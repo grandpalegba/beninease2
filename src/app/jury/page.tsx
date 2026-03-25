@@ -1,3 +1,7 @@
+/**
+ * PAGE PUBLIQUE - LISTE DU JURY
+ * Role: Affiche tous les membres du jury.
+ */
 "use client";
 
 import { Suspense } from "react";

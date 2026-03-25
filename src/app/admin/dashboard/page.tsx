@@ -1,3 +1,7 @@
+/**
+ * PAGE PROTÉGÉE - DASHBOARD ADMIN
+ * Role: Vue d'ensemble du statut admin.
+ */
 import { getUserRole } from "@/lib/auth/get-user-role";
 
 export default async function AdminDashboardPage() {

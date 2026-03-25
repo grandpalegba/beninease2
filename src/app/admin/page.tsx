@@ -1,3 +1,8 @@
+/**
+ * PAGE PROTÉGÉE - ADMINISTRATION AVANCÉE
+ * Role: Dashboard principal d'administration pour la gestion des catégories, 
+ * médias (vidéos/avatars) et suppression de profils.
+ */
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";

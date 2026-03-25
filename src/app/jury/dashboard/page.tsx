@@ -1,3 +1,7 @@
+/**
+ * PAGE PROTÉGÉE - DASHBOARD JURY
+ * Role: Espace de travail pour les membres du jury.
+ */
 import { getUserRole } from "@/lib/auth/get-user-role";
 
 export default async function JuryDashboardPage() {

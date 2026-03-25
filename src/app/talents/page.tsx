@@ -1,3 +1,7 @@
+/**
+ * PAGE PUBLIQUE - LISTE DES TALENTS
+ * Role: Galerie des candidats avec système de vote.
+ */
 "use client";
 
 import { useEffect, useMemo, useState, Suspense } from "react";

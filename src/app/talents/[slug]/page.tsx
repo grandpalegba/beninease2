@@ -1,3 +1,7 @@
+/**
+ * PAGE PUBLIQUE - PROFIL TALENT
+ * Role: "Sanctuaire" du talent, affichage des vidéos et détails.
+ */
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";

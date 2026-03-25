@@ -1,3 +1,7 @@
+/**
+ * PAGE PUBLIQUE - DÉTAIL JURY
+ * Role: Affiche le profil complet d'un membre du jury via son slug.
+ */
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";

@@ -1,3 +1,7 @@
+/**
+ * PAGE PROTÉGÉE - MODÉRATION ADMIN
+ * Role: Gestion détaillée des profils, vidéos et photos de couverture.
+ */
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";

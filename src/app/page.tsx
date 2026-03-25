@@ -1,3 +1,7 @@
+/**
+ * PAGE PUBLIQUE - ACCUEIL
+ * Role: Vitrine principale du site Beninease.
+ */
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import ConceptSection from "@/components/ConceptSection";
