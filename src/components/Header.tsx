@@ -91,7 +91,7 @@ const Header = () => {
                     href="/login?signup=true"
                     className="rounded-full border border-[#C5A267] px-6 py-2 text-xs font-bold tracking-[0.1em] uppercase text-[#C5A267] hover:bg-[#C5A267] hover:text-white transition-all shadow-sm"
                   >
-                    S'inscrire
+                    S&apos;inscrire
                   </a>
                 </>
               )}
