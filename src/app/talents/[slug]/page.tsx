@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { Heart, Image as ImageIcon, MapPin, Play } from "lucide-react";
 
@@ -23,12 +23,11 @@ type VideoRow = {
 
 type VideosByType = Record<string, VideoRow>;
 
-export default function TalentSanctuaryPage() {
+export default function TalentSanctuaryPage({ params }: { params: Promise<{ slug: string }> }) {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const router = useRouter();
-  const params = useParams();
-  const resolvedParams = React.use(params as unknown as Promise<{ id: string }>);
-  const id = resolvedParams?.id;
+  const resolvedParams = React.use(params);
+  const id = resolvedParams?.slug;
 
   const [activeTab, setActiveTab] = useState("Qui je suis");
   const [profile, setProfile] = useState<TalentProfile | null>(null);
