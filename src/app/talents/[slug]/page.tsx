@@ -23,7 +23,7 @@ type VideoRow = {
 
 type VideosByType = Record<string, VideoRow>;
 
-export default function TalentSanctuaryPage({ params }: { params: Promise<{ slug: string }> }) {
+export default function TalentProfilePage({ params }: { params: Promise<{ slug: string }> }) {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const router = useRouter();
   const resolvedParams = React.use(params);
