@@ -20,9 +20,6 @@ type TabItem = {
   objectClass: string;
 };
 
-const toImageSrc = (img: StaticImageData | string) =>
-  typeof img === "string" ? img : img.src;
-
 const tabs: TabItem[] = [
   {
     label: "Qui je suis",
