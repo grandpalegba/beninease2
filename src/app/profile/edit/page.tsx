@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { Upload, MapPin, Globe, Edit, Save, Camera, Image as ImageIcon, Trash2 } from "lucide-react";
@@ -335,11 +336,12 @@ export default function CandidateProfile() {
 
           <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
             <div className="relative group">
-              <div className="w-36 h-36 bg-[#F8F5F0] rounded-[25px] border-[6px] border-white shadow-sm overflow-hidden flex items-center justify-center transition-transform duration-500 group-hover:scale-[1.02]">
-                <img 
+              <div className="w-36 h-36 bg-[#F8F5F0] rounded-[25px] border-[6px] border-white shadow-sm overflow-hidden flex items-center justify-center transition-transform duration-500 group-hover:scale-[1.02] relative">
+                <Image 
                   src={profile.avatar_url || "/assets/profile-aicha.jpg"} 
                   alt="Profil" 
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
                 />
               </div>
               {isEditing && (
@@ -452,7 +454,12 @@ export default function CandidateProfile() {
                   >
                     <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors" />
                     {video?.thumbnail_url ? (
-                      <img src={video.thumbnail_url} alt="" className="w-full h-full object-cover" />
+                      <Image
+                        src={video.thumbnail_url}
+                        alt=""
+                        fill
+                        className="object-cover"
+                      />
                     ) : (
                       <div
                         className="w-full h-full bg-[#2A2A2A] flex items-center justify-center"

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import heroBg from "@/assets/hero-benin-2.png";
 
 const HeroSection = () => {
@@ -18,12 +19,11 @@ const HeroSection = () => {
           className="mx-auto w-full max-w-5xl opacity-0 animate-fade-up overflow-hidden rounded-2xl bg-muted/40 shadow-lg ring-1 ring-border/50"
           style={{ animationDelay: "0.35s" }}
         >
-          <img
-            src={heroBg.src}
+          <Image
+            src={heroBg}
             alt="Collage célébrant l'excellence béninoise : Zangbéto, Bio Guéra, Amazone, Porte du Non-Retour, King Béhanzin, et paysages naturels du Bénin"
             className="mx-auto block h-auto w-full object-contain object-center"
-            loading="eager"
-            decoding="async"
+            priority
           />
         </div>
       </div>

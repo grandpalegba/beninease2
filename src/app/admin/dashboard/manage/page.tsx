@@ -5,6 +5,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { Image as ImageIcon, Trash2, Video, RefreshCw } from "lucide-react";
 
@@ -290,9 +291,14 @@ export default function AdminManagePage() {
                       <tr key={p.id} className="border-b border-[#F2EDE4] last:border-b-0">
                         <td className="px-5 py-4">
                           <div className="flex items-center gap-3">
-                            <div className="h-10 w-10 rounded-full overflow-hidden bg-[#F8F5F0] ring-2 ring-[#C5A267]/20">
+                            <div className="h-10 w-10 rounded-full overflow-hidden bg-[#F8F5F0] ring-2 ring-[#C5A267]/20 relative">
                               {p.avatar_url ? (
-                                <img src={p.avatar_url} alt="" className="h-full w-full object-cover" />
+                                <Image
+                                  src={p.avatar_url}
+                                  alt=""
+                                  fill
+                                  className="object-cover"
+                                />
                               ) : (
                                 <div className="h-full w-full flex items-center justify-center">
                                   <ImageIcon className="h-5 w-5 text-[#C5A267]/45" />

@@ -5,6 +5,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { Image as ImageIcon, MapPin } from "lucide-react";
@@ -121,9 +122,15 @@ export default function JuryProfilePage({ params }: { params: { slug: string } }
       <div className="max-w-4xl mx-auto bg-white rounded-[30px] shadow-[0_10px_40px_rgba(0,0,0,0.03)] overflow-hidden border border-[#F2EDE4]">
         <div className="p-8 md:p-12">
           <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
-            <div className="w-36 h-36 bg-[#F8F5F0] rounded-[25px] border-[6px] border-white shadow-sm overflow-hidden flex items-center justify-center">
+            <div className="w-36 h-36 bg-[#F8F5F0] rounded-[25px] border-[6px] border-white shadow-sm overflow-hidden flex items-center justify-center relative">
               {profile.avatar_url ? (
-                <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
+                <Image
+                  src={profile.avatar_url}
+                  alt={name}
+                  fill
+                  className="object-cover"
+                  priority
+                />
               ) : (
                 <ImageIcon className="w-10 h-10 text-[#C5A267]/45" />
               )}
@@ -186,7 +193,12 @@ export default function JuryProfilePage({ params }: { params: { slug: string } }
                 >
                   <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors" />
                   {v?.thumbnail_url ? (
-                    <img src={v.thumbnail_url} alt="" className="w-full h-full object-cover" />
+                    <Image
+                      src={v.thumbnail_url}
+                      alt=""
+                      fill
+                      className="object-cover"
+                    />
                   ) : (
                     <div className="w-full h-full bg-[#2A2A2A] flex items-center justify-center">
                       <ImageIcon className="w-7 h-7 text-[#C5A267]/45" />

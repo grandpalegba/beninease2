@@ -2,7 +2,7 @@
 
 import { Play, MapPin, Globe, Clock, Heart, Share2 } from "lucide-react";
 import { useState } from "react";
-import type { StaticImageData } from "next/image";
+import Image, { type StaticImageData } from "next/image";
 import profileImg from "@/assets/profile-aicha.jpg";
 import thumbPersonality from "@/assets/video-thumb-personality.jpg";
 import thumbHistory from "@/assets/video-thumb-history.jpg";
@@ -78,11 +78,11 @@ const ProfilePreview = () => {
           <div className="p-6 md:p-8 flex flex-col sm:flex-row sm:items-start gap-6">
             <div className="shrink-0 mx-auto sm:mx-0">
               <div className="relative h-28 w-28 md:h-32 md:w-32 rounded-2xl overflow-hidden ring-2 ring-primary/15 shadow-lg ring-offset-2 ring-offset-background">
-                <img
-                  src={profileImg.src}
+                <Image
+                  src={profileImg}
                   alt="Aïcha Hounkpatin"
                   className="h-full w-full object-cover object-[center_15%]"
-                  decoding="async"
+                  priority
                 />
               </div>
             </div>
@@ -147,12 +147,11 @@ const ProfilePreview = () => {
                     aria-label={`Voir la vidéo : ${tab.label}`}
                     aria-current={activeTab === i ? "true" : undefined}
                   >
-                    <img
-                      src={toImageSrc(tab.thumb)}
+                    <Image
+                      src={tab.thumb}
                       alt=""
                       className={cn("h-full w-full transition-transform duration-500 group-hover:scale-105", tab.objectClass)}
-                      loading={i === 0 ? "eager" : "lazy"}
-                      decoding="async"
+                      priority={i === 0}
                     />
                     <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent pt-6 pb-1.5 px-1.5">
                       <span className="block truncate text-center text-[10px] sm:text-xs font-medium text-white font-body">
@@ -168,15 +167,14 @@ const ProfilePreview = () => {
           {/* Zone vidéo principale */}
           <div className="p-6 md:p-8">
             <div className="relative aspect-video rounded-2xl overflow-hidden cursor-pointer group shadow-2xl ring-1 ring-black/[0.06]">
-              <img
-                src={toImageSrc(current.thumb)}
+              <Image
+                src={current.thumb}
                 alt={current.alt}
                 className={cn(
                   "h-full w-full transition-transform duration-700 ease-out will-change-transform group-hover:scale-[1.035]",
                   current.objectClass,
                 )}
-                loading="eager"
-                decoding="async"
+                priority
               />
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/35 via-black/10 to-black/55" />
               <div className="absolute inset-0 flex flex-col items-center justify-center px-4 transition-colors group-hover:from-black/25">
