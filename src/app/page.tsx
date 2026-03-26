@@ -17,6 +17,7 @@ export default function Home() {
     <div className="min-h-screen bg-background">
       <Header />
       <main>
+          <h1>VERSION TEST 3</h1> {/* 👈 AJOUTE CETTE LIGNE */}
         <HeroSection />
         <ConceptSection />
         <MissionBanner />
