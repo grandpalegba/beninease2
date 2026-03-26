@@ -21,7 +21,7 @@ export const candidates: Candidate[] = [
     category: "Transport & Mobilité",
     city: "Cotonou",
     languages: "Français, Fon, Mina",
-    portrait: "/Talents/koffi-ahouansou.jpg",
+    portrait: "/talents/koffi-ahouansou.jpg",
     tabs: {
       "Qui je suis": "Je suis un entrepreneur qui organise le transport urbain pour le rendre fiable et accessible.",
       "Mon histoire": "J'ai commencé avec une moto, aujourd'hui je coordonne plusieurs chauffeurs dans la ville.",
@@ -37,7 +37,7 @@ export const candidates: Candidate[] = [
     category: "Experts Métier",
     city: "Abomey",
     languages: "Français, Fon",
-    portrait: "/Talents/senami-dossou.jpg",
+    portrait: "/talents/senami-dossou.jpg",
     tabs: {
       "Qui je suis": "Je suis artisane spécialisée dans la transformation du bois et des matériaux locaux.",
       "Mon histoire": "Formée par mon père, j'ai modernisé un savoir-faire traditionnel.",
@@ -53,7 +53,7 @@ export const candidates: Candidate[] = [
     category: "Santé & Médecine",
     city: "Parakou",
     languages: "Français, Bariba, Dendi",
-    portrait: "/Talents/ibrahim-lawani.jpg",
+    portrait: "/talents/ibrahim-lawani.jpg",
     tabs: {
       "Qui je suis": "Je suis médecin engagé dans l'accès aux soins en zone urbaine et périphérique.",
       "Mon histoire": "J'ai choisi de revenir exercer dans ma région d'origine.",
@@ -69,7 +69,7 @@ export const candidates: Candidate[] = [
     category: "Médias & Digital",
     city: "Cotonou",
     languages: "Français, Anglais",
-    portrait: "/Talents/arnaud-zinsou.jpg",
+    portrait: "/talents/arnaud-zinsou.jpg",
     tabs: {
       "Qui je suis": "Je suis créateur de contenu et stratège digital.",
       "Mon histoire": "J'ai construit une audience en valorisant les talents béninois.",
@@ -85,7 +85,7 @@ export const candidates: Candidate[] = [
     category: "Facilitateurs & Conciergerie",
     city: "Porto-Novo",
     languages: "Français, Yoruba, Goun",
-    portrait: "/Talents/nadege-kiki.jpg",
+    portrait: "/talents/nadege-kiki.jpg",
     tabs: {
       "Qui je suis": "Je facilite les démarches et services du quotidien.",
       "Mon histoire": "J'ai aidé des dizaines de personnes à naviguer les complexités administratives.",
@@ -101,7 +101,7 @@ export const candidates: Candidate[] = [
     category: "Création & Culture",
     city: "Ouidah",
     languages: "Français, Fon",
-    portrait: "/Talents/lionel-agossou.jpg",
+    portrait: "/talents/lionel-agossou.jpg",
     tabs: {
       "Qui je suis": "Je suis artiste visuel inspiré de l'histoire du Danxomè.",
       "Mon histoire": "Je transforme les récits historiques en œuvres contemporaines.",
@@ -117,7 +117,7 @@ export const candidates: Candidate[] = [
     category: "Immobilier & Construction",
     city: "Calavi",
     languages: "Français, Fon",
-    portrait: "/Talents/romaric-hountondji.jpg",
+    portrait: "/talents/romaric-hountondji.jpg",
     tabs: {
       "Qui je suis": "Je suis promoteur immobilier.",
       "Mon histoire": "J'ai commencé avec de petits chantiers, aujourd'hui je développe des logements.",
@@ -133,7 +133,7 @@ export const candidates: Candidate[] = [
     category: "Business & Entreprises",
     city: "Cotonou",
     languages: "Français, Anglais",
-    portrait: "/Talents/carine-adjovi.jpg",
+    portrait: "/talents/carine-adjovi.jpg",
     tabs: {
       "Qui je suis": "Je suis entrepreneure et consultante.",
       "Mon histoire": "J'accompagne des entreprises locales dans leur croissance.",
@@ -149,10 +149,10 @@ export const candidates: Candidate[] = [
     category: "Tourisme & Découvertes",
     city: "Ouidah",
     languages: "Français, Fon, Anglais",
-    portrait: "/Talents/jonas-ahodehou.jpg",
+    portrait: "/talents/jonas-ahodehou.jpg",
     tabs: {
       "Qui je suis": "Je suis guide touristique.",
-      "Mon histoire": "Je fais découvrir l'histoire du Bénin aux visiteurs.",
+      "Mon histoire": "Je fait découvrir l'histoire du Bénin aux visiteurs.",
       "Mon service": "Visites culturelles, expériences immersives.",
       "Pourquoi moi": "Parce que connaître son histoire change sa vision du monde."
     }
@@ -165,7 +165,7 @@ export const candidates: Candidate[] = [
     category: "Coutumes & Traditions",
     city: "Abomey",
     languages: "Fon, Français",
-    portrait: "/Talents/koffi-adjakpa.jpg",
+    portrait: "/talents/koffi-adjakpa.jpg",
     tabs: {
       "Qui je suis": "Je suis gardien des traditions.",
       "Mon histoire": "Je transmets les rites et savoirs ancestraux.",
@@ -181,7 +181,7 @@ export const candidates: Candidate[] = [
     category: "Événementiel & Vie Nocturne",
     city: "Cotonou",
     languages: "Français",
-    portrait: "/Talents/steve-kpade.jpg",
+    portrait: "/talents/steve-kpade.jpg",
     tabs: {
       "Qui je suis": "Je suis organisateur d'événements.",
       "Mon histoire": "J'ai lancé des événements populaires.",
@@ -197,7 +197,7 @@ export const candidates: Candidate[] = [
     category: "Hébergement & Séjour",
     city: "Grand-Popo",
     languages: "Français, Mina",
-    portrait: "/Talents/mireille-tognifode.jpg",
+    portrait: "/talents/mireille-tognifode.jpg",
     tabs: {
       "Qui je suis": "Je gère des hébergements touristiques.",
       "Mon histoire": "J'ai transformé une maison familiale en espace d'accueil.",
@@ -213,7 +213,7 @@ export const candidates: Candidate[] = [
     category: "Bien-être & Fitness",
     city: "Bohicon",
     languages: "Français, Fon",
-    portrait: "/Talents/armand-tossou.jpg",
+    portrait: "/talents/armand-tossou.jpg",
     tabs: {
       "Qui je suis": "Coach sportif.",
       "Mon histoire": "J'aide les jeunes à améliorer leur condition physique.",
@@ -229,7 +229,7 @@ export const candidates: Candidate[] = [
     category: "Mode & Beauté",
     city: "Cotonou",
     languages: "Français",
-    portrait: "/Talents/grace-houessou.jpg",
+    portrait: "/talents/grace-houessou.jpg",
     tabs: {
       "Qui je suis": "Styliste.",
       "Mon histoire": "Je valorise les tissus africains.",
@@ -245,7 +245,7 @@ export const candidates: Candidate[] = [
     category: "Marchés & Produits Locaux",
     city: "Djougou",
     languages: "Dendi, Français",
-    portrait: "/Talents/basile-kora.jpg",
+    portrait: "/talents/basile-kora.jpg",
     tabs: {
       "Qui je suis": "Commerçant local.",
       "Mon histoire": "Je valorise les produits du terroir.",
@@ -261,7 +261,7 @@ export const candidates: Candidate[] = [
     category: "Alimentation & Cuisine",
     city: "Cotonou",
     languages: "Français, Fon, Anglais",
-    portrait: "/Talents/aicha-hounkpatin.jpg",
+    portrait: "/talents/aicha-hounkpatin.jpg",
     tabs: {
       "Qui je suis": "Je m'appelle Aïcha, j'ai 28 ans et je suis passionnée par la cuisine béninoise. Chaque plat que je prépare raconte une histoire — celle de ma grand-mère, de mon quartier, de mon pays.",
       "Mon histoire": "Mon parcours a commencé dans la petite cuisine de ma grand-mère à Porto-Novo. C'est là que j'ai appris que cuisiner n'est pas seulement mélanger des ingrédients, c'est transmettre un héritage.",
