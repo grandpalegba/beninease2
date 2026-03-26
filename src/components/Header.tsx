@@ -62,6 +62,12 @@ const Header = () => {
         </a>
 
         <div className="flex items-center gap-4">
+          <a
+            href="/talents"
+            className="text-sm font-medium text-[#1A1A1A] hover:text-[#C5A267] transition-colors"
+          >
+            Talents du Bénin
+          </a>
           {!loading && (
             <>
               {user ? (
@@ -88,10 +94,10 @@ const Header = () => {
                     Se connecter
                   </a>
                   <a
-                    href="/login?signup=true"
+                    href="/postuler"
                     className="rounded-full border border-[#C5A267] px-6 py-2 text-xs font-bold tracking-[0.1em] uppercase text-[#C5A267] hover:bg-[#C5A267] hover:text-white transition-all shadow-sm"
                   >
-                    S&apos;inscrire
+                    Postuler
                   </a>
                 </>
               )}

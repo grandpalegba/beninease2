@@ -6,17 +6,6 @@ import { createSupabaseMiddlewareClient } from "@/lib/supabase/middleware";
 export async function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
 
-  if (
-    pathname.startsWith("/jury") ||
-    pathname.startsWith("/classement") ||
-    pathname.startsWith("/talents")
-  ) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/";
-    url.search = "";
-    return NextResponse.redirect(url);
-  }
-
   const { supabase, response } = createSupabaseMiddlewareClient(request);
 
   const {

@@ -26,10 +26,9 @@ type VideoRow = {
 
 type VideosByType = Record<string, VideoRow>;
 
-export default function JuryProfilePage({ params }: { params: Promise<{ slug: string }> }) {
+export default function JuryProfilePage({ params }: { params: { slug: string } }) {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
-  const resolvedParams = React.use(params);
-  const id = resolvedParams?.slug;
+  const id = params?.slug;
   const router = useRouter();
 
   const [profile, setProfile] = useState<JuryProfile | null>(null);

@@ -2,10 +2,8 @@
  * PAGE PUBLIQUE - ACCUEIL
  * Role: Vitrine principale du site Beninease.
  */
-import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import ConceptSection from "@/components/ConceptSection";
-import ProfilePreview from "@/components/ProfilePreview";
 import UniversGrid from "@/components/UniversGrid";
 import MissionBanner from "@/components/MissionBanner";
 import SelectionSection from "@/components/SelectionSection";
@@ -15,13 +13,11 @@ import Footer from "@/components/Footer";
 export default function Home() {
   return (
     <div className="min-h-screen bg-background">
-      <Header />
       <main>
-          <h1>VERSION TEST 3</h1> {/* 👈 AJOUTE CETTE LIGNE */}
+
         <HeroSection />
-        <ConceptSection />
         <MissionBanner />
-        <ProfilePreview />
+        <ConceptSection />
         <UniversGrid />
         <SelectionSection />
         <WhyParticipate />

@@ -35,10 +35,10 @@ const WhyParticipate = () => {
         </div>
         <div className="mt-16 text-center">
           <a
-            href="/login?signup=true"
+            href="/postuler"
             className="inline-flex items-center justify-center rounded-full bg-white px-10 py-4 text-sm font-bold tracking-[0.1em] uppercase text-[#b25c39] shadow-lg transition-all hover:bg-[#f0e6d8] hover:scale-105 active:scale-95"
           >
-            S&apos;inscrire maintenant
+            Postuler maintenant
           </a>
         </div>
       </div>

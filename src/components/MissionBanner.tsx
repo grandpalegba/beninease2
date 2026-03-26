@@ -9,7 +9,7 @@ type MissionBannerProps = {
   ctaLabel?: string;
 };
 
-const MissionBanner = ({ ctaHref = "/login?signup=true", ctaLabel = "S'inscrire maintenant" }: MissionBannerProps) => {
+const MissionBanner = ({ ctaHref = "/postuler", ctaLabel = "Postuler maintenant" }: MissionBannerProps) => {
   return (
     <section lang="fr" className="py-16 md:py-20 bg-[#b25c39]">
       <div className="container max-w-4xl px-4 text-center sm:px-6">
