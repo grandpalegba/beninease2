@@ -47,7 +47,7 @@ const Header = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 hidden md:block ${
         scrolled ? "bg-white backdrop-blur-md shadow-sm py-3" : "bg-white py-5"
       }`}
     >
