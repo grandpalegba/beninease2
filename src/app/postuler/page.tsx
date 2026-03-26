@@ -87,8 +87,9 @@ export default function PostulerPage() {
         // 3. Success state
         setSuccess(true);
       }
-    } catch (err: any) {
-      setError(err.message || "Une erreur est survenue lors de l'inscription.");
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Une erreur est survenue lors de l'inscription.";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
