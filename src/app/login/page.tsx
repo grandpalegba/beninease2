@@ -3,23 +3,16 @@
 import { useEffect, useMemo, useState, type FormEvent, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import Link from "next/link";
 
 function LoginContent() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isSignUp, setIsSignUp] = useState(false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
-  const searchParams = useSearchParams();
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
-
-  useEffect(() => {
-    if (searchParams?.get("signup") === "true") {
-      setIsSignUp(true);
-    }
-  }, [searchParams]);
 
   const handleAuth = async (e: FormEvent) => {
     e.preventDefault();
@@ -27,24 +20,16 @@ function LoginContent() {
     setLoading(true);
 
     try {
-      if (isSignUp) {
-        const origin = typeof window !== "undefined" ? window.location.origin : "";
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: origin ? `${origin}/auth/callback` : undefined,
-          },
-        });
-        if (error) setMessage(error.message);
-        else setMessage("Vérifiez vos emails pour confirmer l'inscription !");
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) setMessage(error.message);
-        else {
-          router.replace("/");
-          router.refresh();
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        if (error.message.includes("Invalid login credentials")) {
+          setMessage("Identifiants invalides. Veuillez réessayer.");
+        } else {
+          setMessage(error.message);
         }
+      } else {
+        router.replace("/");
+        router.refresh();
       }
     } finally {
       setLoading(false);
@@ -52,50 +37,62 @@ function LoginContent() {
   };
 
   return (
-    <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
-      <h1 className="mb-6 text-center text-2xl font-bold text-gray-900">
-        {isSignUp ? "Inscription Beninease" : "Connexion Beninease"}
+    <div className="w-full max-w-md flex flex-col items-center">
+      <h1 className="mb-10 text-center text-4xl font-bold font-display text-[#FDFBF7] animate-fade-up">
+        Connexion Beninease
       </h1>
-      <form onSubmit={handleAuth} className="space-y-4">
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          autoComplete="email"
-          className="w-full rounded border border-gray-300 p-2 text-gray-900 outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500"
-          required
-        />
-        <input
-          type="password"
-          placeholder="Mot de passe"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          autoComplete={isSignUp ? "new-password" : "current-password"}
-          className="w-full rounded border border-gray-300 p-2 text-gray-900 outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500"
-          required
-        />
+      
+      <form onSubmit={handleAuth} className="w-full space-y-6 animate-fade-up" style={{ animationDelay: "0.1s" }}>
+        <div className="space-y-2">
+          <label className="text-xs font-sans font-medium text-[#FDFBF7]/70 uppercase tracking-wider ml-1">
+            Email
+          </label>
+          <input
+            type="email"
+            placeholder="votre@email.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            autoComplete="email"
+            className="w-full rounded-2xl bg-white/10 border-0 p-4 text-[#FDFBF7] placeholder:text-[#FDFBF7]/30 outline-none focus:ring-1 focus:ring-[#D9A036] transition-all"
+            required
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-xs font-sans font-medium text-[#FDFBF7]/70 uppercase tracking-wider ml-1">
+            Mot de passe
+          </label>
+          <input
+            type="password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
+            className="w-full rounded-2xl bg-white/10 border-0 p-4 text-[#FDFBF7] placeholder:text-[#FDFBF7]/30 outline-none focus:ring-1 focus:ring-[#D9A036] transition-all"
+            required
+          />
+        </div>
+
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded bg-yellow-500 p-2 font-bold text-white hover:bg-yellow-600 disabled:opacity-60"
+          className="w-full rounded-full bg-[#D9A036] p-4 font-sans font-bold text-white hover:bg-[#C58F2E] transition-all shadow-lg active:scale-[0.98] disabled:opacity-60 mt-4"
         >
-          {loading ? "…" : isSignUp ? "S'inscrire" : "Se connecter"}
+          {loading ? "Connexion en cours..." : "Se connecter"}
         </button>
       </form>
-      <button
-        type="button"
-        onClick={() => {
-          setIsSignUp(!isSignUp);
-          setMessage("");
-        }}
-        className="mt-4 w-full text-sm text-blue-600 underline hover:text-blue-800"
+
+      <Link
+        href="/signup"
+        className="mt-8 text-sm font-sans text-[#FDFBF7] hover:text-white transition-colors border-b border-[#FDFBF7]/30 pb-0.5 animate-fade-up"
+        style={{ animationDelay: "0.2s" }}
       >
-        {isSignUp ? "Déjà un compte ? Connexion" : "Pas de compte ? Créer un profil"}
-      </button>
+        Pas de compte ? Créer un profil
+      </Link>
+
       {message ? (
         <p
-          className={`mt-4 text-center text-sm ${message.includes("Vérifiez") ? "text-green-600" : "text-red-500"}`}
+          className="mt-6 text-center text-sm font-sans text-[#FDFBF7] bg-white/10 px-4 py-2 rounded-lg animate-shake"
           role="status"
         >
           {message}
@@ -107,8 +104,8 @@ function LoginContent() {
 
 export default function LoginPage() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 px-4">
-      <Suspense fallback={<div className="text-gray-500">Chargement...</div>}>
+    <div className="flex min-h-screen flex-col items-center justify-center bg-[#B25E3B] px-6 pt-20">
+      <Suspense fallback={<div className="text-[#FDFBF7] animate-pulse">Chargement...</div>}>
         <LoginContent />
       </Suspense>
     </div>
