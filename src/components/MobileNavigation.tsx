@@ -54,21 +54,21 @@ const MobileNavigation = () => {
             transition={{ duration: 0.3, ease: "easeOut" }}
             className="fixed inset-0 z-[55] bg-[#B25E3B] flex flex-col pt-32 px-10 md:hidden"
           >
-            <nav className="flex flex-col items-start gap-10 w-full max-w-sm">
-              {/* Talents du Bénin - Link Serif élégante */}
+            <nav className="flex flex-col items-start gap-8 w-full max-w-sm">
+              {/* Talents du Bénin - Link Sans-Serif moderne */}
               <Link
                 href="/talents"
                 onClick={() => setIsOpen(false)}
-                className="font-display text-4xl font-bold text-[#FDFBF7] hover:opacity-80 transition-opacity"
+                className="font-sans text-xl font-semibold text-[#FDFBF7] hover:opacity-80 transition-opacity"
               >
                 Talents du Bénin
               </Link>
 
-              {/* Se connecter - Link Serif élégante (Identique) */}
+              {/* Se connecter - Link Sans-Serif moderne (Identique) */}
               <Link
                 href="/login"
                 onClick={() => setIsOpen(false)}
-                className="font-display text-4xl font-bold text-[#FDFBF7] hover:opacity-80 transition-opacity"
+                className="font-sans text-xl font-semibold text-[#FDFBF7] hover:opacity-80 transition-opacity"
               >
                 Se connecter
               </Link>
@@ -77,7 +77,7 @@ const MobileNavigation = () => {
               <Link
                 href="/postuler"
                 onClick={() => setIsOpen(false)}
-                className="w-full py-4 rounded-full bg-white text-[#B25E3B] font-sans text-xl font-bold shadow-xl transition-transform active:scale-95 flex items-center justify-center mt-6"
+                className="w-full py-4 rounded-full bg-white text-[#B25E3B] font-sans text-xl font-bold shadow-xl transition-transform active:scale-95 flex items-center justify-center mt-4"
               >
                 Postuler
               </Link>
