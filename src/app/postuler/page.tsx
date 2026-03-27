@@ -62,8 +62,8 @@ export default function PostulerPage() {
       if (error) throw error;
       
       setOtpSent(true);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Une erreur est survenue lors de l'envoi du code.");
+    } catch {
+      setError("Une erreur est survenue lors de l'envoi du code.");
     } finally {
       setLoading(false);
     }
@@ -101,8 +101,8 @@ export default function PostulerPage() {
         if (appError) throw appError;
         setSuccess(true);
       }
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Code invalide ou expiré.");
+    } catch {
+      setError("Code invalide ou expiré.");
     } finally {
       setLoading(false);
     }

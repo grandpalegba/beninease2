@@ -75,7 +75,7 @@ function LoginContent() {
         router.replace("/");
         router.refresh();
       }
-    } catch (err: unknown) {
+    } catch {
       setMessage("Une erreur est survenue lors de la vérification.");
     } finally {
       setLoading(false);
