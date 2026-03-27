@@ -2,119 +2,132 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { Video, Mail, Lock, User, Phone, MapPin, Share2, CheckCircle2 } from "lucide-react";
+import { CheckCircle2, ArrowRight, MessageSquare, ChevronDown } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import Link from "next/link";
+import PhoneInput from "@/components/PhoneInput";
 import { universes } from "@/lib/data/universes";
 
-const videoRequirements = [
-  "Personnalité / Présentation",
-  "Votre histoire",
-  "Votre service / offre",
-  "Pourquoi vous",
+const days = Array.from({ length: 31 }, (_, i) => i + 1);
+const months = [
+  "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", 
+  "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
 ];
+const years = Array.from({ length: 80 }, (_, i) => new Date().getFullYear() - 15 - i);
 
 export default function PostulerPage() {
   const router = useRouter();
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
   // Form states
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [fullName, setFullName] = useState("");
-  const [category, setCategory] = useState("");
-  const [subCategory, setSubCategory] = useState("");
-  const [city, setCity] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [dobDay, setDobDay] = useState("");
+  const [dobMonth, setDobMonth] = useState("");
+  const [dobYear, setDobYear] = useState("");
   const [phone, setPhone] = useState("");
-  const [socials, setSocials] = useState("");
-  const [acceptVideos, setAcceptVideos] = useState(false);
+  const [countryCode, setCountryCode] = useState("+229");
+  const [selectedUniverse, setSelectedUniverse] = useState("");
+  const [selectedSubCategory, setSelectedSubCategory] = useState("");
   
-  // UI states
+  // OTP states
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpCode, setOtpCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  // Derived states
-  const selectedUniverse = universes.find(u => u.name === category);
-  const availableSubCategories = selectedUniverse ? selectedUniverse.subs : [];
+  const fullPhoneNumber = useMemo(() => {
+    return `${countryCode}${phone}`;
+  }, [countryCode, phone]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const availableSubCategories = useMemo(() => {
+    const universe = universes.find(u => u.name === selectedUniverse);
+    return universe ? universe.subs : [];
+  }, [selectedUniverse]);
+
+  const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!acceptVideos) {
-      setError("Veuillez accepter l'engagement sur les vidéos.");
-      return;
-    }
-
     setLoading(true);
     setError(null);
 
     try {
-      // 1. Sign up user
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email,
-        password,
+      const { error } = await supabase.auth.signInWithOtp({
+        phone: fullPhoneNumber,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          shouldCreateUser: true,
         },
       });
 
-      if (authError) {
-        if (authError.message.includes("User already registered")) {
-          throw new Error("Cet email est déjà utilisé.");
-        }
-        if (authError.message.includes("Password should be")) {
-          throw new Error("Le mot de passe doit contenir au moins 6 caractères.");
-        }
-        throw authError;
-      }
-
-      if (authData.user) {
-        // 2. Insert into applications table
-        const { error: appError } = await supabase
-          .from("applications")
-          .insert({
-            user_id: authData.user.id,
-            full_name: fullName,
-            category,
-            sub_category: subCategory,
-            city,
-            phone,
-            socials,
-            accept_videos: acceptVideos,
-          });
-
-        if (appError) throw appError;
-
-        // 3. Success state
-        setSuccess(true);
-      }
+      if (error) throw error;
+      
+      setOtpSent(true);
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : "Une erreur est survenue lors de l'inscription.";
-      setError(errorMessage);
+      setError(err instanceof Error ? err.message : "Une erreur est survenue lors de l'envoi du code.");
     } finally {
       setLoading(false);
     }
   };
 
-  const inputBg = "bg-[#F5F5F5]"; // Light gray/beige as requested
-  const inputClasses = `w-full px-5 py-4 rounded-xl ${inputBg} border-0 text-foreground placeholder:text-muted-foreground font-body text-sm focus:outline-none focus:ring-2 focus:ring-[#C5A267]/30 transition-all`;
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { data: { session }, error: verifyError } = await supabase.auth.verifyOtp({
+        phone: fullPhoneNumber,
+        token: otpCode,
+        type: 'sms'
+      });
+
+      if (verifyError) throw verifyError;
+
+      if (session?.user) {
+        // Insert application data
+        const { error: appError } = await supabase
+          .from("applications")
+          .insert({
+            user_id: session.user.id,
+            full_name: `${firstName} ${lastName}`,
+            city: "", 
+            phone: fullPhoneNumber,
+            category: selectedUniverse,
+            sub_category: selectedSubCategory,
+            dob: `${dobYear}-${months.indexOf(dobMonth) + 1}-${dobDay}`,
+            status: 'pending'
+          });
+
+        if (appError) throw appError;
+        setSuccess(true);
+      }
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Code invalide ou expiré.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const inputClasses = "w-full rounded-2xl bg-white border border-[#D9A036]/10 p-4 text-[#1A1A1A] placeholder:text-gray-300 outline-none focus:ring-1 focus:ring-[#D9A036] focus:border-[#D9A036] transition-all font-sans text-sm appearance-none";
+  const labelClasses = "text-[10px] font-sans font-bold text-[#B25E3B] uppercase tracking-[0.2em] ml-1";
 
   if (success) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center px-4 py-12">
+      <div className="min-h-screen bg-[#FDF8F1] flex items-center justify-center px-4 py-12">
         <div className="max-w-md w-full bg-white p-10 rounded-3xl shadow-xl text-center animate-fade-up">
-          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-8">
+          <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-8 border border-green-100">
             <CheckCircle2 className="w-10 h-10 text-green-600" />
           </div>
-          <h2 className="font-display text-2xl font-bold text-foreground mb-4">
+          <h2 className="font-display text-2xl font-bold text-[#1A1A1A] mb-4">
             Bienvenue parmi les Visages du Bénin ! 🎉
           </h2>
-          <p className="text-muted-foreground font-body leading-relaxed mb-8">
+          <p className="text-gray-500 font-sans leading-relaxed mb-8">
             Votre compte est créé et votre candidature est en cours d&apos;examen. 
-            Vous recevrez un email très prochainement pour la suite de l&apos;aventure.
+            Vous recevrez un message très prochainement.
           </p>
           <button
             onClick={() => router.push("/")}
-            className="w-full py-4 rounded-xl bg-[#C5A267] text-white font-bold hover:bg-[#B38E55] transition-all shadow-lg"
+            className="w-full py-4 rounded-full bg-[#B25E3B] text-white font-bold font-sans hover:bg-[#9A4D2F] transition-all shadow-lg active:scale-95"
           >
             Retour à l&apos;accueil
           </button>
@@ -124,201 +137,216 @@ export default function PostulerPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background py-16 md:py-24 px-4 flex flex-col items-center">
-      {/* Header Info */}
-      <div className="max-w-2xl w-full text-center mb-12 animate-fade-in">
-        <h1 className="font-display text-3xl md:text-5xl font-bold text-foreground mb-4 leading-tight">
-          Devenez un Visage du Bénin
+    <div className="min-h-screen bg-[#FDF8F1] py-16 md:py-24 px-4 flex flex-col items-center">
+      <div className="max-w-xl w-full text-center mb-12 animate-fade-in">
+        <h1 className="font-display text-4xl md:text-5xl font-bold text-[#B25E3B] mb-4 leading-tight">
+          Candidature pour l&apos;Excellence
         </h1>
-        <p className="text-muted-foreground font-body text-lg">
-          Rejoignez la vitrine de l&apos;excellence béninoise et faites rayonner votre talent.
+        <p className="text-gray-500 font-sans text-lg">
+          Rejoignez la vitrine de l&apos;excellence béninoise.
         </p>
       </div>
 
-      {/* Main Card */}
-      <div className="max-w-xl w-full bg-white rounded-3xl shadow-2xl p-6 md:p-10 animate-fade-up">
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Email & Password */}
-          <div className="space-y-4">
-            <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Votre email"
-                required
-                className={`${inputClasses} pl-12`}
-              />
-            </div>
-            <div className="relative">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Mot de passe (min. 6 caractères)"
-                required
-                className={`${inputClasses} pl-12`}
-              />
-            </div>
-          </div>
-
-          <div className="h-px bg-gray-100 my-2" />
-
-          {/* Personal Info */}
-          <div className="space-y-4">
-            <div className="relative">
-              <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <input
-                type="text"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                placeholder="Nom complet"
-                required
-                className={`${inputClasses} pl-12`}
-              />
-            </div>
-
-            {/* Category Select */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="relative">
-                <select
-                  value={category}
-                  onChange={(e) => {
-                    setCategory(e.target.value);
-                    setSubCategory("");
-                  }}
-                  required
-                  className={`${inputClasses} appearance-none`}
-                >
-                  <option value="" disabled>Univers</option>
-                  {universes.map((u) => (
-                    <option key={u.name} value={u.name}>{u.name}</option>
-                  ))}
-                </select>
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m6 9 6 6 6-6"/></svg>
-                </div>
-              </div>
-
-              {/* Sub-category Select */}
-              <div className="relative">
-                <select
-                  value={subCategory}
-                  onChange={(e) => setSubCategory(e.target.value)}
-                  required
-                  disabled={!category}
-                  className={`${inputClasses} appearance-none disabled:opacity-50`}
-                >
-                  <option value="" disabled>Catégorie</option>
-                  {availableSubCategories.map((sub) => (
-                    <option key={sub} value={sub}>{sub}</option>
-                  ))}
-                </select>
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m6 9 6 6 6-6"/></svg>
-                </div>
-              </div>
-            </div>
-
-            <div className="relative">
-              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <input
-                type="text"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                placeholder="Cotonou, Bénin"
-                required
-                className={`${inputClasses} pl-12`}
-              />
-            </div>
-
-            <div className="relative">
-              <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <input
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="Téléphone / WhatsApp"
-                required
-                className={`${inputClasses} pl-12`}
-              />
-            </div>
-
-            <div className="relative">
-              <Share2 className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <input
-                type="text"
-                value={socials}
-                onChange={(e) => setSocials(e.target.value)}
-                placeholder="Réseaux sociaux (Instagram, Facebook...)"
-                className={`${inputClasses} pl-12`}
-              />
-            </div>
-          </div>
-
-          {/* Video Block */}
-          <div className="rounded-2xl border-2 border-dashed border-[#E9E2D6] bg-[#FDFBF7] p-6 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#C5A267]/10 flex items-center justify-center">
-                <Video className="w-5 h-5 text-[#C5A267]" />
-              </div>
-              <div>
-                <h3 className="font-bold text-sm text-foreground">4 vidéos requises</h3>
-                <p className="text-[11px] text-muted-foreground uppercase tracking-wider">Engagement obligatoire</p>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {videoRequirements.map((v, i) => (
-                <div key={v} className="flex items-center gap-3 bg-white p-3 rounded-xl border border-[#E9E2D6]/50 shadow-sm">
-                  <span className="text-[10px] font-bold text-[#C5A267] bg-[#C5A267]/10 w-5 h-5 rounded flex items-center justify-center shrink-0">
-                    0{i + 1}
-                  </span>
-                  <span className="text-xs font-medium text-muted-foreground leading-none">{v}</span>
-                </div>
-              ))}
-            </div>
-
-            <label className="flex items-start gap-3 cursor-pointer pt-2 group">
-              <div className="relative flex items-center">
+      <div className="max-w-xl w-full animate-fade-up">
+        {!otpSent ? (
+          <form onSubmit={handleSendOtp} className="space-y-8">
+            {/* Identity Section */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className={labelClasses}>Prénom</label>
                 <input
-                  type="checkbox"
-                  checked={acceptVideos}
-                  onChange={(e) => setAcceptVideos(e.target.checked)}
-                  className="w-5 h-5 rounded-md border-[#E9E2D6] text-[#C5A267] focus:ring-[#C5A267]/30 accent-[#C5A267] cursor-pointer"
+                  type="text"
+                  placeholder="Koffi"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  required
+                  className={inputClasses}
                 />
               </div>
-              <span className="text-xs text-muted-foreground leading-relaxed group-hover:text-foreground transition-colors">
-                Je confirme que si je suis retenu(e), je m&apos;engage à partager les 4 vidéos requises qui seront dévoilées sur le site.
-              </span>
-            </label>
-          </div>
-
-          {/* Error Message */}
-          {error && (
-            <div className="p-4 rounded-xl bg-red-50 text-red-600 text-sm font-medium border border-red-100 animate-shake">
-              {error}
+              <div className="space-y-2">
+                <label className={labelClasses}>Nom</label>
+                <input
+                  type="text"
+                  placeholder="Dossou"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  required
+                  className={inputClasses}
+                />
+              </div>
             </div>
-          )}
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-4 rounded-xl bg-[#C5A267] text-white font-bold text-base hover:bg-[#B38E55] transition-all shadow-lg active:scale-[0.98] disabled:opacity-60 flex items-center justify-center gap-2"
-          >
-            {loading ? (
-              <>
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Traitement...
-              </>
-            ) : (
-              "Créer mon compte et postuler"
+            <div className="space-y-2">
+              <label className={labelClasses}>Date de naissance</label>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="relative">
+                  <select
+                    value={dobDay}
+                    onChange={(e) => setDobDay(e.target.value)}
+                    required
+                    className={inputClasses}
+                  >
+                    <option value="" disabled>Jour</option>
+                    {days.map(d => <option key={d} value={d}>{d}</option>)}
+                  </select>
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#D9A036] pointer-events-none" />
+                </div>
+                <div className="relative">
+                  <select
+                    value={dobMonth}
+                    onChange={(e) => setDobMonth(e.target.value)}
+                    required
+                    className={inputClasses}
+                  >
+                    <option value="" disabled>Mois</option>
+                    {months.map(m => <option key={m} value={m}>{m}</option>)}
+                  </select>
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#D9A036] pointer-events-none" />
+                </div>
+                <div className="relative">
+                  <select
+                    value={dobYear}
+                    onChange={(e) => setDobYear(e.target.value)}
+                    required
+                    className={inputClasses}
+                  >
+                    <option value="" disabled>Année</option>
+                    {years.map(y => <option key={y} value={y}>{y}</option>)}
+                  </select>
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#D9A036] pointer-events-none" />
+                </div>
+              </div>
+            </div>
+
+            {/* WhatsApp Section */}
+            <div className="space-y-2">
+              <label className={labelClasses}>Numéro WhatsApp</label>
+              <PhoneInput
+                value={phone}
+                onChange={setPhone}
+                onCountryChange={setCountryCode}
+                className="h-[56px]"
+              />
+            </div>
+
+            {/* Universe & Category Section */}
+            <div className="space-y-6 pt-4 border-t border-[#D9A036]/10">
+              <p className="text-xs font-sans font-bold text-[#B25E3B] tracking-wider">VOTRE UNIVERS & CATÉGORIE</p>
+              
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className={labelClasses}>UNIVERS</label>
+                  <div className="relative">
+                    <select
+                      value={selectedUniverse}
+                      onChange={(e) => {
+                        setSelectedUniverse(e.target.value);
+                        setSelectedSubCategory("");
+                      }}
+                      required
+                      className={inputClasses}
+                    >
+                      <option value="" disabled>Sélectionner un univers</option>
+                      {universes.map((u) => (
+                        <option key={u.name} value={u.name}>{u.name}</option>
+                      ))}
+                    </select>
+                    <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#D9A036] pointer-events-none" />
+                  </div>
+                </div>
+
+                {selectedUniverse && (
+                  <div className="space-y-2 animate-fade-in">
+                    <label className={labelClasses}>SOUS-CATÉGORIE</label>
+                    <div className="relative">
+                      <select
+                        value={selectedSubCategory}
+                        onChange={(e) => setSelectedSubCategory(e.target.value)}
+                        required
+                        className={inputClasses}
+                      >
+                        <option value="" disabled>Sélectionner une sous-catégorie</option>
+                        {availableSubCategories.map((sub) => (
+                          <option key={sub} value={sub}>{sub}</option>
+                        ))}
+                      </select>
+                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#D9A036] pointer-events-none" />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {error && (
+              <p className="text-red-500 text-xs text-center font-sans animate-shake bg-red-50 py-2 rounded-lg">{error}</p>
             )}
-          </button>
-        </form>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-5 rounded-full bg-[#B25E3B] text-white font-bold font-sans text-base hover:bg-[#9A4D2F] transition-all shadow-xl active:scale-[0.98] disabled:opacity-60 flex items-center justify-center gap-3 mt-4"
+            >
+              {loading ? "Envoi en cours..." : "Recevoir mon code sur WhatsApp"}
+              {!loading && <ArrowRight className="w-5 h-5" />}
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handleVerifyOtp} className="space-y-8 animate-fade-up">
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-[#B25E3B]/10 rounded-full flex items-center justify-center mx-auto">
+                <MessageSquare className="w-8 h-8 text-[#B25E3B]" />
+              </div>
+              <h2 className="font-display text-2xl font-bold text-[#1A1A1A]">Code de vérification</h2>
+              <p className="text-sm text-gray-400 font-sans">
+                Nous avons envoyé un code de vérification à <br />
+                <span className="text-[#B25E3B] font-bold">{fullPhoneNumber}</span>
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <label className={labelClasses}>Entrez le code à 6 chiffres</label>
+              <input
+                type="text"
+                maxLength={6}
+                placeholder="000000"
+                value={otpCode}
+                onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ""))}
+                className={`${inputClasses} text-center text-3xl tracking-[0.5em] font-bold py-6 appearance-none`}
+                required
+              />
+            </div>
+
+            {error && (
+              <p className="text-red-500 text-xs text-center font-sans animate-shake">{error}</p>
+            )}
+
+            <div className="space-y-4">
+              <button
+                type="submit"
+                disabled={loading || otpCode.length !== 6}
+                className="w-full py-5 rounded-full bg-[#B25E3B] text-white font-bold font-sans text-base hover:bg-[#9A4D2F] transition-all shadow-xl active:scale-[0.98] disabled:opacity-60"
+              >
+                {loading ? "Vérification..." : "Confirmer et postuler"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setOtpSent(false)}
+                className="w-full text-sm text-[#B25E3B] font-sans hover:underline"
+              >
+                Retourner au formulaire
+              </button>
+            </div>
+          </form>
+        )}
+
+        <div className="mt-12 text-center">
+          <Link
+            href="/login"
+            className="text-sm font-sans text-[#B25E3B] hover:text-[#9A4D2F] transition-colors border-b border-[#B25E3B]/30 pb-0.5"
+          >
+            Déjà inscrit ? Se connecter
+          </Link>
+        </div>
       </div>
     </div>
   );
