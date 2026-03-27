@@ -29,14 +29,14 @@ const MobileNavigation = () => {
         <div className="container flex items-center justify-between px-6">
           <Link 
             href="/" 
-            className="font-display text-2xl font-bold text-foreground"
+            className="font-display text-2xl font-bold text-[#008751]"
             onClick={() => setIsOpen(false)}
           >
             Beninease
           </Link>
           <button
             onClick={toggleMenu}
-            className="p-2 text-foreground focus:outline-none transition-transform active:scale-90"
+            className="p-2 text-[#008751] focus:outline-none transition-transform active:scale-90"
             aria-label="Toggle menu"
           >
             {isOpen ? <X size={28} /> : <Menu size={28} />}
@@ -52,14 +52,14 @@ const MobileNavigation = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="fixed inset-0 z-[55] bg-[#B25E3B] flex flex-col pt-32 px-10 md:hidden"
+            className="fixed inset-0 z-[55] bg-[#008751] flex flex-col pt-32 px-10 md:hidden"
           >
             <nav className="flex flex-col items-start gap-8 w-full max-w-sm">
               {/* Talents du Bénin - Link Sans-Serif moderne */}
               <Link
                 href="/talents"
                 onClick={() => setIsOpen(false)}
-                className="font-sans text-xl font-semibold text-[#FDFBF7] hover:opacity-80 transition-opacity"
+                className="font-sans text-xl font-semibold text-[#FDFBF7] hover:text-[#E9B113] transition-colors"
               >
                 Talents du Bénin
               </Link>
@@ -68,7 +68,7 @@ const MobileNavigation = () => {
               <Link
                 href="/login"
                 onClick={() => setIsOpen(false)}
-                className="font-sans text-xl font-semibold text-[#FDFBF7] hover:opacity-80 transition-opacity"
+                className="font-sans text-xl font-semibold text-[#FDFBF7] hover:text-[#E9B113] transition-colors"
               >
                 Se connecter
               </Link>
@@ -77,7 +77,7 @@ const MobileNavigation = () => {
               <Link
                 href="/postuler"
                 onClick={() => setIsOpen(false)}
-                className="w-full py-4 rounded-full bg-white text-[#B25E3B] font-sans text-xl font-bold shadow-xl transition-transform active:scale-95 flex items-center justify-center mt-4"
+                className="w-full py-4 rounded-full bg-white text-[#008751] font-sans text-xl font-bold shadow-xl transition-transform active:scale-95 flex items-center justify-center mt-4"
               >
                 Postuler
               </Link>

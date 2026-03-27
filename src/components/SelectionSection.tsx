@@ -32,11 +32,11 @@ const SelectionSection = () => {
     <section id="selection" className="py-24 md:py-32">
       <div className="container px-4 max-w-4xl">
         <div className="text-center mb-16">
-          <p className="text-xs font-bold tracking-[0.25em] uppercase text-primary mb-4 font-body">
+          <p className="text-xs font-bold tracking-[0.25em] uppercase text-[#E9B113] mb-4 font-body">
             Processus de sélection
           </p>
           <h2
-            className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground text-balance"
+            className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-[#008751] text-balance"
             style={{ lineHeight: "1.15" }}
           >
             ⚡ Parcours Beninease
@@ -49,8 +49,8 @@ const SelectionSection = () => {
           <div className="space-y-12 md:space-y-16">
             {steps.map((step) => (
               <div key={step.number} className="relative flex items-start gap-6">
-                <div className="relative z-10 w-10 h-10 rounded-full bg-primary flex items-center justify-center shrink-0">
-                  <span className="text-primary-foreground text-sm font-bold font-body">{step.number}</span>
+                <div className="relative z-10 w-10 h-10 rounded-full bg-[#008751] flex items-center justify-center shrink-0">
+                  <span className="text-white text-sm font-bold font-body">{step.number}</span>
                 </div>
 
                 <div className="pt-1 min-w-0">

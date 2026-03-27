@@ -6,11 +6,11 @@ const HeroSection = () => {
     <section className="relative bg-background">
       <div className="container max-w-6xl px-4 pt-28 pb-10 text-center md:pt-32 md:pb-14">
         <h1
-          className="font-display text-5xl font-bold text-foreground opacity-0 animate-fade-up sm:text-6xl md:text-7xl lg:text-8xl mb-8 md:mb-10"
+          className="font-display text-5xl font-bold text-[#008751] opacity-0 animate-fade-up sm:text-6xl md:text-7xl lg:text-8xl mb-8 md:mb-10"
           style={{ lineHeight: "1.05", animationDelay: "0.2s" }}
         >
           Benin Is Us
-          <span className="mt-3 block text-lg font-medium text-muted-foreground sm:text-xl md:text-2xl lg:text-3xl">
+          <span className="mt-3 block text-lg font-medium text-[#E9B113] sm:text-xl md:text-2xl lg:text-3xl">
             Le Bénin, c&apos;est Nous
           </span>
         </h1>

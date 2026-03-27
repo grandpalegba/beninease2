@@ -108,8 +108,8 @@ export default function PostulerPage() {
     }
   };
 
-  const inputClasses = "w-full rounded-2xl bg-white border border-[#D9A036]/10 p-4 text-[#1A1A1A] placeholder:text-gray-300 outline-none focus:ring-1 focus:ring-[#D9A036] focus:border-[#D9A036] transition-all font-sans text-sm appearance-none";
-  const labelClasses = "text-[10px] font-sans font-bold text-[#B25E3B] uppercase tracking-[0.2em] ml-1";
+  const inputClasses = "w-full rounded-2xl bg-white border border-[#008751]/10 p-4 text-[#1A1A1A] placeholder:text-gray-300 outline-none focus:ring-2 focus:ring-[#008751] focus:border-[#008751] transition-all font-sans text-sm appearance-none";
+  const labelClasses = "text-[10px] font-sans font-bold text-[#008751] uppercase tracking-[0.2em] ml-1";
 
   if (success) {
     return (
@@ -127,7 +127,7 @@ export default function PostulerPage() {
           </p>
           <button
             onClick={() => router.push("/")}
-            className="w-full py-4 rounded-full bg-[#B25E3B] text-white font-bold font-sans hover:bg-[#9A4D2F] transition-all shadow-lg active:scale-95"
+            className="w-full py-4 rounded-full bg-[#E8112D] text-white font-bold font-sans hover:bg-[#C40D26] transition-all shadow-lg active:scale-95"
           >
             Retour à l&apos;accueil
           </button>
@@ -139,7 +139,7 @@ export default function PostulerPage() {
   return (
     <div className="min-h-screen bg-[#FDF8F1] py-16 md:py-24 px-4 flex flex-col items-center">
       <div className="max-w-xl w-full text-center mb-12 animate-fade-in">
-        <h1 className="font-display text-4xl md:text-5xl font-bold text-[#B25E3B] mb-4 leading-tight">
+        <h1 className="font-display text-4xl md:text-5xl font-bold text-[#008751] mb-4 leading-tight">
           Candidature pour l&apos;Excellence
         </h1>
         <p className="text-gray-500 font-sans text-lg">
@@ -284,7 +284,7 @@ export default function PostulerPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-5 rounded-full bg-[#B25E3B] text-white font-bold font-sans text-base hover:bg-[#9A4D2F] transition-all shadow-xl active:scale-[0.98] disabled:opacity-60 flex items-center justify-center gap-3 mt-4"
+              className="w-full py-5 rounded-full bg-[#E8112D] text-white font-bold font-sans text-base hover:bg-[#C40D26] transition-all shadow-xl active:scale-[0.98] disabled:opacity-60 flex items-center justify-center gap-3 mt-4"
             >
               {loading ? "Envoi en cours..." : "Recevoir mon code sur WhatsApp"}
               {!loading && <ArrowRight className="w-5 h-5" />}
@@ -293,13 +293,13 @@ export default function PostulerPage() {
         ) : (
           <form onSubmit={handleVerifyOtp} className="space-y-8 animate-fade-up">
             <div className="text-center space-y-4">
-              <div className="w-16 h-16 bg-[#B25E3B]/10 rounded-full flex items-center justify-center mx-auto">
-                <MessageSquare className="w-8 h-8 text-[#B25E3B]" />
+              <div className="w-16 h-16 bg-[#008751]/10 rounded-full flex items-center justify-center mx-auto">
+                <MessageSquare className="w-8 h-8 text-[#008751]" />
               </div>
               <h2 className="font-display text-2xl font-bold text-[#1A1A1A]">Code de vérification</h2>
               <p className="text-sm text-gray-400 font-sans">
                 Nous avons envoyé un code de vérification à <br />
-                <span className="text-[#B25E3B] font-bold">{fullPhoneNumber}</span>
+                <span className="text-[#008751] font-bold">{fullPhoneNumber}</span>
               </p>
             </div>
 
@@ -311,7 +311,7 @@ export default function PostulerPage() {
                 placeholder="000000"
                 value={otpCode}
                 onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ""))}
-                className={`${inputClasses} text-center text-3xl tracking-[0.5em] font-bold py-6 appearance-none`}
+                className={`${inputClasses} text-center text-3xl tracking-[0.5em] font-bold py-6 appearance-none focus:ring-2 focus:ring-[#008751]`}
                 required
               />
             </div>
@@ -324,14 +324,14 @@ export default function PostulerPage() {
               <button
                 type="submit"
                 disabled={loading || otpCode.length !== 6}
-                className="w-full py-5 rounded-full bg-[#B25E3B] text-white font-bold font-sans text-base hover:bg-[#9A4D2F] transition-all shadow-xl active:scale-[0.98] disabled:opacity-60"
+                className="w-full py-5 rounded-full bg-[#E8112D] text-white font-bold font-sans text-base hover:bg-[#C40D26] transition-all shadow-xl active:scale-[0.98] disabled:opacity-60"
               >
                 {loading ? "Vérification..." : "Confirmer et postuler"}
               </button>
               <button
                 type="button"
                 onClick={() => setOtpSent(false)}
-                className="w-full text-sm text-[#B25E3B] font-sans hover:underline"
+                className="w-full text-sm text-[#008751] font-sans hover:underline"
               >
                 Retourner au formulaire
               </button>
@@ -342,7 +342,7 @@ export default function PostulerPage() {
         <div className="mt-12 text-center">
           <Link
             href="/login"
-            className="text-sm font-sans text-[#B25E3B] hover:text-[#9A4D2F] transition-colors border-b border-[#B25E3B]/30 pb-0.5"
+            className="text-sm font-sans text-[#008751] hover:text-[#00683D] transition-colors border-b border-[#008751]/30 pb-0.5"
           >
             Déjà inscrit ? Se connecter
           </Link>

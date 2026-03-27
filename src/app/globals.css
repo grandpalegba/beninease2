@@ -6,33 +6,33 @@
 
 @layer base {
   :root {
-    --background: 37 33% 94%;
-    --foreground: 15 8% 15%;
+    --background: 37 33% 94%; /* #FDF8F1 approximately */
+    --foreground: 150 40% 10%;
 
     --card: 37 33% 97%;
-    --card-foreground: 15 8% 15%;
+    --card-foreground: 150 40% 10%;
 
     --popover: 37 33% 97%;
-    --popover-foreground: 15 8% 15%;
+    --popover-foreground: 150 40% 10%;
 
-    --primary: 17 51% 46%;
+    --primary: 150 100% 26%; /* #008751 - Vert Forêt */
     --primary-foreground: 37 33% 97%;
 
-    --secondary: 37 33% 90%;
-    --secondary-foreground: 15 8% 15%;
+    --secondary: 43 85% 49%; /* #E9B113 - Jaune Safran */
+    --secondary-foreground: 150 40% 10%;
 
     --muted: 37 20% 88%;
-    --muted-foreground: 15 8% 40%;
+    --muted-foreground: 150 20% 40%;
 
-    --accent: 15 8% 15%;
+    --accent: 0 86% 49%; /* #E8112D - Rouge Terre */
     --accent-foreground: 37 33% 97%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 37 20% 82%;
-    --input: 37 20% 82%;
-    --ring: 17 51% 46%;
+    --border: 150 20% 82%;
+    --input: 150 20% 82%;
+    --ring: 150 100% 26%;
     --radius: 0.5rem;
 
     /* Universe colors */

@@ -100,7 +100,7 @@ function LoginContent() {
               value={phone}
               onChange={setPhone}
               onCountryChange={setCountryCode}
-              className="bg-black/20 border-white/10 text-white h-[58px]"
+              className="bg-black/20 border-white/10 text-white h-[58px] focus-within:ring-2 focus-within:ring-[#008751]"
               placeholder="Numéro de téléphone"
             />
           </div>
@@ -108,7 +108,7 @@ function LoginContent() {
           <button
             type="submit"
             disabled={loading || !phone}
-            className="w-full rounded-full bg-[#D9A036] p-4 font-sans font-bold text-white hover:bg-[#C58F2E] transition-all shadow-lg active:scale-[0.98] disabled:opacity-60 mt-4 flex items-center justify-center gap-2"
+            className="w-full rounded-full bg-[#E8112D] p-4 font-sans font-bold text-white hover:bg-[#C40D26] transition-all shadow-lg active:scale-[0.98] disabled:opacity-60 mt-4 flex items-center justify-center gap-2"
           >
             {loading ? "Envoi en cours..." : "Recevoir mon code sur WhatsApp"}
             {!loading && <ArrowRight className="w-4 h-4" />}
@@ -118,7 +118,7 @@ function LoginContent() {
         <form onSubmit={handleVerifyOtp} className="w-full space-y-8 animate-fade-up">
           <div className="text-center space-y-3 mb-4">
             <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
-              <MessageSquare className="w-8 h-8 text-[#D9A036]" />
+              <MessageSquare className="w-8 h-8 text-[#E9B113]" />
             </div>
             <p className="text-sm text-[#FDFBF7]/80 font-sans">
               Code envoyé au <span className="text-[#FDFBF7] font-bold">{fullPhone}</span>
@@ -133,7 +133,7 @@ function LoginContent() {
               placeholder="000000"
               value={otpCode}
               onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ""))}
-              className="w-full rounded-2xl bg-black/20 border-0 p-6 text-[#FDFBF7] text-center text-3xl tracking-[0.5em] font-bold placeholder:text-[#FDFBF7]/20 outline-none focus:ring-1 focus:ring-[#D9A036] transition-all"
+              className="w-full rounded-2xl bg-black/20 border-0 p-6 text-[#FDFBF7] text-center text-3xl tracking-[0.5em] font-bold placeholder:text-[#FDFBF7]/20 outline-none focus:ring-2 focus:ring-[#008751] transition-all"
               required
             />
           </div>
@@ -142,7 +142,7 @@ function LoginContent() {
             <button
               type="submit"
               disabled={loading || otpCode.length !== 6}
-              className="w-full rounded-full bg-[#D9A036] p-4 font-sans font-bold text-white hover:bg-[#C58F2E] transition-all shadow-lg active:scale-[0.98] disabled:opacity-60"
+              className="w-full rounded-full bg-[#E8112D] p-4 font-sans font-bold text-white hover:bg-[#C40D26] transition-all shadow-lg active:scale-[0.98] disabled:opacity-60"
             >
               {loading ? "Vérification..." : "Vérifier le code"}
             </button>
@@ -159,7 +159,7 @@ function LoginContent() {
 
       <Link
         href="/postuler"
-        className="mt-12 text-sm font-sans text-[#FDFBF7] hover:text-white transition-colors border-b border-[#FDFBF7]/30 pb-0.5 animate-fade-up"
+        className="mt-12 text-sm font-sans text-[#FDFBF7]/80 hover:text-white transition-colors border-b border-[#FDFBF7]/30 pb-0.5 animate-fade-up"
         style={{ animationDelay: "0.2s" }}
       >
         Pas de compte ? Créer un profil
@@ -179,7 +179,7 @@ function LoginContent() {
 
 export default function LoginPage() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-[#B25E3B] px-6 pt-20">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-[#008751] px-6 pt-20">
       <Suspense fallback={<div className="text-[#FDFBF7] animate-pulse">Chargement...</div>}>
         <LoginContent />
       </Suspense>

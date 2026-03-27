@@ -54,7 +54,7 @@ const Header = () => {
       <div className="container flex items-center justify-between">
         <a href="/" className="flex items-center gap-2">
           <span
-            className="font-display text-2xl font-bold text-[#000000]"
+            className="font-display text-2xl font-bold text-[#008751]"
             style={{ letterSpacing: "0.12em" }}
           >
             Beninease
@@ -64,7 +64,7 @@ const Header = () => {
         <div className="flex items-center gap-4">
           <a
             href="/talents"
-            className="text-sm font-medium text-[#1A1A1A] hover:text-[#C5A267] transition-colors"
+            className="text-sm font-medium text-[#1A1A1A] hover:text-[#008751] transition-colors"
           >
             Talents du Bénin
           </a>
@@ -74,13 +74,13 @@ const Header = () => {
                 <>
                   <a
                     href="/profile/edit"
-                    className="text-sm font-medium text-[#1A1A1A] hover:text-[#C5A267] transition-colors"
+                    className="text-sm font-medium text-[#1A1A1A] hover:text-[#008751] transition-colors"
                   >
                     Mon Profil
                   </a>
                   <button
                     onClick={handleSignOut}
-                    className="rounded-full border border-[#E9E2D6] px-5 py-2 text-xs font-bold tracking-[0.1em] uppercase text-[#1A1A1A] hover:bg-[#FDFBF7] transition-all"
+                    className="rounded-full border border-[#E9E2D6] px-5 py-2 text-xs font-bold tracking-[0.1em] uppercase text-[#1A1A1A] hover:bg-[#FDF8F1] transition-all"
                   >
                     Déconnexion
                   </button>
@@ -89,13 +89,13 @@ const Header = () => {
                 <>
                   <a
                     href="/login"
-                    className="text-sm font-medium text-[#1A1A1A] hover:text-[#C5A267] transition-colors"
+                    className="text-sm font-medium text-[#1A1A1A] hover:text-[#008751] transition-colors"
                   >
                     Se connecter
                   </a>
                   <a
                     href="/postuler"
-                    className="rounded-full border border-[#C5A267] px-6 py-2 text-xs font-bold tracking-[0.1em] uppercase text-[#C5A267] hover:bg-[#C5A267] hover:text-white transition-all shadow-sm"
+                    className="rounded-full bg-[#E8112D] px-6 py-2 text-xs font-bold tracking-[0.1em] uppercase text-white hover:bg-[#C40D26] transition-all shadow-md active:scale-95"
                   >
                     Postuler
                   </a>
