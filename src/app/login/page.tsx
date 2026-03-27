@@ -1,40 +1,88 @@
 "use client";
 
-import { useEffect, useMemo, useState, type FormEvent, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useMemo, useState, type FormEvent, Suspense } from "react";
+import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import Link from "next/link";
+import PhoneInput from "@/components/PhoneInput";
+import { MessageSquare, ArrowRight } from "lucide-react";
 
 function LoginContent() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
+  const [phone, setPhone] = useState("");
+  const [countryCode, setCountryCode] = useState("+229");
+  const [otpCode, setOtpCode] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [message, setMessage] = useState<React.ReactNode>("");
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
-  const handleAuth = async (e: FormEvent) => {
+  const fullPhone = useMemo(() => `${countryCode}${phone}`, [countryCode, phone]);
+
+  const handleSendOtp = async (e: FormEvent) => {
     e.preventDefault();
     setMessage("");
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { error } = await supabase.auth.signInWithOtp({
+        phone: fullPhone,
+        options: {
+          shouldCreateUser: false, // Login only
+        },
+      });
+
       if (error) {
-        if (error.message.includes("Invalid login credentials")) {
-          setMessage("Identifiants invalides. Veuillez réessayer.");
+        if (error.message.includes("User not found")) {
+          setMessage(
+            <span>
+              Numéro inconnu. Souhaitez-vous{" "}
+              <Link href="/postuler" className="underline font-bold hover:text-white transition-colors">
+                créer un profil ?
+              </Link>
+            </span>
+          );
         } else {
           setMessage(error.message);
         }
       } else {
-        router.replace("/");
-        router.refresh();
+        setOtpSent(true);
       }
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Une erreur est survenue lors de l'envoi du code.";
+      setMessage(errorMessage);
     } finally {
       setLoading(false);
     }
   };
+
+  const handleVerifyOtp = async (e: FormEvent) => {
+    e.preventDefault();
+    setMessage("");
+    setLoading(true);
+
+    try {
+      const { data: { session }, error } = await supabase.auth.verifyOtp({
+        phone: fullPhone,
+        token: otpCode,
+        type: 'sms'
+      });
+
+      if (error) {
+        setMessage("Code invalide ou expiré.");
+      } else if (session) {
+        router.replace("/");
+        router.refresh();
+      }
+    } catch (err: unknown) {
+      setMessage("Une erreur est survenue lors de la vérification.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const labelClasses = "text-[10px] font-sans font-bold text-[#FDFBF7]/70 uppercase tracking-[0.2em] ml-1";
 
   return (
     <div className="w-full max-w-md flex flex-col items-center">
@@ -42,49 +90,76 @@ function LoginContent() {
         Connexion Beninease
       </h1>
       
-      <form onSubmit={handleAuth} className="w-full space-y-6 animate-fade-up" style={{ animationDelay: "0.1s" }}>
-        <div className="space-y-2">
-          <label className="text-xs font-sans font-medium text-[#FDFBF7]/70 uppercase tracking-wider ml-1">
-            Email
-          </label>
-          <input
-            type="email"
-            placeholder="votre@email.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            autoComplete="email"
-            className="w-full rounded-2xl bg-white/10 border-0 p-4 text-[#FDFBF7] placeholder:text-[#FDFBF7]/30 outline-none focus:ring-1 focus:ring-[#D9A036] transition-all"
-            required
-          />
-        </div>
+      {!otpSent ? (
+        <form onSubmit={handleSendOtp} className="w-full space-y-8 animate-fade-up" style={{ animationDelay: "0.1s" }}>
+          <div className="space-y-3">
+            <label className={labelClasses}>
+              Numéro WhatsApp
+            </label>
+            <PhoneInput
+              value={phone}
+              onChange={setPhone}
+              onCountryChange={setCountryCode}
+              className="bg-black/20 border-white/10 text-white h-[58px]"
+              placeholder="Numéro de téléphone"
+            />
+          </div>
 
-        <div className="space-y-2">
-          <label className="text-xs font-sans font-medium text-[#FDFBF7]/70 uppercase tracking-wider ml-1">
-            Mot de passe
-          </label>
-          <input
-            type="password"
-            placeholder="••••••••"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            autoComplete="current-password"
-            className="w-full rounded-2xl bg-white/10 border-0 p-4 text-[#FDFBF7] placeholder:text-[#FDFBF7]/30 outline-none focus:ring-1 focus:ring-[#D9A036] transition-all"
-            required
-          />
-        </div>
+          <button
+            type="submit"
+            disabled={loading || !phone}
+            className="w-full rounded-full bg-[#D9A036] p-4 font-sans font-bold text-white hover:bg-[#C58F2E] transition-all shadow-lg active:scale-[0.98] disabled:opacity-60 mt-4 flex items-center justify-center gap-2"
+          >
+            {loading ? "Envoi en cours..." : "Recevoir mon code sur WhatsApp"}
+            {!loading && <ArrowRight className="w-4 h-4" />}
+          </button>
+        </form>
+      ) : (
+        <form onSubmit={handleVerifyOtp} className="w-full space-y-8 animate-fade-up">
+          <div className="text-center space-y-3 mb-4">
+            <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <MessageSquare className="w-8 h-8 text-[#D9A036]" />
+            </div>
+            <p className="text-sm text-[#FDFBF7]/80 font-sans">
+              Code envoyé au <span className="text-[#FDFBF7] font-bold">{fullPhone}</span>
+            </p>
+          </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full rounded-full bg-[#D9A036] p-4 font-sans font-bold text-white hover:bg-[#C58F2E] transition-all shadow-lg active:scale-[0.98] disabled:opacity-60 mt-4"
-        >
-          {loading ? "Connexion en cours..." : "Se connecter"}
-        </button>
-      </form>
+          <div className="space-y-3">
+            <label className={labelClasses}>Code de vérification</label>
+            <input
+              type="text"
+              maxLength={6}
+              placeholder="000000"
+              value={otpCode}
+              onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ""))}
+              className="w-full rounded-2xl bg-black/20 border-0 p-6 text-[#FDFBF7] text-center text-3xl tracking-[0.5em] font-bold placeholder:text-[#FDFBF7]/20 outline-none focus:ring-1 focus:ring-[#D9A036] transition-all"
+              required
+            />
+          </div>
+
+          <div className="space-y-4">
+            <button
+              type="submit"
+              disabled={loading || otpCode.length !== 6}
+              className="w-full rounded-full bg-[#D9A036] p-4 font-sans font-bold text-white hover:bg-[#C58F2E] transition-all shadow-lg active:scale-[0.98] disabled:opacity-60"
+            >
+              {loading ? "Vérification..." : "Vérifier le code"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setOtpSent(false)}
+              className="w-full text-sm text-[#FDFBF7]/60 font-sans hover:text-[#FDFBF7] transition-colors"
+            >
+              Changer de numéro
+            </button>
+          </div>
+        </form>
+      )}
 
       <Link
-        href="/signup"
-        className="mt-8 text-sm font-sans text-[#FDFBF7] hover:text-white transition-colors border-b border-[#FDFBF7]/30 pb-0.5 animate-fade-up"
+        href="/postuler"
+        className="mt-12 text-sm font-sans text-[#FDFBF7] hover:text-white transition-colors border-b border-[#FDFBF7]/30 pb-0.5 animate-fade-up"
         style={{ animationDelay: "0.2s" }}
       >
         Pas de compte ? Créer un profil
@@ -92,7 +167,7 @@ function LoginContent() {
 
       {message ? (
         <p
-          className="mt-6 text-center text-sm font-sans text-[#FDFBF7] bg-white/10 px-4 py-2 rounded-lg animate-shake"
+          className="mt-8 text-center text-sm font-sans text-[#FDFBF7] bg-white/10 px-6 py-3 rounded-xl animate-shake border border-white/5"
           role="status"
         >
           {message}
