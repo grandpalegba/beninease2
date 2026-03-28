@@ -28,7 +28,7 @@ const SelectionSection = () => {
             className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-[#008751] text-balance"
             style={{ lineHeight: "1.15" }}
           >
-            ⚡ Processus de sélection
+            ⚡ Parcours Beninease
           </h2>
         </div>
 
