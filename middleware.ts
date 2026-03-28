@@ -6,11 +6,25 @@ import { createSupabaseMiddlewareClient } from "@/lib/supabase/middleware";
 export async function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
 
+  // --- ACCÈS PUBLIC ---
+  // On autorise immédiatement l'accès aux talents, au classement et aux images OG pour les robots et visiteurs
+  // Cette exception est impérative pour que les réseaux sociaux (WhatsApp, Facebook) voient les métadonnées.
+  if (
+    pathname.startsWith("/talents") || 
+    pathname.startsWith("/classement") || 
+    pathname.startsWith("/api/og")
+  ) {
+    return NextResponse.next();
+  }
+
   const { supabase, response } = createSupabaseMiddlewareClient(request);
 
+  // Utilisation de getSession pour une vérification rapide de la session
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  const user = session?.user;
 
   let profile: PublicUserRow | null = null;
   if (user) {
@@ -29,7 +43,7 @@ export async function middleware(request: NextRequest) {
   const isJuryArea = pathname.startsWith("/jury/dashboard");
   const isProfileArea = pathname.startsWith("/profile");
 
-  // Not authenticated
+  // Redirection si non connecté sur les zones protégées
   if (!user) {
     if (isLogin) return response;
     if (isAdminArea || isJuryArea || isProfileArea || isPending) {
@@ -41,7 +55,7 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
-  // Authenticated but missing profile row (should not happen if trigger works)
+  // Utilisateur connecté mais profil manquant
   if (!profile) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
@@ -93,13 +107,13 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/",
-    "/login",
-    "/pending-approval",
-    "/admin/:path*",
-    "/jury/:path*",
-    "/classement/:path*",
-    "/talents/:path*",
-    "/profile/:path*",
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public (public files like images)
+     */
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

@@ -5,8 +5,16 @@ import Header from "@/components/Header";
 import MobileNavigation from "@/components/MobileNavigation";
 
 export const metadata: Metadata = {
-  title: "Beninease Auth",
-  description: "Supabase Auth + role-based routing (Next.js)",
+  title: "Beninease - Ambassadeurs du Bénin",
+  description: "Découvrez et soutenez les talents qui font rayonner l'excellence béninoise.",
+  openGraph: {
+    title: "Beninease - Ambassadeurs du Bénin",
+    description: "Découvrez et soutenez les talents qui font rayonner l'excellence béninoise.",
+    url: "https://beninease.space",
+    type: "website",
+    locale: "fr_BJ",
+    siteName: "Beninease",
+  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
