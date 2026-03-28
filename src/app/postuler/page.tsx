@@ -1,349 +1,62 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
-import { CheckCircle2, ArrowRight, MessageSquare, ChevronDown } from "lucide-react";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import Link from "next/link";
-import PhoneInput from "@/components/PhoneInput";
-import { universes } from "@/lib/data/universes";
-
-const days = Array.from({ length: 31 }, (_, i) => i + 1);
-const months = [
-  "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", 
-  "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
-];
-const years = Array.from({ length: 80 }, (_, i) => new Date().getFullYear() - 15 - i);
+import AuthButtons from "@/components/auth/AuthButtons";
+import { CheckCircle2, Video, Heart, Star } from "lucide-react";
 
 export default function PostulerPage() {
-  const router = useRouter();
-  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
-
-  // Form states
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [dobDay, setDobDay] = useState("");
-  const [dobMonth, setDobMonth] = useState("");
-  const [dobYear, setDobYear] = useState("");
-  const [phone, setPhone] = useState("");
-  const [selectedUniverse, setSelectedUniverse] = useState("");
-  const [selectedSubCategory, setSelectedSubCategory] = useState("");
-
-  const fullPhoneNumber = useMemo(() => phone, [phone]);
-
-  // OTP states
-  const [otpSent, setOtpSent] = useState(false);
-  const [otpCode, setOtpCode] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
-
-  const availableSubCategories = useMemo(() => {
-    const universe = universes.find(u => u.name === selectedUniverse);
-    return universe ? universe.subs : [];
-  }, [selectedUniverse]);
-
-  const handleSendOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    try {
-      const { error } = await supabase.auth.signInWithOtp({
-        phone: fullPhoneNumber,
-        options: {
-          shouldCreateUser: true,
-        },
-      });
-
-      if (error) throw error;
-      
-      setOtpSent(true);
-    } catch {
-      setError("Une erreur est survenue lors de l'envoi du code.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVerifyOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    try {
-      const { data: { session }, error: verifyError } = await supabase.auth.verifyOtp({
-        phone: fullPhoneNumber,
-        token: otpCode,
-        type: 'sms'
-      });
-
-      if (verifyError) throw verifyError;
-
-      if (session?.user) {
-        // Insert application data
-        const { error: appError } = await supabase
-          .from("applications")
-          .insert({
-            user_id: session.user.id,
-            prenom: firstName,
-            nom: lastName,
-            city: "", 
-            phone: fullPhoneNumber,
-            category: selectedUniverse,
-            sub_category: selectedSubCategory,
-            dob: `${dobYear}-${months.indexOf(dobMonth) + 1}-${dobDay}`,
-            status: 'pending'
-          });
-
-        if (appError) throw appError;
-        setSuccess(true);
-      }
-    } catch {
-      setError("Code invalide ou expiré.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const inputClasses = "w-full rounded-2xl bg-white border border-[#008751]/10 p-4 text-[#1A1A1A] placeholder:text-gray-300 outline-none focus:ring-2 focus:ring-[#008751] focus:border-[#008751] transition-all font-sans text-sm appearance-none";
-  const labelClasses = "text-[10px] font-sans font-bold text-[#008751] uppercase tracking-[0.2em] ml-1";
-
-  if (success) {
-    return (
-      <div className="min-h-screen bg-[#F9F9F7] flex items-center justify-center px-4 py-12">
-        <div className="max-w-md w-full bg-white p-10 rounded-3xl shadow-xl text-center animate-fade-up">
-          <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-8 border border-green-100">
-            <CheckCircle2 className="w-10 h-10 text-green-600" />
-          </div>
-          <h2 className="font-display text-2xl font-bold text-[#1A1A1A] mb-4">
-            Bienvenue parmi les Visages du Bénin ! 🎉
-          </h2>
-          <p className="text-gray-500 font-sans leading-relaxed mb-8">
-            Votre compte est créé et votre candidature est en cours d&apos;examen. 
-            Vous recevrez un message très prochainement.
-          </p>
-          <button
-            onClick={() => router.push("/")}
-            className="w-full py-4 rounded-full bg-[#E8112D] text-white font-bold font-sans hover:bg-[#C40D26] transition-all shadow-lg active:scale-95"
-          >
-            Retour à l&apos;accueil
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-[#F9F9F7] py-16 md:py-24 px-4 flex flex-col items-center">
-      <div className="max-w-xl w-full text-center mb-12 animate-fade-in pt-10">
-        <h1 className="font-display text-4xl md:text-5xl font-bold text-[#008751] mb-4 leading-tight">
-          Candidature pour l&apos;Excellence
-        </h1>
-        <p className="text-gray-500 font-sans text-lg">
-          Rejoignez la vitrine de l&apos;excellence béninoise.
-        </p>
-      </div>
-
-      <div className="max-w-xl w-full animate-fade-up">
-        {!otpSent ? (
-          <form onSubmit={handleSendOtp} className="space-y-8">
-            {/* Identity Section */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className={labelClasses}>Prénom</label>
-                <input
-                  type="text"
-                  placeholder="Koffi"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  required
-                  className={inputClasses}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className={labelClasses}>Nom</label>
-                <input
-                  type="text"
-                  placeholder="Dossou"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  required
-                  className={inputClasses}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className={labelClasses}>Date de naissance</label>
-              <div className="grid grid-cols-3 gap-3">
-                <div className="relative">
-                  <select
-                    value={dobDay}
-                    onChange={(e) => setDobDay(e.target.value)}
-                    required
-                    className={inputClasses}
-                  >
-                    <option value="" disabled>Jour</option>
-                    {days.map(d => <option key={d} value={d}>{d}</option>)}
-                  </select>
-                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#D9A036] pointer-events-none" />
-                </div>
-                <div className="relative">
-                  <select
-                    value={dobMonth}
-                    onChange={(e) => setDobMonth(e.target.value)}
-                    required
-                    className={inputClasses}
-                  >
-                    <option value="" disabled>Mois</option>
-                    {months.map(m => <option key={m} value={m}>{m}</option>)}
-                  </select>
-                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#D9A036] pointer-events-none" />
-                </div>
-                <div className="relative">
-                  <select
-                    value={dobYear}
-                    onChange={(e) => setDobYear(e.target.value)}
-                    required
-                    className={inputClasses}
-                  >
-                    <option value="" disabled>Année</option>
-                    {years.map(y => <option key={y} value={y}>{y}</option>)}
-                  </select>
-                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#D9A036] pointer-events-none" />
-                </div>
-              </div>
-            </div>
-
-            {/* WhatsApp Section */}
-            <div className="space-y-2">
-              <label className={labelClasses}>Numéro WhatsApp</label>
-              <PhoneInput
-                value={phone}
-                onChange={setPhone}
-                className="h-[56px]"
-              />
-            </div>
-
-            {/* Universe & Category Section */}
-            <div className="space-y-6 pt-4 border-t border-[#D9A036]/10">
-              <p className="text-xs font-display font-bold text-black tracking-wider uppercase">VOTRE UNIVERS & CATÉGORIE</p>
-              
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <label className={labelClasses}>UNIVERS</label>
-                  <div className="relative">
-                    <select
-                      value={selectedUniverse}
-                      onChange={(e) => {
-                        setSelectedUniverse(e.target.value);
-                        setSelectedSubCategory("");
-                      }}
-                      required
-                      className={inputClasses}
-                    >
-                      <option value="" disabled>Sélectionner un univers</option>
-                      {universes.map((u) => (
-                        <option key={u.name} value={u.name}>{u.name}</option>
-                      ))}
-                    </select>
-                    <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#D9A036] pointer-events-none" />
-                  </div>
-                </div>
-
-                {selectedUniverse && (
-                  <div className="space-y-2 animate-fade-in">
-                    <label className={labelClasses}>SOUS-CATÉGORIE</label>
-                    <div className="relative">
-                      <select
-                        value={selectedSubCategory}
-                        onChange={(e) => setSelectedSubCategory(e.target.value)}
-                        required
-                        className={inputClasses}
-                      >
-                        <option value="" disabled>Sélectionner une sous-catégorie</option>
-                        {availableSubCategories.map((sub) => (
-                          <option key={sub} value={sub}>{sub}</option>
-                        ))}
-                      </select>
-                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#D9A036] pointer-events-none" />
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {error && (
-              <p className="text-red-500 text-xs text-center font-sans animate-shake bg-red-50 py-2 rounded-lg">{error}</p>
-            )}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-5 rounded-full bg-[#008751] text-white font-bold font-sans text-base hover:bg-[#006B3F] transition-colors duration-300 shadow-xl active:scale-[0.98] disabled:opacity-60 flex items-center justify-center gap-3 mt-4"
-            >
-              {loading ? "Envoi en cours..." : "Recevoir mon code sur WhatsApp"}
-              {!loading && <ArrowRight className="w-5 h-5 text-white" />}
-            </button>
-          </form>
-        ) : (
-          <form onSubmit={handleVerifyOtp} className="space-y-8 animate-fade-up">
-            <div className="text-center space-y-4">
-              <div className="w-16 h-16 bg-[#008751]/10 rounded-full flex items-center justify-center mx-auto">
-                <MessageSquare className="w-8 h-8 text-[#008751]" />
-              </div>
-              <h2 className="font-display text-2xl font-bold text-[#1A1A1A]">Code de vérification</h2>
-              <p className="text-sm text-gray-400 font-sans">
-                Nous avons envoyé un code de vérification à <br />
-                <span className="text-[#008751] font-bold">{fullPhoneNumber}</span>
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <label className={labelClasses}>Entrez le code à 6 chiffres</label>
-              <input
-                type="text"
-                maxLength={6}
-                placeholder="000000"
-                value={otpCode}
-                onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ""))}
-                className={`${inputClasses} text-center text-3xl tracking-[0.5em] font-bold py-6 appearance-none focus:ring-2 focus:ring-[#008751]`}
-                required
-              />
-            </div>
-
-            {error && (
-              <p className="text-red-500 text-xs text-center font-sans animate-shake">{error}</p>
-            )}
-
-            <div className="space-y-4">
-              <button
-                type="submit"
-                disabled={loading || otpCode.length !== 6}
-                className="w-full py-5 rounded-full bg-[#E8112D] text-white font-bold font-sans text-base hover:bg-[#C40D26] transition-all shadow-xl active:scale-[0.98] disabled:opacity-60"
-              >
-                {loading ? "Vérification..." : "Confirmer et postuler"}
-              </button>
-              <button
-                type="button"
-                onClick={() => setOtpSent(false)}
-                className="w-full text-sm text-[#008751] font-sans hover:underline"
-              >
-                Retourner au formulaire
-              </button>
-            </div>
-          </form>
-        )}
-
-        <div className="mt-12 text-center">
-          <Link
-            href="/login"
-            className="text-sm font-sans text-[#008751] hover:text-[#00683D] transition-colors border-b border-[#008751]/30 pb-0.5"
-          >
-            Déjà inscrit ? Se connecter
-          </Link>
+    <div className="min-h-screen bg-[#F9F9F7] flex flex-col items-center justify-center p-6 md:p-12">
+      <div className="w-full max-w-xl space-y-10">
+        {/* Header Section */}
+        <div className="text-center space-y-4">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#E8112D]/10 text-[#E8112D] text-xs font-bold uppercase tracking-widest animate-fade-down">
+            <Star className="w-3.5 h-3.5" />
+            Rejoignez l'élite
+          </div>
+          <h1 className="text-4xl md:text-6xl font-display font-bold text-black leading-tight animate-fade-up">
+            Devenez l'un des <span className="text-[#E8112D]">256 Ambassadeurs</span> du Bénin
+          </h1>
+          <p className="text-gray-500 font-sans text-lg md:text-xl max-w-md mx-auto animate-fade-up" style={{ animationDelay: "0.1s" }}>
+            Faites rayonner votre talent et contribuez au rayonnement de notre nation.
+          </p>
         </div>
+
+        {/* Auth Buttons Card */}
+        <div className="bg-white p-8 md:p-10 rounded-[40px] shadow-2xl shadow-black/5 border border-[#F2EDE4] animate-fade-up" style={{ animationDelay: "0.2s" }}>
+          <div className="mb-8 text-center">
+            <h2 className="text-xl font-display font-bold text-black">Commencez l'aventure</h2>
+            <p className="text-sm text-gray-400 mt-1">Choisissez votre mode de connexion</p>
+          </div>
+          <AuthButtons intent="talent" />
+        </div>
+
+        {/* Steps Section */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-up" style={{ animationDelay: "0.3s" }}>
+          <div className="bg-white/50 p-6 rounded-3xl border border-[#008751]/10 flex flex-col items-center text-center space-y-3">
+            <div className="w-10 h-10 rounded-full bg-[#008751]/10 flex items-center justify-center">
+              <CheckCircle2 className="w-5 h-5 text-[#008751]" />
+            </div>
+            <h3 className="font-bold text-sm uppercase tracking-widest text-black">1. Connexion</h3>
+            <p className="text-xs text-gray-500 leading-relaxed">Identifiez-vous pour sécuriser votre candidature.</p>
+          </div>
+
+          <div className="bg-white/50 p-6 rounded-3xl border border-[#008751]/10 flex flex-col items-center text-center space-y-3">
+            <div className="w-10 h-10 rounded-full bg-[#008751]/10 flex items-center justify-center">
+              <Video className="w-5 h-5 text-[#008751]" />
+            </div>
+            <h3 className="font-bold text-sm uppercase tracking-widest text-black">2. Vidéo "Qui je suis"</h3>
+            <p className="text-xs text-gray-500 leading-relaxed">Présentez-vous en 60 secondes chrono.</p>
+          </div>
+
+          <div className="bg-white/50 p-6 rounded-3xl border border-[#008751]/10 flex flex-col items-center text-center space-y-3">
+            <div className="w-10 h-10 rounded-full bg-[#008751]/10 flex items-center justify-center">
+              <Heart className="w-5 h-5 text-[#008751]" />
+            </div>
+            <h3 className="font-bold text-sm uppercase tracking-widest text-black">3. Vote du public</h3>
+            <p className="text-xs text-gray-500 leading-relaxed">Mobilisez votre communauté pour gagner.</p>
+          </div>
+        </div>
+
       </div>
     </div>
   );

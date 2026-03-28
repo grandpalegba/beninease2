@@ -36,7 +36,6 @@ export function useVoter() {
       const newSession: VoterSession = {
         voter_id: voterId,
         whatsapp: whatsapp,
-        full_name: fullName,
         role: 'votant', // Default role for voters
       };
 

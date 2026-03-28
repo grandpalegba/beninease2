@@ -72,10 +72,10 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
     if (candidate?.slug) {
       // Subscribe to real-time changes
       const channel = supabase
-        .channel(`public:profiles:slug=${candidate.slug}`)
+        .channel(`public:talents:slug=${candidate.slug}`)
         .on(
           'postgres_changes',
-          { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `slug=eq.${candidate.slug}` },
+          { event: 'UPDATE', schema: 'public', table: 'talents', filter: `slug=eq.${candidate.slug}` },
           (payload) => {
             if (payload.new && typeof payload.new.votes === 'number') {
               setVotesCount(payload.new.votes);

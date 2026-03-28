@@ -105,6 +105,7 @@ export default function DashboardPage() {
   };
 
   const currentRole = roleLabels[profile.role as UserRole] || roleLabels.votant;
+  const fullName = `${profile.prenom || ''} ${profile.nom || ''}`.trim() || "Utilisateur";
 
   return (
     <div className="min-h-screen bg-[#F9F9F7] pb-20">
@@ -117,7 +118,7 @@ export default function DashboardPage() {
               {currentRole.label}
             </div>
             <h1 className="text-4xl md:text-5xl font-display font-bold text-black">
-              Bienvenue, {profile.prenom}
+              Bienvenue, {fullName}
             </h1>
             <p className="text-gray-500 font-sans">
               Gérez votre profil et suivez votre impact sur Beninease.

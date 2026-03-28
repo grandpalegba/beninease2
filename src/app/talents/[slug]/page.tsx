@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: { params: any }): Promise<Met
 
   const supabase = await createSupabaseServerClient();
   const { data: talent } = await supabase
-    .from('profiles')
+    .from('talents')
     .select('prenom, nom, avatar_url, category')
     .eq('slug', slug)
     .single();
@@ -30,8 +30,10 @@ export async function generateMetadata({ params }: { params: any }): Promise<Met
   const fullName = `${talent.prenom} ${talent.nom}`;
   
   // Utilisation directe de talent.avatar_url si elle existe, sinon fallback sur une image par défaut.
-  // Plus besoin de "deviner" le nom du fichier.
-  const ogImageUrl = talent.avatar_url || `https://beninease.space/default-talent.jpg`;
+  let ogImageUrl = talent.avatar_url || `https://beninease.space/default-talent.jpg`;
+  if (ogImageUrl && !ogImageUrl.startsWith('http') && !ogImageUrl.startsWith('/')) {
+    ogImageUrl = `/${ogImageUrl}`;
+  }
   
   return {
     title: `${fullName} | Vote Beninease`,
@@ -68,8 +70,8 @@ export default async function TalentProfilePage({ params }: { params: any }) {
   // 1. Fetch from Supabase
   const supabase = await createSupabaseServerClient();
   const { data: profile } = await supabase
-    .from('profiles')
-    .select('id, slug, prenom, nom, category, city, avatar_url, votes')
+    .from('talents')
+    .select('id, slug, prenom, nom, category, avatar_url, votes, bio')
     .eq('slug', slug)
     .single();
 
@@ -94,9 +96,16 @@ export default async function TalentProfilePage({ params }: { params: any }) {
   if (profile.avatar_url) {
     if (profile.avatar_url.startsWith('http') || profile.avatar_url.startsWith('/')) {
       publicAvatarUrl = profile.avatar_url;
+    } else if (profile.avatar_url.startsWith('talents/')) {
+      // Cas des images locales dans public/talents/
+      publicAvatarUrl = `/${profile.avatar_url}`;
+    } else if (profile.avatar_url.endsWith('.jpg') || profile.avatar_url.endsWith('.png')) {
+      // Cas des images locales sans prefixe
+      publicAvatarUrl = `/talents/${profile.avatar_url}`;
     } else {
+      // Cas des images dans Supabase Storage
       const cleanPath = profile.avatar_url.startsWith('/') ? profile.avatar_url.slice(1) : profile.avatar_url;
-      const bucketName = 'talents'; // Utilisation du bucket 'talents'
+      const bucketName = 'talents'; 
       const pathWithoutBucket = cleanPath.startsWith(`${bucketName}/`) 
         ? cleanPath.replace(`${bucketName}/`, '') 
         : cleanPath;
@@ -104,10 +113,8 @@ export default async function TalentProfilePage({ params }: { params: any }) {
       publicAvatarUrl = `${supabaseUrl}/storage/v1/object/public/${bucketName}/${pathWithoutBucket}`;
     }
   } else {
-    // Si pas d'avatar spécifique en base, on construit l'URL basée sur prenom-nom.jpg dans le bucket 'talents'
-    // avec normalisation des accents.
-    const fileName = `${normalizeName(profile.prenom)}-${normalizeName(profile.nom)}.jpg`;
-    publicAvatarUrl = `${supabaseUrl}/storage/v1/object/public/talents/${fileName}`;
+    // Fallback local ou placeholder
+    publicAvatarUrl = `/talents/${slug}.jpg`;
   }
 
   return (

@@ -46,6 +46,7 @@ export function VoteHistory({ voterWhatsapp }: VoteHistoryProps) {
     <div className="space-y-4">
       {votes.map((vote) => {
         const profile = vote.profiles;
+        const fullName = `${profile.prenom || ''} ${profile.nom || ''}`.trim() || "Talent";
         return (
           <Link
             key={vote.id}
@@ -55,14 +56,14 @@ export function VoteHistory({ voterWhatsapp }: VoteHistoryProps) {
             <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
               <Image
                 src={profile.avatar_url || "/placeholder-portrait.jpg"}
-                alt={profile.prenom}
+                alt={fullName}
                 fill
                 className="object-cover"
               />
             </div>
             <div className="flex-1 min-w-0">
               <h4 className="font-bold text-black truncate">
-                {profile.prenom} {profile.nom}
+                {fullName}
               </h4>
               <div className="flex items-center gap-2 text-[10px] text-gray-400 uppercase tracking-widest font-bold">
                 <Calendar className="w-3 h-3" />

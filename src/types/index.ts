@@ -7,15 +7,27 @@ export interface VideoSchema {
   video_4_id: string | null;
 }
 
-export interface Profile extends VideoSchema {
+export interface Talent {
   id: string;
   slug: string;
   prenom: string;
   nom: string;
   category: string;
+  bio: string | null;
+  avatar_url: string | null;
+  votes: number;
+}
+
+export interface Profile extends VideoSchema {
+  id: string;
+  slug: string;
+  prenom: string | null;
+  nom: string | null;
+  category: string;
   avatar_url: string | null;
   votes: number;
   role: UserRole;
+  type: string | null;
   is_validated: boolean;
   city: string | null;
   description: string | null;
@@ -26,7 +38,6 @@ export interface Profile extends VideoSchema {
 export interface VoterSession {
   voter_id: string;
   whatsapp: string;
-  full_name?: string;
   role: UserRole;
 }
 

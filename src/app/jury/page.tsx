@@ -64,7 +64,7 @@ function JuryList() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {profiles.map((jury) => {
-          const fullName = `${jury.prenom} ${jury.nom}`;
+          const fullName = `${jury.prenom || ''} ${jury.nom || ''}`.trim() || "Membre du Jury";
           return (
             <Link
               key={jury.id}

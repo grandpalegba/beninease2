@@ -63,7 +63,7 @@ const MobileNavigation = () => {
                     <User size={20} />
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-white font-bold text-sm">{session?.full_name}</span>
+                    <span className="text-white font-bold text-sm">Votant</span>
                     <span className="text-white/60 text-xs">{session?.whatsapp}</span>
                   </div>
                 </div>
@@ -113,7 +113,7 @@ const MobileNavigation = () => {
                   onClick={() => setIsOpen(false)}
                   className="font-sans text-xl font-semibold text-[#F9F9F7] hover:text-[#E9B113] transition-colors"
                 >
-                  Se connecter
+                  Voter / Se connecter
                 </Link>
               )}
 

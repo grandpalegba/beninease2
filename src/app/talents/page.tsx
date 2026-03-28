@@ -9,26 +9,26 @@ import Link from "next/link";
 import Image from "next/image";
 import { MapPin, Info, Loader2 } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import type { Profile } from "@/types";
+import type { Talent } from "@/types";
 
 function TalentsList() {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
-  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [talents, setTalents] = useState<Talent[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchProfiles = async () => {
+    const fetchTalents = async () => {
       try {
+        // Interrogation de la table public.talents sans aucun filtre de rôle
         const { data, error } = await supabase
-          .from('profiles')
-          .select('id, slug, prenom, nom, category, avatar_url, votes, role, is_validated, video_1_id, video_2_id, video_3_id, video_4_id')
-          .eq('role', 'candidat')
-          .not('prenom', 'is', null)
-          .not('nom', 'is', null)
+          .from('talents')
+          .select('id, slug, prenom, nom, category, avatar_url, votes, bio')
           .order('votes', { ascending: false });
 
+        console.log("Données reçues de la table talents:", data);
+
         if (error) throw error;
-        if (data) setProfiles(data as Profile[]);
+        if (data) setTalents(data as Talent[]);
       } catch (err) {
         console.error("Erreur lors de la récupération des talents:", err);
       } finally {
@@ -36,7 +36,7 @@ function TalentsList() {
       }
     };
 
-    fetchProfiles();
+    fetchTalents();
   }, [supabase]);
 
   if (loading) {
@@ -68,18 +68,30 @@ function TalentsList() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {profiles.map((candidate) => {
-          const fullName = `${candidate.prenom} ${candidate.nom}`;
+        {talents.map((talent) => {
+          const fullName = `${talent.prenom} ${talent.nom}`;
+          let imageUrl = talent.avatar_url || "";
+          
+          if (!imageUrl) {
+            imageUrl = `/talents/${talent.slug}.jpg`;
+          } else if (!imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+            if (imageUrl.startsWith('talents/')) {
+              imageUrl = `/${imageUrl}`;
+            } else {
+              imageUrl = `/talents/${imageUrl}`;
+            }
+          }
+          
           return (
             <Link
-              key={candidate.id}
-              href={`/talents/${candidate.slug}`}
+              key={talent.id}
+              href={`/talents/${talent.slug}`}
               className="group block bg-white border border-[#F2EDE4] rounded-[20px] overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer relative z-10 pointer-events-auto"
             >
               {/* Image Section */}
               <div className="relative aspect-[4/5] w-full overflow-hidden">
                 <Image
-                  src={candidate.avatar_url || '/placeholder-portrait.jpg'}
+                  src={imageUrl}
                   alt={fullName}
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -89,7 +101,7 @@ function TalentsList() {
                 
                 {/* Vote Badge */}
                 <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full shadow-sm flex items-center gap-1.5">
-                  <span className="text-[10px] font-black text-[#008751]">{candidate.votes}</span>
+                  <span className="text-[10px] font-black text-[#008751]">{talent.votes}</span>
                   <span className="text-[8px] font-bold uppercase tracking-tighter text-gray-400">Votes</span>
                 </div>
               </div>
@@ -100,7 +112,7 @@ function TalentsList() {
                   {fullName}
                 </h2>
                 <p className="font-sans text-black text-sm mt-1 truncate uppercase tracking-wider font-bold">
-                  {candidate.category}
+                  {talent.category}
                 </p>
               </div>
             </Link>
@@ -108,9 +120,9 @@ function TalentsList() {
         })}
       </div>
 
-      {profiles.length === 0 && (
+      {talents.length === 0 && (
         <div className="text-center py-20 bg-white rounded-[30px] border border-dashed border-gray-200">
-          <p className="text-gray-500">Aucun talent n&apos;est encore inscrit dans cette galerie.</p>
+          <p className="text-gray-500 font-sans">Aucun talent n&apos;est encore inscrit dans cette galerie.</p>
         </div>
       )}
     </div>

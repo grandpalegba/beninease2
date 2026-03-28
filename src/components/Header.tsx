@@ -115,7 +115,7 @@ const Header = () => {
                         href="/login"
                         className="text-sm font-medium text-[#1A1A1A] hover:text-[#006B3F] transition-colors"
                       >
-                        Se connecter
+                        Voter / Se connecter
                       </Link>
                     )}
                     <Link

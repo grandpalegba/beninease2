@@ -50,6 +50,9 @@ export default function CandidateDashboard({ profile }: CandidateDashboardProps)
             {profile.role.toUpperCase()} 
           </span> 
         </p> 
+        <p className="text-sm font-bold text-black mt-2">
+          {`${profile.prenom || ''} ${profile.nom || ''}`.trim() || "Profil sans nom"}
+        </p>
       </header> 
 
       {/* Grille des 4 Vidéos */} 

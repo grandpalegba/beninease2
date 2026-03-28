@@ -104,7 +104,7 @@ export default function SupportedTalentsPage() {
               <User className="w-5 h-5" />
             </div>
             <div className="flex flex-col">
-              <span className="text-xs font-bold text-black">{session?.full_name}</span>
+              <span className="text-xs font-bold text-black">Votant</span>
               <span className="text-[10px] text-gray-400 font-medium">{session?.whatsapp}</span>
             </div>
             <button 
@@ -119,40 +119,43 @@ export default function SupportedTalentsPage() {
         {/* Content Section */}
         {talents.length > 0 ? (
           <div className="grid gap-6">
-            {talents.map((talent) => (
-              <Link 
-                key={talent.id}
-                href={`/talents/${talent.slug}`}
-                className="group flex flex-col sm:flex-row items-center gap-6 bg-white p-6 rounded-[32px] border border-[#F2EDE4] shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all"
-              >
-                <div className="relative w-24 h-24 sm:w-32 sm:h-32 rounded-2xl overflow-hidden border-4 border-[#F9F9F7] flex-shrink-0">
-                  <Image 
-                    src={talent.avatar_url || '/placeholder-portrait.jpg'} 
-                    alt={`${talent.prenom} ${talent.nom}`}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-
-                <div className="flex-1 text-center sm:text-left">
-                  <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-2">
-                    <span className="px-3 py-1 rounded-full bg-[#008751]/10 text-[#008751] text-[10px] font-bold uppercase tracking-widest">
-                      {talent.category}
-                    </span>
-                    <span className="text-[10px] text-gray-400 font-medium">
-                      Soutenu le {new Date(talent.vote_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
-                    </span>
+            {talents.map((talent) => {
+              const fullName = `${talent.prenom || ''} ${talent.nom || ''}`.trim() || "Ambassadeur";
+              return (
+                <Link 
+                  key={talent.id}
+                  href={`/talents/${talent.slug}`}
+                  className="group flex flex-col sm:flex-row items-center gap-6 bg-white p-6 rounded-[32px] border border-[#F2EDE4] shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all"
+                >
+                  <div className="relative w-24 h-24 sm:w-32 sm:h-32 rounded-2xl overflow-hidden border-4 border-[#F9F9F7] flex-shrink-0">
+                    <Image 
+                      src={talent.avatar_url || '/placeholder-portrait.jpg'} 
+                      alt={fullName}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
                   </div>
-                  <h2 className="font-display text-2xl font-bold text-black mb-2">
-                    {talent.prenom} {talent.nom}
-                  </h2>
-                </div>
 
-                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-[#008751] text-white shadow-lg shadow-[#008751]/20">
-                  <Heart className="w-6 h-6 fill-white" />
-                </div>
-              </Link>
-            ))}
+                  <div className="flex-1 text-center sm:text-left">
+                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-2">
+                      <span className="px-3 py-1 rounded-full bg-[#008751]/10 text-[#008751] text-[10px] font-bold uppercase tracking-widest">
+                        {talent.category}
+                      </span>
+                      <span className="text-[10px] text-gray-400 font-medium">
+                        Soutenu le {new Date(talent.vote_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                      </span>
+                    </div>
+                    <h2 className="font-display text-2xl font-bold text-black mb-2">
+                      {fullName}
+                    </h2>
+                  </div>
+
+                  <div className="flex items-center justify-center w-12 h-12 rounded-full bg-[#008751] text-white shadow-lg shadow-[#008751]/20">
+                    <Heart className="w-6 h-6 fill-white" />
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         ) : (
           <div className="text-center py-24 px-6 bg-white rounded-[40px] border border-dashed border-gray-200">
