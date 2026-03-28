@@ -3,7 +3,7 @@
 import React, { useEffect, useCallback, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import TalentProfileClient from "./[slug]/TalentProfileClient";
+import TalentProfileClient from "@/app/talents/[slug]/TalentProfileClient";
 import type { Talent } from "@/types";
 import { candidates } from "@/data/candidates";
 import { ChevronLeft, ChevronRight, Info } from "lucide-react";
