@@ -1,59 +1,115 @@
 /**
- * PAGE PUBLIQUE - LISTE DU JURY
- * Role: Affiche tous les membres du jury.
+ * PAGE PUBLIQUE - JURY
+ * Role: Galerie filtrée sur role === 'jury' .
  */
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useEffect, useState, useMemo } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { Info, Loader2, Award } from "lucide-react";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import type { Profile } from "@/types";
 
 function JuryList() {
+  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
+  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProfiles = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('role', 'jury')
+          .eq('is_validated', true)
+          .order('prenom', { ascending: true });
+
+        if (error) throw error;
+        if (data) setProfiles(data as Profile[]);
+      } catch (err) {
+        console.error("Erreur lors de la récupération du jury:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfiles();
+  }, [supabase]);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20">
+        <Loader2 className="w-12 h-12 text-[#004d3d] animate-spin mb-4" />
+        <p className="text-[#8E8E8E] font-sans">Chargement du jury...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="mx-auto w-full max-w-6xl">
-      <div className="mb-10 text-center">
-        <h1 className="font-display text-4xl md:text-5xl font-bold text-[#1A1A1A]">
-          Le Jury
+    <div className="max-w-7xl mx-auto">
+      <div className="mb-12 text-center">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#004d3d]/10 text-[#004d3d] text-xs font-bold uppercase tracking-widest mb-4">
+          <Award className="w-3.5 h-3.5" />
+          Membres du Jury
+        </div>
+        <h1 className="font-display text-4xl md:text-5xl font-bold text-black">
+          Le Conseil d&apos;Honneur
         </h1>
-        <p className="mt-3 text-sm md:text-base text-[#8E8E8E]">
-          Dévoilement du Grand Jury prochainement.
+        <p className="mt-4 font-sans text-lg md:text-xl text-black/80 max-w-2xl mx-auto">
+          Découvrez les experts qui veillent à l&apos;excellence et à l&apos;intégrité de notre sélection.
         </p>
       </div>
 
-      <div className="mb-8 rounded-[30px] border border-[#F2EDE4] bg-white p-8 md:p-10 shadow-[0_10px_30px_rgba(0,0,0,0.03)]">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="text-[10px] font-bold text-[#C5A267] uppercase tracking-[0.25em]">
-            Lancement imminent
-          </p>
-          <p className="mt-4 font-display text-2xl md:text-3xl font-bold text-[#1A1A1A]">
-            Dévoilement du Grand Jury prochainement
-          </p>
-          <p className="mt-3 text-sm text-[#8E8E8E]">
-            Une sélection prestigieuse de personnalités et d’experts sera annoncée très bientôt.
-          </p>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {profiles.map((jury) => {
+          const fullName = `${jury.prenom} ${jury.nom}`;
+          return (
+            <Link
+              key={jury.id}
+              href={`/talents/${jury.slug}`}
+              className="group block bg-white border border-[#F2EDE4] rounded-[30px] overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+            >
+              <div className="relative aspect-[4/5] w-full overflow-hidden">
+                <Image
+                  src={jury.avatar_url || '/placeholder-portrait.jpg'}
+                  alt={fullName}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#004d3d]/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              </div>
+
+              <div className="p-8">
+                <h2 className="font-display text-2xl font-bold text-black group-hover:text-[#004d3d] transition-colors">
+                  {fullName}
+                </h2>
+                <p className="font-sans text-[#004d3d] text-xs font-bold uppercase tracking-widest mt-2">
+                  {jury.title || "Membre du Jury"}
+                </p>
+                <p className="font-sans text-gray-600 text-sm mt-4 line-clamp-2 leading-relaxed">
+                  {jury.description}
+                </p>
+              </div>
+            </Link>
+          );
+        })}
       </div>
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {Array.from({ length: 6 }).map((_, idx) => (
-          <div
-            key={idx}
-            className="relative rounded-[28px] border border-[#F2EDE4] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.03)] overflow-hidden"
-          >
-            <div className="relative aspect-[4/3] bg-[#F9F9F7] animate-pulse" />
-            <div className="p-5">
-              <div className="h-4 w-40 rounded-full bg-[#F2EDE4] animate-pulse" />
-              <div className="mt-3 h-3 w-56 rounded-full bg-[#F2EDE4] animate-pulse" />
-            </div>
-          </div>
-        ))}
-      </div>
+      {profiles.length === 0 && (
+        <div className="text-center py-20 bg-white rounded-[30px] border border-dashed border-gray-200">
+          <p className="text-gray-500">Le jury est en cours de constitution.</p>
+        </div>
+      )}
     </div>
   );
 }
 
-export default function JuryListPage() {
+export default function JuryPage() {
   return (
-    <div className="min-h-screen bg-[#F9F9F7] px-4 py-10 md:py-14">
-      <Suspense fallback={<div className="text-center text-[#8E8E8E]">Chargement du jury...</div>}>
+    <div className="min-h-screen bg-[#F9F9F7] px-4 py-10 md:p-8 md:py-14">
+      <Suspense fallback={<Loader2 className="animate-spin" />}>
         <JuryList />
       </Suspense>
     </div>

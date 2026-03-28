@@ -2,12 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-
-export type VoterSession = {
-  voter_id: string;
-  whatsapp: string;
-  full_name?: string;
-};
+import type { VoterSession, UserRole } from "@/types";
 
 export function useVoter() {
   const [session, setSession] = useState<VoterSession | null>(null);
@@ -42,6 +37,7 @@ export function useVoter() {
         voter_id: voterId,
         whatsapp: whatsapp,
         full_name: fullName,
+        role: 'votant', // Default role for voters
       };
 
       localStorage.setItem("beninease_voter_session", JSON.stringify(newSession));

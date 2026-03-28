@@ -29,10 +29,9 @@ export async function generateMetadata({ params }: { params: any }): Promise<Met
 
   const fullName = `${talent.prenom} ${talent.nom}`;
   
-  // Utilisation directe du bucket Supabase 'talents' avec format prenom-nom.jpg
-  // Les noms sont convertis en minuscules et sans accents pour correspondre aux fichiers.
-  const fileName = `${normalizeName(talent.prenom)}-${normalizeName(talent.nom)}.jpg`;
-  const ogImageUrl = `https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/talents/${fileName}`;
+  // Utilisation directe de talent.avatar_url si elle existe, sinon fallback sur une image par défaut.
+  // Plus besoin de "deviner" le nom du fichier.
+  const ogImageUrl = talent.avatar_url || `https://beninease.space/default-talent.jpg`;
   
   return {
     title: `${fullName} | Vote Beninease`,

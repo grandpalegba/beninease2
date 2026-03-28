@@ -9,16 +9,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { MapPin, Info, Loader2 } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-
-type Profile = {
-  id: string;
-  slug: string;
-  prenom: string;
-  nom: string;
-  category: string;
-  avatar_url: string;
-  votes: number;
-};
+import type { Profile } from "@/types";
 
 function TalentsList() {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
@@ -30,7 +21,8 @@ function TalentsList() {
       try {
         const { data, error } = await supabase
           .from('profiles')
-          .select('id, slug, prenom, nom, category, avatar_url, votes')
+          .select('id, slug, prenom, nom, category, avatar_url, votes, role, is_validated, video_1_id, video_2_id, video_3_id, video_4_id')
+          .eq('role', 'candidat')
           .not('prenom', 'is', null)
           .not('nom', 'is', null)
           .order('votes', { ascending: false });
