@@ -1,7 +1,8 @@
 export type Candidate = {
   id: string;
   slug: string;
-  full_name: string;
+  prenom: string;
+  nom: string;
   tagline: string;
   category: string;
   city: string;
@@ -16,7 +17,8 @@ export const candidates: Candidate[] = [
   {
     id: "koffi-ahouansou",
     slug: "koffi-ahouansou",
-    full_name: "Koffi Ahouansou",
+    prenom: "Koffi",
+    nom: "Ahouansou",
     tagline: "Solutions de mobilité urbaine à Cotonou",
     category: "Transport & Mobilité",
     city: "Cotonou",
@@ -32,7 +34,8 @@ export const candidates: Candidate[] = [
   {
     id: "senami-dossou",
     slug: "senami-dossou",
-    full_name: "Sènami Dossou",
+    prenom: "Sènami",
+    nom: "Dossou",
     tagline: "Artisanat bois modernisé à Abomey",
     category: "Experts Métier",
     city: "Abomey",
@@ -48,7 +51,8 @@ export const candidates: Candidate[] = [
   {
     id: "ibrahim-lawani",
     slug: "ibrahim-lawani",
-    full_name: "Dr Ibrahim Lawani",
+    prenom: "Ibrahim",
+    nom: "Lawani",
     tagline: "Médecine accessible à Parakou",
     category: "Santé & Médecine",
     city: "Parakou",
@@ -64,7 +68,8 @@ export const candidates: Candidate[] = [
   {
     id: "arnaud-zinsou",
     slug: "arnaud-zinsou",
-    full_name: "Arnaud Zinsou",
+    prenom: "Arnaud",
+    nom: "Zinsou",
     tagline: "Stratégie digitale & création de contenu",
     category: "Médias & Digital",
     city: "Cotonou",
@@ -80,7 +85,8 @@ export const candidates: Candidate[] = [
   {
     id: "nadege-kiki",
     slug: "nadege-kiki",
-    full_name: "Nadège Kiki",
+    prenom: "Nadège",
+    nom: "Kiki",
     tagline: "Facilitation administrative à Porto-Novo",
     category: "Facilitateurs & Conciergerie",
     city: "Porto-Novo",
@@ -96,7 +102,8 @@ export const candidates: Candidate[] = [
   {
     id: "lionel-agossou",
     slug: "lionel-agossou",
-    full_name: "Lionel Agossou",
+    prenom: "Lionel",
+    nom: "Agossou",
     tagline: "Art visuel inspiré du Danxomè",
     category: "Création & Culture",
     city: "Ouidah",
@@ -112,7 +119,8 @@ export const candidates: Candidate[] = [
   {
     id: "romaric-hountondji",
     slug: "romaric-hountondji",
-    full_name: "Romaric Hountondji",
+    prenom: "Romaric",
+    nom: "Hountondji",
     tagline: "Promotion immobilière à Calavi",
     category: "Immobilier & Construction",
     city: "Calavi",
@@ -128,7 +136,8 @@ export const candidates: Candidate[] = [
   {
     id: "carine-adjovi",
     slug: "carine-adjovi",
-    full_name: "Carine Adjovi",
+    prenom: "Carine",
+    nom: "Adjovi",
     tagline: "Conseil et stratégie d'entreprise",
     category: "Business & Entreprises",
     city: "Cotonou",
@@ -144,7 +153,8 @@ export const candidates: Candidate[] = [
   {
     id: "jonas-ahodehou",
     slug: "jonas-ahodehou",
-    full_name: "Jonas Ahodehou",
+    prenom: "Jonas",
+    nom: "Ahodehou",
     tagline: "Guide touristique culturel à Ouidah",
     category: "Tourisme & Découvertes",
     city: "Ouidah",
@@ -160,7 +170,8 @@ export const candidates: Candidate[] = [
   {
     id: "koffi-adjakpa",
     slug: "koffi-adjakpa",
-    full_name: "Koffi Adjakpa",
+    prenom: "Koffi",
+    nom: "Adjakpa",
     tagline: "Gardien des traditions à Abomey",
     category: "Coutumes & Traditions",
     city: "Abomey",
@@ -176,7 +187,8 @@ export const candidates: Candidate[] = [
   {
     id: "steve-kpade",
     slug: "steve-kpade",
-    full_name: "Steve Kpadé",
+    prenom: "Steve",
+    nom: "Kpadé",
     tagline: "Organisateur d'événements à Cotonou",
     category: "Événementiel & Vie Nocturne",
     city: "Cotonou",
@@ -192,7 +204,8 @@ export const candidates: Candidate[] = [
   {
     id: "mireille-tognifode",
     slug: "mireille-tognifode",
-    full_name: "Mireille Tognifodé",
+    prenom: "Mireille",
+    nom: "Tognifodé",
     tagline: "Hébergement touristique à Grand-Popo",
     category: "Hébergement & Séjour",
     city: "Grand-Popo",
@@ -208,7 +221,8 @@ export const candidates: Candidate[] = [
   {
     id: "armand-tossou",
     slug: "armand-tossou",
-    full_name: "Armand Tossou",
+    prenom: "Armand",
+    nom: "Tossou",
     tagline: "Coach sportif à Bohicon",
     category: "Bien-être & Fitness",
     city: "Bohicon",
@@ -224,7 +238,8 @@ export const candidates: Candidate[] = [
   {
     id: "grace-houessou",
     slug: "grace-houessou",
-    full_name: "Grâce Houessou",
+    prenom: "Grâce",
+    nom: "Houessou",
     tagline: "Stylisme & mode africaine",
     category: "Mode & Beauté",
     city: "Cotonou",
@@ -240,7 +255,8 @@ export const candidates: Candidate[] = [
   {
     id: "basile-kora",
     slug: "basile-kora",
-    full_name: "Basile Kora",
+    prenom: "Basile",
+    nom: "Kora",
     tagline: "Produits du terroir à Djougou",
     category: "Marchés & Produits Locaux",
     city: "Djougou",
@@ -256,7 +272,8 @@ export const candidates: Candidate[] = [
   {
     id: "aicha-hounkpatin",
     slug: "aicha-hounkpatin",
-    full_name: "Aïcha Hounkpatin",
+    prenom: "Aïcha",
+    nom: "Hounkpatin",
     tagline: "Cuisine traditionnelle à domicile à Cotonou",
     category: "Alimentation & Cuisine",
     city: "Cotonou",

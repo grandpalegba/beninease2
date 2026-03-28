@@ -8,7 +8,8 @@ import type { User } from "@supabase/supabase-js";
 
 type ProfileRow = {
   id: string;
-  full_name: string | null;
+  prenom: string | null;
+  nom: string | null;
   avatar_url: string | null;
   title: string | null;
   description: string | null;
@@ -25,7 +26,7 @@ type VideoRow = {
 
 type VideosByType = Record<string, VideoRow>;
 
-type ProfileUpdatableField = "full_name" | "avatar_url" | "title" | "description" | "city";
+type ProfileUpdatableField = "prenom" | "nom" | "avatar_url" | "title" | "description" | "city";
 
 export default function CandidateProfile() {
   const supabase = createSupabaseBrowserClient();
@@ -308,7 +309,7 @@ export default function CandidateProfile() {
 
   if (!user || !profile) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FDFBF7]">
+      <div className="min-h-screen flex items-center justify-center bg-[#F9F9F7]">
         <p className="text-orange-800 animate-pulse font-medium text-lg">
           Chargement de votre sanctuaire...
         </p>
@@ -321,7 +322,7 @@ export default function CandidateProfile() {
   const activeVideoUrl = activeVideo?.video_url ?? undefined;
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] p-4 md:p-8 font-sans">
+    <div className="min-h-screen bg-[#F9F9F7] p-4 md:p-8 font-sans">
       <div className="max-w-4xl mx-auto bg-white rounded-[30px] shadow-[0_10px_40px_rgba(0,0,0,0.03)] overflow-hidden border border-[#F2EDE4]">
         
         {/* HEADER PREMIUM */}
@@ -336,7 +337,7 @@ export default function CandidateProfile() {
 
           <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
             <div className="relative group">
-              <div className="w-36 h-36 bg-[#F8F5F0] rounded-[25px] border-[6px] border-white shadow-sm overflow-hidden flex items-center justify-center transition-transform duration-500 group-hover:scale-[1.02] relative">
+              <div className="w-36 h-36 bg-[#F9F9F7] rounded-[25px] border-[6px] border-white shadow-sm overflow-hidden flex items-center justify-center transition-transform duration-500 group-hover:scale-[1.02] relative">
                 <Image 
                   src={profile.avatar_url || "/assets/profile-aicha.jpg"} 
                   alt="Profil" 
@@ -374,27 +375,52 @@ export default function CandidateProfile() {
 
             <div className="flex-1 text-center md:text-left pt-2">
               {isEditing ? (
-                <input 
-                  type="text" 
-                  defaultValue={profile.title ?? ""}
-                  onBlur={(e) => handleProfileUpdate('title', e.target.value)}
-                  className="text-[34px] font-display font-bold text-[#1A1A1A] leading-tight bg-transparent border-b-2 border-amber-200 focus:border-amber-500 outline-none w-full"
-                />
+                <div className="flex gap-4">
+                  <input 
+                    type="text" 
+                    placeholder="Prénom"
+                    defaultValue={profile.prenom ?? ""}
+                    onBlur={(e) => handleProfileUpdate('prenom', e.target.value)}
+                    className="text-[24px] font-display font-bold text-[#1A1A1A] leading-tight bg-transparent border-b-2 border-amber-200 focus:border-amber-500 outline-none w-full"
+                  />
+                  <input 
+                    type="text" 
+                    placeholder="Nom"
+                    defaultValue={profile.nom ?? ""}
+                    onBlur={(e) => handleProfileUpdate('nom', e.target.value)}
+                    className="text-[24px] font-display font-bold text-[#1A1A1A] leading-tight bg-transparent border-b-2 border-amber-200 focus:border-amber-500 outline-none w-full"
+                  />
+                </div>
               ) : (
                 <h1 className="text-[34px] font-display font-bold text-[#1A1A1A] leading-tight">
-                  {profile.title}
+                  {profile.prenom} {profile.nom}
                 </h1>
+              )}
+
+              {isEditing ? (
+                <input 
+                  type="text" 
+                  placeholder="Titre"
+                  defaultValue={profile.title ?? ""}
+                  onBlur={(e) => handleProfileUpdate('title', e.target.value)}
+                  className="text-[18px] font-display font-medium text-[#1A1A1A] mt-2 leading-tight bg-transparent border-b-2 border-amber-200 focus:border-amber-500 outline-none w-full"
+                />
+              ) : (
+                <h2 className="text-[20px] font-display font-medium text-[#1A1A1A] mt-1">
+                  {profile.title}
+                </h2>
               )}
 
               {isEditing ? (
                 <input
                   type="text"
+                  placeholder="Description"
                   defaultValue={profile.description ?? ""}
                   onBlur={(e) => handleProfileUpdate('description', e.target.value)}
-                  className="text-[#C5A267] font-medium text-sm mt-2 uppercase tracking-wider bg-transparent border-b-2 border-amber-200 focus:border-amber-500 outline-none w-full"
+                  className="text-[#004d3d] font-medium text-sm mt-2 uppercase tracking-wider bg-transparent border-b-2 border-amber-200 focus:border-amber-500 outline-none w-full"
                 />
               ) : (
-                <p className="text-[#C5A267] font-medium text-sm mt-2 uppercase tracking-wider">{profile.description ?? ""}</p>
+                <p className="text-[#004d3d] font-medium text-sm mt-2 uppercase tracking-wider">{profile.description ?? ""}</p>
               )}
 
               <div className="flex items-center gap-4 text-[#8E8E8E] text-[11px] font-medium uppercase tracking-widest mt-4">
@@ -406,7 +432,7 @@ export default function CandidateProfile() {
                     className="bg-transparent border-b-2 border-amber-200 focus:border-amber-500 outline-none w-48"
                   />
                 ) : (
-                  <span className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" /> {profile.city ?? ""}</span>
+                  <span className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5 text-black" /> {profile.city ?? ""}</span>
                 )}
                 <span className="flex items-center gap-1.5"><Globe className="w-3.5 h-3.5" /> ID: {user.email?.split('@')[0]}</span>
               </div>
@@ -423,13 +449,13 @@ export default function CandidateProfile() {
                 onClick={() => setActiveTab(tab)}
                 className={`pb-4 text-xs font-semibold transition-all relative ${
                   activeTab === tab 
-                  ? "text-[#C5A267]" 
-                  : "text-[#8E8E8E] hover:text-[#555]"
+                  ? "text-[#004d3d]" 
+                  : "text-[#8E8E8E] hover:text-[#004d3d]/70"
                 }`}
               >
                 {tab}
                 {activeTab === tab && (
-                  <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#C5A267] animate-in fade-in slide-in-from-left-2" />
+                  <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#004d3d] animate-in fade-in slide-in-from-left-2" />
                 )}
               </button>
             ))}
@@ -448,7 +474,7 @@ export default function CandidateProfile() {
                     onClick={() => setActiveTab(tab)}
                     className={`w-full h-full transition-all duration-500 ${
                       activeTab === tab 
-                      ? "ring-2 ring-[#C5A267] ring-offset-4 scale-[1.02] shadow-lg" 
+                      ? "ring-2 ring-[#004d3d] ring-offset-4 scale-[1.02] shadow-lg" 
                       : "opacity-70 hover:opacity-100 hover:scale-[1.02]"
                     }`}
                   >
@@ -465,7 +491,7 @@ export default function CandidateProfile() {
                         className="w-full h-full bg-[#2A2A2A] flex items-center justify-center"
                         title="Ajouter une photo de couverture"
                       >
-                        <ImageIcon className="w-7 h-7 text-[#C5A267]/45" />
+                        <ImageIcon className="w-7 h-7 text-[#004d3d]/45" />
                       </div>
                     )}
                     <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/80 to-transparent">
@@ -527,7 +553,7 @@ export default function CandidateProfile() {
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-[#222] transition-colors group-hover:bg-[#282828]">
                 <label className="cursor-pointer flex flex-col items-center justify-center text-center gap-3">
-                  <Upload className="w-8 h-8 text-[#C5A267]" />
+                  <Upload className="w-8 h-8 text-[#004d3d]" />
                   <span className="text-white text-xs font-semibold tracking-normal">
                     Uploader le clip « {activeDimension} »
                   </span>

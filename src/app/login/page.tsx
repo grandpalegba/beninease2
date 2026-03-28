@@ -82,11 +82,11 @@ function LoginContent() {
     }
   };
 
-  const labelClasses = "text-[10px] font-sans font-bold text-[#FDFBF7]/70 uppercase tracking-[0.2em] ml-1";
+  const labelClasses = "text-[10px] font-sans font-bold text-[#F9F9F7]/70 uppercase tracking-[0.2em] ml-1";
 
   return (
     <div className="w-full max-w-md flex flex-col items-center">
-      <h1 className="mb-10 text-center text-4xl font-bold font-display text-[#FDFBF7] animate-fade-up">
+      <h1 className="mb-10 text-center text-4xl font-bold font-display text-[#F9F9F7] animate-fade-up">
         Connexion Beninease
       </h1>
       
@@ -108,7 +108,7 @@ function LoginContent() {
           <button
             type="submit"
             disabled={loading || !phone}
-            className="w-full rounded-full bg-[#E8112D] p-4 font-sans font-bold text-white hover:bg-[#C40D26] transition-all shadow-lg active:scale-[0.98] disabled:opacity-60 mt-4 flex items-center justify-center gap-2"
+            className="w-full rounded-full bg-[#004d3d] p-4 font-sans font-bold text-white hover:bg-[#004d3d]/90 transition-all shadow-lg active:scale-[0.98] disabled:opacity-60 mt-4 flex items-center justify-center gap-2"
           >
             {loading ? "Envoi en cours..." : "Recevoir mon code sur WhatsApp"}
             {!loading && <ArrowRight className="w-4 h-4" />}
@@ -118,10 +118,10 @@ function LoginContent() {
         <form onSubmit={handleVerifyOtp} className="w-full space-y-8 animate-fade-up">
           <div className="text-center space-y-3 mb-4">
             <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
-              <MessageSquare className="w-8 h-8 text-[#E9B113]" />
+              <MessageSquare className="w-8 h-8 text-[#F9F9F7]" />
             </div>
-            <p className="text-sm text-[#FDFBF7]/80 font-sans">
-              Code envoyé au <span className="text-[#FDFBF7] font-bold">{fullPhone}</span>
+            <p className="text-sm text-[#F9F9F7]/80 font-sans">
+              Code envoyé au <span className="text-[#F9F9F7] font-bold">{fullPhone}</span>
             </p>
           </div>
 
@@ -133,7 +133,7 @@ function LoginContent() {
               placeholder="000000"
               value={otpCode}
               onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ""))}
-              className="w-full rounded-2xl bg-black/20 border-0 p-6 text-[#FDFBF7] text-center text-3xl tracking-[0.5em] font-bold placeholder:text-[#FDFBF7]/20 outline-none focus:ring-2 focus:ring-[#008751] transition-all"
+              className="w-full rounded-2xl bg-black/20 border-0 p-6 text-[#F9F9F7] text-center text-3xl tracking-[0.5em] font-bold placeholder:text-[#F9F9F7]/20 outline-none focus:ring-2 focus:ring-[#008751] transition-all"
               required
             />
           </div>
@@ -142,14 +142,14 @@ function LoginContent() {
             <button
               type="submit"
               disabled={loading || otpCode.length !== 6}
-              className="w-full rounded-full bg-[#E8112D] p-4 font-sans font-bold text-white hover:bg-[#C40D26] transition-all shadow-lg active:scale-[0.98] disabled:opacity-60"
+              className="w-full rounded-full bg-[#004d3d] p-4 font-sans font-bold text-white hover:bg-[#004d3d]/90 transition-all shadow-lg active:scale-[0.98] disabled:opacity-60"
             >
               {loading ? "Vérification..." : "Vérifier le code"}
             </button>
             <button
               type="button"
               onClick={() => setOtpSent(false)}
-              className="w-full text-sm text-[#FDFBF7]/60 font-sans hover:text-[#FDFBF7] transition-colors"
+              className="w-full text-sm text-[#F9F9F7]/60 font-sans hover:text-[#F9F9F7] transition-colors"
             >
               Changer de numéro
             </button>
@@ -159,7 +159,7 @@ function LoginContent() {
 
       <Link
         href="/postuler"
-        className="mt-12 text-sm font-sans text-[#FDFBF7]/80 hover:text-white transition-colors border-b border-[#FDFBF7]/30 pb-0.5 animate-fade-up"
+        className="mt-12 text-sm font-sans text-[#F9F9F7]/80 hover:text-white transition-colors border-b border-[#F9F9F7]/30 pb-0.5 animate-fade-up"
         style={{ animationDelay: "0.2s" }}
       >
         Pas de compte ? Créer un profil
@@ -167,7 +167,7 @@ function LoginContent() {
 
       {message ? (
         <p
-          className="mt-8 text-center text-sm font-sans text-[#FDFBF7] bg-white/10 px-6 py-3 rounded-xl animate-shake border border-white/5"
+          className="mt-8 text-center text-sm font-sans text-[#F9F9F7] bg-white/10 px-6 py-3 rounded-xl animate-shake border border-white/5"
           role="status"
         >
           {message}
@@ -180,7 +180,7 @@ function LoginContent() {
 export default function LoginPage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-[#008751] px-6 pt-20">
-      <Suspense fallback={<div className="text-[#FDFBF7] animate-pulse">Chargement...</div>}>
+      <Suspense fallback={<div className="text-[#F9F9F7] animate-pulse">Chargement...</div>}>
         <LoginContent />
       </Suspense>
     </div>

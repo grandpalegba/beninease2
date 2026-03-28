@@ -51,6 +51,13 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        "benin-green": "#008751",
+        "benin-yellow": "#E9B113",
+        "benin-red": "#E8112D",
+        "benin-cream": "#F9F9F7",
+        "benin-ocre": "#C5A059",
+        "benin-black": "rgba(0, 0, 0, 0.9)",
+        "benin-gray": "#4B5563", // gray-600
         ocre: "hsl(var(--ocre))",
         forest: "hsl(var(--forest))",
         indigo: "hsl(var(--indigo))",

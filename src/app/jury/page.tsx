@@ -38,7 +38,7 @@ function JuryList() {
             key={idx}
             className="relative rounded-[28px] border border-[#F2EDE4] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.03)] overflow-hidden"
           >
-            <div className="relative aspect-[4/3] bg-[#F8F5F0] animate-pulse" />
+            <div className="relative aspect-[4/3] bg-[#F9F9F7] animate-pulse" />
             <div className="p-5">
               <div className="h-4 w-40 rounded-full bg-[#F2EDE4] animate-pulse" />
               <div className="mt-3 h-3 w-56 rounded-full bg-[#F2EDE4] animate-pulse" />
@@ -52,7 +52,7 @@ function JuryList() {
 
 export default function JuryListPage() {
   return (
-    <div className="min-h-screen bg-[#FDFBF7] px-4 py-10 md:py-14">
+    <div className="min-h-screen bg-[#F9F9F7] px-4 py-10 md:py-14">
       <Suspense fallback={<div className="text-center text-[#8E8E8E]">Chargement du jury...</div>}>
         <JuryList />
       </Suspense>

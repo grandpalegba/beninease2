@@ -1,29 +1,18 @@
 const steps = [
   {
     number: "01",
-    title: "Découverte & Pré-sélection",
-    desc: "16 talents par catégorie sont identifiés et entrent en compétition.",
+    title: "Qualifications",
+    desc: "Chaque candidat s'inscrit et se présente dans une vidéo. Vote d'un jury de présélection.",
   },
   {
     number: "02",
-    title: "Présentation des talents",
-    desc: "Chaque candidat se présente à travers 4 vidéos pour révéler sa vision.",
+    title: "Demi-finales : Top 16 - Votes en ligne",
+    desc: "Les 16 candidats retenus par catégorie publient 3 vidéos supplémentaires.",
   },
   {
     number: "03",
-    title: "Votes de la communauté",
-    desc: "La communauté vote sur la plateforme (confirmation via WhatsApp).",
-  },
-  {
-    number: "04",
-    title: "Demi-finales : Top 8",
-    desc: "Les 8 talents les plus soutenus par catégorie accèdent à la phase finale.",
-  },
-  {
-    number: "05",
-    title: "Finale : Projections & vote hybride",
-    desc: "Une 5ᵉ vidéo des finalistes est dévoilée lors de projections publiques à travers le Bénin.",
-    extra: "👉 Votes : 50% digital • 50% terrain",
+    title: "Finale : Top 8 - Votes sur le terrain",
+    desc: "Les 8 finalistes par catégorie fournissent une 5ème vidéo dévoilée lors de projections publiques dans plusieurs villes du Bénin.",
   },
 ];
 
@@ -32,14 +21,14 @@ const SelectionSection = () => {
     <section id="selection" className="py-24 md:py-32">
       <div className="container px-4 max-w-4xl">
         <div className="text-center mb-16">
-          <p className="text-xs font-bold tracking-[0.25em] uppercase text-[#E9B113] mb-4 font-body">
+          <p className="text-xs font-bold tracking-[0.25em] uppercase text-[#004d3d] mb-4 font-body">
             Processus de sélection
           </p>
           <h2
             className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-[#008751] text-balance"
             style={{ lineHeight: "1.15" }}
           >
-            ⚡ Parcours Beninease
+            ⚡ Processus de sélection
           </h2>
         </div>
 
@@ -57,10 +46,10 @@ const SelectionSection = () => {
                   <h3 className="font-display text-xl md:text-2xl font-bold text-foreground mb-1 leading-snug">
                     {step.title}
                   </h3>
-                  <p className="text-muted-foreground font-body text-sm md:text-base mt-1">{step.desc}</p>
-                  {"extra" in step && step.extra ? (
-                    <p className="text-foreground font-body text-sm md:text-base mt-3 font-medium">{step.extra}</p>
-                  ) : null}
+                  
+                  <p className="text-muted-foreground font-body text-sm md:text-base mt-2">
+                    {step.desc}
+                  </p>
                 </div>
               </div>
             ))}
@@ -73,7 +62,7 @@ const SelectionSection = () => {
               🏆 Résultat
             </h3>
             <p className="text-muted-foreground font-body text-sm md:text-base leading-relaxed">
-              Les 4 talents les mieux classés deviennent Ambassadeurs et représentent le Bénin pendant 1 an.
+              Les 4 talents les mieux classés par catégorie deviennent Ambassadeurs et représentent le Bénin pendant 1 an. Sur Beninease, tous bénéficient d&apos;un espace de visibilité, de promotion et de vente de leurs services.
             </p>
           </div>
         </div>

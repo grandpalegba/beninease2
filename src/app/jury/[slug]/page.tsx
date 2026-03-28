@@ -12,7 +12,8 @@ import { Image as ImageIcon, MapPin } from "lucide-react";
 
 type JuryProfile = {
   id: string;
-  full_name: string | null;
+  prenom: string | null;
+  nom: string | null;
   avatar_url: string | null;
   city: string | null;
   description: string | null;
@@ -57,7 +58,7 @@ export default function JuryProfilePage({ params }: { params: { slug: string } }
       setError(null);
       const { data: p, error: e1 } = await supabase
         .from("profiles")
-        .select("id, full_name, avatar_url, city, description, type")
+        .select("id, prenom, nom, avatar_url, city, description, type")
         .eq("id", id)
         .maybeSingle();
       if (e1 || !p) {
@@ -67,7 +68,8 @@ export default function JuryProfilePage({ params }: { params: { slug: string } }
       }
       setProfile({
         id: p.id,
-        full_name: p.full_name,
+        prenom: p.prenom,
+        nom: p.nom,
         avatar_url: p.avatar_url,
         city: p.city,
         description: p.description,
@@ -89,9 +91,9 @@ export default function JuryProfilePage({ params }: { params: { slug: string } }
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#FDFBF7] px-4 py-10">
-        <div className="mx-auto max-w-4xl rounded-3xl border border-[#F2EDE4] bg-white p-10 text-center text-[#8E8E8E]">
-          Chargement…
+      <div className="min-h-screen bg-[#F9F9F7] px-4 py-10">
+        <div className="mx-auto max-w-4xl rounded-3xl border border-[#F2EDE4] bg-white p-10 text-center text-[#8E8E8E] font-sans">
+          Chargement du sanctuaire…
         </div>
       </div>
     );
@@ -99,13 +101,13 @@ export default function JuryProfilePage({ params }: { params: { slug: string } }
 
   if (!profile) {
     return (
-      <div className="min-h-screen bg-[#FDFBF7] px-4 py-10">
-        <div className="mx-auto max-w-4xl rounded-3xl border border-[#F2EDE4] bg-white p-10">
+      <div className="min-h-screen bg-[#F9F9F7] px-4 py-10">
+        <div className="mx-auto max-w-4xl rounded-3xl border border-[#F2EDE4] bg-white p-10 font-sans text-center">
           <p className="text-sm text-red-700">{error ?? "Profil introuvable."}</p>
           <button
             type="button"
             onClick={() => router.push("/jury")}
-            className="mt-6 rounded-full border border-[#E9E2D6] px-5 py-3 text-xs font-semibold tracking-[0.15em] uppercase text-[#8E8E8E] hover:bg-[#C5A267] hover:text-white hover:border-[#C5A267] transition-colors"
+            className="mt-6 rounded-full border border-[#E9E2D6] px-5 py-3 text-xs font-semibold tracking-[0.15em] uppercase text-[#8E8E8E] hover:bg-[#004d3d] hover:text-white hover:border-[#004d3d] transition-colors"
           >
             Retour au jury
           </button>
@@ -114,15 +116,15 @@ export default function JuryProfilePage({ params }: { params: { slug: string } }
     );
   }
 
-  const name = profile.full_name?.trim() || "Membre du jury";
+  const name = `${profile.prenom || ""} ${profile.nom || ""}`.trim() || "Membre du jury";
   const subtitle = profile.description?.trim() || "Profil du jury";
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] p-4 md:p-8 font-sans">
+    <div className="min-h-screen bg-[#F9F9F7] p-4 md:p-8 font-sans">
       <div className="max-w-4xl mx-auto bg-white rounded-[30px] shadow-[0_10px_40px_rgba(0,0,0,0.03)] overflow-hidden border border-[#F2EDE4]">
         <div className="p-8 md:p-12">
           <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
-            <div className="w-36 h-36 bg-[#F8F5F0] rounded-[25px] border-[6px] border-white shadow-sm overflow-hidden flex items-center justify-center relative">
+            <div className="w-36 h-36 bg-[#F9F9F7] rounded-[25px] border-[6px] border-white shadow-sm overflow-hidden flex items-center justify-center relative">
               {profile.avatar_url ? (
                 <Image
                   src={profile.avatar_url}
@@ -132,7 +134,7 @@ export default function JuryProfilePage({ params }: { params: { slug: string } }
                   priority
                 />
               ) : (
-                <ImageIcon className="w-10 h-10 text-[#C5A267]/45" />
+                <ImageIcon className="w-10 h-10 text-[#004d3d]/45" />
               )}
             </div>
 
@@ -140,13 +142,13 @@ export default function JuryProfilePage({ params }: { params: { slug: string } }
               <h1 className="text-[34px] font-display font-bold text-[#1A1A1A] leading-tight">
                 {name}
               </h1>
-              <div className="mt-2 inline-flex items-center rounded-full border border-[#E9E2D6] bg-[#FFFDF9] px-3 py-1 text-[10px] font-semibold tracking-widest uppercase text-[#C5A267]">
+              <div className="mt-2 inline-flex items-center rounded-full border border-[#E9E2D6] bg-[#F9F9F7] px-3 py-1 text-[10px] font-semibold tracking-widest uppercase text-[#004d3d]">
                 Membre du jury
               </div>
               <p className="text-[#8E8E8E] text-sm mt-3">{subtitle}</p>
               {profile.city ? (
                 <p className="mt-2 text-[11px] uppercase tracking-widest text-[#8E8E8E] inline-flex items-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5" /> {profile.city}
+                  <MapPin className="w-3.5 h-3.5 text-black" /> {profile.city}
                 </p>
               ) : null}
             </div>
@@ -160,12 +162,12 @@ export default function JuryProfilePage({ params }: { params: { slug: string } }
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`pb-4 text-xs font-semibold transition-all relative ${
-                  activeTab === tab ? "text-[#C5A267]" : "text-[#8E8E8E] hover:text-[#555]"
+                  activeTab === tab ? "text-[#004d3d]" : "text-[#8E8E8E] hover:text-[#004d3d]/70"
                 }`}
               >
                 {tab}
                 {activeTab === tab ? (
-                  <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#C5A267]" />
+                  <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#004d3d]" />
                 ) : null}
               </button>
             ))}
@@ -187,7 +189,7 @@ export default function JuryProfilePage({ params }: { params: { slug: string } }
                   onClick={() => setActiveTab(tab)}
                   className={`relative aspect-video rounded-[15px] overflow-hidden group transition-all duration-500 ${
                     activeTab === tab
-                      ? "ring-2 ring-[#C5A267] ring-offset-4 scale-[1.02] shadow-lg"
+                      ? "ring-2 ring-[#004d3d] ring-offset-4 scale-[1.02] shadow-lg"
                       : "opacity-70 hover:opacity-100 hover:scale-[1.02]"
                   }`}
                 >
@@ -201,7 +203,7 @@ export default function JuryProfilePage({ params }: { params: { slug: string } }
                     />
                   ) : (
                     <div className="w-full h-full bg-[#2A2A2A] flex items-center justify-center">
-                      <ImageIcon className="w-7 h-7 text-[#C5A267]/45" />
+                      <ImageIcon className="w-7 h-7 text-[#004d3d]/45" />
                     </div>
                   )}
                   <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/80 to-transparent">
@@ -234,4 +236,3 @@ export default function JuryProfilePage({ params }: { params: { slug: string } }
     </div>
   );
 }
-

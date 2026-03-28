@@ -26,20 +26,17 @@ export default function PostulerPage() {
   const [dobMonth, setDobMonth] = useState("");
   const [dobYear, setDobYear] = useState("");
   const [phone, setPhone] = useState("");
-  const [countryCode, setCountryCode] = useState("+229");
   const [selectedUniverse, setSelectedUniverse] = useState("");
   const [selectedSubCategory, setSelectedSubCategory] = useState("");
-  
+
+  const fullPhoneNumber = useMemo(() => phone, [phone]);
+
   // OTP states
   const [otpSent, setOtpSent] = useState(false);
   const [otpCode, setOtpCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-
-  const fullPhoneNumber = useMemo(() => {
-    return `${countryCode}${phone}`;
-  }, [countryCode, phone]);
 
   const availableSubCategories = useMemo(() => {
     const universe = universes.find(u => u.name === selectedUniverse);
@@ -89,7 +86,8 @@ export default function PostulerPage() {
           .from("applications")
           .insert({
             user_id: session.user.id,
-            full_name: `${firstName} ${lastName}`,
+            prenom: firstName,
+            nom: lastName,
             city: "", 
             phone: fullPhoneNumber,
             category: selectedUniverse,
@@ -113,7 +111,7 @@ export default function PostulerPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-[#FDF8F1] flex items-center justify-center px-4 py-12">
+      <div className="min-h-screen bg-[#F9F9F7] flex items-center justify-center px-4 py-12">
         <div className="max-w-md w-full bg-white p-10 rounded-3xl shadow-xl text-center animate-fade-up">
           <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-8 border border-green-100">
             <CheckCircle2 className="w-10 h-10 text-green-600" />
@@ -137,8 +135,8 @@ export default function PostulerPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FDF8F1] py-16 md:py-24 px-4 flex flex-col items-center">
-      <div className="max-w-xl w-full text-center mb-12 animate-fade-in">
+    <div className="min-h-screen bg-[#F9F9F7] py-16 md:py-24 px-4 flex flex-col items-center">
+      <div className="max-w-xl w-full text-center mb-12 animate-fade-in pt-10">
         <h1 className="font-display text-4xl md:text-5xl font-bold text-[#008751] mb-4 leading-tight">
           Candidature pour l&apos;Excellence
         </h1>
@@ -224,14 +222,13 @@ export default function PostulerPage() {
               <PhoneInput
                 value={phone}
                 onChange={setPhone}
-                onCountryChange={setCountryCode}
                 className="h-[56px]"
               />
             </div>
 
             {/* Universe & Category Section */}
             <div className="space-y-6 pt-4 border-t border-[#D9A036]/10">
-              <p className="text-xs font-sans font-bold text-[#B25E3B] tracking-wider">VOTRE UNIVERS & CATÉGORIE</p>
+              <p className="text-xs font-display font-bold text-black tracking-wider uppercase">VOTRE UNIVERS & CATÉGORIE</p>
               
               <div className="space-y-4">
                 <div className="space-y-2">
@@ -284,10 +281,10 @@ export default function PostulerPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-5 rounded-full bg-[#E8112D] text-white font-bold font-sans text-base hover:bg-[#C40D26] transition-all shadow-xl active:scale-[0.98] disabled:opacity-60 flex items-center justify-center gap-3 mt-4"
+              className="w-full py-5 rounded-full bg-[#008751] text-white font-bold font-sans text-base hover:bg-[#006B3F] transition-colors duration-300 shadow-xl active:scale-[0.98] disabled:opacity-60 flex items-center justify-center gap-3 mt-4"
             >
               {loading ? "Envoi en cours..." : "Recevoir mon code sur WhatsApp"}
-              {!loading && <ArrowRight className="w-5 h-5" />}
+              {!loading && <ArrowRight className="w-5 h-5 text-white" />}
             </button>
           </form>
         ) : (

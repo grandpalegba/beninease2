@@ -10,31 +10,48 @@ const stats = [
 
 function AnimatedCounter({ target, duration = 2000 }: { target: number; duration?: number }) {
   const [count, setCount] = useState(0);
+  const [hasAnimated, setHasAnimated] = useState(false);
   const ref = useRef<HTMLSpanElement>(null);
-  const started = useRef(false);
 
   useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !started.current) {
-          started.current = true;
-          const start = performance.now();
-          const step = (now: number) => {
-            const progress = Math.min((now - start) / duration, 1);
-            const eased = 1 - Math.pow(1 - progress, 3);
+      (entries) => {
+        const [entry] = entries;
+        if (entry.isIntersecting && !hasAnimated) {
+          setHasAnimated(true);
+          let startTime: number;
+          
+          const animate = (currentTime: number) => {
+            if (!startTime) startTime = currentTime;
+            const runtime = currentTime - startTime;
+            const progress = Math.min(runtime / duration, 1);
+            
+            // Easing function: easeOutQuart
+            const eased = 1 - Math.pow(1 - progress, 4);
+            
             setCount(Math.floor(eased * target));
-            if (progress < 1) requestAnimationFrame(step);
+            
+            if (runtime < duration) {
+              requestAnimationFrame(animate);
+            } else {
+              setCount(target);
+            }
           };
-          requestAnimationFrame(step);
+          
+          requestAnimationFrame(animate);
         }
       },
-      { threshold: 0.5 }
+      { threshold: 0.1 }
     );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, [target, duration]);
 
-  return <span ref={ref}>{count}</span>;
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [target, duration, hasAnimated]);
+
+  return <span ref={ref} className="tabular-nums">{count}</span>;
 }
 
 const ConceptSection = () => {
@@ -44,7 +61,7 @@ const ConceptSection = () => {
         <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8 text-balance" style={{ lineHeight: "1.15" }}>
           Le Bénin, un pays facile à aimer.
         </h2>
-        <p className="text-lg md:text-xl text-muted-foreground mb-16 max-w-2xl mx-auto text-balance font-body" style={{ lineHeight: "2" }}>
+        <p className="text-lg md:text-xl text-muted-foreground mb-16 max-w-2xl mx-auto text-balance font-body" style={{ lineHeight: "2.1" }}>
           Beninease est le premier label de confiance communautaire dédié à l&apos;excellence béninoise.
           À travers un système de sélection transparent, ludique et validé par la communauté,
           nous transformons des pépites locales en véritables Ambassadeurs pour une vitrine de prestige célébrant un Bénin qui gagne.

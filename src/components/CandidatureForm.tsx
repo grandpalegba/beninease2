@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Video } from "lucide-react";
+import { Video, Loader2 } from "lucide-react";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
 
 const categories = [
   "Tourisme & Découvertes",
@@ -30,12 +32,20 @@ const videos = [
 ];
 
 const CandidatureForm = () => {
+  const router = useRouter();
+  const supabase = createSupabaseBrowserClient();
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const [form, setForm] = useState({
-    name: "",
+    prenom: "",
+    nom: "",
     category: "",
     subCategory: "",
     location: "",
-    phone: "",
+    whatsapp: "",
+    date_naissance: "",
     socials: "",
   });
   const [acceptVideos, setAcceptVideos] = useState(false);
@@ -44,9 +54,78 @@ const CandidatureForm = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!acceptVideos) {
+      setError("Veuillez accepter l'engagement relatif aux vidéos.");
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Create a slug from prenom and nom
+      const slug = `${form.prenom}-${form.nom}`.toLowerCase().replace(/[^a-z0-9]/g, '-');
+
+      const { error: submitError } = await supabase
+        .from('profiles')
+        .insert([
+          {
+            prenom: form.prenom,
+            nom: form.nom,
+            category: form.category,
+            whatsapp: form.whatsapp,
+            date_naissance: form.date_naissance,
+            city: form.location,
+            slug: slug,
+            votes: 0,
+            // status: 'pending' // If you have a status field for moderation
+          }
+        ]);
+
+      if (submitError) throw submitError;
+
+      setSuccess(true);
+      setForm({
+        prenom: "",
+        nom: "",
+        category: "",
+        subCategory: "",
+        location: "",
+        whatsapp: "",
+        date_naissance: "",
+        socials: "",
+      });
+      setAcceptVideos(false);
+    } catch (err: any) {
+      console.error("Erreur lors de l'inscription:", err);
+      setError("Une erreur est survenue lors de l'envoi de votre candidature. Veuillez réessayer.");
+    } finally {
+      setLoading(false);
+    }
   };
+
+  if (success) {
+    return (
+      <section id="postuler" className="py-24 md:py-32 bg-card">
+        <div className="container px-4 max-w-xl text-center">
+          <div className="bg-white p-10 rounded-[30px] shadow-sm border border-[#008751]/20">
+            <h2 className="font-display text-3xl font-bold text-[#008751] mb-4">Candidature Envoyée !</h2>
+            <p className="text-muted-foreground mb-8">
+              Merci de votre intérêt. Votre profil est en cours d&apos;examen par notre équipe.
+            </p>
+            <button
+              onClick={() => setSuccess(false)}
+              className="px-8 py-3 rounded-full bg-[#008751] text-white font-bold uppercase tracking-widest text-xs hover:bg-[#008751]/90 transition-all"
+            >
+              Retour au formulaire
+            </button>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="postuler" className="py-24 md:py-32 bg-card">
@@ -56,19 +135,31 @@ const CandidatureForm = () => {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            name="name"
-            value={form.name}
-            onChange={handleChange}
-            placeholder="Nom complet"
-            className="w-full px-5 py-4 rounded-xl bg-background border-0 text-foreground placeholder:text-muted-foreground font-body text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
-          />
+          <div className="grid grid-cols-2 gap-4">
+            <input
+              name="prenom"
+              value={form.prenom}
+              onChange={handleChange}
+              placeholder="Prénom (ex: Koffi)"
+              required
+              className="w-full px-5 py-4 rounded-xl bg-background border-0 text-foreground placeholder:text-muted-foreground font-body text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+            />
+            <input
+              name="nom"
+              value={form.nom}
+              onChange={handleChange}
+              placeholder="Nom (ex: Adjakpa)"
+              required
+              className="w-full px-5 py-4 rounded-xl bg-background border-0 text-foreground placeholder:text-muted-foreground font-body text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+            />
+          </div>
 
           <div className="relative">
             <select
               name="category"
               value={form.category}
               onChange={handleChange}
+              required
               className="w-full px-5 py-4 rounded-xl bg-background border-0 text-foreground font-body text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30"
             >
               <option value="" disabled>Catégorie</option>
@@ -82,26 +173,32 @@ const CandidatureForm = () => {
           </div>
 
           <input
-            name="subCategory"
-            value={form.subCategory}
+            name="whatsapp"
+            value={form.whatsapp}
             onChange={handleChange}
-            placeholder="Sous-catégorie"
+            placeholder="WhatsApp (ex: +229 00000000)"
+            required
             className="w-full px-5 py-4 rounded-xl bg-background border-0 text-foreground placeholder:text-muted-foreground font-body text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
+
+          <div className="space-y-1">
+            <label className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground ml-2">Date de naissance</label>
+            <input
+              name="date_naissance"
+              type="date"
+              value={form.date_naissance}
+              onChange={handleChange}
+              required
+              className="w-full px-5 py-4 rounded-xl bg-background border-0 text-foreground placeholder:text-muted-foreground font-body text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+            />
+          </div>
 
           <input
             name="location"
             value={form.location}
             onChange={handleChange}
-            placeholder="Cotonou, Bénin"
-            className="w-full px-5 py-4 rounded-xl bg-background border-0 text-foreground placeholder:text-muted-foreground font-body text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
-          />
-
-          <input
-            name="phone"
-            value={form.phone}
-            onChange={handleChange}
-            placeholder="Téléphone / WhatsApp"
+            placeholder="Ville (ex: Cotonou)"
+            required
             className="w-full px-5 py-4 rounded-xl bg-background border-0 text-foreground placeholder:text-muted-foreground font-body text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
 
@@ -109,9 +206,15 @@ const CandidatureForm = () => {
             name="socials"
             value={form.socials}
             onChange={handleChange}
-            placeholder="Mes réseaux sociaux"
+            placeholder="Réseaux sociaux (optionnel)"
             className="w-full px-5 py-4 rounded-xl bg-background border-0 text-foreground placeholder:text-muted-foreground font-body text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
+
+          {error && (
+            <div className="p-4 rounded-xl bg-red-50 text-red-600 text-sm font-medium">
+              {error}
+            </div>
+          )}
 
           {/* Video requirements */}
           <div className="rounded-xl bg-background p-5">
@@ -146,9 +249,17 @@ const CandidatureForm = () => {
 
           <button
             type="submit"
-            className="w-full py-4 rounded-xl bg-primary text-primary-foreground font-semibold font-body text-base hover:bg-primary/90 transition-colors active:scale-[0.97]"
+            disabled={loading}
+            className="w-full py-4 rounded-xl bg-primary text-primary-foreground font-semibold font-body text-base hover:bg-primary/90 transition-colors active:scale-[0.97] flex items-center justify-center gap-2"
           >
-            Envoyer ma candidature
+            {loading ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                Envoi en cours...
+              </>
+            ) : (
+              "Envoyer ma candidature"
+            )}
           </button>
         </form>
       </div>

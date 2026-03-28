@@ -6,40 +6,37 @@
 
 @layer base {
   :root {
-    --background: 37 33% 94%; /* #FDF8F1 approximately */
-    --foreground: 150 40% 10%;
+    --background: 60 6% 97%; /* #F9F9F7 - benin-cream */
+    --foreground: 0 0% 10%; /* black/90 approximately */
 
-    --card: 37 33% 97%;
-    --card-foreground: 150 40% 10%;
+    --card: 60 6% 97%;
+    --card-foreground: 0 0% 10%;
 
-    --popover: 37 33% 97%;
-    --popover-foreground: 150 40% 10%;
+    --popover: 60 6% 97%;
+    --popover-foreground: 0 0% 10%;
 
-    --primary: 150 100% 26%; /* #008751 - Vert Forêt */
-    --primary-foreground: 37 33% 97%;
+    --primary: 156 100% 26%; /* #008751 - benin-green */
+    --primary-foreground: 60 6% 97%;
 
-    --secondary: 43 85% 49%; /* #E9B113 - Jaune Safran */
-    --secondary-foreground: 150 40% 10%;
+    --secondary: 167 100% 15%; /* #004d3d - dark-green */
+    --secondary-foreground: 60 6% 97%;
 
-    --muted: 37 20% 88%;
-    --muted-foreground: 150 20% 40%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215 16% 47%; /* gray/600 approx */
 
-    --accent: 0 86% 49%; /* #E8112D - Rouge Terre */
-    --accent-foreground: 37 33% 97%;
+    --accent: 355 86% 49%; /* #E8112D - benin-red */
+    --accent-foreground: 60 6% 97%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 150 20% 82%;
-    --input: 150 20% 82%;
-    --ring: 150 100% 26%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 156 100% 26%;
     --radius: 0.5rem;
 
-    /* Universe colors */
-    --ocre: 36 70% 50%;
-    --forest: 150 40% 30%;
-    --indigo: 230 45% 35%;
-    --gold: 43 80% 50%;
+    /* Custom semantic colors */
+    --benin-ocre: 167 100% 15%; /* #004d3d - dark-green */
 
     --sidebar-background: 37 33% 96%;
     --sidebar-foreground: 15 8% 15%;

@@ -59,7 +59,7 @@ const ProfilePreview = () => {
     <section id="profil" className="py-24 md:py-32">
       <div className="container px-4 max-w-4xl">
         <div className="text-center mb-16">
-          <p className="text-xs font-bold tracking-[0.25em] uppercase text-primary mb-4 font-body">
+          <p className="text-xs font-bold tracking-[0.25em] uppercase text-[#004d3d] mb-4 font-body">
             L&apos;expérience future
           </p>
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 text-balance" style={{ lineHeight: "1.15" }}>
@@ -74,7 +74,7 @@ const ProfilePreview = () => {
           {/* Profile header */}
           <div className="p-6 md:p-8 flex flex-col sm:flex-row sm:items-start gap-6">
             <div className="shrink-0 mx-auto sm:mx-0">
-              <div className="relative h-28 w-28 md:h-32 md:w-32 rounded-2xl overflow-hidden ring-2 ring-primary/15 shadow-lg ring-offset-2 ring-offset-background">
+              <div className="relative h-28 w-28 md:h-32 md:w-32 rounded-2xl overflow-hidden ring-2 ring-[#004d3d]/15 shadow-lg ring-offset-2 ring-offset-background">
                 <Image
                   src={profileImg}
                   alt="Aïcha Hounkpatin"
@@ -87,15 +87,15 @@ const ProfilePreview = () => {
               <h3 className="font-display text-2xl font-bold text-foreground">
                 Aïcha Hounkpatin
               </h3>
-              <p className="text-primary font-semibold text-sm font-body mb-1">
+              <p className="text-[#004d3d] font-semibold text-sm font-body mb-1">
                 Cuisine traditionnelle à domicile à Cotonou
               </p>
-              <p className="text-muted-foreground text-sm font-body mb-3">
+              <p className="text-muted-foreground text-sm font-display mb-3 uppercase tracking-wider font-bold">
                 Alimentation & Cuisine
               </p>
               <div className="flex flex-wrap justify-center sm:justify-start gap-4 text-xs text-muted-foreground font-body">
                 <span className="inline-flex items-center gap-1">
-                  <MapPin className="w-3.5 h-3.5 shrink-0" /> Cotonou, Bénin
+                  <MapPin className="w-3.5 h-3.5 shrink-0 text-black" /> Cotonou, Bénin
                 </span>
                 <span className="inline-flex items-center gap-1">
                   <Globe className="w-3.5 h-3.5 shrink-0" /> Français, Fon, Anglais
@@ -115,7 +115,7 @@ const ProfilePreview = () => {
                   className={cn(
                     "flex-1 min-w-[7.5rem] py-3.5 px-2 text-sm font-medium font-body transition-colors border-b-2 whitespace-nowrap",
                     activeTab === i
-                      ? "border-primary text-primary bg-background/80"
+                      ? "border-[#004d3d] text-[#004d3d] bg-background/80"
                       : "border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/40",
                   )}
                 >
@@ -136,9 +136,9 @@ const ProfilePreview = () => {
                     onClick={() => setActiveTab(i)}
                     className={cn(
                       "group relative flex-1 min-w-0 aspect-video rounded-lg overflow-hidden transition-all duration-300",
-                      "ring-2 ring-offset-2 ring-offset-background focus-visible:outline-none focus-visible:ring-primary",
+                      "ring-2 ring-offset-2 ring-offset-background focus-visible:outline-none focus-visible:ring-[#004d3d]",
                       activeTab === i
-                        ? "ring-primary shadow-md scale-[1.02] z-[1]"
+                        ? "ring-[#004d3d] shadow-md scale-[1.02] z-[1]"
                         : "ring-transparent opacity-80 hover:opacity-100 hover:ring-border",
                     )}
                     aria-label={`Voir la vidéo : ${tab.label}`}
@@ -194,7 +194,7 @@ const ProfilePreview = () => {
           <div className="px-6 md:px-8 pb-6 md:pb-8 flex flex-col sm:flex-row gap-3">
             <button
               type="button"
-              className="flex-1 inline-flex items-center justify-center gap-2 py-3.5 rounded-xl bg-primary text-primary-foreground font-semibold font-body text-sm hover:bg-primary/90 transition-colors active:scale-[0.97]"
+              className="flex-1 inline-flex items-center justify-center gap-2 py-3.5 rounded-xl bg-[#004d3d] text-primary-foreground font-semibold font-body text-sm hover:bg-[#004d3d]/90 transition-colors active:scale-[0.97]"
             >
               <Heart className="w-4 h-4" /> Voter pour moi
             </button>

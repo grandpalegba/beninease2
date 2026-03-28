@@ -11,13 +11,14 @@ import { Image as ImageIcon, Trash2, Video, RefreshCw } from "lucide-react";
 
 type AdminProfile = {
   id: string;
-  full_name: string | null;
+  prenom: string | null;
+  nom: string | null;
   avatar_url: string | null;
   city: string | null;
   description: string | null;
   category: string | null;
   type: "candidate" | "jury" | string;
-  votes_count: number | null;
+  votes: number | null;
 };
 
 type VideoRow = {
@@ -65,7 +66,7 @@ export default function AdminManagePage() {
 
     const { data, error: e1 } = await supabase
       .from("profiles")
-      .select("id, full_name, avatar_url, city, description, category, type, votes_count, updated_at")
+      .select("id, prenom, nom, avatar_url, city, description, category, type, votes, updated_at")
       .order("updated_at", { ascending: false })
       .limit(500);
 
@@ -219,7 +220,7 @@ export default function AdminManagePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] px-4 py-10 md:py-14">
+    <div className="min-h-screen bg-[#F9F9F7] px-4 py-10 md:py-14">
       <div className="mx-auto w-full max-w-6xl">
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
@@ -247,7 +248,7 @@ export default function AdminManagePage() {
         <div className="rounded-[24px] border border-[#F2EDE4] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.03)] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[980px]">
-              <thead className="bg-[#FFFDF9] border-b border-[#F2EDE4]">
+              <thead className="bg-[#F9F9F7] border-b border-[#F2EDE4]">
                 <tr className="text-left">
                   <th className="px-5 py-4 text-[10px] font-bold tracking-widest uppercase text-[#8E8E8E]">
                     Profil
@@ -284,14 +285,14 @@ export default function AdminManagePage() {
                   </tr>
                 ) : (
                   profiles.map((p) => {
-                    const name = p.full_name?.trim() || "Profil";
+                    const fullName = `${p.prenom || ""} ${p.nom || ""}`.trim() || "Profil";
                     const isBusy = busyId === p.id;
                     const mediaByType = media[p.id] ?? {};
                     return (
                       <tr key={p.id} className="border-b border-[#F2EDE4] last:border-b-0">
                         <td className="px-5 py-4">
                           <div className="flex items-center gap-3">
-                            <div className="h-10 w-10 rounded-full overflow-hidden bg-[#F8F5F0] ring-2 ring-[#C5A267]/20 relative">
+                            <div className="h-10 w-10 rounded-full overflow-hidden bg-[#F9F9F7] ring-2 ring-[#C5A267]/20 relative">
                               {p.avatar_url ? (
                                 <Image
                                   src={p.avatar_url}
@@ -306,7 +307,7 @@ export default function AdminManagePage() {
                               )}
                             </div>
                             <div className="min-w-0">
-                              <p className="truncate text-sm font-semibold text-[#1A1A1A]">{name}</p>
+                              <p className="truncate text-sm font-semibold text-[#1A1A1A]">{fullName}</p>
                               <p className="truncate text-[11px] text-[#8E8E8E]">
                                 {p.city ?? ""} {p.description ? `• ${p.description}` : ""}
                               </p>
@@ -314,7 +315,7 @@ export default function AdminManagePage() {
                           </div>
                         </td>
                         <td className="px-5 py-4">
-                          <span className="inline-flex items-center rounded-full border border-[#E9E2D6] bg-[#FFFDF9] px-3 py-1 text-[10px] font-semibold tracking-widest uppercase text-[#C5A267]">
+                          <span className="inline-flex items-center rounded-full border border-[#E9E2D6] bg-[#F9F9F7] px-3 py-1 text-[10px] font-semibold tracking-widest uppercase text-[#C5A267]">
                             {p.type}
                           </span>
                         </td>
@@ -322,7 +323,7 @@ export default function AdminManagePage() {
                           <span className="text-[11px] text-[#8E8E8E]">{p.category ?? "—"}</span>
                         </td>
                         <td className="px-5 py-4">
-                          <span className="text-sm font-semibold text-[#1A1A1A]">{p.votes_count ?? 0}</span>
+                          <span className="text-sm font-semibold text-[#1A1A1A]">{p.votes ?? 0}</span>
                         </td>
                         <td className="px-5 py-4">
                           {p.type === "candidate" ? (
@@ -332,7 +333,7 @@ export default function AdminManagePage() {
                                 const hasVideo = !!r?.video_url;
                                 const hasThumb = !!r?.thumbnail_url;
                                 return (
-                                  <div key={d} className="rounded-xl border border-[#F2EDE4] bg-[#FFFDF9] px-3 py-2">
+                                  <div key={d} className="rounded-xl border border-[#F2EDE4] bg-[#F9F9F7] px-3 py-2">
                                     <p className="text-[9px] font-bold tracking-widest uppercase text-[#8E8E8E]">
                                       {d}
                                     </p>

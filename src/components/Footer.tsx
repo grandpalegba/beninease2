@@ -1,12 +1,12 @@
 const Footer = () => {
   return (
-    <footer className="py-16 border-t border-border">
-      <div className="container px-4 text-center">
-        <p className="font-display text-2xl md:text-3xl font-bold text-foreground mb-3">
-          On est ensemble. À tout moment.
-        </p>
-        <p className="text-sm text-muted-foreground font-body">
-          © 2026 Beninease. Tous droits réservés.
+    <footer className="py-24 md:py-32 bg-[#F9F9F7] text-center px-4">
+      <div className="container max-w-4xl mx-auto">
+        <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-[#004d3d] mb-6">
+          On est ensemble. <br className="md:hidden" /> À tout moment.
+        </h2>
+        <p className="text-sm md:text-base text-[#008751] font-sans font-medium tracking-wide">
+          © 2026 Beninease. <br className="md:hidden" /> Tous droits réservés.
         </p>
       </div>
     </footer>
