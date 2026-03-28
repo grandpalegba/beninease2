@@ -7,7 +7,7 @@
 import { Suspense, useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { MapPin, Info, Loader2 } from "lucide-react";
+import { MapPin, Info, Loader2, LayoutGrid, Smartphone } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import type { Talent } from "@/types";
 
@@ -58,12 +58,22 @@ function TalentsList() {
           Découvrez les femmes et les hommes qui font rayonner l&apos;excellence béninoise.
         </p>
 
-        <div className="mt-6 inline-flex items-start gap-3 bg-white/50 border border-[#004d3d]/20 p-4 rounded-xl text-left max-w-2xl mx-auto shadow-sm backdrop-blur-sm">
-          <Info className="w-5 h-5 flex-shrink-0 mt-0.5 text-[#004d3d]" />
-          <p className="text-sm text-gray-700 leading-relaxed">
-            <span className="block font-semibold text-black mb-1">Votez pour vos Talents</span>
-            Explorez les portraits de nos ambassadeurs et soutenez ceux qui vous inspirent. Chaque vote compte pour le classement final !
-          </p>
+        <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="inline-flex items-start gap-3 bg-white/50 border border-[#004d3d]/20 p-4 rounded-xl text-left max-w-2xl shadow-sm backdrop-blur-sm">
+            <Info className="w-5 h-5 flex-shrink-0 mt-0.5 text-[#004d3d]" />
+            <p className="text-sm text-gray-700 leading-relaxed">
+              <span className="block font-semibold text-black mb-1">Votez pour vos Talents</span>
+              Explorez les portraits de nos ambassadeurs et soutenez ceux qui vous inspirent. Chaque vote compte pour le classement final !
+            </p>
+          </div>
+
+          <Link 
+            href="/talents/swipe"
+            className="group flex items-center gap-3 px-6 py-4 bg-[#008751] text-white rounded-2xl font-bold text-sm uppercase tracking-widest hover:bg-[#004d3d] transition-all shadow-lg shadow-[#008751]/20 active:scale-95"
+          >
+            <Smartphone className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+            Mode Swipe Mobile
+          </Link>
         </div>
       </div>
 
