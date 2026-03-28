@@ -4,12 +4,29 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/";
+  const next = searchParams.get("next");
 
   if (code) {
     const supabase = await createSupabaseServerClient();
-    await supabase.auth.exchangeCodeForSession(code);
+    const { data: { session }, error: sessionError } = await supabase.auth.exchangeCodeForSession(code);
+
+    if (session?.user && !next) {
+      // Logic for automatic redirection based on role
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", session.user.id)
+        .single();
+
+      if (profile?.role === 'votant') {
+        return NextResponse.redirect(`${origin}/dashboard/votant`);
+      } else if (profile?.role === 'candidat' || profile?.role === 'ambassadeur') {
+        return NextResponse.redirect(`${origin}/profile/dashboard`);
+      } else if (profile?.role === 'admin') {
+        return NextResponse.redirect(`${origin}/admin`);
+      }
+    }
   }
 
-  return NextResponse.redirect(`${origin}${next}`);
+  return NextResponse.redirect(`${origin}${next ?? "/"}`);
 }

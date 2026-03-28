@@ -30,6 +30,9 @@ export interface Profile extends VideoSchema {
   type: string | null;
   is_validated: boolean;
   city: string | null;
+  whatsapp_number: string | null;
+  instagram_url: string | null;
+  tiktok_url: string | null;
   description: string | null;
   title: string | null;
   updated_at: string | null;

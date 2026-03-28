@@ -71,7 +71,7 @@ export default async function TalentProfilePage({ params }: { params: any }) {
   const supabase = await createSupabaseServerClient();
   const { data: profile } = await supabase
     .from('talents')
-    .select('id, slug, prenom, nom, category, avatar_url, votes, bio')
+    .select('*') // Get everything including new fields
     .eq('slug', slug)
     .single();
 
@@ -118,11 +118,14 @@ export default async function TalentProfilePage({ params }: { params: any }) {
   }
 
   return (
-    <TalentProfileClient 
-      candidate={candidate} 
-      initialVotesCount={profile.votes || 0}
-      profileId={profile.id}
-      avatarUrl={publicAvatarUrl}
-    />
+    <div className="min-h-screen bg-[#F9F9F7]">
+      <TalentProfileClient 
+        candidate={candidate} 
+        initialVotesCount={profile.votes || 0}
+        profileId={profile.id}
+        avatarUrl={publicAvatarUrl}
+        profileData={profile} // Pass all data
+      />
+    </div>
   );
 }
