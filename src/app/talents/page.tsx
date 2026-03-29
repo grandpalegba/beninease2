@@ -19,14 +19,13 @@ function TalentsList() {
   useEffect(() => {
     const fetchTalents = async () => {
       try {
-        // Interrogation de la table public.profiles filtrée pour les talents (candidats/ambassadeurs)
+        // Interrogation de la table public.talents sans aucun filtre de rôle
         const { data, error } = await supabase
-          .from('profiles')
-          .select('id, slug, prenom, nom, category, univers, categorie, avatar_url, votes, bio, role')
-          .or('role.eq.candidat,role.eq.ambassadeur,role.eq.candidate,role.eq.talent,role.eq.partenaire,role.eq.jury')
+          .from('talents')
+          .select('id, slug, prenom, nom, category, avatar_url, votes, bio')
           .order('votes', { ascending: false });
 
-        console.log("Données reçues de la table profiles (talents):", data);
+        console.log("Données reçues de la table talents:", data);
 
         if (error) throw error;
         if (data) setTalents(data as Talent[]);
@@ -80,8 +79,7 @@ function TalentsList() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {talents.map((talent) => {
-          const fullName = `${talent.prenom || ''} ${talent.nom || ''}`;
-          const category = talent.categorie || talent.univers || talent.category || talent.role || "Talent";
+          const fullName = `${talent.prenom} ${talent.nom}`;
           let imageUrl = talent.avatar_url || "";
           
           if (!imageUrl) {
@@ -124,7 +122,7 @@ function TalentsList() {
                   {fullName}
                 </h2>
                 <p className="font-sans text-black text-sm mt-1 truncate uppercase tracking-wider font-bold">
-                  {category}
+                  {talent.category}
                 </p>
               </div>
             </Link>

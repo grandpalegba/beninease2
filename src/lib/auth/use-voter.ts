@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import type { VoterSession, UserRole } from "@/types";
 
 export function useVoter() {
   const [session, setSession] = useState<VoterSession | null>(null);
   const [loading, setLoading] = useState(true);
-  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
+  const supabase = createSupabaseBrowserClient();
 
   useEffect(() => {
     // Load from localStorage
@@ -56,13 +56,13 @@ export function useVoter() {
   }, []);
 
   const checkHasVoted = useCallback(async (candidateId: string) => {
-    if (!session?.voter_id) return false;
+    if (!session?.whatsapp) return false;
     
     try {
       const { data, error } = await supabase
-        .from("votes")
+        .from("votes_records")
         .select("id")
-        .eq("voter_id", session.voter_id)
+        .eq("voter_whatsapp", session.whatsapp)
         .eq("candidate_id", candidateId)
         .maybeSingle();
 
@@ -80,6 +80,6 @@ export function useVoter() {
     login,
     logout,
     checkHasVoted,
-    isAuthenticated: !!session?.voter_id,
+    isAuthenticated: !!session?.whatsapp,
   };
 }

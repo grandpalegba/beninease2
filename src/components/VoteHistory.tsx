@@ -4,20 +4,20 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Heart, Calendar, ArrowRight } from "lucide-react";
-import { getVotesByUserId } from "@/lib/supabase/queries";
+import { getVotesByUser } from "@/lib/supabase/queries";
 
 interface VoteHistoryProps {
-  voterId: string;
+  voterWhatsapp: string;
 }
 
-export function VoteHistory({ voterId }: VoteHistoryProps) {
+export function VoteHistory({ voterWhatsapp }: VoteHistoryProps) {
   const [votes, setVotes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadVotes() {
       try {
-        const data = await getVotesByUserId(voterId);
+        const data = await getVotesByUser(voterWhatsapp);
         setVotes(data || []);
       } catch (err) {
         console.error("Error loading votes:", err);
@@ -26,7 +26,7 @@ export function VoteHistory({ voterId }: VoteHistoryProps) {
       }
     }
     loadVotes();
-  }, [voterId]);
+  }, [voterWhatsapp]);
 
   if (loading) return <div className="animate-pulse h-40 bg-gray-100 rounded-2xl" />;
 
@@ -67,7 +67,7 @@ export function VoteHistory({ voterId }: VoteHistoryProps) {
               </h4>
               <div className="flex items-center gap-2 text-[10px] text-gray-400 uppercase tracking-widest font-bold">
                 <Calendar className="w-3 h-3" />
-                {new Date(vote.created_at).toLocaleDateString()}
+                {new Date(vote.vote_date).toLocaleDateString()}
               </div>
             </div>
             <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-[#008751] transition-colors" />

@@ -6,23 +6,22 @@ import type { Talent } from "@/types";
 export default async function TalentSwipePage({
   searchParams,
 }: {
-  searchParams: Promise<{ slug?: string }>;
+  searchParams: { slug?: string };
 }) {
   const supabase = await createSupabaseServerClient();
   
-  // Fetch all talents from profiles table
-  const resolvedParams = await searchParams;
-  const initialSlug = resolvedParams.slug;
-
+  // Fetch all talents for the swiper
   const { data: talents, error } = await supabase
-    .from("profiles")
-    .select("id, slug, prenom, nom, category, univers, categorie, avatar_url, votes, bio, role")
-    .or('role.eq.candidat,role.eq.ambassadeur,role.eq.candidate,role.eq.talent,role.eq.partenaire,role.eq.jury')
+    .from("talents")
+    .select("id, slug, prenom, nom, category, avatar_url, votes, bio")
     .order("votes", { ascending: false });
 
   if (error || !talents || talents.length === 0) {
     notFound();
   }
+
+  const resolvedParams = await searchParams;
+  const initialSlug = resolvedParams.slug;
 
   return (
     <CandidateSwiper 

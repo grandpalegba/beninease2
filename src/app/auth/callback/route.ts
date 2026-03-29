@@ -22,8 +22,10 @@ export async function GET(request: Request) {
 
       if (role === 'votant') {
         return NextResponse.redirect(`${origin}/dashboard/votant`);
-      } else if (role === 'candidat' || role === 'ambassadeur') {
-        return NextResponse.redirect(`${origin}/dashboard/talent`);
+      } else if (role === 'candidat') {
+        return NextResponse.redirect(`${origin}/dashboard/candidat`);
+      } else if (role === 'ambassadeur') {
+        return NextResponse.redirect(`${origin}/dashboard/ambassadeur`);
       } else if (role === 'admin') {
         return NextResponse.redirect(`${origin}/admin`);
       }

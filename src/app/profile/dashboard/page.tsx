@@ -74,14 +74,9 @@ export default function DashboardPage() {
   };
 
   const handleLogout = async () => {
-    try {
-      setLoading(true);
-      await supabase.auth.signOut();
-      window.location.href = '/';
-    } catch (error) {
-      console.error("Error signing out:", error);
-      setLoading(false);
-    }
+    await supabase.auth.signOut();
+    router.push("/");
+    router.refresh();
   };
 
   if (loading) {
@@ -166,7 +161,7 @@ export default function DashboardPage() {
                 <div className="w-8 h-[1px] bg-[#008751]/30" />
                 Historique des soutiens
               </h3>
-              <VoteHistory voterId={profile.id} />
+              <VoteHistory voterWhatsapp={profile.id} />
             </section>
           </div>
         </div>

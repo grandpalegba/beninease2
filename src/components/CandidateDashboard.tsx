@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from 'react'; 
-import { Lock, Trash2, Upload, Mail, MessageSquare, ChevronRight, CheckCircle2, ExternalLink, Loader2, Award, Heart, TrendingUp, User, Settings } from 'lucide-react'; 
-import Link from 'next/link';
+import { Lock, Trash2, Upload, Mail, MessageSquare, ChevronRight, CheckCircle2, ExternalLink, Loader2, Award, Heart, TrendingUp, User } from 'lucide-react'; 
 import { VIDEO_STEPS } from '@/lib/constants/video-steps'; 
 import { createSupabaseBrowserClient } from '@/lib/supabase/client';
 import type { Profile } from '@/types';
@@ -29,7 +28,7 @@ export default function CandidateDashboard({ profile }: CandidateDashboardProps)
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [talentStats, setTalentStats] = useState<any>(null);
-  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
+  const supabase = createSupabaseBrowserClient();
   
   // Logique d'activation : Seul l'onglet 1 est ouvert pour les 'candidat' 
   const isAmbassadeur = profile.role === 'ambassadeur' || profile.role === 'admin'; 
@@ -45,53 +44,36 @@ export default function CandidateDashboard({ profile }: CandidateDashboardProps)
   }, [profile.id]);
 
   const fetchTalentStats = async () => {
-    try {
-      // Use profiles as the single source of truth
-      const { data: talentData, error: talentError } = await supabase
-        .from('profiles')
-        .select('votes, category')
-        .eq('id', profile.id)
-        .single();
+    // We assume there's a table or view that gives us total votes and rank
+    const { data: talentData } = await supabase
+      .from('talents')
+      .select('votes, category')
+      .eq('id', profile.id)
+      .single();
 
-      if (talentError) throw talentError;
+    if (talentData) {
+      // Fetch rank in category
+      const { data: rankData } = await supabase
+        .from('talents')
+        .select('id, votes')
+        .eq('category', talentData.category)
+        .order('votes', { ascending: false });
 
-      if (talentData) {
-        // Fetch rank in category
-        const { data: rankData, error: rankError } = await supabase
-          .from('profiles')
-          .select('id, votes')
-          .eq('category', talentData.category)
-          .or('role.eq.candidat,role.eq.ambassadeur,role.eq.candidate,role.eq.talent,role.eq.partenaire,role.eq.jury')
-          .order('votes', { ascending: false });
-
-        if (rankError) throw rankError;
-
-        const rank = rankData ? rankData.findIndex(t => t.id === profile.id) + 1 : 0;
-        setTalentStats({ votes: talentData.votes || 0, rank, category: talentData.category });
-      }
-    } catch (err) {
-      console.error("Error fetching talent stats:", err);
-      // Set default stats on error to avoid infinite loading
-      setTalentStats({ votes: 0, rank: 0, category: profile.category || 'Non définie' });
+      const rank = rankData ? rankData.findIndex(t => t.id === profile.id) + 1 : 0;
+      setTalentStats({ votes: talentData.votes || 0, rank, category: talentData.category });
     }
   };
 
   const fetchMessages = async () => {
-    try {
-      setLoadingMessages(true);
-      const { data, error } = await supabase
-        .from('messages')
-        .select('*')
-        .eq('receiver_id', profile.id)
-        .order('created_at', { ascending: false });
+    setLoadingMessages(true);
+    const { data, error } = await supabase
+      .from('messages')
+      .select('*')
+      .eq('receiver_id', profile.id)
+      .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      if (data) setMessages(data);
-    } catch (err) {
-      console.error("Error fetching messages:", err);
-    } finally {
-      setLoadingMessages(false);
-    }
+    if (data) setMessages(data);
+    setLoadingMessages(false);
   };
 
   const markAsRead = async (messageId: string) => {
@@ -150,23 +132,6 @@ export default function CandidateDashboard({ profile }: CandidateDashboardProps)
           <p className="text-sm font-bold text-[#008751] bg-[#008751]/5 px-4 py-2 rounded-full inline-block">
             {`${profile.prenom || ''} ${profile.nom || ''}`.trim() || "Profil sans nom"}
           </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 mt-6">
-            <Link
-              href="/dashboard/votant"
-              className="flex items-center justify-center gap-2 px-6 py-3 bg-white border border-[#E9B113] text-[#E9B113] rounded-full font-bold text-sm hover:bg-[#E9B113]/5 transition-all shadow-sm group"
-            >
-              <Heart className="w-4 h-4 group-hover:fill-[#E9B113] transition-all" />
-              Accéder à l'Espace Vote
-            </Link>
-            <button 
-              onClick={() => window.location.href = '/settings'}
-              className="flex items-center justify-center gap-2 px-6 py-3 bg-white border border-gray-200 text-gray-600 rounded-full font-bold text-sm hover:bg-gray-50 transition-all shadow-sm"
-            >
-              <Settings className="w-4 h-4" />
-              Modifier le profil
-            </button>
-          </div>
         </div>
 
         {/* Stats Cards Quick View */}

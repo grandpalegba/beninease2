@@ -36,9 +36,9 @@ export default function SupportedTalentsPage() {
 
     const fetchSupportedTalents = async () => {
       try {
-        // Fetch votes for this user and join with profiles
+        // Fetch votes_records for this user and join with profiles
         const { data, error } = await supabase
-          .from("votes")
+          .from("votes_records")
           .select(`
             created_at,
             profiles:candidate_id (
@@ -50,7 +50,7 @@ export default function SupportedTalentsPage() {
               avatar_url
             )
           `)
-          .eq("voter_id", session?.voter_id)
+          .eq("voter_whatsapp", session?.whatsapp)
           .order("created_at", { ascending: false });
 
         if (error) throw error;

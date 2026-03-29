@@ -17,11 +17,8 @@ type Profile = {
   prenom: string | null;
   nom: string | null;
   category: string | null;
-  univers: string | null;
-  categorie: string | null;
   votes: number;
-  avatar_url: string;
-  role: string | null;
+  avatar_url: string; // Using avatar_url from Supabase
 };
 
 function RankingList() {
@@ -35,8 +32,9 @@ function RankingList() {
       setLoading(true);
       const { data } = await supabase
         .from('profiles')
-        .select('id, slug, prenom, nom, category, univers, categorie, avatar_url, votes, role')
-        .or('role.eq.candidat,role.eq.ambassadeur,role.eq.candidate,role.eq.talent,role.eq.partenaire,role.eq.jury')
+        .select('id, slug, prenom, nom, category, votes, avatar_url')
+        .not('prenom', 'is', null)
+        .not('nom', 'is', null)
         .order('votes', { ascending: false })
         .order('nom', { ascending: true })
         .limit(16);
@@ -83,8 +81,7 @@ function RankingList() {
         {profiles.map((talent, index) => {
           const rankLabel = index === 0 ? "1er" : `${index + 1}e`;
           const isTop4 = index < 4;
-          const fullName = `${talent.prenom || ''} ${talent.nom || ''}`;
-          const category = talent.categorie || talent.univers || talent.category || "Talent";
+          const fullName = `${talent.prenom} ${talent.nom}`;
           
           return (
             <Link 
@@ -116,7 +113,7 @@ function RankingList() {
                   {fullName}
                 </h3>
                 <p className="text-xs md:text-sm text-[#004d3d] font-display font-bold uppercase tracking-widest mt-0.5">
-                  {category}
+                  {talent.category}
                 </p>
               </div>
 

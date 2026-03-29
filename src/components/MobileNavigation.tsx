@@ -51,17 +51,6 @@ const MobileNavigation = () => {
     return () => { document.body.style.overflow = "unset"; };
   }, [isOpen]);
 
-  const handleSignOut = async () => {
-    try {
-      logout(); // Custom voter logic logout
-      await supabase.auth.signOut();
-      setIsOpen(false);
-      window.location.href = '/';
-    } catch (error) {
-      console.error("Error signing out:", error);
-    }
-  };
-
   const toggleMenu = () => setIsOpen(!isOpen);
 
   const menuLinkClasses = "font-display text-2xl font-bold text-[#1A1A1A] hover:text-[#006B3F] transition-colors flex items-center gap-4 w-full py-2";
@@ -72,6 +61,15 @@ const MobileNavigation = () => {
       <header className="fixed top-0 left-0 right-0 z-[60] bg-white/95 backdrop-blur-md border-b border-black/5 h-16 flex items-center md:hidden">
         <div className="container flex items-center justify-between px-6">
           <Link href="/" className="flex items-center gap-2 group" onClick={() => setIsOpen(false)}>
+            <div className="relative h-8 w-8">
+              <Image
+                src="/images/logo.png"
+                alt="Emblème Beninease"
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
             <span className="font-display text-xl font-bold text-[#006B3F]">
               Beninease
             </span>
@@ -135,7 +133,7 @@ const MobileNavigation = () => {
                     onClick={() => setIsOpen(false)}
                     className="w-full py-4 rounded-full bg-[#F9F9F7] text-[#1A1A1A] font-display text-lg font-bold shadow-sm flex items-center justify-center border border-gray-100"
                   >
-                    Voter / Se connecter
+                    Se connecter
                   </Link>
                   <Link
                     href="/postuler"
@@ -157,20 +155,23 @@ const MobileNavigation = () => {
                 <Link href="/classement" onClick={() => setIsOpen(false)} className={menuLinkClasses}>
                   <Trophy size={24} className="text-[#006B3F]" /> Classement
                 </Link>
+                <Link href="/univers" onClick={() => setIsOpen(false)} className={menuLinkClasses}>
+                  <Star size={24} className="text-[#006B3F]" /> Univers
+                </Link>
               </nav>
 
               {/* 3. Settings & Logout (Bottom) */}
               {user && (
                 <div className="mt-auto space-y-4 pt-6">
                   <Link
-                    href="/settings"
+                    href="/profile/edit"
                     onClick={() => setIsOpen(false)}
                     className="flex items-center gap-3 text-gray-500 font-bold text-sm hover:text-[#006B3F] transition-colors"
                   >
                     <Settings size={18} /> Paramètres du compte
                   </Link>
                   <button
-                    onClick={handleSignOut}
+                    onClick={() => { logout(); supabase.auth.signOut(); setIsOpen(false); }}
                     className="flex items-center gap-3 text-red-500 font-bold text-sm hover:text-red-600 transition-colors w-full text-left"
                   >
                     <LogOut size={18} /> Déconnexion

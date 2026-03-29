@@ -28,33 +28,6 @@ const Header = () => {
     return calculateVoterStatus(userStats.unique_candidates_voted || 0, userStats.unique_universes_voted || 0);
   }, [userStats]);
 
-  // Sync with user session on mount and when dropdown opens
-  const syncUserData = async (authUser: User) => {
-    try {
-      // Fetch profile
-      const { data: profileData, error: profileError } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", authUser.id)
-        .maybeSingle();
-      
-      if (profileError) console.error("Error fetching profile in Header:", profileError);
-      setProfile(profileData);
-
-      // Fetch user stats for grade
-      const { data: statsData, error: statsError } = await supabase
-        .from("user_stats")
-        .select("*")
-        .eq("voter_id", authUser.id)
-        .maybeSingle();
-      
-      if (statsError) console.error("Error fetching stats in Header:", statsError);
-      setUserStats(statsData);
-    } catch (err) {
-      console.error("Critical error in syncUserData:", err);
-    }
-  };
-
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -72,42 +45,58 @@ const Header = () => {
     
     // Check initial session
     const checkUser = async () => {
-      try {
-        const { data: { user: initialUser }, error: userError } = await supabase.auth.getUser();
-        if (userError) throw userError;
-        
-        setUser(initialUser);
-        
-        if (initialUser) {
-          await syncUserData(initialUser);
-        }
-      } catch (err) {
-        console.error("Header checkUser error:", err);
-      } finally {
-        setLoading(false);
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+      
+      if (user) {
+        // Fetch profile
+        const { data: profileData } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", user.id)
+          .single();
+        setProfile(profileData);
+
+        // Fetch user stats for grade
+        const { data: statsData } = await supabase
+          .from("user_stats")
+          .select("*")
+          .eq("voter_id", user.id)
+          .single();
+        setUserStats(statsData);
       }
+      
+      setLoading(false);
     };
     checkUser();
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      try {
-        const currentUser = session?.user ?? null;
-        setUser(currentUser);
-        
-        if (currentUser) {
-          await syncUserData(currentUser);
-        } else {
-          setProfile(null);
-          setUserStats(null);
-        }
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+      
+      if (currentUser) {
+        const { data: profileData } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", currentUser.id)
+          .single();
+        setProfile(profileData);
 
-        if (event === 'SIGNED_OUT') {
-          router.push('/');
-          router.refresh();
-        }
-      } catch (err) {
-        console.error("Auth change error in Header:", err);
+        const { data: statsData } = await supabase
+          .from("user_stats")
+          .select("*")
+          .eq("voter_id", currentUser.id)
+          .single();
+        setUserStats(statsData);
+      } else {
+        setProfile(null);
+        setUserStats(null);
+      }
+
+      if (event === 'SIGNED_OUT') {
+        router.push('/');
+        router.refresh();
       }
     });
 
@@ -118,25 +107,8 @@ const Header = () => {
   }, [supabase, router]);
 
   const handleSignOut = async () => {
-    try {
-      setLoading(true);
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      
-      // Clear any potential local storage or session state if needed
-      // (useVoter might handle its own, but we can be explicit here)
-      
-      // Redirect to home and refresh
-      router.push('/');
-      router.refresh();
-      
-      // Force a full reload to clear all states if router.refresh isn't enough
-      window.location.href = '/';
-    } catch (error) {
-      console.error("Error signing out:", error);
-    } finally {
-      setLoading(false);
-    }
+    await supabase.auth.signOut();
+    router.refresh();
   };
 
   const navLinkClasses = "text-sm font-bold text-[#1A1A1A] hover:text-[#006B3F] transition-colors font-display tracking-wide";
@@ -144,11 +116,20 @@ const Header = () => {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 hidden md:block ${
-        scrolled ? "bg-white shadow-sm py-3" : "bg-white py-5"
+        scrolled ? "bg-white/95 backdrop-blur-md shadow-sm py-3" : "bg-white py-5"
       }`}
     >
       <div className="container max-w-7xl mx-auto flex items-center justify-between px-6">
         <Link href="/" className="flex items-center gap-3 group">
+          <div className="relative h-10 w-10 transition-transform group-hover:scale-110 active:scale-95">
+            <Image
+              src="/images/logo.png"
+              alt="Emblème Beninease"
+              fill
+              className="object-contain"
+              priority
+            />
+          </div>
           <span
             className="font-display text-2xl font-bold text-[#006B3F]"
             style={{ letterSpacing: "0.12em" }}
@@ -164,6 +145,9 @@ const Header = () => {
             </Link>
             <Link href="/classement" className={navLinkClasses}>
               Classement
+            </Link>
+            <Link href="/univers" className={navLinkClasses}>
+              Univers
             </Link>
           </nav>
 
@@ -222,11 +206,10 @@ const Header = () => {
                           </div>
                         </div>
                         
-                        {/* Lien vers le Dashboard principal (selon le rôle) */}
                         <Link
                           href={
                             profile?.role === 'admin' ? '/admin' :
-                            (profile?.role === 'candidat' || profile?.role === 'ambassadeur') ? '/dashboard/talent' :
+                            (profile?.role === 'candidat' || profile?.role === 'ambassadeur') ? '/profile/dashboard' :
                             '/dashboard/votant'
                           }
                           onClick={() => setShowDropdown(false)}
@@ -235,25 +218,11 @@ const Header = () => {
                           <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-[#006B3F]/10 transition-colors">
                             <LayoutDashboard className="w-4 h-4" />
                           </div>
-                          {profile?.role === 'candidat' || profile?.role === 'ambassadeur' ? '📊 Dashboard Talent' : '📊 Mon Dashboard'}
+                          📊 Mon Dashboard
                         </Link>
-
-                        {/* Lien additionnel pour l'espace vote si c'est un talent */}
-                        {(profile?.role === 'candidat' || profile?.role === 'ambassadeur') && (
-                          <Link
-                            href="/dashboard/votant"
-                            onClick={() => setShowDropdown(false)}
-                            className="flex items-center gap-4 px-6 py-3 text-sm font-bold text-gray-700 hover:bg-[#E9B113]/5 hover:text-[#E9B113] transition-all group"
-                          >
-                            <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-[#E9B113]/10 transition-colors">
-                              <Heart className="w-4 h-4" />
-                            </div>
-                            🗳️ Espace Vote
-                          </Link>
-                        )}
                         
                         <Link
-                          href="/settings"
+                          href="/profile/edit"
                           onClick={() => setShowDropdown(false)}
                           className="flex items-center gap-4 px-6 py-3 text-sm font-bold text-gray-700 hover:bg-[#006B3F]/5 hover:text-[#006B3F] transition-all group"
                         >
@@ -286,7 +255,7 @@ const Header = () => {
                       href="/login"
                       className="text-sm font-bold text-[#1A1A1A] hover:text-[#006B3F] transition-colors font-display tracking-wide"
                     >
-                      Voter / Se connecter
+                      Se connecter
                     </Link>
                     <Link
                       href="/postuler"

@@ -1,70 +1,105 @@
 import { NextResponse, type NextRequest } from "next/server";
+import type { PublicUserRow } from "@/lib/auth/types";
+import { getHomePathForUser } from "@/lib/auth/routes";
 import { createSupabaseMiddlewareClient } from "@/lib/supabase/middleware";
 
-/**
- * Middleware principal pour la gestion des sessions et de la protection des routes.
- */
 export async function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
 
-  // 1. Refresh de la session Supabase
-  const { supabase, response } = await createSupabaseMiddlewareClient(request);
+  // --- ACCÈS PUBLIC ---
+  // On autorise immédiatement l'accès aux talents, au classement et aux images OG pour les robots et visiteurs
+  // Cette exception est impérative pour que les réseaux sociaux (WhatsApp, Facebook) voient les métadonnées.
+  if (
+    pathname.startsWith("/talents") || 
+    pathname.startsWith("/classement") || 
+    pathname.startsWith("/api/og")
+  ) {
+    return NextResponse.next();
+  }
 
-  // 2. Vérification de la session
-  const { data: { user } } = await supabase.auth.getUser();
+  const { supabase, response } = createSupabaseMiddlewareClient(request);
 
-  // 3. --- ROUTES PROTÉGÉES ---
-  
-  // Admin Area
-  if (pathname.startsWith("/admin")) {
-    if (!user) {
+  // Utilisation de getSession pour une vérification rapide de la session
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  const user = session?.user;
+
+  let profile: PublicUserRow | null = null;
+  if (user) {
+    const { data } = await supabase
+      .from("users")
+      .select("id, role, is_approved")
+      .eq("id", user.id)
+      .maybeSingle();
+    profile = (data as PublicUserRow | null) ?? null;
+  }
+
+  const isHome = pathname === "/";
+  const isLogin = pathname === "/login";
+  const isPending = pathname === "/pending-approval";
+  const isAdminArea = pathname.startsWith("/admin");
+  const isJuryArea = pathname.startsWith("/jury/dashboard");
+  const isProfileArea = pathname.startsWith("/profile");
+
+  // Redirection si non connecté sur les zones protégées
+  if (!user) {
+    if (isLogin) return response;
+    if (isAdminArea || isJuryArea || isProfileArea || isPending) {
       const url = request.nextUrl.clone();
       url.pathname = "/login";
-      url.searchParams.set("next", pathname);
+      url.searchParams.set("next", `${pathname}${search}`);
       return NextResponse.redirect(url);
     }
-    
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
-      .single();
-      
-    if (profile?.role !== "admin") {
-      return NextResponse.redirect(new URL("/", request.url));
+    return response;
+  }
+
+  // Utilisateur connecté mais profil manquant
+  if (!profile) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    url.searchParams.set("error", "missing_profile");
+    return NextResponse.redirect(url);
+  }
+
+  const home = getHomePathForUser(profile);
+
+  if (isHome) {
+    return NextResponse.redirect(new URL(home, request.url));
+  }
+
+  if (isLogin) {
+    return NextResponse.redirect(new URL(home, request.url));
+  }
+
+  if (isAdminArea && profile.role !== "admin") {
+    return NextResponse.redirect(new URL(home, request.url));
+  }
+
+  if (isJuryArea) {
+    if (profile.role !== "jury") {
+      return NextResponse.redirect(new URL(home, request.url));
+    }
+    if (!profile.is_approved) {
+      return NextResponse.redirect(new URL("/pending-approval", request.url));
     }
   }
 
-  // Dashboard Area (Talent & Votant)
-  if (pathname.startsWith("/dashboard")) {
-    if (!user) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/login";
-      url.searchParams.set("next", pathname);
-      return NextResponse.redirect(url);
-    }
+  if (isProfileArea && profile.role !== "candidate") {
+    return NextResponse.redirect(new URL(home, request.url));
   }
 
-  // Settings Area
-  if (pathname.startsWith("/settings")) {
-    if (!user) {
-      return NextResponse.redirect(new URL("/login", request.url));
+  if (isPending) {
+    if (profile.role === "admin") {
+      return NextResponse.redirect(new URL("/admin/dashboard", request.url));
     }
-  }
-
-  // 4. --- LOGIQUE DE REDIRECTION INTELLIGENTE ---
-  // Si l'utilisateur est connecté et va sur /login, on le redirige vers son dashboard
-  if (pathname === "/login" && user) {
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
-      .single();
-      
-    const role = profile?.role || 'votant';
-    if (role === 'admin') return NextResponse.redirect(new URL("/admin", request.url));
-    if (role === 'candidat' || role === 'ambassadeur') return NextResponse.redirect(new URL("/dashboard/talent", request.url));
-    return NextResponse.redirect(new URL("/dashboard/votant", request.url));
+    if (profile.role === "candidate") {
+      return NextResponse.redirect(new URL("/profile/edit", request.url));
+    }
+    if (profile.role === "jury" && profile.is_approved) {
+      return NextResponse.redirect(new URL("/jury/dashboard", request.url));
+    }
   }
 
   return response;
@@ -77,7 +112,7 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * - public (public files like logos)
+     * - public (public files like images)
      */
     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],

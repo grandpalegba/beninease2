@@ -10,15 +10,12 @@ export interface VideoSchema {
 export interface Talent {
   id: string;
   slug: string;
-  prenom: string | null;
-  nom: string | null;
+  prenom: string;
+  nom: string;
   category: string;
-  categorie?: string;
-  univers?: string;
   bio: string | null;
   avatar_url: string | null;
   votes: number;
-  role?: string;
 }
 
 export interface Profile extends VideoSchema {
@@ -27,23 +24,18 @@ export interface Profile extends VideoSchema {
   prenom: string | null;
   nom: string | null;
   category: string;
-  categorie?: string;
-  univers?: string;
   avatar_url: string | null;
   votes: number;
   role: UserRole;
   type: string | null;
   is_validated: boolean;
   city: string | null;
-  whatsapp?: string | null;
   whatsapp_number: string | null;
   instagram_url: string | null;
   tiktok_url: string | null;
   description: string | null;
   title: string | null;
   updated_at: string | null;
-  bio?: string | null;
-  full_name?: string | null;
 }
 
 export interface VoterSession {

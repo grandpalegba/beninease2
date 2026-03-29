@@ -40,112 +40,60 @@ export default function VoterDashboard() {
   const [selectedCategory, setSelectedCategory] = useState<string>("Toutes les catégories");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const [error, setError] = useState<string | null>(null);
-
   useEffect(() => {
-    let isMounted = true;
-    const timeoutId = setTimeout(() => {
-      if (isMounted && loading) {
-        setError("Le chargement prend plus de temps que prévu. Veuillez rafraîchir la page.");
-        setLoading(false);
-      }
-    }, 8000);
-
     async function loadData() {
-      try {
-        console.log("VoterDashboard: starting loadData");
-        const { data: { user }, error: authError } = await supabase.auth.getUser();
-        if (authError) throw authError;
-        
-        if (!user) {
-          console.log("VoterDashboard: no user found, redirecting to login");
-          router.push("/login");
-          return;
-        }
-
-        console.log("VoterDashboard: user found", user.id);
-
-        // Load profile with prenom/nom
-        const { data: profileData, error: profileError } = await supabase
-          .from("profiles")
-          .select("id, role, prenom, nom, full_name, avatar_url, whatsapp_number")
-          .eq("id", user.id)
-          .maybeSingle();
-        
-        if (profileError) {
-          console.error("VoterDashboard: profile query error", profileError);
-          throw profileError;
-        }
-        
-        if (!profileData) {
-          console.log("VoterDashboard: no profile found for user, redirecting to home");
-          router.push("/");
-          return;
-        }
-        
-        if (isMounted) setProfile(profileData);
-
-        // Security check
-        const allowedRoles = ['votant', 'candidat', 'ambassadeur', 'admin', 'candidate', 'talent', 'partenaire', 'jury'];
-        if (!allowedRoles.includes(profileData.role)) {
-          console.log("VoterDashboard: role not allowed", profileData.role);
-          router.push("/");
-          return;
-        }
-
-        // Load stats with immediate fallback
-        console.log("VoterDashboard: loading stats");
-        const { data: statsData, error: statsError } = await supabase
-          .from("user_stats")
-          .select("*")
-          .eq("voter_id", user.id)
-          .maybeSingle();
-        
-        if (isMounted) {
-          setUserStats(statsData || { 
-            unique_candidates_voted: 0, 
-            unique_categories_voted: 0, 
-            unique_universes_voted: 0 
-          });
-        }
-
-        // Load unique votes
-        console.log("VoterDashboard: loading votes");
-        const { data: votesData, error: votesError } = await supabase
-          .from("votes")
-          .select(`
-            id,
-            created_at,
-            candidate_id,
-            profiles:candidate_id (
-              id,
-              slug,
-              prenom,
-              nom,
-              categorie,
-              univers,
-              avatar_url
-            )
-          `)
-          .eq("voter_id", user.id)
-          .order("created_at", { ascending: false });
-
-        if (votesError) console.error("VoterDashboard: votes query error", votesError);
-        
-        if (isMounted && votesData) {
-          setVotes(votesData);
-        }
-      } catch (err: any) {
-        console.error("VoterDashboard Load Error:", err);
-        if (isMounted) setError(err.message || "Impossible de charger vos données.");
-      } finally {
-        if (isMounted) setLoading(false);
-        clearTimeout(timeoutId);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        router.push("/login");
+        return;
       }
+
+      // Load profile
+      const { data: profileData } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+      
+      setProfile(profileData);
+
+      // Load stats from user_stats view
+      const { data: statsData } = await supabase
+        .from("user_stats")
+        .select("*")
+        .eq("voter_id", user.id)
+        .single();
+      
+      setUserStats(statsData);
+
+      // Load unique votes
+      const { data: votesData, error: votesError } = await supabase
+        .from("votes_records")
+        .select(`
+          id,
+          vote_date,
+          candidate_id,
+          voter_id,
+          talents (
+            id,
+            slug,
+            prenom,
+            nom,
+            category,
+            avatar_url
+          )
+        `)
+        .eq("voter_id", user.id)
+        .order("vote_date", { ascending: false });
+
+      if (votesData) {
+        setVotes(votesData);
+      }
+      
+      setLoading(false);
     }
 
     loadData();
-    return () => { isMounted = false; clearTimeout(timeoutId); };
   }, [supabase, router]);
 
   // Derived stats using user_stats view for reliability
@@ -165,15 +113,14 @@ export default function VoterDashboard() {
   // Filtering logic
   const filteredVotes = useMemo(() => {
     return votes.filter(vote => {
-      const talent = vote.profiles; // Use the aliased profiles
+      const talent = vote.talents;
       if (!talent) return false;
       
-      const category = talent.categorie || talent.univers || talent.category;
-      const universe = getUniverseFromCategory(category);
-      const fullName = `${talent.prenom || ''} ${talent.nom || ''}`.toLowerCase();
+      const universe = getUniverseFromCategory(talent.category);
+      const fullName = `${talent.prenom} ${talent.nom}`.toLowerCase();
       
       const matchesUniverse = selectedUniverse === "Tous les univers" || universe === selectedUniverse;
-      const matchesCategory = selectedCategory === "Toutes les catégories" || category === selectedCategory;
+      const matchesCategory = selectedCategory === "Toutes les catégories" || talent.category === selectedCategory;
       const matchesSearch = fullName.includes(searchQuery.toLowerCase());
       
       return matchesUniverse && matchesCategory && matchesSearch;
@@ -181,48 +128,14 @@ export default function VoterDashboard() {
   }, [votes, selectedUniverse, selectedCategory, searchQuery]);
 
   const allCategories = useMemo(() => {
-    const cats = new Set<string>();
-    votes.forEach(v => {
-      const cat = v.profiles?.categorie || v.profiles?.univers || v.profiles?.category;
-      if (cat) {
-        const universe = getUniverseFromCategory(cat);
-        if (selectedUniverse === "Tous les univers" || universe === selectedUniverse) {
-          cats.add(cat);
-        }
-      }
-    });
-    return ["Toutes les catégories", ...Array.from(cats).sort()];
-  }, [votes, selectedUniverse]);
+    const cats = new Set(votes.map(v => v.talents?.category).filter(Boolean));
+    return ["Toutes les catégories", ...Array.from(cats) as string[]];
+  }, [votes]);
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F9F9F7]">
-        <div className="text-center space-y-4">
-          <Loader2 className="w-12 h-12 text-[#008751] animate-spin mx-auto" />
-          <p className="text-sm font-bold text-gray-400 uppercase tracking-widest animate-pulse">Chargement de votre espace...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F9F9F7] px-6">
-        <div className="max-w-md w-full bg-white rounded-[40px] p-10 shadow-2xl text-center space-y-6 border border-red-50">
-          <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto">
-            <AlertCircle className="w-10 h-10 text-red-500" />
-          </div>
-          <div className="space-y-2">
-            <h2 className="text-2xl font-display font-bold text-black">Oups !</h2>
-            <p className="text-gray-500 text-sm">{error}</p>
-          </div>
-          <button
-            onClick={() => window.location.reload()}
-            className="w-full py-4 bg-[#008751] text-white rounded-full font-black uppercase tracking-widest text-xs shadow-xl shadow-[#008751]/20 hover:bg-[#006B3F] transition-all active:scale-95"
-          >
-            Réessayer
-          </button>
-        </div>
+        <Loader2 className="w-12 h-12 text-[#008751] animate-spin" />
       </div>
     );
   }
@@ -252,23 +165,13 @@ export default function VoterDashboard() {
           </div>
 
           <div className="grid grid-cols-2 gap-4 w-full md:w-auto">
-            <div className="bg-[#F9F9F7] p-4 rounded-2xl border border-[#F2EDE4] flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#008751]/10 flex items-center justify-center">
-                <Trophy className="w-5 h-5 text-[#008751]" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-2xl font-black text-[#008751]">{stats.totalVotes}</span>
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Talents soutenus</span>
-              </div>
+            <div className="bg-[#F9F9F7] p-4 rounded-2xl border border-[#F2EDE4] text-center">
+              <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Talents soutenus</span>
+              <span className="text-2xl font-bold text-[#008751]">{stats.totalVotes}</span>
             </div>
-            <div className="bg-[#F9F9F7] p-4 rounded-2xl border border-[#F2EDE4] flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#E9B113]/10 flex items-center justify-center">
-                <Globe className="w-5 h-5 text-[#E9B113]" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-2xl font-black text-[#E9B113]">{stats.universeCount}</span>
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Univers</span>
-              </div>
+            <div className="bg-[#F9F9F7] p-4 rounded-2xl border border-[#F2EDE4] text-center">
+              <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Univers explorés</span>
+              <span className="text-2xl font-bold text-[#E9B113]">{stats.universeCount}/16</span>
             </div>
           </div>
         </div>
@@ -377,10 +280,8 @@ export default function VoterDashboard() {
           {filteredVotes.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {filteredVotes.map((vote) => {
-                const talent = vote.profiles;
-                if (!talent) return null;
-                const category = talent.categorie || talent.univers || talent.category || "Talent";
-                const universe = getUniverseFromCategory(category);
+                const talent = vote.talents;
+                const universe = getUniverseFromCategory(talent.category);
                 return (
                   <Link 
                     key={vote.id}
@@ -400,16 +301,13 @@ export default function VoterDashboard() {
                         <span className="text-[9px] font-black uppercase tracking-widest text-[#008751] bg-[#008751]/5 px-2 py-0.5 rounded-full">
                           {universe}
                         </span>
-                        <span className="text-[9px] font-bold uppercase tracking-widest text-gray-400">
-                          • {category}
-                        </span>
                       </div>
                       <h4 className="text-lg font-display font-bold text-black truncate group-hover:text-[#008751] transition-colors">
                         {talent.prenom} {talent.nom}
                       </h4>
                       <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest flex items-center gap-1.5 mt-1">
                         <Calendar className="w-3 h-3" />
-                        Soutenu le {new Date(vote.created_at).toLocaleDateString()}
+                        Soutenu le {new Date(vote.vote_date).toLocaleDateString()}
                       </p>
                     </div>
                     <ArrowRight className="w-5 h-5 text-gray-200 group-hover:text-[#008751] transition-colors" />

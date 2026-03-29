@@ -82,9 +82,6 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
 
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
 
-  const category = useMemo(() => candidate.categorie || candidate.univers || candidate.category || "Talent", [candidate]);
-  const city = useMemo(() => candidate.city || "Bénin", [candidate]);
-
   const handleImageError = (tabName: string) => {
     setImageErrors((prev) => ({ ...prev, [tabName]: true }));
   };
@@ -103,12 +100,12 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
 
   useEffect(() => {
     if (candidate?.slug) {
-      // Subscribe to real-time changes on profiles table
+      // Subscribe to real-time changes
       const channel = supabase
-        .channel(`public:profiles:slug=${candidate.slug}`)
+        .channel(`public:talents:slug=${candidate.slug}`)
         .on(
           'postgres_changes',
-          { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `slug=eq.${candidate.slug}` },
+          { event: 'UPDATE', schema: 'public', table: 'talents', filter: `slug=eq.${candidate.slug}` },
           (payload) => {
             if (payload.new && typeof payload.new.votes === 'number') {
               setVotesCount(payload.new.votes);
@@ -144,19 +141,49 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
     setVoteMessage(null);
 
     try {
-      // Use the cast_vote RPC which handles profile sync, vote record and increment
-      const { data: newVotes, error: voteError } = await supabase.rpc('cast_vote', { p_candidate_id: profileId });
+      // Étape Préventive : S'assurer que le profil existe (Synchronisation forcée)
+      // On utilise un UPSERT pour être certain que la ligne existe dans profiles avant de voter
+      const { error: profileSyncError } = await supabase
+        .from('profiles')
+        .upsert({ 
+          id: voterId, 
+          role: 'votant',
+          full_name: activeUser.user_metadata?.full_name || activeUser.email,
+          avatar_url: activeUser.user_metadata?.avatar_url || activeUser.user_metadata?.picture,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'id' });
 
-      if (voteError) {
-        console.error("Supabase cast_vote Error:", voteError);
-        if (voteError.message?.includes('déjà voté')) {
+      if (profileSyncError) {
+        console.error("Profile Sync Error:", profileSyncError);
+        throw new Error("Impossible de synchroniser votre profil avant le vote.");
+      }
+
+      // Étape A : Insérer le vote dans la table votes (voter_id et candidate_id uniquement)
+      const { error: recordError } = await supabase
+        .from('votes')
+        .insert([
+          { 
+            voter_id: voterId,
+            candidate_id: profileId
+          }
+        ]);
+
+      if (recordError) {
+        console.error("Supabase Vote INSERT Error:", recordError);
+        if (recordError.code === '23505' || recordError.message?.includes('unique')) {
           setVoteMessage({ type: 'error', text: "Vous avez déjà soutenu ce talent !" });
           setHasVoted(true);
-        } else {
-          throw voteError;
+          setIsVoting(false);
+          return;
         }
-        setIsVoting(false);
-        return;
+        throw recordError;
+      }
+
+      // Étape B : Incrémenter votes dans talents (via RPC)
+      const { error: updateError } = await supabase.rpc('increment_votes', { candidate_id: profileId });
+      if (updateError) {
+        console.error("Supabase Vote RPC Increment Error:", updateError);
+        throw updateError;
       }
       
       confetti({
@@ -168,11 +195,7 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
 
       setVoteMessage({ type: 'success', text: "Soutien validé ! Merci." });
       setHasVoted(true);
-      if (typeof newVotes === 'number') {
-        setVotesCount(newVotes);
-      } else {
-        setVotesCount(prev => prev + 1);
-      }
+      setVotesCount(prev => prev + 1);
       
       // Force refresh data for dashboards and leaderboard
       router.refresh();
@@ -258,14 +281,14 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
               </div>
               
               <p className="mt-6 inline-block rounded-full bg-[#008751]/10 px-3 py-1 text-xs font-display font-bold uppercase tracking-wider text-[#008751]">
-                {category}
+                {candidate.category}
               </p>
               <div className="mt-4 flex flex-wrap items-center justify-center md:justify-start gap-6 text-[#8E8E8E] text-[11px] font-medium uppercase tracking-widest">
                 <span className="inline-flex items-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5 text-black" /> {city}, Bénin
+                  <MapPin className="w-3.5 h-3.5 text-black" /> {candidate.city}, Bénin
                 </span>
                 <span className="inline-flex items-center gap-1.5">
-                  <Globe className="w-3.5 h-3.5" /> {candidate.languages || "Français"}
+                  <Globe className="w-3.5 h-3.5" /> {candidate.languages}
                 </span>
               </div>
             </div>
