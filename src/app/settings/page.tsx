@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 
 export default function SettingsPage() {
   const router = useRouter();
-  const supabase = createSupabaseBrowserClient();
+  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   
   const [loading, setLoading] = useState(true);
   const [saving, setLoadingSaving] = useState(false);
@@ -280,7 +280,7 @@ export default function SettingsPage() {
                 <div className="relative group">
                   <input 
                     type="text" 
-                    value={profile?.whatsapp || profile?.whatsapp_number || "Non renseigné"} 
+                    value={profile?.whatsapp || profile?.whatsapp_number || ""} 
                     disabled
                     className="w-full px-6 py-4 rounded-2xl bg-[#F9F9F7] border border-gray-100 font-sans font-bold text-gray-400 cursor-not-allowed pr-12"
                   />

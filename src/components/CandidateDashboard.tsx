@@ -28,7 +28,7 @@ export default function CandidateDashboard({ profile }: CandidateDashboardProps)
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [talentStats, setTalentStats] = useState<any>(null);
-  const supabase = createSupabaseBrowserClient();
+  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   
   // Logique d'activation : Seul l'onglet 1 est ouvert pour les 'candidat' 
   const isAmbassadeur = profile.role === 'ambassadeur' || profile.role === 'admin'; 

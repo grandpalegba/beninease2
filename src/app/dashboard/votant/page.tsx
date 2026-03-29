@@ -124,7 +124,8 @@ export default function VoterDashboard() {
       const talent = vote.profiles; // Use the aliased profiles
       if (!talent) return false;
       
-      const universe = getUniverseFromCategory(talent.category);
+      const category = talent.category || talent.univers || talent.categorie;
+      const universe = getUniverseFromCategory(category);
       const fullName = `${talent.prenom || ''} ${talent.nom || ''}`.toLowerCase();
       
       const matchesUniverse = selectedUniverse === "Tous les univers" || universe === selectedUniverse;

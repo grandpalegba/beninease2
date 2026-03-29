@@ -22,7 +22,7 @@ function TalentsList() {
         // Interrogation de la table public.profiles filtrée pour les talents (candidats/ambassadeurs)
         const { data, error } = await supabase
           .from('profiles')
-          .select('id, slug, prenom, nom, category, avatar_url, votes, bio')
+          .select('id, slug, prenom, nom, category, univers, categorie, avatar_url, votes, bio')
           .or('role.eq.candidat,role.eq.ambassadeur,role.eq.candidate')
           .order('votes', { ascending: false });
 
@@ -80,7 +80,8 @@ function TalentsList() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {talents.map((talent) => {
-          const fullName = `${talent.prenom} ${talent.nom}`;
+          const fullName = `${talent.prenom || ''} ${talent.nom || ''}`;
+          const category = talent.category || talent.univers || talent.categorie || "Talent";
           let imageUrl = talent.avatar_url || "";
           
           if (!imageUrl) {
@@ -123,7 +124,7 @@ function TalentsList() {
                   {fullName}
                 </h2>
                 <p className="font-sans text-black text-sm mt-1 truncate uppercase tracking-wider font-bold">
-                  {talent.category}
+                  {category}
                 </p>
               </div>
             </Link>

@@ -82,6 +82,9 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
 
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
 
+  const category = useMemo(() => candidate.category || candidate.univers || candidate.categorie || "Talent", [candidate]);
+  const city = useMemo(() => candidate.city || "Bénin", [candidate]);
+
   const handleImageError = (tabName: string) => {
     setImageErrors((prev) => ({ ...prev, [tabName]: true }));
   };
@@ -255,14 +258,14 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
               </div>
               
               <p className="mt-6 inline-block rounded-full bg-[#008751]/10 px-3 py-1 text-xs font-display font-bold uppercase tracking-wider text-[#008751]">
-                {candidate.category}
+                {category}
               </p>
               <div className="mt-4 flex flex-wrap items-center justify-center md:justify-start gap-6 text-[#8E8E8E] text-[11px] font-medium uppercase tracking-widest">
                 <span className="inline-flex items-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5 text-black" /> {candidate.city}, Bénin
+                  <MapPin className="w-3.5 h-3.5 text-black" /> {city}, Bénin
                 </span>
                 <span className="inline-flex items-center gap-1.5">
-                  <Globe className="w-3.5 h-3.5" /> {candidate.languages}
+                  <Globe className="w-3.5 h-3.5" /> {candidate.languages || "Français"}
                 </span>
               </div>
             </div>

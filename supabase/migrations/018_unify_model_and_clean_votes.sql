@@ -119,7 +119,7 @@ WITH voter_votes AS (
   SELECT 
     v.voter_id,
     v.candidate_id,
-    p.category
+    COALESCE(p.category, p.univers, p.categorie) as category
   FROM public.votes v
   JOIN public.profiles p ON v.candidate_id = p.id
 )
