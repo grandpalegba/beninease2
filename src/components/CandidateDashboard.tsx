@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useMemo } from 'react'; 
-import { Lock, Trash2, Upload, Mail, MessageSquare, ChevronRight, CheckCircle2, ExternalLink, Loader2, Award, Heart, TrendingUp, User } from 'lucide-react'; 
+import { Lock, Trash2, Upload, Mail, MessageSquare, ChevronRight, CheckCircle2, ExternalLink, Loader2, Award, Heart, TrendingUp, User, Settings } from 'lucide-react'; 
+import Link from 'next/link';
 import { VIDEO_STEPS } from '@/lib/constants/video-steps'; 
 import { createSupabaseBrowserClient } from '@/lib/supabase/client';
 import type { Profile } from '@/types';
@@ -149,6 +150,23 @@ export default function CandidateDashboard({ profile }: CandidateDashboardProps)
           <p className="text-sm font-bold text-[#008751] bg-[#008751]/5 px-4 py-2 rounded-full inline-block">
             {`${profile.prenom || ''} ${profile.nom || ''}`.trim() || "Profil sans nom"}
           </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 mt-6">
+            <Link
+              href="/dashboard/votant"
+              className="flex items-center justify-center gap-2 px-6 py-3 bg-white border border-[#E9B113] text-[#E9B113] rounded-full font-bold text-sm hover:bg-[#E9B113]/5 transition-all shadow-sm group"
+            >
+              <Heart className="w-4 h-4 group-hover:fill-[#E9B113] transition-all" />
+              Accéder à l'Espace Vote
+            </Link>
+            <button 
+              onClick={() => window.location.href = '/settings'}
+              className="flex items-center justify-center gap-2 px-6 py-3 bg-white border border-gray-200 text-gray-600 rounded-full font-bold text-sm hover:bg-gray-50 transition-all shadow-sm"
+            >
+              <Settings className="w-4 h-4" />
+              Modifier le profil
+            </button>
+          </div>
         </div>
 
         {/* Stats Cards Quick View */}

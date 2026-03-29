@@ -35,9 +35,12 @@ export function getNextStatus(currentLevel: number): VoterStatus | null {
 }
 
 export function getUniverseFromCategory(category: string): string {
-  // Match category to its universe
+  // 1. If it's already an universe name, return it
+  if (universes.some(u => u.name === category)) return category;
+
+  // 2. Match sub-category to its universe
   const found = universes.find(u => 
-    u.name === category || u.subs.includes(category)
+    u.subs.some(sub => sub.toLowerCase() === category.toLowerCase())
   );
   return found ? found.name : "Autre";
 }

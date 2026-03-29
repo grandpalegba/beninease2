@@ -96,6 +96,7 @@ TO authenticated
 WITH CHECK (auth.uid() = voter_id);
 
 -- 3. RECREATE RANKING VIEW (based on profiles)
+DROP VIEW IF EXISTS public.rankings CASCADE;
 CREATE OR REPLACE VIEW public.rankings AS
 SELECT
   p.id as candidate_id,
@@ -114,19 +115,22 @@ FROM public.profiles p
 WHERE (p.role = 'candidat' OR p.role = 'ambassadeur' OR p.role = 'candidate') AND p.category IS NOT NULL;
 
 -- 4. USER STATS VIEW (for Dashboard)
+DROP VIEW IF EXISTS public.user_stats CASCADE;
 CREATE OR REPLACE VIEW public.user_stats AS
 WITH voter_votes AS (
   SELECT 
     v.voter_id,
     v.candidate_id,
-    COALESCE(p.category, p.univers, p.categorie) as category
+    COALESCE(p.univers, p.category, p.categorie) as universe,
+    COALESCE(p.category, p.categorie, p.univers) as category
   FROM public.votes v
   JOIN public.profiles p ON v.candidate_id = p.id
 )
 SELECT 
   voter_id,
   COUNT(DISTINCT candidate_id) as unique_candidates_voted,
-  COUNT(DISTINCT category) as unique_categories_voted
+  COUNT(DISTINCT category) as unique_categories_voted,
+  COUNT(DISTINCT universe) as unique_universes_voted
 FROM voter_votes
 GROUP BY voter_id;
 

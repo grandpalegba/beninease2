@@ -211,10 +211,11 @@ const Header = () => {
                           </div>
                         </div>
                         
+                        {/* Lien vers le Dashboard principal (selon le rôle) */}
                         <Link
                           href={
                             profile?.role === 'admin' ? '/admin' :
-                            (profile?.role === 'candidat' || profile?.role === 'ambassadeur') ? '/profile/dashboard' :
+                            (profile?.role === 'candidat' || profile?.role === 'ambassadeur') ? '/dashboard/talent' :
                             '/dashboard/votant'
                           }
                           onClick={() => setShowDropdown(false)}
@@ -223,8 +224,22 @@ const Header = () => {
                           <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-[#006B3F]/10 transition-colors">
                             <LayoutDashboard className="w-4 h-4" />
                           </div>
-                          📊 Mon Dashboard
+                          {profile?.role === 'candidat' || profile?.role === 'ambassadeur' ? '📊 Dashboard Talent' : '📊 Mon Dashboard'}
                         </Link>
+
+                        {/* Lien additionnel pour l'espace vote si c'est un talent */}
+                        {(profile?.role === 'candidat' || profile?.role === 'ambassadeur') && (
+                          <Link
+                            href="/dashboard/votant"
+                            onClick={() => setShowDropdown(false)}
+                            className="flex items-center gap-4 px-6 py-3 text-sm font-bold text-gray-700 hover:bg-[#E9B113]/5 hover:text-[#E9B113] transition-all group"
+                          >
+                            <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-[#E9B113]/10 transition-colors">
+                              <Heart className="w-4 h-4" />
+                            </div>
+                            🗳️ Espace Vote
+                          </Link>
+                        )}
                         
                         <Link
                           href="/settings"

@@ -59,6 +59,14 @@ export default function VoterDashboard() {
         if (profileError) throw profileError;
         setProfile(profileData);
 
+        // Security check: Only allow 'votant', 'candidat', 'ambassadeur' or 'admin'
+        // (A talent can vote, so they should have access to this dashboard)
+        const allowedRoles = ['votant', 'candidat', 'ambassadeur', 'admin', 'candidate'];
+        if (!allowedRoles.includes(profileData.role)) {
+          router.push("/");
+          return;
+        }
+
         // Load stats from user_stats view
         const { data: statsData, error: statsError } = await supabase
           .from("user_stats")
@@ -107,12 +115,12 @@ export default function VoterDashboard() {
   // Derived stats using user_stats view for reliability
   const stats = useMemo(() => {
     const totalVotes = userStats?.unique_candidates_voted || 0;
-    const categoryCount = userStats?.unique_categories_voted || 0;
+    const universeCount = userStats?.unique_universes_voted || 0;
     
     return {
       totalVotes,
-      categoryCount,
-      currentStatus: calculateVoterStatus(totalVotes, categoryCount)
+      universeCount,
+      currentStatus: calculateVoterStatus(totalVotes, universeCount)
     };
   }, [userStats]);
 
@@ -174,13 +182,23 @@ export default function VoterDashboard() {
           </div>
 
           <div className="grid grid-cols-2 gap-4 w-full md:w-auto">
-            <div className="bg-[#F9F9F7] p-4 rounded-2xl border border-[#F2EDE4] text-center">
-              <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Talents soutenus</span>
-              <span className="text-2xl font-black text-[#008751]">{stats.totalVotes}</span>
+            <div className="bg-[#F9F9F7] p-4 rounded-2xl border border-[#F2EDE4] flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-[#008751]/10 flex items-center justify-center">
+                <Trophy className="w-5 h-5 text-[#008751]" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-2xl font-black text-[#008751]">{stats.totalVotes}</span>
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Talents soutenus</span>
+              </div>
             </div>
-            <div className="bg-[#F9F9F7] p-4 rounded-2xl border border-[#F2EDE4] text-center">
-              <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Catégories explorées</span>
-              <span className="text-2xl font-black text-[#E9B113]">{stats.categoryCount}</span>
+            <div className="bg-[#F9F9F7] p-4 rounded-2xl border border-[#F2EDE4] flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-[#E9B113]/10 flex items-center justify-center">
+                <Globe className="w-5 h-5 text-[#E9B113]" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-2xl font-black text-[#E9B113]">{stats.universeCount}</span>
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Univers</span>
+              </div>
             </div>
           </div>
         </div>
@@ -197,8 +215,8 @@ export default function VoterDashboard() {
                 </h3>
                 <p className="text-sm text-gray-500">
                   {stats.totalVotes < nextStatus.minVotes && `Encore ${nextStatus.minVotes - stats.totalVotes} votes `}
-                  {stats.totalVotes < nextStatus.minVotes && stats.categoryCount < nextStatus.minUniverses && "et "}
-                  {stats.categoryCount < nextStatus.minUniverses && `${nextStatus.minUniverses - stats.categoryCount} catégories `}
+                  {stats.totalVotes < nextStatus.minVotes && stats.universeCount < nextStatus.minUniverses && "et "}
+                  {stats.universeCount < nextStatus.minUniverses && `${nextStatus.minUniverses - stats.universeCount} univers `}
                   pour passer au grade supérieur.
                 </p>
               </div>
@@ -225,13 +243,13 @@ export default function VoterDashboard() {
               {nextStatus.minUniverses > 0 && (
                 <div className="space-y-1.5">
                   <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-gray-400">
-                    <span>Diversité des Catégories</span>
-                    <span>{stats.categoryCount} / {nextStatus.minUniverses}</span>
+                    <span>Diversité des Univers</span>
+                    <span>{stats.universeCount} / {nextStatus.minUniverses}</span>
                   </div>
                   <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                     <div 
                       className="h-full bg-[#E9B113] transition-all duration-1000" 
-                      style={{ width: `${Math.min(100, (stats.categoryCount / nextStatus.minUniverses) * 100)}%` }}
+                      style={{ width: `${Math.min(100, (stats.universeCount / nextStatus.minUniverses) * 100)}%` }}
                     />
                   </div>
                 </div>
@@ -290,7 +308,9 @@ export default function VoterDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {filteredVotes.map((vote) => {
                 const talent = vote.profiles;
-                const universe = getUniverseFromCategory(talent.category);
+                if (!talent) return null;
+                const category = talent.category || talent.univers || talent.categorie || "Talent";
+                const universe = getUniverseFromCategory(category);
                 return (
                   <Link 
                     key={vote.id}
@@ -309,6 +329,9 @@ export default function VoterDashboard() {
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-[9px] font-black uppercase tracking-widest text-[#008751] bg-[#008751]/5 px-2 py-0.5 rounded-full">
                           {universe}
+                        </span>
+                        <span className="text-[9px] font-bold uppercase tracking-widest text-gray-400">
+                          • {category}
                         </span>
                       </div>
                       <h4 className="text-lg font-display font-bold text-black truncate group-hover:text-[#008751] transition-colors">
