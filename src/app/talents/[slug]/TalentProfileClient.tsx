@@ -120,23 +120,28 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
     }
   }, [candidate?.slug, supabase]);
 
+  // Share state
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [isCopied, setIsShareCopied] = useState(false);
+
   const handleVote = async () => {
     if (!profileId) return;
 
-    // Phase de test : Redirection vers login si non connecté
-    if (!isAuthenticated) {
+    // Récupération forcée de la session actuelle pour éviter les faux négatifs
+    const { data: { session: currentSession } } = await supabase.auth.getSession();
+    const activeUser = currentSession?.user;
+
+    if (!activeUser) {
       router.push("/login");
       return;
     }
 
-    // Phase de test : On utilise les infos de la session directement
-    const voterId = currentUser?.id; // Use authenticated user ID directly from state
-
+    const voterId = activeUser.id;
     setIsVoting(true);
     setVoteMessage(null);
 
     try {
-      // Étape A : Insérer le vote dans la table votes (nom correct selon les spécifications récentes)
+      // Étape A : Insérer le vote dans la table votes
       const { error: recordError } = await supabase
         .from('votes')
         .insert([
@@ -147,7 +152,6 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
         ]);
 
       if (recordError) {
-        // Gestion erreur : Si doublon (code 23505 ou message spécifique)
         if (recordError.code === '23505' || recordError.message?.includes('unique')) {
           setVoteMessage({ type: 'error', text: "Vous avez déjà soutenu ce talent !" });
           setHasVoted(true);
@@ -157,7 +161,7 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
         throw recordError;
       }
 
-      // Étape B : Si succès, incrémenter votes dans talents (via RPC pour atomicité)
+      // Étape B : Si succès, incrémenter votes dans talents (via RPC)
       const { error: updateError } = await supabase.rpc('increment_votes', { candidate_id: profileId });
       if (updateError) throw updateError;
       
@@ -168,20 +172,12 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
         colors: ["#008751", "#E9B113", "#E8112D"],
       });
 
-      setVoteMessage({ type: 'success', text: "Votre soutien a été enregistré avec succès !" });
+      setVoteMessage({ type: 'success', text: "Soutien validé ! Merci." });
       setHasVoted(true);
-      
-      // Refresh counts locally for instant feedback
       setVotesCount(prev => prev + 1);
       
       // Force refresh data for dashboards and leaderboard
       router.refresh();
-      
-      // Auto-close modal after success
-      setTimeout(() => {
-        setShowVoteModal(false);
-        setVoteMessage(null);
-      }, 3000);
 
     } catch (err) {
       console.error("Erreur lors du vote:", err);
@@ -189,6 +185,31 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
     } finally {
       setIsVoting(false);
     }
+  };
+
+  const handleShare = async () => {
+    const shareData = {
+      title: `Soutenez ${fullName} sur Beninease !`,
+      text: `Je viens de voter pour ${fullName} dans l'univers ${candidate.category}. Rejoignez l'aventure pour choisir nos 256 ambassadeurs !`,
+      url: window.location.href,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        console.log('User cancelled share or error:', err);
+      }
+    } else {
+      // Fallback if Native Share API is not available
+      setShowShareModal(true);
+    }
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setIsShareCopied(true);
+    setTimeout(() => setIsShareCopied(false), 2000);
   };
 
   const fullName = `${candidate.prenom} ${candidate.nom}`;
@@ -356,9 +377,12 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
               {/* 5. Footer & Action Buttons */}
               <div className="mt-8 flex flex-col sm:flex-row gap-4">
                 {hasVoted ? (
-                  <div className="flex-[2] flex items-center justify-center gap-3 rounded-full bg-gray-100 border border-gray-200 px-8 py-5 text-sm font-bold tracking-widest uppercase text-gray-500 cursor-default">
-                    <CheckCircle2 className="w-5 h-5 text-[#008751]" />
-                    Talent soutenu ✅
+                  <div className="flex-[2] flex flex-col items-center justify-center gap-1 rounded-full bg-gray-50 border border-[#008751]/20 px-8 py-5 text-sm font-bold tracking-widest uppercase text-[#008751] cursor-default animate-in fade-in duration-500">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-5 h-5" />
+                      Soutien validé ✅
+                    </div>
+                    <span className="text-[10px] text-gray-400 normal-case font-medium">Merci pour votre participation</span>
                   </div>
                 ) : (
                   <button
@@ -379,16 +403,24 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
                 )}
                 <button
                   type="button"
-                  onClick={() => {
-                    const message = `Soutenez ${candidate.prenom} ${candidate.nom} pour devenir Ambassadeur du Bénin ! Votez ici : ${window.location.origin}/talents/${candidate.slug}`;
-                    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, "_blank");
-                  }}
+                  onClick={handleShare}
                   className="flex-1 flex items-center justify-center gap-2 rounded-full bg-white border border-[#008751]/20 px-8 py-5 text-xs font-bold tracking-widest uppercase text-[#008751] transition-all hover:bg-[#F9F9F7] hover:border-[#008751] active:scale-95 shadow-sm"
                 >
                   <Share2 className="w-4 h-4" />
                   Partager
                 </button>
               </div>
+
+              {/* Vote message notification */}
+              {voteMessage && !hasVoted && (
+                <div className={cn(
+                  "mt-4 p-4 rounded-2xl flex items-center gap-3 text-sm font-bold animate-in slide-in-from-top-2 duration-300",
+                  voteMessage.type === 'success' ? "bg-green-50 text-[#008751]" : "bg-red-50 text-red-600"
+                )}>
+                  {voteMessage.type === 'success' ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
+                  {voteMessage.text}
+                </div>
+              )}
             </div>
           </>
         ) : (
@@ -500,13 +532,66 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
         )}
       </div>
 
-      {/* Vote Modal - Temporarily disabled for test phase
-      {showVoteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          ...
+      {/* Vote Modal - Temporarily disabled for test phase */}
+      {/* ... */}
+
+      {/* Share Modal Fallback */}
+      {showShareModal && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-[32px] w-full max-w-sm overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="p-8">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-display font-bold text-black">Partager le profil</h3>
+                <button 
+                  onClick={() => setShowShareModal(false)}
+                  className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                >
+                  <X className="w-5 h-5 text-gray-400" />
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <button
+                  onClick={() => {
+                    const message = `Soutenez ${candidate.prenom} ${candidate.nom} pour devenir Ambassadeur du Bénin ! Votez ici : ${window.location.href}`;
+                    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, "_blank");
+                  }}
+                  className="w-full flex items-center gap-4 p-4 rounded-2xl bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20 transition-all font-bold text-sm"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-[#25D366] flex items-center justify-center text-white">
+                    <Phone className="w-5 h-5 fill-current" />
+                  </div>
+                  WhatsApp
+                </button>
+
+                <button
+                  onClick={() => {
+                    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, "_blank");
+                  }}
+                  className="w-full flex items-center gap-4 p-4 rounded-2xl bg-[#1877F2]/10 text-[#1877F2] hover:bg-[#1877F2]/20 transition-all font-bold text-sm"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-[#1877F2] flex items-center justify-center text-white">
+                    <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 3.656 10.995 8.75 11.723v-8.293H5.27v-3.43h3.48V9.411c0-3.435 2.045-5.333 5.178-5.333 1.499 0 3.069.268 3.069.268v3.375h-1.73c-1.701 0-2.231 1.056-2.231 2.14v2.561h3.8l-.607 3.43h-3.193V23.8c5.094-.728 8.75-5.733 8.75-11.727z"/>
+                    </svg>
+                  </div>
+                  Facebook
+                </button>
+
+                <button
+                  onClick={copyToClipboard}
+                  className="w-full flex items-center gap-4 p-4 rounded-2xl bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all font-bold text-sm"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-gray-700 flex items-center justify-center text-white">
+                    <Share2 className="w-5 h-5" />
+                  </div>
+                  {isCopied ? "Lien copié !" : "Copier le lien"}
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
-      */}
     </div>
   );
 }
