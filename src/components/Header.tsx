@@ -30,21 +30,29 @@ const Header = () => {
 
   // Sync with user session on mount and when dropdown opens
   const syncUserData = async (authUser: User) => {
-    // Fetch profile
-    const { data: profileData } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", authUser.id)
-      .maybeSingle();
-    setProfile(profileData);
+    try {
+      // Fetch profile
+      const { data: profileData, error: profileError } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", authUser.id)
+        .maybeSingle();
+      
+      if (profileError) console.error("Error fetching profile in Header:", profileError);
+      setProfile(profileData);
 
-    // Fetch user stats for grade
-    const { data: statsData } = await supabase
-      .from("user_stats")
-      .select("*")
-      .eq("voter_id", authUser.id)
-      .maybeSingle();
-    setUserStats(statsData);
+      // Fetch user stats for grade
+      const { data: statsData, error: statsError } = await supabase
+        .from("user_stats")
+        .select("*")
+        .eq("voter_id", authUser.id)
+        .maybeSingle();
+      
+      if (statsError) console.error("Error fetching stats in Header:", statsError);
+      setUserStats(statsData);
+    } catch (err) {
+      console.error("Critical error in syncUserData:", err);
+    }
   };
 
   // Close dropdown when clicking outside
@@ -64,32 +72,42 @@ const Header = () => {
     
     // Check initial session
     const checkUser = async () => {
-      const { data: { user: initialUser } } = await supabase.auth.getUser();
-      setUser(initialUser);
-      
-      if (initialUser) {
-        await syncUserData(initialUser);
+      try {
+        const { data: { user: initialUser }, error: userError } = await supabase.auth.getUser();
+        if (userError) throw userError;
+        
+        setUser(initialUser);
+        
+        if (initialUser) {
+          await syncUserData(initialUser);
+        }
+      } catch (err) {
+        console.error("Header checkUser error:", err);
+      } finally {
+        setLoading(false);
       }
-      
-      setLoading(false);
     };
     checkUser();
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      const currentUser = session?.user ?? null;
-      setUser(currentUser);
-      
-      if (currentUser) {
-        await syncUserData(currentUser);
-      } else {
-        setProfile(null);
-        setUserStats(null);
-      }
+      try {
+        const currentUser = session?.user ?? null;
+        setUser(currentUser);
+        
+        if (currentUser) {
+          await syncUserData(currentUser);
+        } else {
+          setProfile(null);
+          setUserStats(null);
+        }
 
-      if (event === 'SIGNED_OUT') {
-        router.push('/');
-        router.refresh();
+        if (event === 'SIGNED_OUT') {
+          router.push('/');
+          router.refresh();
+        }
+      } catch (err) {
+        console.error("Auth change error in Header:", err);
       }
     });
 

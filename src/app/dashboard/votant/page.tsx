@@ -40,80 +40,112 @@ export default function VoterDashboard() {
   const [selectedCategory, setSelectedCategory] = useState<string>("Toutes les catégories");
   const [searchQuery, setSearchQuery] = useState("");
 
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
+    let isMounted = true;
+    const timeoutId = setTimeout(() => {
+      if (isMounted && loading) {
+        setError("Le chargement prend plus de temps que prévu. Veuillez rafraîchir la page.");
+        setLoading(false);
+      }
+    }, 8000);
+
     async function loadData() {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
+        console.log("VoterDashboard: starting loadData");
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (authError) throw authError;
+        
         if (!user) {
+          console.log("VoterDashboard: no user found, redirecting to login");
           router.push("/login");
           return;
         }
 
-        // Load profile
+        console.log("VoterDashboard: user found", user.id);
+
+        // Load profile with prenom/nom
         const { data: profileData, error: profileError } = await supabase
           .from("profiles")
-          .select("*")
+          .select("id, role, prenom, nom, full_name, avatar_url, whatsapp_number")
           .eq("id", user.id)
           .maybeSingle();
         
-        if (profileError) throw profileError;
+        if (profileError) {
+          console.error("VoterDashboard: profile query error", profileError);
+          throw profileError;
+        }
+        
         if (!profileData) {
+          console.log("VoterDashboard: no profile found for user, redirecting to home");
           router.push("/");
           return;
         }
-        setProfile(profileData);
+        
+        if (isMounted) setProfile(profileData);
 
-        // Security check: Only allow 'votant', 'candidat', 'ambassadeur', 'admin', 'talent', 'partenaire' or 'jury'
-        // (A talent can vote, so they should have access to this dashboard)
+        // Security check
         const allowedRoles = ['votant', 'candidat', 'ambassadeur', 'admin', 'candidate', 'talent', 'partenaire', 'jury'];
         if (!allowedRoles.includes(profileData.role)) {
+          console.log("VoterDashboard: role not allowed", profileData.role);
           router.push("/");
           return;
         }
 
-        // Load stats from user_stats view
+        // Load stats with immediate fallback
+        console.log("VoterDashboard: loading stats");
         const { data: statsData, error: statsError } = await supabase
           .from("user_stats")
           .select("*")
           .eq("voter_id", user.id)
           .maybeSingle();
         
-        // Don't throw if stats are missing, just use defaults
-        setUserStats(statsData || { unique_candidates_voted: 0, unique_categories_voted: 0, unique_universes_voted: 0 });
+        if (isMounted) {
+          setUserStats(statsData || { 
+            unique_candidates_voted: 0, 
+            unique_categories_voted: 0, 
+            unique_universes_voted: 0 
+          });
+        }
 
         // Load unique votes
+        console.log("VoterDashboard: loading votes");
         const { data: votesData, error: votesError } = await supabase
           .from("votes")
           .select(`
             id,
             created_at,
             candidate_id,
-            voter_id,
             profiles:candidate_id (
               id,
               slug,
               prenom,
               nom,
-              category,
+              categorie,
+              univers,
               avatar_url
             )
           `)
           .eq("voter_id", user.id)
           .order("created_at", { ascending: false });
 
-        if (votesError) throw votesError;
-        if (votesData) {
+        if (votesError) console.error("VoterDashboard: votes query error", votesError);
+        
+        if (isMounted && votesData) {
           setVotes(votesData);
         }
-      } catch (err) {
-        console.error("Dashboard Load Error:", err);
-        // We still set loading to false to show the UI with empty state/error
+      } catch (err: any) {
+        console.error("VoterDashboard Load Error:", err);
+        if (isMounted) setError(err.message || "Impossible de charger vos données.");
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
+        clearTimeout(timeoutId);
       }
     }
 
     loadData();
+    return () => { isMounted = false; clearTimeout(timeoutId); };
   }, [supabase, router]);
 
   // Derived stats using user_stats view for reliability
@@ -149,14 +181,48 @@ export default function VoterDashboard() {
   }, [votes, selectedUniverse, selectedCategory, searchQuery]);
 
   const allCategories = useMemo(() => {
-    const cats = new Set(votes.map(v => v.profiles?.categorie || v.profiles?.univers || v.profiles?.category).filter(Boolean));
-    return ["Toutes les catégories", ...Array.from(cats) as string[]];
-  }, [votes]);
+    const cats = new Set<string>();
+    votes.forEach(v => {
+      const cat = v.profiles?.categorie || v.profiles?.univers || v.profiles?.category;
+      if (cat) {
+        const universe = getUniverseFromCategory(cat);
+        if (selectedUniverse === "Tous les univers" || universe === selectedUniverse) {
+          cats.add(cat);
+        }
+      }
+    });
+    return ["Toutes les catégories", ...Array.from(cats).sort()];
+  }, [votes, selectedUniverse]);
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F9F9F7]">
-        <Loader2 className="w-12 h-12 text-[#008751] animate-spin" />
+        <div className="text-center space-y-4">
+          <Loader2 className="w-12 h-12 text-[#008751] animate-spin mx-auto" />
+          <p className="text-sm font-bold text-gray-400 uppercase tracking-widest animate-pulse">Chargement de votre espace...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#F9F9F7] px-6">
+        <div className="max-w-md w-full bg-white rounded-[40px] p-10 shadow-2xl text-center space-y-6 border border-red-50">
+          <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto">
+            <AlertCircle className="w-10 h-10 text-red-500" />
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-2xl font-display font-bold text-black">Oups !</h2>
+            <p className="text-gray-500 text-sm">{error}</p>
+          </div>
+          <button
+            onClick={() => window.location.reload()}
+            className="w-full py-4 bg-[#008751] text-white rounded-full font-black uppercase tracking-widest text-xs shadow-xl shadow-[#008751]/20 hover:bg-[#006B3F] transition-all active:scale-95"
+          >
+            Réessayer
+          </button>
+        </div>
       </div>
     );
   }
