@@ -141,7 +141,7 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
     setVoteMessage(null);
 
     try {
-      // Étape A : Insérer le vote dans la table votes
+      // Étape A : Insérer le vote dans la table votes (voter_id et candidate_id uniquement)
       const { error: recordError } = await supabase
         .from('votes')
         .insert([
@@ -152,6 +152,7 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
         ]);
 
       if (recordError) {
+        console.error("Supabase Vote INSERT Error:", recordError);
         if (recordError.code === '23505' || recordError.message?.includes('unique')) {
           setVoteMessage({ type: 'error', text: "Vous avez déjà soutenu ce talent !" });
           setHasVoted(true);
@@ -161,9 +162,12 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
         throw recordError;
       }
 
-      // Étape B : Si succès, incrémenter votes dans talents (via RPC)
+      // Étape B : Incrémenter votes dans talents (via RPC)
       const { error: updateError } = await supabase.rpc('increment_votes', { candidate_id: profileId });
-      if (updateError) throw updateError;
+      if (updateError) {
+        console.error("Supabase Vote RPC Increment Error:", updateError);
+        throw updateError;
+      }
       
       confetti({
         particleCount: 150,
@@ -179,9 +183,12 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
       // Force refresh data for dashboards and leaderboard
       router.refresh();
 
-    } catch (err) {
-      console.error("Erreur lors du vote:", err);
-      setVoteMessage({ type: 'error', text: "Une erreur est survenue. Veuillez réessayer." });
+    } catch (err: any) {
+      console.error("Critical Vote Error:", err);
+      setVoteMessage({ 
+        type: 'error', 
+        text: `Une erreur est survenue : ${err.message || 'Erreur inconnue'}` 
+      });
     } finally {
       setIsVoting(false);
     }
