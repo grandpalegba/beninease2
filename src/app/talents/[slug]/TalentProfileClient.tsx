@@ -141,6 +141,23 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
     setVoteMessage(null);
 
     try {
+      // Étape Préventive : S'assurer que le profil existe (Synchronisation forcée)
+      // On utilise un UPSERT pour être certain que la ligne existe dans profiles avant de voter
+      const { error: profileSyncError } = await supabase
+        .from('profiles')
+        .upsert({ 
+          id: voterId, 
+          role: 'votant',
+          full_name: activeUser.user_metadata?.full_name || activeUser.email,
+          avatar_url: activeUser.user_metadata?.avatar_url || activeUser.user_metadata?.picture,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'id' });
+
+      if (profileSyncError) {
+        console.error("Profile Sync Error:", profileSyncError);
+        throw new Error("Impossible de synchroniser votre profil avant le vote.");
+      }
+
       // Étape A : Insérer le vote dans la table votes (voter_id et candidate_id uniquement)
       const { error: recordError } = await supabase
         .from('votes')
