@@ -44,6 +44,7 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
   const [activeTab, setActiveTab] = useState("Vidéos");
   const [activeVideoTab, setActiveVideoTab] = useState("Qui je suis");
   const [votesCount, setVotesCount] = useState(initialVotesCount);
+  const [currentUser, setCurrentUser] = useState<any>(null);
   
   // Voting state
   const [hasVoted, setHasVoted] = useState(false);
@@ -86,10 +87,16 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
   };
 
   useEffect(() => {
+    async function getUser() {
+      const { data: { user } } = await supabase.auth.getUser();
+      setCurrentUser(user);
+    }
+    getUser();
+    
     if (isAuthenticated && profileId) {
       checkHasVoted(profileId).then(setHasVoted);
     }
-  }, [isAuthenticated, profileId, checkHasVoted]);
+  }, [isAuthenticated, profileId, checkHasVoted, supabase]);
 
   useEffect(() => {
     if (candidate?.slug) {
@@ -123,27 +130,25 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
     }
 
     // Phase de test : On utilise les infos de la session directement
-    const currentWhatsapp = session?.whatsapp || "00000000"; // Fallback pour le test
-    const voterId = session?.voter_id;
+    const voterId = currentUser?.id; // Use authenticated user ID directly from state
 
     setIsVoting(true);
     setVoteMessage(null);
 
     try {
-      // Étape A : Insérer le vote dans votes_records
+      // Étape A : Insérer le vote dans la table votes (nom correct selon les spécifications récentes)
       const { error: recordError } = await supabase
-        .from('votes_records')
+        .from('votes')
         .insert([
           { 
-            voter_whatsapp: currentWhatsapp, 
-            candidate_id: profileId,
-            voter_id: session?.voter_id // If we have it from session
+            voter_id: voterId,
+            candidate_id: profileId
           }
         ]);
 
       if (recordError) {
-        // Gestion erreur : Si doublon (code 23505)
-        if (recordError.code === '23505') {
+        // Gestion erreur : Si doublon (code 23505 ou message spécifique)
+        if (recordError.code === '23505' || recordError.message?.includes('unique')) {
           setVoteMessage({ type: 'error', text: "Vous avez déjà soutenu ce talent !" });
           setHasVoted(true);
           setIsVoting(false);
@@ -152,8 +157,8 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
         throw recordError;
       }
 
-      // Étape B : Si succès, incrémenter votes dans profiles
-      const { error: updateError } = await supabase.rpc('increment_votes', { profile_id: profileId });
+      // Étape B : Si succès, incrémenter votes dans talents (via RPC pour atomicité)
+      const { error: updateError } = await supabase.rpc('increment_votes', { candidate_id: profileId });
       if (updateError) throw updateError;
       
       confetti({
@@ -163,8 +168,14 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
         colors: ["#008751", "#E9B113", "#E8112D"],
       });
 
-      setVoteMessage({ type: 'success', text: "Votre vote a été pris en compte ! Merci." });
+      setVoteMessage({ type: 'success', text: "Votre soutien a été enregistré avec succès !" });
       setHasVoted(true);
+      
+      // Refresh counts locally for instant feedback
+      setVotesCount(prev => prev + 1);
+      
+      // Force refresh data for dashboards and leaderboard
+      router.refresh();
       
       // Auto-close modal after success
       setTimeout(() => {
