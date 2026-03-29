@@ -1,5 +1,4 @@
 import Image from "next/image";
-import heroBg from "@/assets/hero-benin-2.png";
 
 const HeroSection = () => {
   return (
@@ -25,8 +24,10 @@ const HeroSection = () => {
           style={{ animationDelay: "0.35s" }}
         >
           <Image
-            src={heroBg}
+            src="/hero-benin-2.png"
             alt="Collage célébrant l'excellence béninoise"
+            width={1200}
+            height={675}
             className="mx-auto block h-auto w-full object-contain object-center shadow-2xl"
             priority
           />

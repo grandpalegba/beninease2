@@ -100,12 +100,12 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
 
   useEffect(() => {
     if (candidate?.slug) {
-      // Subscribe to real-time changes
+      // Subscribe to real-time changes on profiles table
       const channel = supabase
-        .channel(`public:talents:slug=${candidate.slug}`)
+        .channel(`public:profiles:slug=${candidate.slug}`)
         .on(
           'postgres_changes',
-          { event: 'UPDATE', schema: 'public', table: 'talents', filter: `slug=eq.${candidate.slug}` },
+          { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `slug=eq.${candidate.slug}` },
           (payload) => {
             if (payload.new && typeof payload.new.votes === 'number') {
               setVotesCount(payload.new.votes);
@@ -141,49 +141,19 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
     setVoteMessage(null);
 
     try {
-      // Étape Préventive : S'assurer que le profil existe (Synchronisation forcée)
-      // On utilise un UPSERT pour être certain que la ligne existe dans profiles avant de voter
-      const { error: profileSyncError } = await supabase
-        .from('profiles')
-        .upsert({ 
-          id: voterId, 
-          role: 'votant',
-          full_name: activeUser.user_metadata?.full_name || activeUser.email,
-          avatar_url: activeUser.user_metadata?.avatar_url || activeUser.user_metadata?.picture,
-          updated_at: new Date().toISOString()
-        }, { onConflict: 'id' });
+      // Use the cast_vote RPC which handles profile sync, vote record and increment
+      const { data: newVotes, error: voteError } = await supabase.rpc('cast_vote', { p_candidate_id: profileId });
 
-      if (profileSyncError) {
-        console.error("Profile Sync Error:", profileSyncError);
-        throw new Error("Impossible de synchroniser votre profil avant le vote.");
-      }
-
-      // Étape A : Insérer le vote dans la table votes (voter_id et candidate_id uniquement)
-      const { error: recordError } = await supabase
-        .from('votes')
-        .insert([
-          { 
-            voter_id: voterId,
-            candidate_id: profileId
-          }
-        ]);
-
-      if (recordError) {
-        console.error("Supabase Vote INSERT Error:", recordError);
-        if (recordError.code === '23505' || recordError.message?.includes('unique')) {
+      if (voteError) {
+        console.error("Supabase cast_vote Error:", voteError);
+        if (voteError.message?.includes('déjà voté')) {
           setVoteMessage({ type: 'error', text: "Vous avez déjà soutenu ce talent !" });
           setHasVoted(true);
-          setIsVoting(false);
-          return;
+        } else {
+          throw voteError;
         }
-        throw recordError;
-      }
-
-      // Étape B : Incrémenter votes dans talents (via RPC)
-      const { error: updateError } = await supabase.rpc('increment_votes', { candidate_id: profileId });
-      if (updateError) {
-        console.error("Supabase Vote RPC Increment Error:", updateError);
-        throw updateError;
+        setIsVoting(false);
+        return;
       }
       
       confetti({
@@ -195,7 +165,11 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
 
       setVoteMessage({ type: 'success', text: "Soutien validé ! Merci." });
       setHasVoted(true);
-      setVotesCount(prev => prev + 1);
+      if (typeof newVotes === 'number') {
+        setVotesCount(newVotes);
+      } else {
+        setVotesCount(prev => prev + 1);
+      }
       
       // Force refresh data for dashboards and leaderboard
       router.refresh();

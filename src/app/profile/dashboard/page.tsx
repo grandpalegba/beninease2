@@ -161,7 +161,7 @@ export default function DashboardPage() {
                 <div className="w-8 h-[1px] bg-[#008751]/30" />
                 Historique des soutiens
               </h3>
-              <VoteHistory voterWhatsapp={profile.id} />
+              <VoteHistory voterId={profile.id} />
             </section>
           </div>
         </div>

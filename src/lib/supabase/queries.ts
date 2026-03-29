@@ -1,14 +1,14 @@
 import { createSupabaseBrowserClient } from "./client";
 
-export async function getVotesByUser(voterWhatsapp: string) {
+export async function getVotesByUserId(voterId: string) {
   const supabase = createSupabaseBrowserClient();
   const { data, error } = await supabase
-    .from("votes_records")
+    .from("votes")
     .select(`
       id,
-      vote_date,
+      created_at,
       candidate_id,
-      profiles (
+      profiles:candidate_id (
         id,
         slug,
         prenom,
@@ -17,8 +17,8 @@ export async function getVotesByUser(voterWhatsapp: string) {
         avatar_url
       )
     `)
-    .eq("voter_whatsapp", voterWhatsapp)
-    .order("vote_date", { ascending: false });
+    .eq("voter_id", voterId)
+    .order("created_at", { ascending: false });
 
   if (error) throw error;
   return data;

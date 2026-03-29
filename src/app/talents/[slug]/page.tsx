@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: { params: any }): Promise<Met
 
   const supabase = await createSupabaseServerClient();
   const { data: talent } = await supabase
-    .from('talents')
+    .from('profiles')
     .select('prenom, nom, avatar_url, category')
     .eq('slug', slug)
     .single();
@@ -70,7 +70,7 @@ export default async function TalentProfilePage({ params }: { params: any }) {
   // 1. Fetch from Supabase
   const supabase = await createSupabaseServerClient();
   const { data: profile } = await supabase
-    .from('talents')
+    .from('profiles')
     .select('*') // Get everything including new fields
     .eq('slug', slug)
     .single();

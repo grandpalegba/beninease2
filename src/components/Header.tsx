@@ -116,11 +116,11 @@ const Header = () => {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 hidden md:block ${
-        scrolled ? "bg-white/95 backdrop-blur-md shadow-sm py-3" : "bg-[#F9F9F7] py-5"
+        scrolled ? "bg-white shadow-sm py-3" : "bg-white py-5"
       }`}
     >
       <div className="container max-w-7xl mx-auto flex items-center justify-between px-6">
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-3 group">
           <span
             className="font-display text-2xl font-bold text-[#006B3F]"
             style={{ letterSpacing: "0.12em" }}
@@ -136,9 +136,6 @@ const Header = () => {
             </Link>
             <Link href="/classement" className={navLinkClasses}>
               Classement
-            </Link>
-            <Link href="/univers" className={navLinkClasses}>
-              Univers
             </Link>
           </nav>
 

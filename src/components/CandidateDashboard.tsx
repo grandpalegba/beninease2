@@ -44,9 +44,9 @@ export default function CandidateDashboard({ profile }: CandidateDashboardProps)
   }, [profile.id]);
 
   const fetchTalentStats = async () => {
-    // We assume there's a table or view that gives us total votes and rank
+    // Use profiles as the single source of truth
     const { data: talentData } = await supabase
-      .from('talents')
+      .from('profiles')
       .select('votes, category')
       .eq('id', profile.id)
       .single();
@@ -54,9 +54,10 @@ export default function CandidateDashboard({ profile }: CandidateDashboardProps)
     if (talentData) {
       // Fetch rank in category
       const { data: rankData } = await supabase
-        .from('talents')
+        .from('profiles')
         .select('id, votes')
         .eq('category', talentData.category)
+        .or('role.eq.candidat,role.eq.ambassadeur,role.eq.candidate')
         .order('votes', { ascending: false });
 
       const rank = rankData ? rankData.findIndex(t => t.id === profile.id) + 1 : 0;

@@ -19,13 +19,14 @@ function TalentsList() {
   useEffect(() => {
     const fetchTalents = async () => {
       try {
-        // Interrogation de la table public.talents sans aucun filtre de rôle
+        // Interrogation de la table public.profiles filtrée pour les talents (candidats/ambassadeurs)
         const { data, error } = await supabase
-          .from('talents')
+          .from('profiles')
           .select('id, slug, prenom, nom, category, avatar_url, votes, bio')
+          .or('role.eq.candidat,role.eq.ambassadeur,role.eq.candidate')
           .order('votes', { ascending: false });
 
-        console.log("Données reçues de la table talents:", data);
+        console.log("Données reçues de la table profiles (talents):", data);
 
         if (error) throw error;
         if (data) setTalents(data as Talent[]);

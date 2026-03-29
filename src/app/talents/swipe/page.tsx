@@ -10,10 +10,11 @@ export default async function TalentSwipePage({
 }) {
   const supabase = await createSupabaseServerClient();
   
-  // Fetch all talents for the swiper
+  // Fetch all talents from profiles table
   const { data: talents, error } = await supabase
-    .from("talents")
+    .from("profiles")
     .select("id, slug, prenom, nom, category, avatar_url, votes, bio")
+    .or('role.eq.candidat,role.eq.ambassadeur,role.eq.candidate')
     .order("votes", { ascending: false });
 
   if (error || !talents || talents.length === 0) {

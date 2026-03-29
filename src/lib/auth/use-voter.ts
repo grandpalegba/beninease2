@@ -56,13 +56,13 @@ export function useVoter() {
   }, []);
 
   const checkHasVoted = useCallback(async (candidateId: string) => {
-    if (!session?.whatsapp) return false;
+    if (!session?.voter_id) return false;
     
     try {
       const { data, error } = await supabase
-        .from("votes_records")
+        .from("votes")
         .select("id")
-        .eq("voter_whatsapp", session.whatsapp)
+        .eq("voter_id", session.voter_id)
         .eq("candidate_id", candidateId)
         .maybeSingle();
 
@@ -80,6 +80,6 @@ export function useVoter() {
     login,
     logout,
     checkHasVoted,
-    isAuthenticated: !!session?.whatsapp,
+    isAuthenticated: !!session?.voter_id,
   };
 }

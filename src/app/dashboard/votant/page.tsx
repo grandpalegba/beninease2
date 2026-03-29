@@ -68,13 +68,13 @@ export default function VoterDashboard() {
 
       // Load unique votes
       const { data: votesData, error: votesError } = await supabase
-        .from("votes_records")
+        .from("votes")
         .select(`
           id,
-          vote_date,
+          created_at,
           candidate_id,
           voter_id,
-          talents (
+          profiles:candidate_id (
             id,
             slug,
             prenom,
@@ -84,7 +84,7 @@ export default function VoterDashboard() {
           )
         `)
         .eq("voter_id", user.id)
-        .order("vote_date", { ascending: false });
+        .order("created_at", { ascending: false });
 
       if (votesData) {
         setVotes(votesData);
@@ -280,7 +280,7 @@ export default function VoterDashboard() {
           {filteredVotes.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {filteredVotes.map((vote) => {
-                const talent = vote.talents;
+                const talent = vote.profiles;
                 const universe = getUniverseFromCategory(talent.category);
                 return (
                   <Link 
@@ -307,7 +307,7 @@ export default function VoterDashboard() {
                       </h4>
                       <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest flex items-center gap-1.5 mt-1">
                         <Calendar className="w-3 h-3" />
-                        Soutenu le {new Date(vote.vote_date).toLocaleDateString()}
+                        Soutenu le {new Date(vote.created_at).toLocaleDateString()}
                       </p>
                     </div>
                     <ArrowRight className="w-5 h-5 text-gray-200 group-hover:text-[#008751] transition-colors" />
