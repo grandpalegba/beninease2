@@ -109,8 +109,16 @@ const Header = () => {
   }, [supabase, router]);
 
   const handleSignOut = async () => {
+    setUser(null);
+    setProfile(null);
+    setUserStats(null);
     await supabase.auth.signOut();
-    router.refresh();
+    window.location.href = '/'; // Force un rechargement complet à la racine pour nettoyer le cache
+  };
+
+  const handleDropdownSignOut = async () => {
+    setShowDropdown(false);
+    await handleSignOut();
   };
 
   const navLinkClasses = "text-sm font-bold text-[#1A1A1A] hover:text-[#006B3F] transition-colors font-display tracking-wide";
@@ -223,10 +231,7 @@ const Header = () => {
                     <div className="h-px bg-gray-50 my-2 mx-6" />
 
                     <button
-                      onClick={() => {
-                        setShowDropdown(false);
-                        handleSignOut();
-                      }}
+                      onClick={handleDropdownSignOut}
                       className="flex items-center gap-4 w-full px-6 py-3 text-sm font-bold text-red-600 hover:bg-red-50 transition-all group"
                     >
                       <div className="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center group-hover:bg-red-100 transition-colors">

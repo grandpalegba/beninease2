@@ -76,25 +76,24 @@ const MobileNavigation = () => {
     return () => { document.body.style.overflow = "unset"; };
   }, [isOpen]);
 
-  const toggleMenu = () => setIsOpen(!isOpen);
+  const handleSignOut = async () => {
+    setUser(null);
+    setProfile(null);
+    setUserStats(null);
+    await supabase.auth.signOut();
+    window.location.href = '/'; // Force un rechargement complet à la racine pour nettoyer le cache
+  };
 
   const menuLinkClasses = "font-display text-2xl font-bold text-[#1A1A1A] hover:text-[#006B3F] transition-colors flex items-center gap-4 w-full py-2";
 
   return (
-    <>
-      {/* Fixed Header Mobile */}
-      <header className="fixed top-0 left-0 right-0 z-[60] bg-white/95 backdrop-blur-md border-b border-black/5 h-16 flex items-center md:hidden">
-        <div className="container flex items-center justify-between px-6">
-          <Link href="/" className="flex items-center gap-2 group" onClick={() => setIsOpen(false)}>
-            <span className="font-display text-xl font-bold text-[#006B3F]">
-              Beninease
-            </span>
-          </Link>
-          <button onClick={toggleMenu} className="p-2 text-[#006B3F] focus:outline-none transition-transform active:scale-90">
-            {isOpen ? <X size={28} /> : <Menu size={28} />}
-          </button>
-        </div>
-      </header>
+    <div className="md:hidden">
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        className="fixed top-4 right-6 z-[70] p-2 bg-white rounded-full shadow-lg border border-[#006B3F]/10 text-[#006B3F] active:scale-90 transition-all"
+      >
+        {isOpen ? <X size={24} /> : <Menu size={24} />}
+      </button>
 
       {/* Overlay Menu */}
       <AnimatePresence>
@@ -183,7 +182,7 @@ const MobileNavigation = () => {
                     <Settings size={18} /> Paramètres du compte
                   </Link>
                   <button
-                    onClick={() => { logout(); supabase.auth.signOut(); setIsOpen(false); }}
+                    onClick={() => { handleSignOut(); setIsOpen(false); }}
                     className="flex items-center gap-3 text-red-500 font-bold text-sm hover:text-red-600 transition-colors w-full text-left"
                   >
                     <LogOut size={18} /> Déconnexion
@@ -194,7 +193,7 @@ const MobileNavigation = () => {
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </div>
   );
 };
 
