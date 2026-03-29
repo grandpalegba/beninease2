@@ -111,9 +111,30 @@ SELECT
     ORDER BY COALESCE(p.votes, 0) DESC, p.updated_at DESC, p.id ASC
   ) as category_rank
 FROM public.profiles p
-WHERE (p.role = 'candidat' OR p.role = 'ambassadeur') AND p.category IS NOT NULL;
+WHERE (p.role = 'candidat' OR p.role = 'ambassadeur' OR p.role = 'candidate') AND p.category IS NOT NULL;
 
--- 4. ATOMIC VOTE FUNCTION (Updated to use profiles and votes table)
+-- 4. USER STATS VIEW (for Dashboard)
+CREATE OR REPLACE VIEW public.user_stats AS
+WITH voter_votes AS (
+  SELECT 
+    v.voter_id,
+    v.candidate_id,
+    p.category
+  FROM public.votes v
+  JOIN public.profiles p ON v.candidate_id = p.id
+)
+SELECT 
+  voter_id,
+  COUNT(DISTINCT candidate_id) as unique_candidates_voted,
+  COUNT(DISTINCT category) as unique_categories_voted
+FROM voter_votes
+GROUP BY voter_id;
+
+-- Grant select on view to all authenticated users
+GRANT SELECT ON public.user_stats TO authenticated;
+GRANT SELECT ON public.user_stats TO anon;
+
+-- 5. ATOMIC VOTE FUNCTION (Updated to use profiles and votes table)
 CREATE OR REPLACE FUNCTION public.cast_vote(p_candidate_id uuid)
 RETURNS integer
 LANGUAGE plpgsql

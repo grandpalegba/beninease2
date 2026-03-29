@@ -44,37 +44,53 @@ export default function CandidateDashboard({ profile }: CandidateDashboardProps)
   }, [profile.id]);
 
   const fetchTalentStats = async () => {
-    // Use profiles as the single source of truth
-    const { data: talentData } = await supabase
-      .from('profiles')
-      .select('votes, category')
-      .eq('id', profile.id)
-      .single();
-
-    if (talentData) {
-      // Fetch rank in category
-      const { data: rankData } = await supabase
+    try {
+      // Use profiles as the single source of truth
+      const { data: talentData, error: talentError } = await supabase
         .from('profiles')
-        .select('id, votes')
-        .eq('category', talentData.category)
-        .or('role.eq.candidat,role.eq.ambassadeur,role.eq.candidate')
-        .order('votes', { ascending: false });
+        .select('votes, category')
+        .eq('id', profile.id)
+        .single();
 
-      const rank = rankData ? rankData.findIndex(t => t.id === profile.id) + 1 : 0;
-      setTalentStats({ votes: talentData.votes || 0, rank, category: talentData.category });
+      if (talentError) throw talentError;
+
+      if (talentData) {
+        // Fetch rank in category
+        const { data: rankData, error: rankError } = await supabase
+          .from('profiles')
+          .select('id, votes')
+          .eq('category', talentData.category)
+          .or('role.eq.candidat,role.eq.ambassadeur,role.eq.candidate')
+          .order('votes', { ascending: false });
+
+        if (rankError) throw rankError;
+
+        const rank = rankData ? rankData.findIndex(t => t.id === profile.id) + 1 : 0;
+        setTalentStats({ votes: talentData.votes || 0, rank, category: talentData.category });
+      }
+    } catch (err) {
+      console.error("Error fetching talent stats:", err);
+      // Set default stats on error to avoid infinite loading
+      setTalentStats({ votes: 0, rank: 0, category: profile.category || 'Non définie' });
     }
   };
 
   const fetchMessages = async () => {
-    setLoadingMessages(true);
-    const { data, error } = await supabase
-      .from('messages')
-      .select('*')
-      .eq('receiver_id', profile.id)
-      .order('created_at', { ascending: false });
+    try {
+      setLoadingMessages(true);
+      const { data, error } = await supabase
+        .from('messages')
+        .select('*')
+        .eq('receiver_id', profile.id)
+        .order('created_at', { ascending: false });
 
-    if (data) setMessages(data);
-    setLoadingMessages(false);
+      if (error) throw error;
+      if (data) setMessages(data);
+    } catch (err) {
+      console.error("Error fetching messages:", err);
+    } finally {
+      setLoadingMessages(false);
+    }
   };
 
   const markAsRead = async (messageId: string) => {

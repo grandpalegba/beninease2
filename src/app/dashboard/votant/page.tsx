@@ -42,55 +42,63 @@ export default function VoterDashboard() {
 
   useEffect(() => {
     async function loadData() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        router.push("/login");
-        return;
-      }
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          router.push("/login");
+          return;
+        }
 
-      // Load profile
-      const { data: profileData } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .single();
-      
-      setProfile(profileData);
+        // Load profile
+        const { data: profileData, error: profileError } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", user.id)
+          .single();
+        
+        if (profileError) throw profileError;
+        setProfile(profileData);
 
-      // Load stats from user_stats view
-      const { data: statsData } = await supabase
-        .from("user_stats")
-        .select("*")
-        .eq("voter_id", user.id)
-        .single();
-      
-      setUserStats(statsData);
+        // Load stats from user_stats view
+        const { data: statsData, error: statsError } = await supabase
+          .from("user_stats")
+          .select("*")
+          .eq("voter_id", user.id)
+          .single();
+        
+        // Don't throw if stats are missing, just use defaults
+        setUserStats(statsData || { unique_candidates_voted: 0, unique_categories_voted: 0 });
 
-      // Load unique votes
-      const { data: votesData, error: votesError } = await supabase
-        .from("votes")
-        .select(`
-          id,
-          created_at,
-          candidate_id,
-          voter_id,
-          profiles:candidate_id (
+        // Load unique votes
+        const { data: votesData, error: votesError } = await supabase
+          .from("votes")
+          .select(`
             id,
-            slug,
-            prenom,
-            nom,
-            category,
-            avatar_url
-          )
-        `)
-        .eq("voter_id", user.id)
-        .order("created_at", { ascending: false });
+            created_at,
+            candidate_id,
+            voter_id,
+            profiles:candidate_id (
+              id,
+              slug,
+              prenom,
+              nom,
+              category,
+              avatar_url
+            )
+          `)
+          .eq("voter_id", user.id)
+          .order("created_at", { ascending: false });
 
-      if (votesData) {
-        setVotes(votesData);
+        if (votesError) throw votesError;
+        if (votesData) {
+          setVotes(votesData);
+        }
+      } catch (err) {
+        console.error("Dashboard Load Error:", err);
+        // We still set loading to false to show the UI with empty state/error
+      } finally {
+        setLoading(false);
       }
-      
-      setLoading(false);
     }
 
     loadData();
@@ -99,12 +107,12 @@ export default function VoterDashboard() {
   // Derived stats using user_stats view for reliability
   const stats = useMemo(() => {
     const totalVotes = userStats?.unique_candidates_voted || 0;
-    const universeCount = userStats?.unique_universes_voted || 0;
+    const categoryCount = userStats?.unique_categories_voted || 0;
     
     return {
       totalVotes,
-      universeCount,
-      currentStatus: calculateVoterStatus(totalVotes, universeCount)
+      categoryCount,
+      currentStatus: calculateVoterStatus(totalVotes, categoryCount)
     };
   }, [userStats]);
 
@@ -113,11 +121,11 @@ export default function VoterDashboard() {
   // Filtering logic
   const filteredVotes = useMemo(() => {
     return votes.filter(vote => {
-      const talent = vote.talents;
+      const talent = vote.profiles; // Use the aliased profiles
       if (!talent) return false;
       
       const universe = getUniverseFromCategory(talent.category);
-      const fullName = `${talent.prenom} ${talent.nom}`.toLowerCase();
+      const fullName = `${talent.prenom || ''} ${talent.nom || ''}`.toLowerCase();
       
       const matchesUniverse = selectedUniverse === "Tous les univers" || universe === selectedUniverse;
       const matchesCategory = selectedCategory === "Toutes les catégories" || talent.category === selectedCategory;
@@ -128,7 +136,7 @@ export default function VoterDashboard() {
   }, [votes, selectedUniverse, selectedCategory, searchQuery]);
 
   const allCategories = useMemo(() => {
-    const cats = new Set(votes.map(v => v.talents?.category).filter(Boolean));
+    const cats = new Set(votes.map(v => v.profiles?.category).filter(Boolean));
     return ["Toutes les catégories", ...Array.from(cats) as string[]];
   }, [votes]);
 
@@ -167,11 +175,11 @@ export default function VoterDashboard() {
           <div className="grid grid-cols-2 gap-4 w-full md:w-auto">
             <div className="bg-[#F9F9F7] p-4 rounded-2xl border border-[#F2EDE4] text-center">
               <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Talents soutenus</span>
-              <span className="text-2xl font-bold text-[#008751]">{stats.totalVotes}</span>
+              <span className="text-2xl font-black text-[#008751]">{stats.totalVotes}</span>
             </div>
             <div className="bg-[#F9F9F7] p-4 rounded-2xl border border-[#F2EDE4] text-center">
-              <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Univers explorés</span>
-              <span className="text-2xl font-bold text-[#E9B113]">{stats.universeCount}/16</span>
+              <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Catégories explorées</span>
+              <span className="text-2xl font-black text-[#E9B113]">{stats.categoryCount}</span>
             </div>
           </div>
         </div>
@@ -188,8 +196,8 @@ export default function VoterDashboard() {
                 </h3>
                 <p className="text-sm text-gray-500">
                   {stats.totalVotes < nextStatus.minVotes && `Encore ${nextStatus.minVotes - stats.totalVotes} votes `}
-                  {stats.totalVotes < nextStatus.minVotes && stats.universeCount < nextStatus.minUniverses && "et "}
-                  {stats.universeCount < nextStatus.minUniverses && `${nextStatus.minUniverses - stats.universeCount} univers `}
+                  {stats.totalVotes < nextStatus.minVotes && stats.categoryCount < nextStatus.minUniverses && "et "}
+                  {stats.categoryCount < nextStatus.minUniverses && `${nextStatus.minUniverses - stats.categoryCount} catégories `}
                   pour passer au grade supérieur.
                 </p>
               </div>
@@ -216,13 +224,13 @@ export default function VoterDashboard() {
               {nextStatus.minUniverses > 0 && (
                 <div className="space-y-1.5">
                   <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-gray-400">
-                    <span>Diversité des Univers</span>
-                    <span>{stats.universeCount} / {nextStatus.minUniverses}</span>
+                    <span>Diversité des Catégories</span>
+                    <span>{stats.categoryCount} / {nextStatus.minUniverses}</span>
                   </div>
                   <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                     <div 
                       className="h-full bg-[#E9B113] transition-all duration-1000" 
-                      style={{ width: `${Math.min(100, (stats.universeCount / nextStatus.minUniverses) * 100)}%` }}
+                      style={{ width: `${Math.min(100, (stats.categoryCount / nextStatus.minUniverses) * 100)}%` }}
                     />
                   </div>
                 </div>
