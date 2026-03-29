@@ -18,11 +18,15 @@ export async function GET(request: Request) {
         .eq("id", session.user.id)
         .single();
 
-      if (profile?.role === 'votant') {
+      const role = profile?.role || 'votant';
+
+      if (role === 'votant') {
         return NextResponse.redirect(`${origin}/dashboard/votant`);
-      } else if (profile?.role === 'candidat' || profile?.role === 'ambassadeur') {
-        return NextResponse.redirect(`${origin}/profile/dashboard`);
-      } else if (profile?.role === 'admin') {
+      } else if (role === 'candidat') {
+        return NextResponse.redirect(`${origin}/dashboard/candidat`);
+      } else if (role === 'ambassadeur') {
+        return NextResponse.redirect(`${origin}/dashboard/ambassadeur`);
+      } else if (role === 'admin') {
         return NextResponse.redirect(`${origin}/admin`);
       }
     }

@@ -2,13 +2,31 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import { Heart, MapPin, Play, Globe, Clock, Share2, X, CheckCircle2, AlertCircle, Mail, MessageSquare, Instagram, Phone, Trophy } from "lucide-react";
+import { Heart, MapPin, Play, Globe, Clock, Share2, X, CheckCircle2, AlertCircle, Mail, MessageSquare, Phone, Trophy } from "lucide-react";
 import confetti from "canvas-confetti";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import PhoneInput from "@/components/PhoneInput";
 import { useVoter } from "@/lib/auth/use-voter";
 import { ContactForm } from "@/components/talents/ContactForm";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
+
+// Custom Instagram Icon because it's missing from lucide-react in this version
+const Instagram = ({ className }: { className?: string }) => (
+  <svg 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={className}
+  >
+    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+  </svg>
+);
 
 type Props = {
   candidate: any;
@@ -19,6 +37,7 @@ type Props = {
 };
 
 export default function TalentProfileClient({ candidate, initialVotesCount, profileId, avatarUrl, profileData }: Props) {
+  const router = useRouter();
   const { session, login, isAuthenticated, checkHasVoted } = useVoter();
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
@@ -97,19 +116,15 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
   const handleVote = async () => {
     if (!profileId) return;
 
-    // If not authenticated, we need to log in first
+    // Phase de test : Redirection vers login si non connecté
     if (!isAuthenticated) {
-      if (!voterWhatsapp || !voterName) return;
-      setIsVoting(true);
-      const { success } = await login(voterWhatsapp, voterName);
-      if (!success) {
-        setVoteMessage({ type: 'error', text: "Erreur lors de la connexion. Veuillez réessayer." });
-        setIsVoting(false);
-        return;
-      }
+      router.push("/login");
+      return;
     }
 
-    const currentWhatsapp = session?.whatsapp || voterWhatsapp;
+    // Phase de test : On utilise les infos de la session directement
+    const currentWhatsapp = session?.whatsapp || "00000000"; // Fallback pour le test
+    const voterId = session?.voter_id;
 
     setIsVoting(true);
     setVoteMessage(null);
@@ -337,11 +352,18 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
                 ) : (
                   <button
                     type="button"
-                    onClick={() => setShowVoteModal(true)}
+                    onClick={handleVote}
+                    disabled={isVoting}
                     className="flex-[2] flex items-center justify-center gap-3 rounded-full bg-[#008751] px-8 py-5 text-sm font-bold tracking-widest uppercase text-white shadow-xl transition-all hover:bg-[#008751]/90 hover:shadow-[#008751]/20 hover:shadow-2xl active:scale-95 group"
                   >
-                    <Heart className="w-5 h-5 fill-white text-white group-hover:animate-pulse" />
-                    Voter pour {candidate.prenom}
+                    {isVoting ? (
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    ) : (
+                      <>
+                        <Heart className="w-5 h-5 fill-white text-white group-hover:animate-pulse" />
+                        Voter pour {candidate.prenom}
+                      </>
+                    )}
                   </button>
                 )}
                 <button
@@ -467,104 +489,13 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
         )}
       </div>
 
-      {/* Vote Modal */}
+      {/* Vote Modal - Temporarily disabled for test phase
       {showVoteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white rounded-[32px] w-full max-w-md overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
-            <div className="p-8">
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-2xl font-display font-bold text-black">
-                  {isAuthenticated ? "Confirmer votre vote" : "Rejoindre l'aventure"}
-                </h3>
-                <button 
-                  onClick={() => setShowVoteModal(false)}
-                  className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-                >
-                  <X className="w-6 h-6 text-gray-400" />
-                </button>
-              </div>
-
-              {!voteMessage ? (
-                <>
-                  <p className="text-gray-600 mb-8 leading-relaxed">
-                    {isAuthenticated 
-                      ? `Vous allez voter pour `
-                      : `Entrez vos informations pour soutenir `
-                    }
-                    <span className="font-bold text-black">{fullName}</span>. 
-                    Un seul vote par personne est autorisé.
-                  </p>
-
-                  <div className="space-y-6">
-                    {!isAuthenticated && (
-                      <>
-                        <div className="space-y-2">
-                          <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400 ml-2">Nom Complet</label>
-                          <input 
-                            type="text"
-                            value={voterName}
-                            onChange={(e) => setVoterName(e.target.value)}
-                            placeholder="Votre nom et prénom"
-                            className="w-full px-5 py-4 rounded-2xl bg-[#F9F9F7] border border-[#008751]/10 text-sm focus:outline-none focus:ring-2 focus:ring-[#008751]/20"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400 ml-2">Numéro WhatsApp</label>
-                          <PhoneInput 
-                            value={voterWhatsapp} 
-                            onChange={setVoterWhatsapp} 
-                            placeholder="Votre numéro WhatsApp"
-                          />
-                        </div>
-                      </>
-                    )}
-
-                    <button
-                      onClick={handleVote}
-                      disabled={( !isAuthenticated && (!voterWhatsapp || !voterName)) || isVoting}
-                      className="w-full flex items-center justify-center gap-3 rounded-full bg-[#008751] py-4 text-sm font-bold tracking-widest uppercase text-white shadow-lg transition-all hover:bg-[#008751]/90 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {isVoting ? (
-                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      ) : (
-                        <>
-                          <Heart className="w-5 h-5 fill-white" />
-                          {isAuthenticated ? "Confirmer mon vote" : "Voter maintenant"}
-                        </>
-                      )}
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <div className="py-8 text-center animate-in zoom-in-95 duration-300">
-                  {voteMessage.type === 'success' ? (
-                    <div className="flex flex-col items-center">
-                      <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mb-6">
-                        <CheckCircle2 className="w-10 h-10 text-[#008751]" />
-                      </div>
-                      <p className="text-lg font-bold text-black mb-2">{voteMessage.text}</p>
-                      <p className="text-gray-500 text-sm">Merci pour votre soutien !</p>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center">
-                      <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mb-6">
-                        <AlertCircle className="w-10 h-10 text-red-500" />
-                      </div>
-                      <p className="text-lg font-bold text-black mb-2">{voteMessage.text}</p>
-                      <button
-                        onClick={() => setVoteMessage(null)}
-                        className="mt-4 text-[#008751] font-bold text-sm uppercase tracking-widest"
-                      >
-                        Réessayer
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
+          ...
         </div>
       )}
+      */}
     </div>
   );
 }
