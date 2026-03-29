@@ -28,6 +28,25 @@ const Header = () => {
     return calculateVoterStatus(userStats.unique_candidates_voted || 0, userStats.unique_universes_voted || 0);
   }, [userStats]);
 
+  // Sync with user session on mount and when dropdown opens
+  const syncUserData = async (authUser: User) => {
+    // Fetch profile
+    const { data: profileData } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", authUser.id)
+      .maybeSingle();
+    setProfile(profileData);
+
+    // Fetch user stats for grade
+    const { data: statsData } = await supabase
+      .from("user_stats")
+      .select("*")
+      .eq("voter_id", authUser.id)
+      .maybeSingle();
+    setUserStats(statsData);
+  };
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -45,25 +64,11 @@ const Header = () => {
     
     // Check initial session
     const checkUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
+      const { data: { user: initialUser } } = await supabase.auth.getUser();
+      setUser(initialUser);
       
-      if (user) {
-        // Fetch profile
-        const { data: profileData } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", user.id)
-          .single();
-        setProfile(profileData);
-
-        // Fetch user stats for grade
-        const { data: statsData } = await supabase
-          .from("user_stats")
-          .select("*")
-          .eq("voter_id", user.id)
-          .single();
-        setUserStats(statsData);
+      if (initialUser) {
+        await syncUserData(initialUser);
       }
       
       setLoading(false);
@@ -76,19 +81,7 @@ const Header = () => {
       setUser(currentUser);
       
       if (currentUser) {
-        const { data: profileData } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", currentUser.id)
-          .single();
-        setProfile(profileData);
-
-        const { data: statsData } = await supabase
-          .from("user_stats")
-          .select("*")
-          .eq("voter_id", currentUser.id)
-          .single();
-        setUserStats(statsData);
+        await syncUserData(currentUser);
       } else {
         setProfile(null);
         setUserStats(null);

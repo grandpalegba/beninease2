@@ -61,7 +61,7 @@ export default function CandidateDashboard({ profile }: CandidateDashboardProps)
           .from('profiles')
           .select('id, votes')
           .eq('category', talentData.category)
-          .or('role.eq.candidat,role.eq.ambassadeur,role.eq.candidate')
+          .or('role.eq.candidat,role.eq.ambassadeur,role.eq.candidate,role.eq.talent,role.eq.partenaire,role.eq.jury')
           .order('votes', { ascending: false });
 
         if (rankError) throw rankError;

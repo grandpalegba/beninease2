@@ -18,6 +18,7 @@ export interface Talent {
   bio: string | null;
   avatar_url: string | null;
   votes: number;
+  role?: string;
 }
 
 export interface Profile extends VideoSchema {

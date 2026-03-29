@@ -54,14 +54,18 @@ export default function VoterDashboard() {
           .from("profiles")
           .select("*")
           .eq("id", user.id)
-          .single();
+          .maybeSingle();
         
         if (profileError) throw profileError;
+        if (!profileData) {
+          router.push("/");
+          return;
+        }
         setProfile(profileData);
 
-        // Security check: Only allow 'votant', 'candidat', 'ambassadeur' or 'admin'
+        // Security check: Only allow 'votant', 'candidat', 'ambassadeur', 'admin', 'talent', 'partenaire' or 'jury'
         // (A talent can vote, so they should have access to this dashboard)
-        const allowedRoles = ['votant', 'candidat', 'ambassadeur', 'admin', 'candidate'];
+        const allowedRoles = ['votant', 'candidat', 'ambassadeur', 'admin', 'candidate', 'talent', 'partenaire', 'jury'];
         if (!allowedRoles.includes(profileData.role)) {
           router.push("/");
           return;
@@ -72,10 +76,10 @@ export default function VoterDashboard() {
           .from("user_stats")
           .select("*")
           .eq("voter_id", user.id)
-          .single();
+          .maybeSingle();
         
         // Don't throw if stats are missing, just use defaults
-        setUserStats(statsData || { unique_candidates_voted: 0, unique_categories_voted: 0 });
+        setUserStats(statsData || { unique_candidates_voted: 0, unique_categories_voted: 0, unique_universes_voted: 0 });
 
         // Load unique votes
         const { data: votesData, error: votesError } = await supabase
@@ -132,12 +136,12 @@ export default function VoterDashboard() {
       const talent = vote.profiles; // Use the aliased profiles
       if (!talent) return false;
       
-      const category = talent.category || talent.univers || talent.categorie;
+      const category = talent.categorie || talent.univers || talent.category;
       const universe = getUniverseFromCategory(category);
       const fullName = `${talent.prenom || ''} ${talent.nom || ''}`.toLowerCase();
       
       const matchesUniverse = selectedUniverse === "Tous les univers" || universe === selectedUniverse;
-      const matchesCategory = selectedCategory === "Toutes les catégories" || talent.category === selectedCategory;
+      const matchesCategory = selectedCategory === "Toutes les catégories" || category === selectedCategory;
       const matchesSearch = fullName.includes(searchQuery.toLowerCase());
       
       return matchesUniverse && matchesCategory && matchesSearch;
@@ -145,7 +149,7 @@ export default function VoterDashboard() {
   }, [votes, selectedUniverse, selectedCategory, searchQuery]);
 
   const allCategories = useMemo(() => {
-    const cats = new Set(votes.map(v => v.profiles?.category).filter(Boolean));
+    const cats = new Set(votes.map(v => v.profiles?.categorie || v.profiles?.univers || v.profiles?.category).filter(Boolean));
     return ["Toutes les catégories", ...Array.from(cats) as string[]];
   }, [votes]);
 
@@ -309,7 +313,7 @@ export default function VoterDashboard() {
               {filteredVotes.map((vote) => {
                 const talent = vote.profiles;
                 if (!talent) return null;
-                const category = talent.category || talent.univers || talent.categorie || "Talent";
+                const category = talent.categorie || talent.univers || talent.category || "Talent";
                 const universe = getUniverseFromCategory(category);
                 return (
                   <Link 

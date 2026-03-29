@@ -22,8 +22,8 @@ function TalentsList() {
         // Interrogation de la table public.profiles filtrée pour les talents (candidats/ambassadeurs)
         const { data, error } = await supabase
           .from('profiles')
-          .select('id, slug, prenom, nom, category, univers, categorie, avatar_url, votes, bio')
-          .or('role.eq.candidat,role.eq.ambassadeur,role.eq.candidate')
+          .select('id, slug, prenom, nom, category, univers, categorie, avatar_url, votes, bio, role')
+          .or('role.eq.candidat,role.eq.ambassadeur,role.eq.candidate,role.eq.talent,role.eq.partenaire,role.eq.jury')
           .order('votes', { ascending: false });
 
         console.log("Données reçues de la table profiles (talents):", data);
@@ -81,7 +81,7 @@ function TalentsList() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {talents.map((talent) => {
           const fullName = `${talent.prenom || ''} ${talent.nom || ''}`;
-          const category = talent.category || talent.univers || talent.categorie || "Talent";
+          const category = talent.categorie || talent.univers || talent.category || talent.role || "Talent";
           let imageUrl = talent.avatar_url || "";
           
           if (!imageUrl) {

@@ -50,10 +50,13 @@ export default function SettingsPage() {
           .from("profiles")
           .select("*")
           .eq("id", authUser.id)
-          .single();
+          .maybeSingle();
 
         if (error) throw error;
-
+        if (!profileData) {
+          router.push("/");
+          return;
+        }
         setProfile(profileData);
         setFullName(profileData.full_name || "");
         setBio(profileData.bio || "");
@@ -280,7 +283,7 @@ export default function SettingsPage() {
                 <div className="relative group">
                   <input 
                     type="text" 
-                    value={profile?.whatsapp || profile?.whatsapp_number || ""} 
+                    value={profile?.whatsapp_number || profile?.whatsapp || ""} 
                     disabled
                     className="w-full px-6 py-4 rounded-2xl bg-[#F9F9F7] border border-gray-100 font-sans font-bold text-gray-400 cursor-not-allowed pr-12"
                   />

@@ -15,33 +15,40 @@ export default function TalentDashboardPage() {
 
   useEffect(() => {
     async function getProfile() {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        router.push("/login");
-        return;
-      }
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (!user) {
+          router.push("/login");
+          return;
+        }
 
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .single();
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", user.id)
+          .maybeSingle();
 
-      if (error || !data) {
-        console.error("Error fetching profile:", error);
+        if (error) throw error;
+        if (!data) {
+          console.error("No profile found");
+          router.push("/");
+          return;
+        }
+
+        // Only allow talents
+        const talentRoles = ['candidat', 'ambassadeur', 'candidate', 'talent', 'partenaire', 'jury'];
+        if (!talentRoles.includes(data.role)) {
+          router.push("/dashboard/votant");
+          return;
+        }
+
+        setProfile(data as Profile);
+      } catch (err) {
+        console.error("Dashboard error:", err);
+      } finally {
         setLoading(false);
-        return;
       }
-
-      // Security: Only allow 'talent' (candidat or ambassadeur)
-      if (data.role !== 'candidat' && data.role !== 'ambassadeur' && data.role !== 'admin') {
-        router.push("/");
-        return;
-      }
-
-      setProfile(data as Profile);
-      setLoading(false);
     }
 
     getProfile();

@@ -82,7 +82,7 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
 
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
 
-  const category = useMemo(() => candidate.category || candidate.univers || candidate.categorie || "Talent", [candidate]);
+  const category = useMemo(() => candidate.categorie || candidate.univers || candidate.category || "Talent", [candidate]);
   const city = useMemo(() => candidate.city || "Bénin", [candidate]);
 
   const handleImageError = (tabName: string) => {
