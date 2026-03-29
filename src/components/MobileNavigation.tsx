@@ -61,15 +61,6 @@ const MobileNavigation = () => {
       <header className="fixed top-0 left-0 right-0 z-[60] bg-white/95 backdrop-blur-md border-b border-black/5 h-16 flex items-center md:hidden">
         <div className="container flex items-center justify-between px-6">
           <Link href="/" className="flex items-center gap-2 group" onClick={() => setIsOpen(false)}>
-            <div className="relative h-8 w-8">
-              <Image
-                src="/images/logo.png"
-                alt="Emblème Beninease"
-                fill
-                className="object-contain"
-                priority
-              />
-            </div>
             <span className="font-display text-xl font-bold text-[#006B3F]">
               Beninease
             </span>
@@ -148,15 +139,11 @@ const MobileNavigation = () => {
 
               {/* 2. Main Navigation (Middle) */}
               <nav className="flex flex-col gap-4 mb-12 border-y border-gray-100 py-8">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2">Concours</p>
                 <Link href="/talents" onClick={() => setIsOpen(false)} className={menuLinkClasses}>
                   <Globe size={24} className="text-[#006B3F]" /> Talents
                 </Link>
                 <Link href="/classement" onClick={() => setIsOpen(false)} className={menuLinkClasses}>
                   <Trophy size={24} className="text-[#006B3F]" /> Classement
-                </Link>
-                <Link href="/univers" onClick={() => setIsOpen(false)} className={menuLinkClasses}>
-                  <Star size={24} className="text-[#006B3F]" /> Univers
                 </Link>
               </nav>
 
@@ -178,11 +165,6 @@ const MobileNavigation = () => {
                   </button>
                 </div>
               )}
-
-              {/* Footer */}
-              <div className="mt-10 text-gray-300 font-sans text-[10px] uppercase tracking-widest">
-                © {new Date().getFullYear()} Beninease — L'Excellence Béninoise
-              </div>
             </div>
           </motion.div>
         )}

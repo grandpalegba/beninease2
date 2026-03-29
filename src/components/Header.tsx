@@ -121,15 +121,6 @@ const Header = () => {
     >
       <div className="container max-w-7xl mx-auto flex items-center justify-between px-6">
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="relative h-10 w-10 transition-transform group-hover:scale-110 active:scale-95">
-            <Image
-              src="/images/logo.png"
-              alt="Emblème Beninease"
-              fill
-              className="object-contain"
-              priority
-            />
-          </div>
           <span
             className="font-display text-2xl font-bold text-[#006B3F]"
             style={{ letterSpacing: "0.12em" }}
@@ -145,9 +136,6 @@ const Header = () => {
             </Link>
             <Link href="/classement" className={navLinkClasses}>
               Classement
-            </Link>
-            <Link href="/univers" className={navLinkClasses}>
-              Univers
             </Link>
           </nav>
 
