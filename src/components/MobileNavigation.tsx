@@ -51,6 +51,17 @@ const MobileNavigation = () => {
     return () => { document.body.style.overflow = "unset"; };
   }, [isOpen]);
 
+  const handleSignOut = async () => {
+    try {
+      logout(); // Custom voter logic logout
+      await supabase.auth.signOut();
+      setIsOpen(false);
+      window.location.href = '/';
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+
   const toggleMenu = () => setIsOpen(!isOpen);
 
   const menuLinkClasses = "font-display text-2xl font-bold text-[#1A1A1A] hover:text-[#006B3F] transition-colors flex items-center gap-4 w-full py-2";
@@ -124,7 +135,7 @@ const MobileNavigation = () => {
                     onClick={() => setIsOpen(false)}
                     className="w-full py-4 rounded-full bg-[#F9F9F7] text-[#1A1A1A] font-display text-lg font-bold shadow-sm flex items-center justify-center border border-gray-100"
                   >
-                    Se connecter
+                    Voter / Se connecter
                   </Link>
                   <Link
                     href="/postuler"
@@ -152,14 +163,14 @@ const MobileNavigation = () => {
               {user && (
                 <div className="mt-auto space-y-4 pt-6">
                   <Link
-                    href="/profile/edit"
+                    href="/settings"
                     onClick={() => setIsOpen(false)}
                     className="flex items-center gap-3 text-gray-500 font-bold text-sm hover:text-[#006B3F] transition-colors"
                   >
                     <Settings size={18} /> Paramètres du compte
                   </Link>
                   <button
-                    onClick={() => { logout(); supabase.auth.signOut(); setIsOpen(false); }}
+                    onClick={handleSignOut}
                     className="flex items-center gap-3 text-red-500 font-bold text-sm hover:text-red-600 transition-colors w-full text-left"
                   >
                     <LogOut size={18} /> Déconnexion

@@ -9,10 +9,6 @@ export default function PostulerPage() {
       <div className="w-full max-w-xl space-y-10">
         {/* Header Section */}
         <div className="text-center space-y-4">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#E8112D]/10 text-[#E8112D] text-xs font-bold uppercase tracking-widest animate-fade-down">
-            <Star className="w-3.5 h-3.5" />
-            Rejoignez l'élite
-          </div>
           <h1 className="text-4xl md:text-6xl font-display font-bold text-black leading-tight animate-fade-up">
             Devenez l'un des <span className="text-[#E8112D]">256 Ambassadeurs</span> du Bénin
           </h1>

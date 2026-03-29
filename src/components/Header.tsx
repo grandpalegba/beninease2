@@ -107,8 +107,25 @@ const Header = () => {
   }, [supabase, router]);
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    router.refresh();
+    try {
+      setLoading(true);
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      
+      // Clear any potential local storage or session state if needed
+      // (useVoter might handle its own, but we can be explicit here)
+      
+      // Redirect to home and refresh
+      router.push('/');
+      router.refresh();
+      
+      // Force a full reload to clear all states if router.refresh isn't enough
+      window.location.href = '/';
+    } catch (error) {
+      console.error("Error signing out:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const navLinkClasses = "text-sm font-bold text-[#1A1A1A] hover:text-[#006B3F] transition-colors font-display tracking-wide";
@@ -210,7 +227,7 @@ const Header = () => {
                         </Link>
                         
                         <Link
-                          href="/profile/edit"
+                          href="/settings"
                           onClick={() => setShowDropdown(false)}
                           className="flex items-center gap-4 px-6 py-3 text-sm font-bold text-gray-700 hover:bg-[#006B3F]/5 hover:text-[#006B3F] transition-all group"
                         >
@@ -243,7 +260,7 @@ const Header = () => {
                       href="/login"
                       className="text-sm font-bold text-[#1A1A1A] hover:text-[#006B3F] transition-colors font-display tracking-wide"
                     >
-                      Se connecter
+                      Voter / Se connecter
                     </Link>
                     <Link
                       href="/postuler"

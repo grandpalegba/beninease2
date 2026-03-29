@@ -74,9 +74,14 @@ export default function DashboardPage() {
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.push("/");
-    router.refresh();
+    try {
+      setLoading(true);
+      await supabase.auth.signOut();
+      window.location.href = '/';
+    } catch (error) {
+      console.error("Error signing out:", error);
+      setLoading(false);
+    }
   };
 
   if (loading) {
