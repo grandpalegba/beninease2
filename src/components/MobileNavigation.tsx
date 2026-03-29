@@ -109,13 +109,7 @@ const MobileNavigation = () => {
             <div className="flex flex-col min-h-full pt-24 pb-10 px-8">
               
               {/* 1. Identity Section (Top) */}
-              {loading ? (
-                <div className="mb-10 bg-gray-50 p-6 rounded-[32px] animate-pulse">
-                  <div className="h-14 w-14 bg-gray-200 rounded-full mb-4" />
-                  <div className="h-6 w-32 bg-gray-200 rounded mb-2" />
-                  <div className="h-10 w-full bg-gray-200 rounded-full" />
-                </div>
-              ) : user ? (
+              {user ? (
                 <div className="mb-10 bg-[#F9F9F7] p-6 rounded-[32px] border border-[#006B3F]/10 shadow-sm">
                   <div className="flex items-center gap-4 mb-4">
                     <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-white shadow-lg bg-gray-50">
