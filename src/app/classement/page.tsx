@@ -5,10 +5,11 @@
 "use client";
 
 import { Suspense, useEffect, useMemo, useState } from "react";
-import { Info } from "lucide-react";
+import { Info, Trophy, Star, ChevronRight } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import Image from "next/image";
 import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Define the type for our profile data
 type Profile = {
@@ -18,7 +19,7 @@ type Profile = {
   nom: string | null;
   category: string | null;
   votes: number;
-  avatar_url: string; // Using avatar_url from Supabase
+  avatar_url: string; 
 };
 
 function RankingList() {
@@ -26,41 +27,38 @@ function RankingList() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchProfiles = async () => {
+    const { data } = await supabase
+      .from('profiles')
+      .select('id, slug, prenom, nom, category, votes, avatar_url')
+      .not('prenom', 'is', null)
+      .not('nom', 'is', null)
+      .order('votes', { ascending: false })
+      .order('nom', { ascending: true })
+      .limit(16);
+
+    if (data) {
+      setProfiles(data as Profile[]);
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
-    // 1. Fetch initial data
-    const fetchProfiles = async () => {
-      setLoading(true);
-      const { data } = await supabase
-        .from('profiles')
-        .select('id, slug, prenom, nom, category, votes, avatar_url')
-        .not('prenom', 'is', null)
-        .not('nom', 'is', null)
-        .order('votes', { ascending: false })
-        .order('nom', { ascending: true })
-        .limit(16);
-
-      if (data) {
-        setProfiles(data as Profile[]);
-      }
-      setLoading(false);
-    };
-
     fetchProfiles();
 
-    // 2. Subscribe to real-time updates
+    // 2. Subscribe to real-time updates for profiles via supabase_realtime
     const channel = supabase
-      .channel('profiles_updates')
+      .channel('supabase_realtime')
       .on(
         'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'profiles' },
         () => {
-          // When a profile is updated, re-fetch the whole list to re-order it
+          // Re-fetch and re-sort
           fetchProfiles();
         }
       )
       .subscribe();
 
-    // 3. Cleanup subscription on component unmount
     return () => {
       supabase.removeChannel(channel);
     };
@@ -70,71 +68,93 @@ function RankingList() {
     return (
       <div className="flex flex-col items-center justify-center py-20">
         <div className="w-12 h-12 border-4 border-[#008751]/20 border-t-[#008751] rounded-full animate-spin mb-4" />
-        <p className="text-[#008751] font-medium">Chargement du classement...</p>
+        <p className="text-[#008751] font-medium">Calcul du classement...</p>
       </div>
     );
   }
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="grid gap-4">
-        {profiles.map((talent, index) => {
-          const rankLabel = index === 0 ? "1er" : `${index + 1}e`;
-          const isTop4 = index < 4;
-          const fullName = `${talent.prenom} ${talent.nom}`;
-          
-          return (
-            <Link 
-              key={talent.id} 
-              href={`/talents/${talent.slug || talent.id}`}
-              className="flex items-center gap-4 bg-white p-4 md:p-6 rounded-[24px] shadow-sm border border-transparent hover:border-[#008751]/30 transition-all hover:shadow-md active:scale-[0.99] group relative overflow-hidden"
-            >
-              {isTop4 && (
-                <div className="absolute top-0 left-0 w-1 h-full bg-[#004d3d]" />
-              )}
-              
-              <div className="flex flex-col items-center justify-center w-12 md:w-16">
-                <span className={`text-2xl md:text-3xl font-display font-black ${isTop4 ? 'text-[#004d3d]' : 'text-gray-300'}`}>
-                  {rankLabel}
-                </span>
-              </div>
+      <AnimatePresence mode="popLayout">
+        <motion.div layout className="grid gap-4">
+          {profiles.map((talent, index) => {
+            const rankLabel = index === 0 ? "1er" : `${index + 1}e`;
+            const isTop4 = index < 4;
+            const fullName = `${talent.prenom} ${talent.nom}`;
+            
+            return (
+              <motion.div
+                key={talent.id}
+                layout
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ 
+                  type: "spring", 
+                  stiffness: 300, 
+                  damping: 30,
+                  layout: { duration: 0.6 }
+                }}
+              >
+                <Link 
+                  href={`/talents/${talent.slug || talent.id}`}
+                  className="flex items-center gap-4 bg-white p-4 md:p-6 rounded-[28px] shadow-sm border border-transparent hover:border-[#008751]/30 transition-all hover:shadow-lg active:scale-[0.98] group relative overflow-hidden"
+                >
+                  {isTop4 && (
+                    <div className="absolute top-0 left-0 w-1.5 h-full bg-[#008751]" />
+                  )}
+                  
+                  <div className="flex flex-col items-center justify-center w-12 md:w-16">
+                    <span className={`text-2xl md:text-3xl font-display font-black ${isTop4 ? 'text-[#008751]' : 'text-gray-300'}`}>
+                      {rankLabel}
+                    </span>
+                    {index === 0 && <Trophy className="w-4 h-4 text-[#E9B113] mt-1" />}
+                  </div>
 
-              <div className="relative w-14 h-14 md:w-20 md:h-20 rounded-2xl overflow-hidden border-2 border-white shadow-sm group-hover:scale-105 transition-transform">
-                <Image 
-                  src={talent.avatar_url || '/placeholder-portrait.jpg'} 
-                  alt={fullName} 
-                  fill 
-                  className="object-cover" 
-                />
-              </div>
+                  <div className="relative w-14 h-14 md:w-20 md:h-20 rounded-2xl overflow-hidden border-2 border-white shadow-sm group-hover:scale-105 transition-transform">
+                    <Image 
+                      src={talent.avatar_url || '/placeholder-portrait.jpg'} 
+                      alt={fullName} 
+                      fill 
+                      className="object-cover" 
+                    />
+                  </div>
 
-              <div className="flex-1 ml-2">
-                <h3 className="font-display text-lg md:text-xl font-bold text-black group-hover:text-[#008751] transition-colors">
-                  {fullName}
-                </h3>
-                <p className="text-xs md:text-sm text-[#004d3d] font-display font-bold uppercase tracking-widest mt-0.5">
-                  {talent.category}
-                </p>
-              </div>
+                  <div className="flex-1 ml-2">
+                    <h3 className="font-display text-lg md:text-xl font-bold text-black group-hover:text-[#008751] transition-colors">
+                      {fullName}
+                    </h3>
+                    <p className="text-[10px] md:text-xs text-gray-400 font-display font-bold uppercase tracking-[0.15em] mt-1">
+                      {talent.category}
+                    </p>
+                  </div>
 
-              <div className="text-right px-4">
-                <div className="flex flex-col items-end">
-                  <span className="text-2xl md:text-3xl font-display font-black text-[#008751]">
-                    {talent.votes}
-                  </span>
-                  <span className="text-[10px] uppercase tracking-widest font-bold text-gray-400">
-                    Votes
-                  </span>
-                </div>
-              </div>
-            </Link>
-          );
-        })}
-      </div>
+                  <div className="text-right px-4">
+                    <motion.div 
+                      key={talent.votes}
+                      initial={{ scale: 1.2, color: "#E9B113" }}
+                      animate={{ scale: 1, color: "#008751" }}
+                      className="flex flex-col items-end"
+                    >
+                      <span className="text-2xl md:text-3xl font-display font-black">
+                        {talent.votes}
+                      </span>
+                      <span className="text-[10px] uppercase tracking-widest font-bold text-gray-400">
+                        Soutiens
+                      </span>
+                    </motion.div>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-gray-200 group-hover:text-[#008751] transition-colors mr-2" />
+                </Link>
+              </motion.div>
+            );
+          })}
+        </motion.div>
+      </AnimatePresence>
       
       {profiles.length === 0 && !loading && (
         <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
-          <p className="text-gray-500">Aucun talent n&apos;a encore reçu de vote.</p>
+          <p className="text-gray-500">L&apos;excellence attend votre premier vote.</p>
         </div>
       )}
     </div>

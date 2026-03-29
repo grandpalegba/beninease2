@@ -19,13 +19,10 @@ function TalentsList() {
   useEffect(() => {
     const fetchTalents = async () => {
       try {
-        // Interrogation de la table public.talents sans aucun filtre de rôle
         const { data, error } = await supabase
           .from('talents')
           .select('id, slug, prenom, nom, category, avatar_url, votes, bio')
           .order('votes', { ascending: false });
-
-        console.log("Données reçues de la table talents:", data);
 
         if (error) throw error;
         if (data) setTalents(data as Talent[]);
@@ -37,6 +34,24 @@ function TalentsList() {
     };
 
     fetchTalents();
+
+    // Subscribe to real-time updates for all talents via supabase_realtime
+    const channel = supabase
+      .channel('supabase_realtime')
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'profiles' },
+        (payload) => {
+          setTalents(prev => prev.map(t => 
+            t.id === payload.new.id ? { ...t, votes: payload.new.votes } : t
+          ));
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [supabase]);
 
   if (loading) {

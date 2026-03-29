@@ -41,7 +41,8 @@ export default function VoterDashboard() {
   const [votes, setVotes] = useState<any[]>([]);
   const [userStats, setUserStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  
+  const [sqlGrade, setSqlGrade] = useState<string | null>(null);
+
   // Filters
   const [selectedUniverse, setSelectedUniverse] = useState<string>("Tous les univers");
   const [selectedCategory, setSelectedCategory] = useState<string>("Toutes les catégories");
@@ -73,32 +74,63 @@ export default function VoterDashboard() {
       
       setUserStats(statsData);
 
-      // Load unique votes
-      const { data: votesData, error: votesError } = await supabase
-        .from("votes_records")
-        .select(`
-          id,
-          vote_date,
-          candidate_id,
-          voter_id,
-          category,
-          universe,
-          talents (
-            id,
-            slug,
-            prenom,
-            nom,
-            avatar_url
-          )
-        `)
-        .eq("voter_id", user.id)
-        .order("vote_date", { ascending: false });
+      // Call the SQL grade function
+      const { data: gradeData } = await supabase.rpc('get_user_grade', { user_uuid: user.id });
+      if (gradeData) setSqlGrade(gradeData);
 
-      if (votesData) {
-        setVotes(votesData);
-      }
-      
+      // Function to load votes
+      const fetchVotes = async () => {
+        const { data: votesData } = await supabase
+          .from("votes")
+          .select(`
+            id,
+            vote_date,
+            candidate_id,
+            user_id,
+            sous_categorie,
+            univers,
+            talents (
+              id,
+              slug,
+              prenom,
+              nom,
+              avatar_url
+            )
+          `)
+          .eq("user_id", user.id)
+          .order("vote_date", { ascending: false });
+
+        if (votesData) {
+          setVotes(votesData);
+        }
+      };
+
+      await fetchVotes();
       setLoading(false);
+
+      // Realtime subscription for this voter's votes
+      const channel = supabase
+        .channel(`voter_realtime_${user.id}`)
+        .on(
+          'postgres_changes',
+          { 
+            event: 'INSERT', 
+            schema: 'public', 
+            table: 'votes', 
+            filter: `user_id=eq.${user.id}` 
+          },
+          async () => {
+            await fetchVotes();
+            // Also refresh grade
+            const { data: newGrade } = await supabase.rpc('get_user_grade', { user_uuid: user.id });
+            if (newGrade) setSqlGrade(newGrade);
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
     }
 
     loadData();
@@ -107,8 +139,8 @@ export default function VoterDashboard() {
   // Derived stats using user_stats view for reliability
   const stats = useMemo(() => {
     const totalVotes = votes.length;
-    const distinctUniverses = Array.from(new Set(votes.map(v => v.universe).filter(Boolean)));
-    const distinctCategories = Array.from(new Set(votes.map(v => v.category).filter(Boolean)));
+    const distinctUniverses = Array.from(new Set(votes.map(v => v.univers).filter(Boolean)));
+    const distinctCategories = Array.from(new Set(votes.map(v => v.sous_categorie).filter(Boolean)));
     const universeCount = distinctUniverses.length;
     const categoryCount = distinctCategories.length;
     
@@ -130,11 +162,11 @@ export default function VoterDashboard() {
       const talent = vote.talents;
       if (!talent) return false;
       
-      const universe = vote.universe || getUniverseFromCategory(vote.category);
+      const universe = vote.univers || getUniverseFromCategory(vote.sous_categorie);
       const fullName = `${talent.prenom} ${talent.nom}`.toLowerCase();
       
       const matchesUniverse = selectedUniverse === "Tous les univers" || universe === selectedUniverse;
-      const matchesCategory = selectedCategory === "Toutes les catégories" || vote.category === selectedCategory;
+      const matchesCategory = selectedCategory === "Toutes les catégories" || vote.sous_categorie === selectedCategory;
       const matchesSearch = fullName.includes(searchQuery.toLowerCase());
       
       return matchesUniverse && matchesCategory && matchesSearch;
@@ -142,7 +174,7 @@ export default function VoterDashboard() {
   }, [votes, selectedUniverse, selectedCategory, searchQuery]);
 
   const allCategories = useMemo(() => {
-    const cats = new Set(votes.map(v => v.category).filter(Boolean));
+    const cats = new Set(votes.map(v => v.sous_categorie).filter(Boolean));
     return ["Toutes les catégories", ...Array.from(cats) as string[]];
   }, [votes]);
 
@@ -177,7 +209,7 @@ export default function VoterDashboard() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <VoterStatusBadge status={stats.currentStatus} />
+              <VoterStatusBadge status={{...stats.currentStatus, label: sqlGrade || stats.currentStatus.label}} />
             </motion.div>
             <motion.h1 
               initial={{ opacity: 0, y: 10 }}

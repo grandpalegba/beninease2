@@ -100,12 +100,12 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
 
   useEffect(() => {
     if (candidate?.slug) {
-      // Subscribe to real-time changes
+      // Subscribe to real-time changes using supabase_realtime channel
       const channel = supabase
-        .channel(`public:talents:slug=${candidate.slug}`)
+        .channel('supabase_realtime')
         .on(
           'postgres_changes',
-          { event: 'UPDATE', schema: 'public', table: 'talents', filter: `slug=eq.${candidate.slug}` },
+          { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `id=eq.${profileId}` },
           (payload) => {
             if (payload.new && typeof payload.new.votes === 'number') {
               setVotesCount(payload.new.votes);
@@ -118,7 +118,7 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
         supabase.removeChannel(channel);
       };
     }
-  }, [candidate?.slug, supabase]);
+  }, [candidate?.slug, profileId, supabase]);
 
   // Share state
   const [showShareModal, setShowShareModal] = useState(false);
@@ -127,7 +127,7 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
   const handleVote = async () => {
     if (!profileId) return;
 
-    // Récupération forcée de la session actuelle pour éviter les faux négatifs
+    // Récupération forcée de la session actuelle
     const { data: { session: currentSession } } = await supabase.auth.getSession();
     const activeUser = currentSession?.user;
 
@@ -137,13 +137,30 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
     }
 
     const voterId = activeUser.id;
+    
+    // --- OPTIMISTIC UPDATE START ---
+    setHasVoted(true);
+    setVotesCount(prev => prev + 1);
+    
+    // Feedback sensoriel
+    if (window.navigator.vibrate) {
+      window.navigator.vibrate(50);
+    }
+    
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.7 },
+      colors: ["#008751", "#E9B113", "#D4AF37"],
+    });
+    // --- OPTIMISTIC UPDATE END ---
+
     setIsVoting(true);
     setVoteMessage(null);
 
     try {
-      // Étape Préventive : S'assurer que le profil existe (Synchronisation forcée)
-      // On utilise un UPSERT pour être certain que la ligne existe dans profiles avant de voter
-      const { error: profileSyncError } = await supabase
+      // Étape Préventive : S'assurer que le profil existe
+      await supabase
         .from('profiles')
         .upsert({ 
           id: voterId, 
@@ -153,51 +170,29 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
           updated_at: new Date().toISOString()
         }, { onConflict: 'id' });
 
-      if (profileSyncError) {
-        console.error("Profile Sync Error:", profileSyncError);
-        throw new Error("Impossible de synchroniser votre profil avant le vote.");
-      }
-
-      // Étape A : Insérer le vote dans la table votes (voter_id et candidate_id uniquement)
+      // Étape A : Insérer le vote (Trigger SQL s'occupe du compteur)
       const { error: recordError } = await supabase
         .from('votes')
-        .insert([
-          { 
-            voter_id: voterId,
-            candidate_id: profileId
-          }
-        ]);
+        .insert([{ 
+          user_id: voterId, 
+          candidate_id: profileId,
+          univers: candidate.category ? getUniverseFromCategory(candidate.category) : 'Autre',
+          sous_categorie: candidate.category
+        }]);
 
       if (recordError) {
-        console.error("Supabase Vote INSERT Error:", recordError);
-        if (recordError.code === '23505' || recordError.message?.includes('unique')) {
+        // Rollback optimistic update if error (except if already voted)
+        if (recordError.code !== '23505' && !recordError.message?.includes('unique')) {
+          setHasVoted(false);
+          setVotesCount(prev => prev - 1);
+          throw recordError;
+        } else {
           setVoteMessage({ type: 'error', text: "Vous avez déjà soutenu ce talent !" });
-          setHasVoted(true);
-          setIsVoting(false);
           return;
         }
-        throw recordError;
-      }
-
-      // Étape B : Incrémenter votes dans talents (via RPC)
-      const { error: updateError } = await supabase.rpc('increment_votes', { candidate_id: profileId });
-      if (updateError) {
-        console.error("Supabase Vote RPC Increment Error:", updateError);
-        throw updateError;
       }
       
-      confetti({
-        particleCount: 150,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ["#008751", "#E9B113", "#E8112D"],
-      });
-
       setVoteMessage({ type: 'success', text: "Soutien validé ! Merci." });
-      setHasVoted(true);
-      setVotesCount(prev => prev + 1);
-      
-      // Force refresh data for dashboards and leaderboard
       router.refresh();
 
     } catch (err: any) {
