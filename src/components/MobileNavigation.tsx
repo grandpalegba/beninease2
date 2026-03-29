@@ -15,25 +15,50 @@ const MobileNavigation = () => {
   const [userStats, setUserStats] = useState<any>(null);
   const [user, setUser] = useState<any>(null);
   
+  const [loading, setLoading] = useState(true);
+  
   const { logout } = useVoter();
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
   // Sync with Supabase Auth
   useEffect(() => {
     const checkUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
-      if (user) {
-        const { data: profileData } = await supabase.from("profiles").select("*").eq("id", user.id).single();
-        setProfile(profileData);
-        const { data: statsData } = await supabase.from("user_stats").select("*").eq("voter_id", user.id).single();
-        setUserStats(statsData);
+      try {
+        const { data: { user: currentUser } } = await supabase.auth.getUser();
+        setUser(currentUser);
+        if (currentUser) {
+          const [profileRes, statsRes] = await Promise.all([
+            supabase.from("profiles").select("*").eq("id", currentUser.id).single(),
+            supabase.from("user_stats").select("*").eq("voter_id", currentUser.id).single()
+          ]);
+          if (profileRes.data) setProfile(profileRes.data);
+          if (statsRes.data) setUserStats(statsRes.data);
+        }
+      } catch (err) {
+        console.log("Public mobile user session:", err);
+      } finally {
+        setLoading(false);
       }
     };
     checkUser();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+      if (currentUser) {
+        setLoading(true);
+        const [profileRes, statsRes] = await Promise.all([
+          supabase.from("profiles").select("*").eq("id", currentUser.id).single(),
+          supabase.from("user_stats").select("*").eq("voter_id", currentUser.id).single()
+        ]);
+        if (profileRes.data) setProfile(profileRes.data);
+        if (statsRes.data) setUserStats(statsRes.data);
+        setLoading(false);
+      } else {
+        setProfile(null);
+        setUserStats(null);
+        setLoading(false);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -84,7 +109,13 @@ const MobileNavigation = () => {
             <div className="flex flex-col min-h-full pt-24 pb-10 px-8">
               
               {/* 1. Identity Section (Top) */}
-              {user ? (
+              {loading ? (
+                <div className="mb-10 bg-gray-50 p-6 rounded-[32px] animate-pulse">
+                  <div className="h-14 w-14 bg-gray-200 rounded-full mb-4" />
+                  <div className="h-6 w-32 bg-gray-200 rounded mb-2" />
+                  <div className="h-10 w-full bg-gray-200 rounded-full" />
+                </div>
+              ) : user ? (
                 <div className="mb-10 bg-[#F9F9F7] p-6 rounded-[32px] border border-[#006B3F]/10 shadow-sm">
                   <div className="flex items-center gap-4 mb-4">
                     <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-white shadow-lg bg-gray-50">

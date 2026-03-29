@@ -45,28 +45,28 @@ const Header = () => {
     
     // Check initial session
     const checkUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
-      
-      if (user) {
-        // Fetch profile
-        const { data: profileData } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", user.id)
-          .single();
-        setProfile(profileData);
+      try {
+        const { data: { user: currentUser }, error: authError } = await supabase.auth.getUser();
+        if (authError) throw authError;
+        
+        setUser(currentUser);
+        
+        if (currentUser) {
+          // Parallel fetch for profile and stats
+          const [profileRes, statsRes] = await Promise.all([
+            supabase.from("profiles").select("*").eq("id", currentUser.id).single(),
+            supabase.from("user_stats").select("*").eq("voter_id", currentUser.id).single()
+          ]);
 
-        // Fetch user stats for grade
-        const { data: statsData } = await supabase
-          .from("user_stats")
-          .select("*")
-          .eq("voter_id", user.id)
-          .single();
-        setUserStats(statsData);
+          if (profileRes.data) setProfile(profileRes.data);
+          if (statsRes.data) setUserStats(statsRes.data);
+        }
+      } catch (err) {
+        console.log("Public user or session error in Header:", err);
+        setUser(null);
+      } finally {
+        setLoading(false);
       }
-      
-      setLoading(false);
     };
     checkUser();
 
@@ -76,22 +76,24 @@ const Header = () => {
       setUser(currentUser);
       
       if (currentUser) {
-        const { data: profileData } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", currentUser.id)
-          .single();
-        setProfile(profileData);
+        setLoading(true);
+        try {
+          const [profileRes, statsRes] = await Promise.all([
+            supabase.from("profiles").select("*").eq("id", currentUser.id).single(),
+            supabase.from("user_stats").select("*").eq("voter_id", currentUser.id).single()
+          ]);
 
-        const { data: statsData } = await supabase
-          .from("user_stats")
-          .select("*")
-          .eq("voter_id", currentUser.id)
-          .single();
-        setUserStats(statsData);
+          if (profileRes.data) setProfile(profileRes.data);
+          if (statsRes.data) setUserStats(statsRes.data);
+        } catch (err) {
+          console.error("Error updating user data in Header:", err);
+        } finally {
+          setLoading(false);
+        }
       } else {
         setProfile(null);
         setUserStats(null);
+        setLoading(false);
       }
 
       if (event === 'SIGNED_OUT') {
@@ -140,7 +142,12 @@ const Header = () => {
           </nav>
 
           <div className="flex items-center gap-4 border-l border-[#006B3F]/10 pl-8">
-            {!loading && (
+            {loading ? (
+              <div className="flex items-center gap-4">
+                <div className="h-4 w-20 bg-gray-100 animate-pulse rounded" />
+                <div className="h-10 w-28 bg-gray-100 animate-pulse rounded-full" />
+              </div>
+            ) : (
               <>
                 {user ? (
                   <div className="flex items-center gap-4 user-menu-container relative">
