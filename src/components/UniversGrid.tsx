@@ -19,7 +19,7 @@ const UniversGrid = ({ ctaHref = "/postuler", ctaLabel = "POSTULER MAINTENANT" }
 
   return (
     <section id="univers" className="py-24 md:py-32 bg-[#008751] relative z-10">
-      <div className="container px-4 relative z-20">
+      <div className="container px-4 relative z-20 mx-auto">
         <div className="text-center mb-16">
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 text-balance" style={{ lineHeight: "1.15" }}>
             Les 16 Univers
@@ -29,7 +29,7 @@ const UniversGrid = ({ ctaHref = "/postuler", ctaLabel = "POSTULER MAINTENANT" }
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5 max-w-5xl mx-auto relative z-30">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 max-w-7xl mx-auto relative z-30">
           {universes.map((u, i) => {
             const Icon = u.icon;
             const isActive = activeIdx === i;
@@ -42,31 +42,38 @@ const UniversGrid = ({ ctaHref = "/postuler", ctaLabel = "POSTULER MAINTENANT" }
                   e.stopPropagation();
                   handleToggle(i, u.name);
                 }}
-                className={`relative group rounded-2xl p-5 md:p-6 text-left transition-all duration-300 ease-in-out cursor-pointer border-none shadow-sm flex flex-col items-start hover:scale-[1.05] hover:shadow-[0_10px_20px_rgba(0,0,0,0.1)] active:scale-95 z-40 pointer-events-auto ${
-                  isActive ? "bg-[#008751] col-span-2 row-span-1 scale-[1.05] shadow-[0_10px_20px_rgba(0,0,0,0.1)] ring-2 ring-white/20" : "bg-white hover:scale-[1.05]"
+                className={`relative group rounded-2xl p-5 md:p-6 text-left transition-all duration-300 ease-in-out cursor-pointer border-none shadow-sm flex flex-col items-start hover:scale-[1.05] hover:shadow-[0_10px_20px_rgba(0,0,0,0.1)] active:scale-95 z-40 pointer-events-auto min-h-[140px] ${
+                  isActive ? "bg-white col-span-1 sm:col-span-2 lg:col-span-2 row-span-1 scale-[1.05] shadow-[0_20px_40px_rgba(0,0,0,0.2)] ring-4 ring-white/20" : "bg-white/10 hover:bg-white/20"
                 }`}
               >
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-4 transition-colors ${
-                  isActive ? "bg-white/20" : "bg-[#008751]/10"
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-colors ${
+                  isActive ? "bg-[#008751]/10" : "bg-white/20"
                 }`}>
-                  <Icon className={`w-5 h-5 ${isActive ? "text-white" : "text-[#008751]"}`} />
+                  <Icon className={`w-6 h-6 ${isActive ? "text-[#008751]" : "text-white"}`} />
                 </div>
                 <h3 className={`font-sans text-sm md:text-base font-bold leading-tight mb-1 uppercase tracking-wider ${
-                  isActive ? "text-white" : "text-[#000000]"
+                  isActive ? "text-[#008751]" : "text-white"
                 }`}>
                   {u.name}
                 </h3>
 
                 {isActive && (
-                  <div className="mt-4 flex flex-wrap gap-2 animate-fade-in">
+                  <div className="mt-4 grid grid-cols-2 gap-2 w-full animate-in fade-in slide-in-from-top-2 duration-300">
                     {u.subs.map((sub) => (
-                      <span
+                      <div
                         key={sub}
-                        className="text-[10px] md:text-xs px-3 py-1.5 rounded-full bg-white/20 text-white font-sans font-bold uppercase tracking-wider"
+                        className="text-[10px] md:text-xs px-3 py-2.5 rounded-xl bg-[#008751]/5 text-[#008751] font-sans font-bold uppercase tracking-wider border border-[#008751]/10 flex items-center justify-center text-center"
                       >
                         {sub}
-                      </span>
+                      </div>
                     ))}
+                  </div>
+                )}
+                
+                {!isActive && (
+                  <div className="mt-auto pt-4 flex items-center gap-2 text-[10px] font-bold text-white/40 uppercase tracking-widest group-hover:text-white/60 transition-colors">
+                    <span>Voir les catégories</span>
+                    <div className="w-4 h-px bg-current" />
                   </div>
                 )}
               </button>
