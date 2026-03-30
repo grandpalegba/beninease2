@@ -60,7 +60,7 @@ export function useVoter() {
     
     try {
       const { data, error } = await supabase
-        .from("votes_records")
+        .from("Votes")
         .select("id")
         .eq("voter_whatsapp", session.whatsapp)
         .eq("candidate_id", candidateId)

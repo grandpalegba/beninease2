@@ -1,28 +1,15 @@
 import { createSupabaseBrowserClient } from "./client";
 
-export async function getVotesByUser(voterWhatsapp: string) {
-  const supabase = createSupabaseBrowserClient();
-  const { data, error } = await supabase
-    .from("votes_records")
+export const getUserVotes = async (supabase: any, votantId: string) => {
+  return await supabase
+    .from('Votes')
     .select(`
-      id,
-      vote_date,
-      candidate_id,
-      profiles (
-        id,
-        slug,
-        prenom,
-        nom,
-        category,
-        avatar_url
-      )
+      *,
+      talents:Talents(*)
     `)
-    .eq("voter_whatsapp", voterWhatsapp)
-    .order("vote_date", { ascending: false });
-
-  if (error) throw error;
-  return data;
-}
+    .eq('votant_id', votantId)
+    .order('vote_date', { ascending: false });
+};
 
 export async function updateVideoId(userId: string, slotIndex: 1 | 2 | 3 | 4, videoId: string | null) {
   const supabase = createSupabaseBrowserClient();

@@ -181,9 +181,9 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
 
       const finalVotantId = votantData?.id || activeUser.id;
 
-      // 2. Étape A : Insérer le vote dans votes_records avec les IDs réels
+      // 2. Étape A : Insérer le vote dans Votes avec les IDs réels
       const { error: recordError } = await supabase
-        .from('votes_records')
+        .from('Votes')
         .insert([{ 
           votant_id: finalVotantId, 
           talent_id: profileId,

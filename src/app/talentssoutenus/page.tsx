@@ -36,29 +36,41 @@ export default function SupportedTalentsPage() {
 
     const fetchSupportedTalents = async () => {
       try {
-        // Fetch votes_records for this user and join with profiles
+        // 1. Fetch user profile
+        const { data: userData, error: userError } = await supabase
+          .from('Votants')
+          .select('id')
+          .eq('whatsapp', session?.whatsapp)
+          .single();
+
+        if (userError || !userData) throw userError || new Error('User not found');
+
+        // 2. Fetch votes
         const { data, error } = await supabase
-          .from("votes_records")
+          .from('Votes')
           .select(`
-            created_at,
-            profiles:candidate_id (
+            id,
+            vote_date,
+            talent_id,
+            talents:Talents (
               id,
               slug,
               prenom,
               nom,
-              category,
+              categorie,
               avatar_url
             )
           `)
-          .eq("voter_whatsapp", session?.whatsapp)
-          .order("created_at", { ascending: false });
+          .eq('votant_id', userData.id)
+          .order('vote_date', { ascending: false });
 
         if (error) throw error;
 
         if (data) {
           const formatted = data.map((item: any) => ({
-            ...item.profiles,
-            vote_date: item.created_at
+            ...(item.talents as any),
+            category: (item.talents as any)?.categorie,
+            vote_date: item.vote_date
           }));
           setTalents(formatted);
         }
