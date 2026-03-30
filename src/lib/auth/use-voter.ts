@@ -60,7 +60,7 @@ export function useVoter() {
     
     try {
       const { data, error } = await supabase
-        .from("Votes")
+        .from("votes")
         .select("id")
         .eq("votant_id", session.votant_id)
         .eq("talent_id", talentId)

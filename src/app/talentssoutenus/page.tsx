@@ -47,7 +47,7 @@ export default function SupportedTalentsPage() {
 
         // 2. Fetch votes
         const { data, error } = await supabase
-          .from('Votes')
+          .from('votes')
           .select(`
             id,
             vote_date,

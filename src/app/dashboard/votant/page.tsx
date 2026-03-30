@@ -62,7 +62,7 @@ export default function VoterDashboard() {
 
   const fetchVotes = useCallback(async (actualVotantId: string) => {
     const { data, error } = await supabase
-      .from("Votes")
+      .from("votes")
       .select(`
         id,
         vote_date,
@@ -147,7 +147,7 @@ export default function VoterDashboard() {
           {
             event: "INSERT",
             schema: "public",
-            table: "Votes",
+            table: "votes",
             filter: `votant_id=eq.${user.id}`,
           },
           async () => {

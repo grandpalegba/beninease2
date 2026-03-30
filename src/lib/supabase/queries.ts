@@ -3,7 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 export const getUserVotes = async (supabase: SupabaseClient, votantId: string) => {
   return await supabase
-    .from('Votes')
+    .from('votes')
     .select(`
       *,
       talents:talents(*)
