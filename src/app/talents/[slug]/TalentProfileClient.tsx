@@ -134,6 +134,7 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
   const [isCopied, setIsShareCopied] = useState(false);
 
   const handleVote = async () => {
+    console.log("SUPABASE_INSTANCE", supabase)
     if (!profileId) return;
 
     // Récupération forcée de la session actuelle
@@ -195,14 +196,20 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
       const finalVotantId = votantData?.id || activeUser.id;
 
       // 2. Étape A : Insérer le vote dans votes avec les IDs réels
-      const { error: recordError } = await supabase
+      const voteData = [{ 
+        votant_id: finalVotantId, 
+        talent_id: profileId,
+        univers_nom: candidate.univers || getUniverseFromCategory(candidate.categorie ?? ""),
+        categorie_nom: candidate.categorie
+      }];
+      
+      console.log("INSERT_PAYLOAD", voteData)
+      
+      const { data, error: recordError } = await supabase
         .from('votes')
-        .insert([{ 
-          votant_id: finalVotantId, 
-          talent_id: profileId,
-          univers_nom: candidate.univers || getUniverseFromCategory(candidate.categorie ?? ""),
-          categorie_nom: candidate.categorie
-        }]);
+        .insert(voteData);
+        
+      console.log("INSERT_RESULT", { data, error: recordError })
 
       if (recordError) {
         console.error("Talent Profile - Error inserting vote:", recordError);

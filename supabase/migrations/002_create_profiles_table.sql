@@ -48,6 +48,8 @@ begin
 end;
 $$;
 
+-- Drop trigger if exists, then create
+drop trigger if exists on_auth_user_created_create_profile on auth.users;
 create trigger on_auth_user_created_create_profile
   after insert on auth.users
   for each row execute procedure public.handle_new_user_profile();

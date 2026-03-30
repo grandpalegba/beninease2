@@ -16,16 +16,8 @@ BEGIN
         END IF;
     END IF;
 
-    -- Nettoyage pour la table 'votes_records'
-    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'votes_records' AND table_schema = 'public') THEN
-        SELECT string_agg('DROP POLICY IF EXISTS ' || quote_ident(policyname) || ' ON public.votes_records;', ' ')
-        INTO v_sql
-        FROM pg_policies WHERE tablename = 'votes_records' AND schemaname = 'public';
-        
-        IF v_sql IS NOT NULL THEN
-            EXECUTE v_sql;
-        END IF;
-    END IF;
+    -- Suppression des références à votes_records (table désactivée)
+    -- Nettoyage pour la table 'votes_records' - DÉSACTIVÉ
 END $$;
 
 -- 2. HARMONISATION DE LA STRUCTURE (voter_id vs user_id)
@@ -51,6 +43,19 @@ CREATE TABLE IF NOT EXISTS public.votes (
 -- 3. RE-CREATION DES POLITIQUES RLS
 ALTER TABLE public.votes ENABLE ROW LEVEL SECURITY;
 
+-- Vérifier la structure de la table votes avant de créer les policies
+DO $$
+BEGIN
+  -- Vérifier si la colonne votant_id existe, sinon créer voter_id
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'votes' AND table_schema = 'public' AND column_name = 'voter_id') THEN
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'votes' AND table_schema = 'public' AND column_name = 'votant_id') THEN
+      ALTER TABLE public.votes RENAME COLUMN votant_id TO voter_id;
+    ELSE
+      ALTER TABLE public.votes ADD COLUMN voter_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE;
+    END IF;
+  END IF;
+END $$;
+
 -- Politique d'INSERT (voter_id est le nom officiel)
 CREATE POLICY "Allow authenticated users to vote" 
 ON public.votes 
@@ -74,7 +79,15 @@ USING (true);
 
 -- 4. REPARATION DES PROFILS ORPHELINS (FAIL-SAFE)
 -- On s'assure que chaque utilisateur Auth a un profil pour respecter la clé étrangère
+-- Ajout de la colonne role si elle n'existe pas
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'profiles' AND table_schema = 'public' AND column_name = 'role') THEN
+    ALTER TABLE public.profiles ADD COLUMN role text DEFAULT 'votant';
+  END IF;
+END $$;
+
 INSERT INTO public.profiles (id, full_name, role)
-SELECT id, email, 'votant'::public.user_role
+SELECT id, email, 'votant'::text
 FROM auth.users
 ON CONFLICT (id) DO NOTHING;
