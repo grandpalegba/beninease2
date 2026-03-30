@@ -42,7 +42,7 @@ type VoteRow = {
   talent_id: string;
   votant_id: string;
   categorie_nom: string | null;
-  univers: string | null;
+  univers_nom: string | null;
   talents: TalentMini | null;
 };
 
@@ -69,7 +69,7 @@ export default function VoterDashboard() {
         talent_id,
         votant_id,
         categorie_nom,
-        univers,
+        univers_nom,
         talents:talents (
           id,
           slug,
@@ -173,7 +173,7 @@ export default function VoterDashboard() {
 
   const stats = useMemo(() => {
     const totalVotes = votes.length;
-    const distinctUniverses = Array.from(new Set(votes.map(v => v.univers).filter(Boolean)));
+    const distinctUniverses = Array.from(new Set(votes.map(v => v.univers_nom).filter(Boolean)));
     const distinctCategories = Array.from(new Set(votes.map(v => v.categorie_nom).filter(Boolean)));
     const universeCount = distinctUniverses.length;
     const categoryCount = distinctCategories.length;
@@ -198,7 +198,7 @@ export default function VoterDashboard() {
 
     const cats = new Set(
       votes
-        .filter((vote) => (vote.univers || getUniverseFromCategory(vote.categorie_nom ?? "")) === selectedUniverse)
+        .filter((vote) => (vote.univers_nom || getUniverseFromCategory(vote.categorie_nom ?? "")) === selectedUniverse)
         .map((vote) => vote.categorie_nom)
         .filter(Boolean),
     );
@@ -212,7 +212,7 @@ export default function VoterDashboard() {
       const talent = vote.talents;
       if (!talent) return false;
       
-      const universe = vote.univers || getUniverseFromCategory(vote.categorie_nom);
+      const universe = vote.univers_nom || getUniverseFromCategory(vote.categorie_nom);
                       const fullName = `${talent.prenom || ""} ${talent.nom || ""}`.toLowerCase();
       
       const matchesUniverse = selectedUniverse === "Tous les univers" || universe === selectedUniverse;
@@ -430,7 +430,7 @@ export default function VoterDashboard() {
                     {filteredVotes.map((vote) => {
                       const talent = vote.talents;
                       if (!talent) return null;
-                      const universe = vote.univers || getUniverseFromCategory(vote.categorie_nom ?? "");
+                      const universe = vote.univers_nom || getUniverseFromCategory(vote.categorie_nom ?? "");
                       return (
                         <motion.div
                           layout

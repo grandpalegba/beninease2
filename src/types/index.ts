@@ -54,7 +54,7 @@ export interface Vote {
   id: string;
   votant_id: string;
   talent_id: string;
-  univers: string;
+  univers_nom: string;
   categorie_nom: string;
   created_at: string;
 }

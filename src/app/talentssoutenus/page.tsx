@@ -53,6 +53,7 @@ export default function SupportedTalentsPage() {
             created_at,
             talent_id,
             categorie_nom,
+            univers_nom,
             talents:Talents (
               id,
               slug,

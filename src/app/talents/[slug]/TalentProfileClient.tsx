@@ -198,7 +198,7 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
         .insert([{ 
           votant_id: finalVotantId, 
           talent_id: profileId,
-          univers: candidate.univers || getUniverseFromCategory(candidate.categorie ?? ""),
+          univers_nom: candidate.univers || getUniverseFromCategory(candidate.categorie ?? ""),
           categorie_nom: candidate.categorie
         }]);
 
