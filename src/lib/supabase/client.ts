@@ -30,3 +30,4 @@ export function createSupabaseBrowserClient() {
 // fix cache
 // fix cache
 // fix singleton
+// fix singleton
