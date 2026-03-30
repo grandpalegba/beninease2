@@ -82,6 +82,7 @@ export default function VoterDashboard() {
       .order("created_at", { ascending: false });
 
     if (error) {
+      console.error("Dashboard Votant - Error fetching votes:", error);
       setErrorMsg(error.message);
       setVotes([]);
       return;

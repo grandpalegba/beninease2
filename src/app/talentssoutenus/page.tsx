@@ -54,7 +54,7 @@ export default function SupportedTalentsPage() {
             talent_id,
             categorie_nom,
             univers_nom,
-            talents:Talents (
+            talents:talents (
               id,
               slug,
               prenom,
@@ -66,7 +66,10 @@ export default function SupportedTalentsPage() {
           .eq('votant_id', userData.id)
           .order('created_at', { ascending: false });
 
-        if (error) throw error;
+        if (error) {
+          console.error("Talents Soutenus - Error fetching votes:", error);
+          throw error;
+        }
 
         if (data) {
           const formatted = data.map((item: any) => ({

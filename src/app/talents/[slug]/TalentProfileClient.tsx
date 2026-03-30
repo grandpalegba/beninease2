@@ -203,6 +203,7 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
         }]);
 
       if (recordError) {
+        console.error("Talent Profile - Error inserting vote:", recordError);
         // Rollback optimistic update if error (except if already voted)
         if (recordError.code !== '23505' && !recordError.message?.includes('unique')) {
           setHasVoted(false);
