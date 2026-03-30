@@ -11,12 +11,6 @@ export function createSupabaseBrowserClient() {
 
   try {
     const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
-    
-    // TEMPORARY FOR DEBUGGING: Expose supabase to window
-    if (typeof window !== 'undefined') {
-      (window as any).supabase = supabase;
-    }
-
     return supabase;
   } catch (error) {
     console.error("🚨 [ERREUR CRITIQUE] Impossible d'initialiser le client Supabase :", error);
