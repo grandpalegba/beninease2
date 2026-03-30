@@ -110,7 +110,7 @@ const Header = () => {
       window.removeEventListener("scroll", onScroll);
       subscription.unsubscribe();
     };
-  }, [supabase, router]);
+  }, [supabase]);
 
   const handleSignOut = async () => {
     setUser(null);

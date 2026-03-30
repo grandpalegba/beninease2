@@ -73,7 +73,7 @@ function RankingList() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [supabase, fetchTalents]);
+  }, [supabase]);
 
   if (loading && talents.length === 0) {
     return (
