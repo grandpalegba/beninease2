@@ -1,29 +1,20 @@
 import { createBrowserClient } from "@supabase/ssr";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-let supabase: SupabaseClient | undefined;
-
 export function createSupabaseBrowserClient() {
-  if (supabase) return supabase;
-
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
-
-  // Logs de débogage pour vérifier la présence des variables (sans exposer la clé entière)
-  console.log("🔍 [DEBUG SUPABASE] URL définie :", !!supabaseUrl, supabaseUrl ? `(${supabaseUrl.substring(0, 12)}...)` : "VIDE");
-  console.log("🔍 [DEBUG SUPABASE] Clé Anon définie :", !!supabaseAnonKey);
 
   if (!supabaseUrl || !supabaseAnonKey) {
     console.error("🚨 [ERREUR CRITIQUE] Les variables d'environnement Supabase sont MANQUANTES côté client !");
   }
 
   try {
-    supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
+    const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
     
     // TEMPORARY FOR DEBUGGING: Expose supabase to window
     if (typeof window !== 'undefined') {
       (window as any).supabase = supabase;
-      console.log("🔍 [DEBUG] Supabase client exposed to window.supabase");
     }
 
     return supabase;
@@ -32,9 +23,3 @@ export function createSupabaseBrowserClient() {
     throw error;
   }
 }
-// trigger git
-// trigger git
-// fix cache
-// fix cache
-// fix singleton
-// fix singleton
