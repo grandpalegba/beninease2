@@ -29,11 +29,13 @@ function RankingList() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const fetchTalents = useCallback(async () => {
+    console.log("🚀 [DEBUG CLASSEMENT] 1. Début de fetchTalents");
     try {
       setLoading(true);
       setErrorMsg(null);
 
-      const { data, error } = await supabase
+      console.log("🚀 [DEBUG CLASSEMENT] 2. Lancement de la requête Supabase...");
+      const { data, error, status, statusText } = await supabase
         .from("talents")
         .select("id, slug, prenom, nom, categorie, votes, avatar_url")
         .not("prenom", "is", null)
@@ -42,14 +44,32 @@ function RankingList() {
         .order("nom", { ascending: true })
         .limit(16);
 
+      console.log("🚀 [DEBUG CLASSEMENT] 3. Requête terminée.", {
+        status,
+        statusText,
+        error,
+        dataLength: data ? data.length : 0
+      });
+
       if (error) {
+        console.error("🚨 [DEBUG CLASSEMENT] Erreur Supabase:", error);
         setTalents([]);
-        setErrorMsg(error.message);
+        setErrorMsg(`Erreur Supabase (${status}): ${error.message}`);
+        return;
+      }
+
+      if (!data) {
+        console.warn("⚠️ [DEBUG CLASSEMENT] Aucune donnée retournée.");
+        setTalents([]);
         return;
       }
 
       setTalents((data ?? []) as unknown as TalentRank[]);
+    } catch (err) {
+      console.error("🚨 [DEBUG CLASSEMENT] Exception inattendue:", err);
+      setErrorMsg("Une erreur inattendue est survenue.");
     } finally {
+      console.log("🚀 [DEBUG CLASSEMENT] 4. Fin de fetchTalents, setLoading(false)");
       setLoading(false);
     }
   }, [supabase]);
