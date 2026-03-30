@@ -141,6 +141,7 @@ export default function VoterDashboard() {
 
       if (!active) return;
 
+      /*
       realtimeChannel = supabase
         .channel(`voter_realtime_${user.id}`)
         .on(
@@ -156,6 +157,7 @@ export default function VoterDashboard() {
           },
         )
         .subscribe();
+      */
 
       setLoading(false);
     }
@@ -166,9 +168,11 @@ export default function VoterDashboard() {
 
     return () => {
       active = false;
+      /*
       if (realtimeChannel) {
         supabase.removeChannel(realtimeChannel);
       }
+      */
     };
   }, [fetchVotes, router, supabase]);
 

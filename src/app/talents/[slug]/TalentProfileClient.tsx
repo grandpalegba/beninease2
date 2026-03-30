@@ -107,6 +107,7 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
 
   useEffect(() => {
     if (candidate?.slug) {
+      /*
       // Subscribe to real-time changes using supabase_realtime channel
       const channel = supabase
         .channel('supabase_realtime')
@@ -124,6 +125,7 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
       return () => {
         supabase.removeChannel(channel);
       };
+      */
     }
   }, [candidate?.slug, profileId, supabase]);
 
