@@ -1,12 +1,7 @@
 import { ImageResponse } from 'next/og';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '@/lib/supabase/client';
 
 export const runtime = 'edge';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export async function GET(
   request: Request,
@@ -62,12 +57,12 @@ export async function GET(
           ? cleanPath.replace(`${bucketName}/`, '') 
           : cleanPath;
 
-        imageUrl = `${supabaseUrl}/storage/v1/object/public/${bucketName}/${pathWithoutBucket}`;
+        imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${bucketName}/${pathWithoutBucket}`;
       }
     } else {
       // Format prenom-nom.jpg dans le bucket 'talents' par défaut
       const fileName = `${profile.prenom.toLowerCase()}-${profile.nom.toLowerCase()}.jpg`;
-      imageUrl = `${supabaseUrl}/storage/v1/object/public/talents/${fileName}`;
+      imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/talents/${fileName}`;
     }
 
     // Design
