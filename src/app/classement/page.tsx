@@ -30,7 +30,7 @@ function RankingList() {
   const fetchProfiles = async () => {
     const { data } = await supabase
       .from('Talents')
-      .select('id, slug, prenom, nom, category, votes, avatar_url')
+      .select('id, slug, prenom, nom, categorie, votes, avatar_url')
       .not('prenom', 'is', null)
       .not('nom', 'is', null)
       .order('votes', { ascending: false })

@@ -14,7 +14,7 @@ export interface Talent {
   slug: string;
   prenom: string | null;
   nom: string | null;
-  category: string;
+  categorie: string;
   avatar_url: string | null;
   votes: number;
   role: UserRole;
@@ -45,10 +45,10 @@ export interface Votant {
 
 export interface Vote {
   id: string;
-  user_id: string;
-  candidate_id: string;
+  votant_id: string;
+  talent_id: string;
   univers: string;
-  sous_categorie: string;
+  categorie: string;
   vote_date: string;
 }
 
@@ -59,7 +59,7 @@ export interface Treasure {
   slug: string;
   title: string;
   description: string;
-  category: 'Royauté' | 'Culture' | string;
+  categorie: 'Royauté' | 'Culture' | string;
   image_url: string | null;
   is_validated: boolean;
   video_1_id: string | null;

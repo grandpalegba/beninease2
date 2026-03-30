@@ -172,12 +172,12 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
 
       // Étape A : Insérer le vote (Trigger SQL s'occupe du compteur)
       const { error: recordError } = await supabase
-        .from('Votes')
+        .from('votes_records')
         .insert([{ 
-          user_id: voterId, 
-          candidate_id: profileId,
-          univers: candidate.category ? getUniverseFromCategory(candidate.category) : 'Autre',
-          sous_categorie: candidate.category
+          votant_id: voterId, 
+          talent_id: profileId,
+          univers: candidate.categorie ? getUniverseFromCategory(candidate.categorie) : 'Autre',
+          categorie: candidate.categorie
         }]);
 
       if (recordError) {

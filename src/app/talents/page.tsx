@@ -21,7 +21,7 @@ function TalentsList() {
       try {
         const { data, error } = await supabase
           .from('Talents')
-          .select('id, slug, prenom, nom, category, avatar_url, votes, bio')
+          .select('id, slug, prenom, nom, categorie, avatar_url, votes, bio')
           .order('votes', { ascending: false });
 
         if (error) throw error;

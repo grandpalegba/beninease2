@@ -81,13 +81,13 @@ export default function VoterDashboard() {
       // Function to load votes
       const fetchVotes = async () => {
         const { data: votesData } = await supabase
-          .from("Votes")
+          .from("votes_records")
           .select(`
             id,
             vote_date,
-            candidate_id,
-            user_id,
-            sous_categorie,
+            talent_id,
+            votant_id,
+            categorie,
             univers,
             talents:Talents (
               id,
@@ -97,7 +97,7 @@ export default function VoterDashboard() {
               avatar_url
             )
           `)
-          .eq("user_id", user.id)
+          .eq("votant_id", user.id)
           .order("vote_date", { ascending: false });
 
         if (votesData) {
@@ -116,8 +116,8 @@ export default function VoterDashboard() {
           { 
             event: 'INSERT', 
             schema: 'public', 
-            table: 'Votes', 
-            filter: `user_id=eq.${user.id}` 
+            table: 'votes_records', 
+            filter: `votant_id=eq.${user.id}` 
           },
           async () => {
             await fetchVotes();
@@ -140,7 +140,7 @@ export default function VoterDashboard() {
   const stats = useMemo(() => {
     const totalVotes = votes.length;
     const distinctUniverses = Array.from(new Set(votes.map(v => v.univers).filter(Boolean)));
-    const distinctCategories = Array.from(new Set(votes.map(v => v.sous_categorie).filter(Boolean)));
+    const distinctCategories = Array.from(new Set(votes.map(v => v.categorie).filter(Boolean)));
     const universeCount = distinctUniverses.length;
     const categoryCount = distinctCategories.length;
     
@@ -162,11 +162,11 @@ export default function VoterDashboard() {
       const talent = vote.talents;
       if (!talent) return false;
       
-      const universe = vote.univers || getUniverseFromCategory(vote.sous_categorie);
+      const universe = vote.univers || getUniverseFromCategory(vote.categorie);
       const fullName = `${talent.prenom} ${talent.nom}`.toLowerCase();
       
       const matchesUniverse = selectedUniverse === "Tous les univers" || universe === selectedUniverse;
-      const matchesCategory = selectedCategory === "Toutes les catégories" || vote.sous_categorie === selectedCategory;
+      const matchesCategory = selectedCategory === "Toutes les catégories" || vote.categorie === selectedCategory;
       const matchesSearch = fullName.includes(searchQuery.toLowerCase());
       
       return matchesUniverse && matchesCategory && matchesSearch;
@@ -174,7 +174,7 @@ export default function VoterDashboard() {
   }, [votes, selectedUniverse, selectedCategory, searchQuery]);
 
   const allCategories = useMemo(() => {
-    const cats = new Set(votes.map(v => v.sous_categorie).filter(Boolean));
+    const cats = new Set(votes.map(v => v.categorie).filter(Boolean));
     return ["Toutes les catégories", ...Array.from(cats) as string[]];
   }, [votes]);
 
