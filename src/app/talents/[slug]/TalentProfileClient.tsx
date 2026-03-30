@@ -159,22 +159,33 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
     setVoteMessage(null);
 
     try {
-      // Étape Préventive : S'assurer que le profil existe
-      await supabase
+      // 1. Récupérer le votant_id réel depuis la table Votants (lié à l'auth_id)
+      const { data: votantData, error: votantError } = await supabase
         .from('Votants')
-        .upsert({ 
-          id: voterId, 
-          role: 'votant',
-          full_name: activeUser.user_metadata?.full_name || activeUser.email,
-          avatar_url: activeUser.user_metadata?.avatar_url || activeUser.user_metadata?.picture,
-          updated_at: new Date().toISOString()
-        }, { onConflict: 'id' });
+        .select('id')
+        .eq('id', activeUser.id) // Ici on suppose que Votants.id = auth.id pour l'instant, ou on cherche une colonne spécifique si besoin
+        .single();
 
-      // Étape A : Insérer le vote (Trigger SQL s'occupe du compteur)
+      if (votantError || !votantData) {
+        // Si le votant n'existe pas encore, on le crée (Upsert préventif)
+        await supabase
+          .from('Votants')
+          .upsert({ 
+            id: activeUser.id, 
+            role: 'votant',
+            full_name: activeUser.user_metadata?.full_name || activeUser.email,
+            avatar_url: activeUser.user_metadata?.avatar_url || activeUser.user_metadata?.picture,
+            updated_at: new Date().toISOString()
+          });
+      }
+
+      const finalVotantId = votantData?.id || activeUser.id;
+
+      // 2. Étape A : Insérer le vote dans votes_records avec les IDs réels
       const { error: recordError } = await supabase
         .from('votes_records')
         .insert([{ 
-          votant_id: voterId, 
+          votant_id: finalVotantId, 
           talent_id: profileId,
           univers: candidate.categorie ? getUniverseFromCategory(candidate.categorie) : 'Autre',
           categorie: candidate.categorie

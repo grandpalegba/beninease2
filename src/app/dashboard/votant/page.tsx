@@ -79,7 +79,7 @@ export default function VoterDashboard() {
       if (gradeData) setSqlGrade(gradeData);
 
       // Function to load votes
-      const fetchVotes = async () => {
+      const fetchVotes = async (actualVotantId: string) => {
         const { data: votesData } = await supabase
           .from("votes_records")
           .select(`
@@ -97,7 +97,7 @@ export default function VoterDashboard() {
               avatar_url
             )
           `)
-          .eq("votant_id", user.id)
+          .eq("votant_id", actualVotantId)
           .order("vote_date", { ascending: false });
 
         if (votesData) {
@@ -105,7 +105,7 @@ export default function VoterDashboard() {
         }
       };
 
-      await fetchVotes();
+      await fetchVotes(user.id);
       setLoading(false);
 
       // Realtime subscription for this voter's votes
@@ -120,7 +120,7 @@ export default function VoterDashboard() {
             filter: `votant_id=eq.${user.id}` 
           },
           async () => {
-            await fetchVotes();
+            await fetchVotes(user.id);
             // Also refresh grade
             const { data: newGrade } = await supabase.rpc('get_user_grade', { user_uuid: user.id });
             if (newGrade) setSqlGrade(newGrade);
