@@ -11,8 +11,10 @@ import type { User as SupabaseUser } from "@supabase/supabase-js";
 import type { Votant } from "@/types";
 
 type UserStats = {
-  unique_candidates_voted?: number | null;
-  unique_universes_voted?: number | null;
+  votant_id: string;
+  total_votes: number;
+  created_at?: string;
+  updated_at?: string;
 };
 
 const MobileNavigation = () => {
@@ -67,7 +69,7 @@ const MobileNavigation = () => {
   // Grade calculation
   const userGrade = useMemo(() => {
     if (!userStats) return null;
-    return calculateVoterStatus(userStats.unique_candidates_voted || 0, userStats.unique_universes_voted || 0);
+    return calculateVoterStatus(userStats.total_votes || 0, 0, 0);
   }, [userStats]);
 
   // Prevent scroll when menu is open
