@@ -13,7 +13,16 @@ export function createSupabaseBrowserClient() {
   }
 
   try {
-    return createBrowserClient(supabaseUrl, supabaseAnonKey);
+    return createBrowserClient(supabaseUrl, supabaseAnonKey, {
+      global: {
+        fetch: (url, options) => {
+          return fetch(url, {
+            ...options,
+            cache: 'no-store', // Force Next.js à ne pas mettre en cache ces requêtes
+          });
+        },
+      },
+    });
   } catch (error) {
     console.error("🚨 [ERREUR CRITIQUE] Impossible d'initialiser le client Supabase :", error);
     throw error;

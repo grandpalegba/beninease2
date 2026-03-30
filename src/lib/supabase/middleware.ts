@@ -19,6 +19,14 @@ export function createSupabaseMiddlewareClient(request: NextRequest) {
     supabaseUrl,
     supabaseAnonKey,
     {
+      global: {
+        fetch: (url, options) => {
+          return fetch(url, {
+            ...options,
+            cache: 'no-store',
+          });
+        },
+      },
       cookies: {
         getAll() {
           return request.cookies.getAll();
