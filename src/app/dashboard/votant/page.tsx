@@ -41,7 +41,7 @@ type VoteRow = {
   created_at: string;
   talent_id: string;
   votant_id: string;
-  categorie: string | null;
+  categorie_nom: string | null;
   univers: string | null;
   talents: TalentMini | null;
 };
@@ -68,7 +68,7 @@ export default function VoterDashboard() {
         created_at,
         talent_id,
         votant_id,
-        categorie,
+        categorie_nom,
         univers,
         talents:talents (
           id,
@@ -174,7 +174,7 @@ export default function VoterDashboard() {
   const stats = useMemo(() => {
     const totalVotes = votes.length;
     const distinctUniverses = Array.from(new Set(votes.map(v => v.univers).filter(Boolean)));
-    const distinctCategories = Array.from(new Set(votes.map(v => v.categorie).filter(Boolean)));
+    const distinctCategories = Array.from(new Set(votes.map(v => v.categorie_nom).filter(Boolean)));
     const universeCount = distinctUniverses.length;
     const categoryCount = distinctCategories.length;
     
@@ -192,14 +192,14 @@ export default function VoterDashboard() {
 
   const availableCategories = useMemo(() => {
     if (selectedUniverse === "Tous les univers") {
-      const cats = new Set(votes.map((vote) => vote.categorie).filter(Boolean));
+      const cats = new Set(votes.map((vote) => vote.categorie_nom).filter(Boolean));
       return ["Toutes les catégories", ...Array.from(cats) as string[]];
     }
 
     const cats = new Set(
       votes
-        .filter((vote) => (vote.univers || getUniverseFromCategory(vote.categorie ?? "")) === selectedUniverse)
-        .map((vote) => vote.categorie)
+        .filter((vote) => (vote.univers || getUniverseFromCategory(vote.categorie_nom ?? "")) === selectedUniverse)
+        .map((vote) => vote.categorie_nom)
         .filter(Boolean),
     );
 
@@ -212,11 +212,11 @@ export default function VoterDashboard() {
       const talent = vote.talents;
       if (!talent) return false;
       
-      const universe = vote.univers || getUniverseFromCategory(vote.categorie);
+      const universe = vote.univers || getUniverseFromCategory(vote.categorie_nom);
                       const fullName = `${talent.prenom || ""} ${talent.nom || ""}`.toLowerCase();
       
       const matchesUniverse = selectedUniverse === "Tous les univers" || universe === selectedUniverse;
-      const matchesCategory = selectedCategory === "Toutes les catégories" || vote.categorie === selectedCategory;
+      const matchesCategory = selectedCategory === "Toutes les catégories" || vote.categorie_nom === selectedCategory;
       const matchesSearch = fullName.includes(searchQuery.toLowerCase());
       
       return matchesUniverse && matchesCategory && matchesSearch;
@@ -430,7 +430,7 @@ export default function VoterDashboard() {
                     {filteredVotes.map((vote) => {
                       const talent = vote.talents;
                       if (!talent) return null;
-                      const universe = vote.univers || getUniverseFromCategory(vote.categorie ?? "");
+                      const universe = vote.univers || getUniverseFromCategory(vote.categorie_nom ?? "");
                       return (
                         <motion.div
                           layout

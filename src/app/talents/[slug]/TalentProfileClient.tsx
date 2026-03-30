@@ -199,7 +199,7 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
           votant_id: finalVotantId, 
           talent_id: profileId,
           univers: candidate.univers || getUniverseFromCategory(candidate.categorie ?? ""),
-          categorie: candidate.categorie
+          categorie_nom: candidate.categorie
         }]);
 
       if (recordError) {
