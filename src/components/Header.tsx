@@ -78,32 +78,34 @@ const Header = () => {
     checkUser();
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log(`[AUTH STATE CHANGE] Event: ${event}`, { session });
-      const currentUser = session?.user ?? null;
-      setUser(currentUser);
-      
-      if (currentUser) {
-        try {
-          const [profileRes, statsRes] = await Promise.all([
-            supabase.from("Votants").select("*").eq("id", currentUser.id).single(),
-            supabase.from("user_stats").select("*").eq("votant_id", currentUser.id).single()
-          ]);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setTimeout(async () => {
+        console.log(`[AUTH STATE CHANGE] Event: ${event}`, { session });
+        const currentUser = session?.user ?? null;
+        setUser(currentUser);
+        
+        if (currentUser) {
+          try {
+            const [profileRes, statsRes] = await Promise.all([
+              supabase.from("Votants").select("*").eq("id", currentUser.id).single(),
+              supabase.from("user_stats").select("*").eq("votant_id", currentUser.id).single()
+            ]);
 
-          if (profileRes.data) setProfile(profileRes.data);
-          if (statsRes.data) setUserStats(statsRes.data);
-        } catch (err) {
-          console.error("Error updating user data in Header:", err);
+            if (profileRes.data) setProfile(profileRes.data);
+            if (statsRes.data) setUserStats(statsRes.data);
+          } catch (err) {
+            console.error("Error updating user data in Header:", err);
+          }
+        } else {
+          setProfile(null);
+          setUserStats(null);
         }
-      } else {
-        setProfile(null);
-        setUserStats(null);
-      }
 
-      if (event === 'SIGNED_OUT') {
-        router.push('/');
-        router.refresh();
-      }
+        if (event === 'SIGNED_OUT') {
+          router.push('/');
+          router.refresh();
+        }
+      }, 0);
     });
 
     return () => {

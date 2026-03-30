@@ -24,43 +24,45 @@ const MobileNavigation = () => {
 
 
   // Sync with Supabase Auth
-  // useEffect(() => {
-  //   const checkUser = async () => {
-  //     try {
-  //       const { data: { user: currentUser } } = await supabase.auth.getUser();
-  //       setUser(currentUser);
-  //       if (currentUser) {
-  //         const [profileRes, statsRes] = await Promise.all([
-  //           supabase.from("Votants").select("*").eq("id", currentUser.id).single(),
-  //           supabase.from("user_stats").select("*").eq("votant_id", currentUser.id).single()
-  //         ]);
-  //         if (profileRes.data) setProfile(profileRes.data);
-  //         if (statsRes.data) setUserStats(statsRes.data);
-  //       }
-  //     } catch (err) {
-  //       console.log("Public mobile user session:", err);
-  //     }
-  //   };
-  //   checkUser();
-  //
-  //   const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-  //     const currentUser = session?.user ?? null;
-  //     setUser(currentUser);
-  //     if (currentUser) {
-  //       const [profileRes, statsRes] = await Promise.all([
-  //         supabase.from("Votants").select("*").eq("id", currentUser.id).single(),
-  //         supabase.from("user_stats").select("*").eq("votant_id", currentUser.id).single()
-  //       ]);
-  //       if (profileRes.data) setProfile(profileRes.data);
-  //       if (statsRes.data) setUserStats(statsRes.data);
-  //     } else {
-  //       setProfile(null);
-  //       setUserStats(null);
-  //     }
-  //   });
-  //
-  //   return () => subscription.unsubscribe();
-  // }, [supabase]);
+  useEffect(() => {
+    const checkUser = async () => {
+      try {
+        const { data: { user: currentUser } } = await supabase.auth.getUser();
+        setUser(currentUser);
+        if (currentUser) {
+          const [profileRes, statsRes] = await Promise.all([
+            supabase.from("Votants").select("*").eq("id", currentUser.id).single(),
+            supabase.from("user_stats").select("*").eq("votant_id", currentUser.id).single()
+          ]);
+          if (profileRes.data) setProfile(profileRes.data);
+          if (statsRes.data) setUserStats(statsRes.data);
+        }
+      } catch (err) {
+        console.log("Public mobile user session:", err);
+      }
+    };
+    checkUser();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setTimeout(async () => {
+        const currentUser = session?.user ?? null;
+        setUser(currentUser);
+        if (currentUser) {
+          const [profileRes, statsRes] = await Promise.all([
+            supabase.from("Votants").select("*").eq("id", currentUser.id).single(),
+            supabase.from("user_stats").select("*").eq("votant_id", currentUser.id).single()
+          ]);
+          if (profileRes.data) setProfile(profileRes.data);
+          if (statsRes.data) setUserStats(statsRes.data);
+        } else {
+          setProfile(null);
+          setUserStats(null);
+        }
+      }, 0);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [supabase]);
 
   // Grade calculation
   const userGrade = useMemo(() => {
