@@ -38,7 +38,7 @@ type TalentMini = {
 
 type VoteRow = {
   id: string;
-  vote_date: string;
+  created_at: string;
   talent_id: string;
   votant_id: string;
   categorie: string | null;
@@ -65,7 +65,7 @@ export default function VoterDashboard() {
       .from("votes")
       .select(`
         id,
-        vote_date,
+        created_at,
         talent_id,
         votant_id,
         categorie,
@@ -79,7 +79,7 @@ export default function VoterDashboard() {
         )
       `)
       .eq("votant_id", actualVotantId)
-      .order("vote_date", { ascending: false });
+      .order("created_at", { ascending: false });
 
     if (error) {
       setErrorMsg(error.message);
@@ -460,7 +460,7 @@ export default function VoterDashboard() {
                               </h4>
                               <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest flex items-center gap-1 mt-0.5">
                                 <Calendar className="w-2.5 h-2.5" />
-                                {new Date(vote.vote_date).toLocaleDateString()}
+                                {new Date(vote.created_at).toLocaleDateString()}
                               </p>
                             </div>
                             <ArrowRight className="w-5 h-5 text-gray-200 group-hover:text-[#006B3F] transition-colors" />

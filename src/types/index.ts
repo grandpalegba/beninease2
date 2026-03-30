@@ -56,7 +56,7 @@ export interface Vote {
   talent_id: string;
   univers: string;
   categorie: string;
-  vote_date: string;
+  created_at: string;
 }
 
 export type EntityType = 'talent' | 'jury' | 'treasure';

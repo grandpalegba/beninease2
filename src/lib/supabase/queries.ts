@@ -9,7 +9,7 @@ export const getUserVotes = async (supabase: SupabaseClient, votantId: string) =
       talents:talents(*)
     `)
     .eq('votant_id', votantId)
-    .order('vote_date', { ascending: false });
+    .order('created_at', { ascending: false });
 };
 
 export async function updateVideoId(talentId: string, slotIndex: 1 | 2 | 3 | 4, videoId: string | null) {

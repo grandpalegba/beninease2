@@ -15,7 +15,7 @@ type SupportedTalent = {
   nom: string;
   category: string;
   avatar_url: string;
-  vote_date: string;
+  created_at: string;
 };
 
 export default function SupportedTalentsPage() {
@@ -50,7 +50,7 @@ export default function SupportedTalentsPage() {
           .from('votes')
           .select(`
             id,
-            vote_date,
+            created_at,
             talent_id,
             talents:Talents (
               id,
@@ -62,7 +62,7 @@ export default function SupportedTalentsPage() {
             )
           `)
           .eq('votant_id', userData.id)
-          .order('vote_date', { ascending: false });
+          .order('created_at', { ascending: false });
 
         if (error) throw error;
 
@@ -70,7 +70,7 @@ export default function SupportedTalentsPage() {
           const formatted = data.map((item: any) => ({
             ...(item.talents as any),
             category: (item.talents as any)?.categorie,
-            vote_date: item.vote_date
+            created_at: item.created_at
           }));
           setTalents(formatted);
         }
@@ -154,7 +154,7 @@ export default function SupportedTalentsPage() {
                         {talent.category}
                       </span>
                       <span className="text-[10px] text-gray-400 font-medium">
-                        Soutenu le {new Date(talent.vote_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                        Soutenu le {new Date(talent.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
                       </span>
                     </div>
                     <h2 className="font-display text-2xl font-bold text-black mb-2">
