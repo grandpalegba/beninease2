@@ -20,7 +20,7 @@ function TalentsList() {
     const fetchTalents = async () => {
       try {
         const { data, error } = await supabase
-          .from('talents')
+          .from('Talents')
           .select('id, slug, prenom, nom, category, avatar_url, votes, bio')
           .order('votes', { ascending: false });
 
@@ -40,7 +40,7 @@ function TalentsList() {
       .channel('supabase_realtime')
       .on(
         'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'profiles' },
+        { event: 'UPDATE', schema: 'public', table: 'Talents' },
         (payload) => {
           setTalents(prev => prev.map(t => 
             t.id === payload.new.id ? { ...t, votes: payload.new.votes } : t

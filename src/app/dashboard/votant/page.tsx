@@ -58,7 +58,7 @@ export default function VoterDashboard() {
 
       // Load profile
       const { data: profileData } = await supabase
-        .from("profiles")
+        .from("Votants")
         .select("*")
         .eq("id", user.id)
         .single();
@@ -81,7 +81,7 @@ export default function VoterDashboard() {
       // Function to load votes
       const fetchVotes = async () => {
         const { data: votesData } = await supabase
-          .from("votes")
+          .from("Votes")
           .select(`
             id,
             vote_date,
@@ -89,7 +89,7 @@ export default function VoterDashboard() {
             user_id,
             sous_categorie,
             univers,
-            talents (
+            talents:Talents (
               id,
               slug,
               prenom,
@@ -116,7 +116,7 @@ export default function VoterDashboard() {
           { 
             event: 'INSERT', 
             schema: 'public', 
-            table: 'votes', 
+            table: 'Votes', 
             filter: `user_id=eq.${user.id}` 
           },
           async () => {

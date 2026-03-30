@@ -1,24 +1,15 @@
 export type UserRole = 'votant' | 'candidat' | 'ambassadeur' | 'jury' | 'admin';
 
-export interface VideoSchema {
-  video_1_id: string | null;
-  video_2_id: string | null;
-  video_3_id: string | null;
-  video_4_id: string | null;
+export interface Video {
+  id: string;
+  url: string;
+  talent_id: string;
+  title: string | null;
+  description: string | null;
+  created_at: string;
 }
 
 export interface Talent {
-  id: string;
-  slug: string;
-  prenom: string;
-  nom: string;
-  category: string;
-  bio: string | null;
-  avatar_url: string | null;
-  votes: number;
-}
-
-export interface Profile extends VideoSchema {
   id: string;
   slug: string;
   prenom: string | null;
@@ -35,18 +26,35 @@ export interface Profile extends VideoSchema {
   tiktok_url: string | null;
   description: string | null;
   title: string | null;
+  bio: string | null;
   updated_at: string | null;
+  video_1_id: string | null;
+  video_2_id: string | null;
+  video_3_id: string | null;
+  video_4_id: string | null;
 }
 
-export interface VoterSession {
-  voter_id: string;
-  whatsapp: string;
+export interface Votant {
+  id: string;
+  whatsapp: string | null;
+  full_name: string | null;
+  avatar_url: string | null;
   role: UserRole;
+  created_at: string;
+}
+
+export interface Vote {
+  id: string;
+  user_id: string;
+  candidate_id: string;
+  univers: string;
+  sous_categorie: string;
+  vote_date: string;
 }
 
 export type EntityType = 'talent' | 'jury' | 'treasure';
 
-export interface Treasure extends VideoSchema {
+export interface Treasure {
   id: string;
   slug: string;
   title: string;
@@ -54,4 +62,8 @@ export interface Treasure extends VideoSchema {
   category: 'Royauté' | 'Culture' | string;
   image_url: string | null;
   is_validated: boolean;
+  video_1_id: string | null;
+  video_2_id: string | null;
+  video_3_id: string | null;
+  video_4_id: string | null;
 }

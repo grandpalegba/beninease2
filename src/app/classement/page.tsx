@@ -29,7 +29,7 @@ function RankingList() {
 
   const fetchProfiles = async () => {
     const { data } = await supabase
-      .from('profiles')
+      .from('Talents')
       .select('id, slug, prenom, nom, category, votes, avatar_url')
       .not('prenom', 'is', null)
       .not('nom', 'is', null)
@@ -51,7 +51,7 @@ function RankingList() {
       .channel('supabase_realtime')
       .on(
         'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'profiles' },
+        { event: 'UPDATE', schema: 'public', table: 'Talents' },
         () => {
           // Re-fetch and re-sort
           fetchProfiles();

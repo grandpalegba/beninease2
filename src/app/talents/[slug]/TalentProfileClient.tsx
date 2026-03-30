@@ -105,7 +105,7 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
         .channel('supabase_realtime')
         .on(
           'postgres_changes',
-          { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `id=eq.${profileId}` },
+          { event: 'UPDATE', schema: 'public', table: 'Talents', filter: `id=eq.${profileId}` },
           (payload) => {
             if (payload.new && typeof payload.new.votes === 'number') {
               setVotesCount(payload.new.votes);
@@ -161,7 +161,7 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
     try {
       // Étape Préventive : S'assurer que le profil existe
       await supabase
-        .from('profiles')
+        .from('Votants')
         .upsert({ 
           id: voterId, 
           role: 'votant',
@@ -172,7 +172,7 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
 
       // Étape A : Insérer le vote (Trigger SQL s'occupe du compteur)
       const { error: recordError } = await supabase
-        .from('votes')
+        .from('Votes')
         .insert([{ 
           user_id: voterId, 
           candidate_id: profileId,

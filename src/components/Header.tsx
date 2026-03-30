@@ -54,7 +54,7 @@ const Header = () => {
         if (currentUser) {
           // Parallel fetch for profile and stats
           const [profileRes, statsRes] = await Promise.all([
-            supabase.from("profiles").select("*").eq("id", currentUser.id).single(),
+            supabase.from("Votants").select("*").eq("id", currentUser.id).single(),
             supabase.from("user_stats").select("*").eq("voter_id", currentUser.id).single()
           ]);
 
@@ -79,7 +79,7 @@ const Header = () => {
         setLoading(true);
         try {
           const [profileRes, statsRes] = await Promise.all([
-            supabase.from("profiles").select("*").eq("id", currentUser.id).single(),
+            supabase.from("Votants").select("*").eq("id", currentUser.id).single(),
             supabase.from("user_stats").select("*").eq("voter_id", currentUser.id).single()
           ]);
 
