@@ -78,24 +78,24 @@ function TalentsList() {
     fetchTalents();
   }, [supabase]);
 
-  useEffect(() => {
-    const channel = supabase
-      .channel("supabase_realtime")
-      .on(
-        "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "talents" },
-        (payload) => {
-          setTalents((prev) =>
-            prev.map((t) => (t.id === payload.new.id ? { ...t, votes: payload.new.votes } : t)),
-          );
-        },
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [supabase]);
+  // useEffect(() => {
+  //   const channel = supabase
+  //     .channel("supabase_realtime")
+  //     .on(
+  //       "postgres_changes",
+  //       { event: "UPDATE", schema: "public", table: "talents" },
+  //       (payload) => {
+  //         setTalents((prev) =>
+  //           prev.map((t) => (t.id === payload.new.id ? { ...t, votes: payload.new.votes } : t)),
+  //         );
+  //       },
+  //     )
+  //     .subscribe();
+  //
+  //   return () => {
+  //     supabase.removeChannel(channel);
+  //   };
+  // }, [supabase]);
 
   // Derived categories based on selected universe
   const availableCategories = useMemo(() => {
