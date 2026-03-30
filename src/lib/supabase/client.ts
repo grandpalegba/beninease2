@@ -29,3 +29,4 @@ export function createSupabaseBrowserClient() {
 // trigger git
 // fix cache
 // fix cache
+// fix singleton
