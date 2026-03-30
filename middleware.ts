@@ -70,12 +70,10 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
-  // Utilisateur connecté mais profil manquant
+  // Si l'utilisateur est connecté mais n'a pas de profil, on laisse passer.
+  // La logique de création de profil se trouve dans les pages elles-mêmes.
   if (!profile) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    url.searchParams.set("error", "missing_profile");
-    return NextResponse.redirect(url);
+    return response;
   }
 
   const home = getHomePathForUser(profile);

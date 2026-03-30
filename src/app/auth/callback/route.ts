@@ -8,51 +8,13 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createSupabaseServerClient();
-    const { data: { session } } = await supabase.auth.exchangeCodeForSession(code);
-
-    if (session?.user && !next) {
-      const { data: talentProfile } = await supabase
-        .from("talents")
-        .select("role")
-        .eq("id", session.user.id)
-        .maybeSingle();
-
-      let role = talentProfile?.role;
-
-      if (!role) {
-        const { data: votantProfile } = await supabase
-          .from("Votants")
-          .select("id, role")
-          .eq("id", session.user.id)
-          .maybeSingle();
-
-        if (!votantProfile) {
-          await supabase.from("Votants").upsert({
-            id: session.user.id,
-            role: "votant",
-            full_name:
-              session.user.user_metadata?.full_name ||
-              session.user.user_metadata?.name ||
-              session.user.email,
-            avatar_url:
-              session.user.user_metadata?.avatar_url ||
-              session.user.user_metadata?.picture ||
-              null,
-          });
-        }
-
-        role = votantProfile?.role || 'votant';
-      }
-
-      if (role === 'votant') {
-        return NextResponse.redirect(`${origin}/dashboard/votant`);
-      } else if (role === 'candidat' || role === 'ambassadeur') {
-        return NextResponse.redirect(`${origin}/dashboard/talent`);
-      } else if (role === 'admin') {
-        return NextResponse.redirect(`${origin}/admin`);
-      }
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    if (!error) {
+      // Redirect to the user's intended destination or a default dashboard
+      return NextResponse.redirect(`${origin}${next ?? "/dashboard/votant"}`);
     }
   }
 
-  return NextResponse.redirect(`${origin}${next ?? "/"}`);
+  // Fallback redirect in case of error or no code
+  return NextResponse.redirect(`${origin}/login?error=auth_failed`);
 }

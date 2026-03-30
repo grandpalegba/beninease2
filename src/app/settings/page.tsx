@@ -405,7 +405,7 @@ export default function SettingsPage() {
               </div>
               <div className="space-y-2">
                 <h2 className="text-2xl font-display font-bold text-black">Action Irréversible</h2>
-                <p className="text-gray-500 text-sm">
+                <p className="text-sm text-gray-500">
                   Êtes-vous certain de vouloir supprimer votre compte Beninease ? Vos votes et vos données seront effacés définitivement.
                 </p>
               </div>

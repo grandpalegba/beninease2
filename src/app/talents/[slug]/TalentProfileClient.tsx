@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { Heart, MapPin, Play, Globe, Clock, Share2, X, CheckCircle2, AlertCircle, Mail, Phone, Trophy } from "lucide-react";
-import confetti from "canvas-confetti";
+import { confetti } from "tsparticles-confetti";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useVoter } from "@/lib/auth/use-voter";
 import { ContactForm } from "@/components/talents/ContactForm";
@@ -151,13 +151,19 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
     if (window.navigator.vibrate) {
       window.navigator.vibrate(50);
     }
-    
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.7 },
-      colors: ["#008751", "#E9B113", "#D4AF37"],
-    });
+
+    const canvas = document.createElement('canvas');
+    document.body.appendChild(canvas);
+    try {
+      await confetti(canvas, {
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.7 },
+        colors: ["#008751", "#E9B113", "#D4AF37"],
+      });
+    } finally {
+      document.body.removeChild(canvas);
+    }
     // --- OPTIMISTIC UPDATE END ---
 
     setIsVoting(true);
