@@ -36,14 +36,15 @@ export default function AuthButtons({ intent }: AuthButtonsProps) {
         setMessage({ type: 'success', text: "Un lien magique a été envoyé à votre adresse email." });
       } else if (provider !== 'email') {
         const { error } = await supabase.auth.signInWithOAuth({ 
-          provider: provider as any, 
+          provider: provider as 'google' | 'facebook', 
           options 
         });
         if (error) throw error;
       }
-    } catch (err: any) {
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Une erreur est survenue lors de l'authentification.";
       console.error("Auth error:", err);
-      setMessage({ type: 'error', text: err.message || "Une erreur est survenue lors de l'authentification." });
+      setMessage({ type: 'error', text: msg });
     } finally {
       setLoading(null);
     }

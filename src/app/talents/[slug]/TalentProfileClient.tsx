@@ -2,14 +2,14 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import { Heart, MapPin, Play, Globe, Clock, Share2, X, CheckCircle2, AlertCircle, Mail, MessageSquare, Phone, Trophy } from "lucide-react";
+import { Heart, MapPin, Play, Globe, Clock, Share2, X, CheckCircle2, AlertCircle, Mail, Phone, Trophy } from "lucide-react";
 import confetti from "canvas-confetti";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import PhoneInput from "@/components/PhoneInput";
 import { useVoter } from "@/lib/auth/use-voter";
 import { ContactForm } from "@/components/talents/ContactForm";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { getUniverseFromCategory } from "@/lib/voter-logic";
 
 // Custom Instagram Icon because it's missing from lucide-react in this version
 const Instagram = ({ className }: { className?: string }) => (
@@ -29,28 +29,38 @@ const Instagram = ({ className }: { className?: string }) => (
 );
 
 type Props = {
-  candidate: any;
+  candidate: {
+    slug: string;
+    prenom: string | null;
+    nom: string | null;
+    portrait?: string | null;
+    city?: string | null;
+    univers?: string | null;
+    categorie?: string | null;
+    tabs: Record<string, string>;
+  };
   initialVotesCount: number;
   profileId: string;
   avatarUrl?: string | null;
-  profileData?: any; // New prop for extra profile info
+  profileData?: {
+    instagram_url?: string | null;
+    tiktok_url?: string | null;
+    whatsapp_number?: string | null;
+    city?: string | null;
+  } | null;
 };
 
 export default function TalentProfileClient({ candidate, initialVotesCount, profileId, avatarUrl, profileData }: Props) {
   const router = useRouter();
-  const { session, login, isAuthenticated, checkHasVoted } = useVoter();
+  const { isAuthenticated, checkHasVoted } = useVoter();
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
   const [activeTab, setActiveTab] = useState("Vidéos");
   const [activeVideoTab, setActiveVideoTab] = useState("Qui je suis");
   const [votesCount, setVotesCount] = useState(initialVotesCount);
-  const [currentUser, setCurrentUser] = useState<any>(null);
   
   // Voting state
   const [hasVoted, setHasVoted] = useState(false);
-  const [showVoteModal, setShowVoteModal] = useState(false);
-  const [voterWhatsapp, setVoterWhatsapp] = useState("");
-  const [voterName, setVoterName] = useState("");
   const [isVoting, setIsVoting] = useState(false);
   const [voteMessage, setVoteMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
@@ -78,7 +88,10 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
     return `/talents/${candidate.slug}/${fileName}.${extension}`;
   };
 
-  const quiJeSuisImage = useMemo(() => getImagePath("Qui je suis"), [candidate.slug]);
+  const quiJeSuisImage = useMemo(() => {
+    const fileName = "qui-je-suis";
+    return `/talents/${candidate.slug}/${fileName}.jpg`;
+  }, [candidate.slug]);
 
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
 
@@ -87,12 +100,6 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
   };
 
   useEffect(() => {
-    async function getUser() {
-      const { data: { user } } = await supabase.auth.getUser();
-      setCurrentUser(user);
-    }
-    getUser();
-    
     if (isAuthenticated && profileId) {
       checkHasVoted(profileId).then(setHasVoted);
     }
@@ -105,7 +112,7 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
         .channel('supabase_realtime')
         .on(
           'postgres_changes',
-          { event: 'UPDATE', schema: 'public', table: 'Talents', filter: `id=eq.${profileId}` },
+          { event: 'UPDATE', schema: 'public', table: 'talents', filter: `id=eq.${profileId}` },
           (payload) => {
             if (payload.new && typeof payload.new.votes === 'number') {
               setVotesCount(payload.new.votes);
@@ -135,8 +142,6 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
       router.push("/login");
       return;
     }
-
-    const voterId = activeUser.id;
     
     // --- OPTIMISTIC UPDATE START ---
     setHasVoted(true);
@@ -187,7 +192,7 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
         .insert([{ 
           votant_id: finalVotantId, 
           talent_id: profileId,
-          univers: candidate.categorie ? getUniverseFromCategory(candidate.categorie) : 'Autre',
+          univers: candidate.univers || getUniverseFromCategory(candidate.categorie ?? ""),
           categorie: candidate.categorie
         }]);
 
@@ -206,11 +211,12 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
       setVoteMessage({ type: 'success', text: "Soutien validé ! Merci." });
       router.refresh();
 
-    } catch (err: any) {
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Erreur inconnue";
       console.error("Critical Vote Error:", err);
       setVoteMessage({ 
         type: 'error', 
-        text: `Une erreur est survenue : ${err.message || 'Erreur inconnue'}` 
+        text: `Une erreur est survenue : ${message}` 
       });
     } finally {
       setIsVoting(false);
@@ -220,7 +226,7 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
   const handleShare = async () => {
     const shareData = {
       title: `Soutenez ${fullName} sur Beninease !`,
-      text: `Je viens de voter pour ${fullName} dans l'univers ${candidate.category}. Rejoignez l'aventure pour choisir nos 256 ambassadeurs !`,
+      text: `Je viens de voter pour ${fullName} dans l'univers ${candidate.univers}. Rejoignez l'aventure pour choisir nos 256 ambassadeurs !`,
       url: window.location.href,
     };
 
@@ -242,7 +248,7 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
     setTimeout(() => setIsShareCopied(false), 2000);
   };
 
-  const fullName = `${candidate.prenom} ${candidate.nom}`;
+  const fullName = `${candidate.prenom || ""} ${candidate.nom || ""}`.trim() || "Talent";
 
   return (
     <div className="min-h-screen bg-[#F9F9F7] p-4 md:p-8 font-sans">
@@ -286,9 +292,13 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
                 <span className="block text-3xl font-bold text-black text-center">{votesCount}</span>
               </div>
               
-              <p className="mt-6 inline-block rounded-full bg-[#008751]/10 px-3 py-1 text-xs font-display font-bold uppercase tracking-wider text-[#008751]">
-                {candidate.category}
-              </p>
+              <div className="mt-6 flex items-center justify-center md:justify-start gap-2">
+                <span className="rounded-full bg-[#008751]/10 px-3 py-1 text-xs font-display font-bold uppercase tracking-wider text-[#008751]">
+                  {candidate.univers}
+                </span>
+                <span className="text-[#8E8E8E] text-[10px] font-bold uppercase tracking-widest">•</span>
+                <span className="text-[#8E8E8E] text-[10px] font-bold uppercase tracking-widest">{candidate.categorie}</span>
+              </div>
               <div className="mt-4 flex flex-wrap items-center justify-center md:justify-start gap-6 text-[#8E8E8E] text-[11px] font-medium uppercase tracking-widest">
                 <span className="inline-flex items-center gap-1.5">
                   <MapPin className="w-3.5 h-3.5 text-black" /> {candidate.city}, Bénin
@@ -529,8 +539,8 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
                         <Trophy className="w-4 h-4 text-[#008751]" />
                       </div>
                       <div>
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Catégorie</p>
-                        <p className="text-sm font-bold text-black">{candidate.category}</p>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Univers</p>
+                        <p className="text-sm font-bold text-black">{candidate.univers}</p>
                       </div>
                     </div>
 

@@ -1,21 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import type { ComponentType } from "react";
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { VideoTabs } from "@/components/VideoTabs";
 import { VoteHistory } from "@/components/VoteHistory";
 import { AdBanner } from "@/components/AdBanner";
 import { Loader2, User, Award, Shield, LogOut } from "lucide-react";
-import type { Profile, UserRole, VideoSchema } from "@/types";
+import type { Talent, UserRole, VideoSchema } from "@/types";
 import { updateVideoId } from "@/lib/supabase/queries";
 
 export default function DashboardPage() {
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profile, setProfile] = useState<Talent | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(0);
   const router = useRouter();
-  const supabase = createSupabaseBrowserClient();
+  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
   useEffect(() => {
     async function getProfile() {
@@ -26,17 +27,17 @@ export default function DashboardPage() {
       }
 
       const { data, error } = await supabase
-        .from("profiles")
+        .from("talents")
         .select("*")
         .eq("id", user.id)
         .single();
 
       if (error || !data) {
-        console.error("Error fetching profile:", error);
+        console.error("Error fetching talent profile:", error);
         return;
       }
 
-      setProfile(data as Profile);
+      setProfile(data as Talent);
       setLoading(false);
     }
 
@@ -48,12 +49,12 @@ export default function DashboardPage() {
     const videoId = window.prompt("Entrez l'ID de la vidéo YouTube (ex: dQw4w9WgXcQ) :");
     if (videoId && profile) {
       try {
-        await updateVideoId(profile.id, (index + 1) as any, videoId);
+        await updateVideoId(profile.id, (index + 1) as 1 | 2 | 3 | 4, videoId);
         setProfile({
           ...profile,
           [`video_${index + 1}_id`]: videoId
-        } as Profile);
-      } catch (err) {
+        } as Talent);
+      } catch {
         alert("Erreur lors de la mise à jour de la vidéo.");
       }
     }
@@ -62,12 +63,12 @@ export default function DashboardPage() {
   const handleDelete = async (index: number) => {
     if (window.confirm("Supprimer cette vidéo ?") && profile) {
       try {
-        await updateVideoId(profile.id, (index + 1) as any, null);
+        await updateVideoId(profile.id, (index + 1) as 1 | 2 | 3 | 4, null);
         setProfile({
           ...profile,
           [`video_${index + 1}_id`]: null
-        } as Profile);
-      } catch (err) {
+        } as Talent);
+      } catch {
         alert("Erreur lors de la suppression.");
       }
     }
@@ -96,7 +97,7 @@ export default function DashboardPage() {
     video_4_id: profile.video_4_id,
   };
 
-  const roleLabels: Record<UserRole, { label: string; icon: any; color: string }> = {
+  const roleLabels: Record<UserRole, { label: string; icon: ComponentType<{ className?: string }>; color: string }> = {
     votant: { label: "Votant", icon: Heart, color: "text-red-500 bg-red-50" },
     candidat: { label: "Candidat", icon: User, color: "text-[#008751] bg-[#008751]/10" },
     ambassadeur: { label: "Ambassadeur", icon: Award, color: "text-amber-600 bg-amber-50" },

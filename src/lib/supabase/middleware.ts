@@ -42,7 +42,7 @@ export function createSupabaseMiddlewareClient(request: NextRequest) {
     }
     
     const { data: profile } = await supabase
-      .from('profiles')
+      .from('Talents')
       .select('role')
       .eq('id', user.id)
       .single();

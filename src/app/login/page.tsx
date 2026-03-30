@@ -27,7 +27,7 @@ export default function LoginPage() {
             Connectez-vous pour soutenir votre <span className="text-[#008751]">talent préféré</span>
           </h1>
           <p className="text-gray-500 font-sans text-sm max-w-xs mx-auto animate-fade-up" style={{ animationDelay: "0.1s" }}>
-            Votre voix compte pour faire rayonner l'excellence béninoise.
+            Votre voix compte pour faire rayonner l&apos;excellence béninoise.
           </p>
         </div>
 

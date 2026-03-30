@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import type { ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -13,12 +14,12 @@ import {
   AlertCircle, 
   Loader2, 
   User, 
-  Smartphone,
-  ChevronRight,
   ShieldCheck
 } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
+import type { User as SupabaseUser } from "@supabase/supabase-js";
+import type { Talent, Votant } from "@/types";
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -26,8 +27,8 @@ export default function SettingsPage() {
   
   const [loading, setLoading] = useState(true);
   const [saving, setLoadingSaving] = useState(false);
-  const [profile, setProfile] = useState<any>(null);
-  const [user, setUser] = useState<any>(null);
+  const [profile, setProfile] = useState<Talent | Votant | null>(null);
+  const [user, setUser] = useState<SupabaseUser | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
   
@@ -46,17 +47,31 @@ export default function SettingsPage() {
         }
         setUser(authUser);
 
-        const { data: profileData, error } = await supabase
-          .from("profiles")
+        // Check Votants first as it's the primary table for general users
+        const { data: profileData } = await supabase
+          .from("Votants")
           .select("*")
           .eq("id", authUser.id)
-          .single();
+          .maybeSingle();
 
-        if (error) throw error;
-
-        setProfile(profileData);
-        setFullName(profileData.full_name || "");
-        setBio(profileData.bio || "");
+        if (profileData) {
+          setProfile(profileData);
+          setFullName(profileData.full_name || "");
+          setBio(""); // Votants might not have bio, adjust if needed
+        } else {
+          // Check Talents if not a Votant
+          const { data: talentData } = await supabase
+            .from("talents")
+            .select("*")
+            .eq("id", authUser.id)
+            .single();
+          
+          if (talentData) {
+            setProfile(talentData);
+            setFullName(`${talentData.prenom || ""} ${talentData.nom || ""}`.trim());
+            setBio(talentData.bio || "");
+          }
+        }
       } catch (err) {
         console.error("Error loading settings:", err);
       } finally {
@@ -72,20 +87,38 @@ export default function SettingsPage() {
     setMessage(null);
 
     try {
-      const { error } = await supabase
-        .from("profiles")
-        .update({
-          full_name: fullName,
-          bio: bio,
-          updated_at: new Date().toISOString()
-        })
-        .eq("id", user.id);
-
-      if (error) throw error;
+      const isTalent = profile?.role === 'candidat' || profile?.role === 'ambassadeur';
+      
+      if (isTalent) {
+        // Splitting full name back into prenom/nom if possible
+        const parts = fullName.split(' ');
+        const prenom = parts[0] || "";
+        const nom = parts.slice(1).join(' ') || "";
+        
+        const { error } = await supabase
+          .from("talents")
+          .update({
+            prenom,
+            nom,
+            bio,
+            updated_at: new Date().toISOString()
+          })
+          .eq("id", user.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from("Votants")
+          .update({
+            full_name: fullName,
+            updated_at: new Date().toISOString()
+          })
+          .eq("id", user.id);
+        if (error) throw error;
+      }
       
       setMessage({ type: 'success', text: "Modifications enregistrées avec succès." });
       setTimeout(() => setMessage(null), 3000);
-    } catch (err: any) {
+    } catch (err) {
       console.error("Error saving profile:", err);
       setMessage({ type: 'error', text: "Erreur lors de l'enregistrement." });
     } finally {
@@ -93,12 +126,13 @@ export default function SettingsPage() {
     }
   };
 
-  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !user) return;
 
     try {
       setLoadingSaving(true);
+      const isTalent = profile?.role === 'candidat' || profile?.role === 'ambassadeur' || profile?.role === 'admin';
       const fileExt = file.name.split('.').pop();
       const filePath = `${user.id}/avatar-${Date.now()}.${fileExt}`;
 
@@ -113,7 +147,7 @@ export default function SettingsPage() {
         .getPublicUrl(filePath);
 
       const { error: updateError } = await supabase
-        .from('profiles')
+        .from(isTalent ? 'talents' : 'Votants')
         .update({ avatar_url: publicUrl })
         .eq('id', user.id);
 

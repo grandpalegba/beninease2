@@ -4,57 +4,68 @@
  */
 "use client";
 
-import { Suspense, useEffect, useMemo, useState } from "react";
-import { Info, Trophy, Star, ChevronRight } from "lucide-react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { Info, Trophy, Star, AlertCircle } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Define the type for our profile data
-type Profile = {
+// Define the type for our talent data
+type TalentRank = {
   id: string;
   slug: string;
   prenom: string | null;
   nom: string | null;
-  category: string | null;
+  categorie: string | null;
   votes: number;
   avatar_url: string; 
 };
 
 function RankingList() {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
-  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [talents, setTalents] = useState<TalentRank[]>([]);
   const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const fetchProfiles = async () => {
-    const { data } = await supabase
-      .from('Talents')
-      .select('id, slug, prenom, nom, categorie, votes, avatar_url')
-      .not('prenom', 'is', null)
-      .not('nom', 'is', null)
-      .order('votes', { ascending: false })
-      .order('nom', { ascending: true })
-      .limit(16);
+  const fetchTalents = useCallback(async () => {
+    try {
+      setLoading(true);
+      setErrorMsg(null);
 
-    if (data) {
-      setProfiles(data as Profile[]);
+      const { data, error } = await supabase
+        .from("talents")
+        .select("id, slug, prenom, nom, categorie, votes, avatar_url")
+        .not("prenom", "is", null)
+        .not("nom", "is", null)
+        .order("votes", { ascending: false })
+        .order("nom", { ascending: true })
+        .limit(16);
+
+      if (error) {
+        setTalents([]);
+        setErrorMsg(error.message);
+        return;
+      }
+
+      setTalents((data ?? []) as unknown as TalentRank[]);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-  };
+  }, [supabase]);
 
   useEffect(() => {
-    fetchProfiles();
+    fetchTalents();
 
-    // 2. Subscribe to real-time updates for profiles via supabase_realtime
+    // 2. Subscribe to real-time updates for Talents via supabase_realtime
     const channel = supabase
       .channel('supabase_realtime')
       .on(
         'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'Talents' },
+        { event: 'UPDATE', schema: 'public', table: 'talents' },
         () => {
           // Re-fetch and re-sort
-          fetchProfiles();
+          fetchTalents();
         }
       )
       .subscribe();
@@ -62,9 +73,9 @@ function RankingList() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [supabase]);
+  }, [supabase, fetchTalents]);
 
-  if (loading && profiles.length === 0) {
+  if (loading && talents.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20">
         <div className="w-12 h-12 border-4 border-[#008751]/20 border-t-[#008751] rounded-full animate-spin mb-4" />
@@ -73,11 +84,27 @@ function RankingList() {
     );
   }
 
+  if (errorMsg) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-red-500">
+        <AlertCircle className="w-12 h-12 mb-4" />
+        <p className="font-sans font-bold">Une erreur est survenue lors de la récupération du classement.</p>
+        <p className="font-sans text-sm mt-2">{errorMsg}</p>
+        <button
+          onClick={() => fetchTalents()}
+          className="mt-6 px-6 py-3 bg-[#008751] text-white rounded-2xl font-bold uppercase tracking-widest text-xs"
+        >
+          Réessayer
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-4xl mx-auto">
       <AnimatePresence mode="popLayout">
         <motion.div layout className="grid gap-4">
-          {profiles.map((talent, index) => {
+          {talents.map((talent, index) => {
             const rankLabel = index === 0 ? "1er" : `${index + 1}e`;
             const isTop4 = index < 4;
             const fullName = `${talent.prenom} ${talent.nom}`;
@@ -98,63 +125,62 @@ function RankingList() {
               >
                 <Link 
                   href={`/talents/${talent.slug || talent.id}`}
-                  className="flex items-center gap-4 bg-white p-4 md:p-6 rounded-[28px] shadow-sm border border-transparent hover:border-[#008751]/30 transition-all hover:shadow-lg active:scale-[0.98] group relative overflow-hidden"
+                  className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-[#F2EDE4] hover:shadow-lg transition-all group relative overflow-hidden"
                 >
-                  {isTop4 && (
-                    <div className="absolute top-0 left-0 w-1.5 h-full bg-[#008751]" />
-                  )}
-                  
-                  <div className="flex flex-col items-center justify-center w-12 md:w-16">
-                    <span className={`text-2xl md:text-3xl font-display font-black ${isTop4 ? 'text-[#008751]' : 'text-gray-300'}`}>
-                      {rankLabel}
-                    </span>
-                    {index === 0 && <Trophy className="w-4 h-4 text-[#E9B113] mt-1" />}
+                  {/* Rank Badge */}
+                  <div className={`w-10 h-10 flex items-center justify-center rounded-xl font-bold text-sm ${
+                    index === 0 ? "bg-[#FFD700] text-white" : 
+                    index === 1 ? "bg-[#C0C0C0] text-white" : 
+                    index === 2 ? "bg-[#CD7F32] text-white" : 
+                    "bg-[#F9F9F7] text-gray-400"
+                  }`}>
+                    {rankLabel}
                   </div>
 
-                  <div className="relative w-14 h-14 md:w-20 md:h-20 rounded-2xl overflow-hidden border-2 border-white shadow-sm group-hover:scale-105 transition-transform">
-                    <Image 
-                      src={talent.avatar_url || '/placeholder-portrait.jpg'} 
-                      alt={fullName} 
-                      fill 
-                      className="object-cover" 
+                  {/* Avatar */}
+                  <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-white shadow-sm flex-shrink-0">
+                    <Image
+                      src={talent.avatar_url || "/placeholder-portrait.jpg"}
+                      alt={fullName}
+                      fill
+                      className="object-cover"
                     />
                   </div>
 
-                  <div className="flex-1 ml-2">
-                    <h3 className="font-display text-lg md:text-xl font-bold text-black group-hover:text-[#008751] transition-colors">
+                  {/* Info */}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-display text-lg font-bold text-black truncate group-hover:text-[#008751] transition-colors">
                       {fullName}
                     </h3>
-                    <p className="text-[10px] md:text-xs text-gray-400 font-display font-bold uppercase tracking-[0.15em] mt-1">
-                      {talent.category}
+                    <p className="text-xs text-gray-500 uppercase tracking-widest font-bold">
+                      {talent.categorie}
                     </p>
                   </div>
 
-                  <div className="text-right px-4">
-                    <motion.div 
-                      key={talent.votes}
-                      initial={{ scale: 1.2, color: "#E9B113" }}
-                      animate={{ scale: 1, color: "#008751" }}
-                      className="flex flex-col items-end"
-                    >
-                      <span className="text-2xl md:text-3xl font-display font-black">
-                        {talent.votes}
-                      </span>
-                      <span className="text-[10px] uppercase tracking-widest font-bold text-gray-400">
-                        Soutiens
-                      </span>
-                    </motion.div>
+                  {/* Votes */}
+                  <div className="text-right">
+                    <div className="flex items-center justify-end gap-1.5 text-[#008751]">
+                      <Trophy className="w-4 h-4" />
+                      <span className="font-display text-xl font-black">{talent.votes}</span>
+                    </div>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-tighter font-bold">Votes récoltés</p>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-gray-200 group-hover:text-[#008751] transition-colors mr-2" />
+
+                  {isTop4 && (
+                    <div className="absolute -top-1 -right-1">
+                      <Star className="w-8 h-8 text-[#FFD700]/10 fill-[#FFD700]/10 rotate-12" />
+                    </div>
+                  )}
                 </Link>
               </motion.div>
             );
           })}
         </motion.div>
       </AnimatePresence>
-      
-      {profiles.length === 0 && !loading && (
-        <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
-          <p className="text-gray-500">L&apos;excellence attend votre premier vote.</p>
+
+      {talents.length === 0 && !loading && (
+        <div className="text-center py-20 bg-white rounded-[30px] border border-dashed border-gray-200">
+          <p className="text-gray-500 font-sans">Aucun talent n&apos;est encore classé.</p>
         </div>
       )}
     </div>

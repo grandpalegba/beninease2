@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
 import { Play, Clock, Lock, Trash2, Upload } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { UserRole, VideoSchema } from "@/types";

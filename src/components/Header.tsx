@@ -5,20 +5,23 @@ import { useEffect, useState, useMemo } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
-import { useVoter } from "@/lib/auth/use-voter";
-import { Heart, User as UserIcon, LogOut, LayoutDashboard, ChevronDown, Trophy, UserCheck, Settings, Globe } from "lucide-react";
+import { User as UserIcon, LogOut, LayoutDashboard, ChevronDown, Trophy, UserCheck, Settings } from "lucide-react";
 import Image from "next/image";
 import { calculateVoterStatus } from "@/lib/voter-logic";
+import type { Votant } from "@/types";
+
+type UserStats = {
+  unique_candidates_voted?: number | null;
+  unique_universes_voted?: number | null;
+};
 
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<any>(null);
-  const [userStats, setUserStats] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState<Votant | null>(null);
+  const [userStats, setUserStats] = useState<UserStats | null>(null);
   const [showDropdown, setShowDropdown] = useState(false);
-  
-  const { session: voterSession, isAuthenticated: isVoterAuthenticated } = useVoter();
+
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const router = useRouter();
 
@@ -55,7 +58,7 @@ const Header = () => {
           // Parallel fetch for profile and stats
           const [profileRes, statsRes] = await Promise.all([
             supabase.from("Votants").select("*").eq("id", currentUser.id).single(),
-            supabase.from("user_stats").select("*").eq("voter_id", currentUser.id).single()
+            supabase.from("user_stats").select("*").eq("votant_id", currentUser.id).single()
           ]);
 
           if (profileRes.data) setProfile(profileRes.data);
@@ -64,8 +67,6 @@ const Header = () => {
       } catch (err) {
         console.log("Public user or session error in Header:", err);
         setUser(null);
-      } finally {
-        setLoading(false);
       }
     };
     checkUser();
@@ -76,24 +77,20 @@ const Header = () => {
       setUser(currentUser);
       
       if (currentUser) {
-        setLoading(true);
         try {
           const [profileRes, statsRes] = await Promise.all([
             supabase.from("Votants").select("*").eq("id", currentUser.id).single(),
-            supabase.from("user_stats").select("*").eq("voter_id", currentUser.id).single()
+            supabase.from("user_stats").select("*").eq("votant_id", currentUser.id).single()
           ]);
 
           if (profileRes.data) setProfile(profileRes.data);
           if (statsRes.data) setUserStats(statsRes.data);
         } catch (err) {
           console.error("Error updating user data in Header:", err);
-        } finally {
-          setLoading(false);
         }
       } else {
         setProfile(null);
         setUserStats(null);
-        setLoading(false);
       }
 
       if (event === 'SIGNED_OUT') {
@@ -248,7 +245,7 @@ const Header = () => {
                   href="/login"
                   className="text-sm font-bold text-[#1A1A1A] hover:text-[#006B3F] transition-colors font-display tracking-wide"
                 >
-                  Se connecter
+                  Voter
                 </Link>
                 <Link
                   href="/postuler"

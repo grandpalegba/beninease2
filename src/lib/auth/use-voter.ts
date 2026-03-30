@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import type { VoterSession, UserRole } from "@/types";
+import type { VoterSession } from "@/types";
 
 export function useVoter() {
   const [session, setSession] = useState<VoterSession | null>(null);
@@ -26,7 +26,7 @@ export function useVoter() {
     setLoading(true);
     try {
       // Use the RPC to get or register the voter
-      const { data: voterId, error } = await supabase.rpc("register_or_get_voter", {
+      const { data: votantId, error } = await supabase.rpc("register_or_get_voter", {
         p_full_name: fullName,
         p_whatsapp: whatsapp,
       });
@@ -34,7 +34,7 @@ export function useVoter() {
       if (error) throw error;
 
       const newSession: VoterSession = {
-        voter_id: voterId,
+        votant_id: votantId,
         whatsapp: whatsapp,
         role: 'votant', // Default role for voters
       };
@@ -55,15 +55,15 @@ export function useVoter() {
     setSession(null);
   }, []);
 
-  const checkHasVoted = useCallback(async (candidateId: string) => {
+  const checkHasVoted = useCallback(async (talentId: string) => {
     if (!session?.whatsapp) return false;
     
     try {
       const { data, error } = await supabase
         .from("Votes")
         .select("id")
-        .eq("voter_whatsapp", session.whatsapp)
-        .eq("candidate_id", candidateId)
+        .eq("votant_id", session.votant_id)
+        .eq("talent_id", talentId)
         .maybeSingle();
 
       if (error) throw error;

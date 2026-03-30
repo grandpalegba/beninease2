@@ -16,13 +16,13 @@ type AdminProfile = {
   avatar_url: string | null;
   city: string | null;
   description: string | null;
-  category: string | null;
+  categorie: string | null;
   type: "candidate" | "jury" | string;
   votes: number | null;
 };
 
 type VideoRow = {
-  candidate_id: string;
+  talent_id: string;
   video_type: string;
   video_url: string | null;
   thumbnail_url: string | null;
@@ -50,7 +50,7 @@ export default function AdminManagePage() {
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [profiles, setProfiles] = useState<AdminProfile[]>([]);
+  const [talents, setTalents] = useState<AdminProfile[]>([]);
   const [media, setMedia] = useState<MediaMap>({});
 
   const removeFromBucketByPublicUrl = async (bucket: string, publicUrl: string) => {
@@ -65,21 +65,21 @@ export default function AdminManagePage() {
     setError(null);
 
     const { data, error: e1 } = await supabase
-      .from("profiles")
-      .select("id, prenom, nom, avatar_url, city, description, category, type, votes, updated_at")
+      .from("Talents")
+      .select("id, prenom, nom, avatar_url, city, description, categorie, type, votes, updated_at")
       .order("updated_at", { ascending: false })
       .limit(500);
 
     if (e1) {
       setError(e1.message);
-      setProfiles([]);
+      setTalents([]);
       setMedia({});
       setLoading(false);
       return;
     }
 
     const list = (data ?? []) as AdminProfile[];
-    setProfiles(list);
+    setTalents(list);
 
     const ids = list.map((p) => p.id);
     if (ids.length === 0) {
@@ -89,9 +89,9 @@ export default function AdminManagePage() {
     }
 
     const { data: vids, error: e2 } = await supabase
-      .from("videos")
-      .select("candidate_id, video_type, video_url, thumbnail_url")
-      .in("candidate_id", ids)
+      .from("Videos")
+      .select("talent_id, video_type, video_url, thumbnail_url")
+      .in("talent_id", ids)
       .limit(2000);
 
     if (e2) {
@@ -103,8 +103,8 @@ export default function AdminManagePage() {
     const map: MediaMap = {};
     (vids ?? []).forEach((v) => {
       const row = v as unknown as VideoRow;
-      map[row.candidate_id] = map[row.candidate_id] ?? {};
-      map[row.candidate_id][row.video_type] = row;
+      map[row.talent_id] = map[row.talent_id] ?? {};
+      map[row.talent_id][row.video_type] = row;
     });
     setMedia(map);
 
@@ -136,7 +136,7 @@ export default function AdminManagePage() {
       const { error: e } = await supabase.rpc("admin_delete_profile", { p_profile_id: p.id });
       if (e) throw e;
 
-      setProfiles((prev) => prev.filter((x) => x.id !== p.id));
+      setTalents((prev) => prev.filter((x) => x.id !== p.id));
       setMedia((prev) => {
         const next = { ...prev };
         delete next[p.id];
@@ -159,7 +159,7 @@ export default function AdminManagePage() {
       await removeFromBucketByPublicUrl("profile-avatars", p.avatar_url);
       const { error: e } = await supabase.rpc("admin_reset_avatar", { p_profile_id: p.id });
       if (e) throw e;
-      setProfiles((prev) => prev.map((x) => (x.id === p.id ? { ...x, avatar_url: null } : x)));
+      setTalents((prev) => prev.map((x) => (x.id === p.id ? { ...x, avatar_url: null } : x)));
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Erreur inconnue";
       setError(msg);
@@ -169,17 +169,17 @@ export default function AdminManagePage() {
   };
 
   const handleResetMedia = async (
-    candidateId: string,
+    talentId: string,
     videoType: string,
     mode: "video" | "thumbnail",
   ) => {
-    const row = media[candidateId]?.[videoType];
+    const row = media[talentId]?.[videoType];
     if (!row) return;
     const label = mode === "video" ? "la vidéo" : "la photo de couverture";
     if (!confirmOrReturn(`Êtes-vous sûr ? Supprimer ${label} (${videoType}) ?`)) return;
 
     try {
-      setBusyId(candidateId);
+      setBusyId(talentId);
       setError(null);
 
       if (mode === "video" && row.video_url) {
@@ -190,7 +190,7 @@ export default function AdminManagePage() {
       }
 
       const { error: e } = await supabase.rpc("admin_reset_candidate_media", {
-        p_candidate_id: candidateId,
+        p_candidate_id: talentId,
         p_video_type: videoType,
         p_reset_video: mode === "video",
         p_reset_thumbnail: mode === "thumbnail",
@@ -199,7 +199,7 @@ export default function AdminManagePage() {
 
       setMedia((prev) => {
         const next = { ...prev };
-        const current = next[candidateId] ? { ...next[candidateId] } : {};
+        const current = next[talentId] ? { ...next[talentId] } : {};
         const updated = { ...(current[videoType] ?? row) };
         if (mode === "video") updated.video_url = null;
         if (mode === "thumbnail") updated.thumbnail_url = null;
@@ -208,7 +208,7 @@ export default function AdminManagePage() {
         } else {
           current[videoType] = updated;
         }
-        next[candidateId] = current;
+        next[talentId] = current;
         return next;
       });
     } catch (e) {
@@ -277,14 +277,14 @@ export default function AdminManagePage() {
                       Chargement…
                     </td>
                   </tr>
-                ) : profiles.length === 0 ? (
+                ) : talents.length === 0 ? (
                   <tr>
                     <td className="px-5 py-8 text-sm text-[#8E8E8E]" colSpan={6}>
-                      Aucun profil.
+                      Aucun talent.
                     </td>
                   </tr>
                 ) : (
-                  profiles.map((p) => {
+                  talents.map((p) => {
                     const fullName = `${p.prenom || ""} ${p.nom || ""}`.trim() || "Profil";
                     const isBusy = busyId === p.id;
                     const mediaByType = media[p.id] ?? {};
@@ -320,7 +320,7 @@ export default function AdminManagePage() {
                           </span>
                         </td>
                         <td className="px-5 py-4 text-sm text-[#1A1A1A]">
-                          <span className="text-[11px] text-[#8E8E8E]">{p.category ?? "—"}</span>
+                          <span className="text-[11px] text-[#8E8E8E]">{p.categorie ?? "—"}</span>
                         </td>
                         <td className="px-5 py-4">
                           <span className="text-sm font-semibold text-[#1A1A1A]">{p.votes ?? 0}</span>

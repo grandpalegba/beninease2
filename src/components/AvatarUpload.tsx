@@ -63,9 +63,9 @@ export default function AvatarUpload({
         .from('talents')
         .getPublicUrl(filePath);
 
-      // 4. Update profiles table
+      // 4. Update Talents table
       const { error: updateError } = await supabase
-        .from('profiles')
+        .from('Talents')
         .update({ avatar_url: publicUrl, updated_at: new Date().toISOString() })
         .eq('id', talentId);
 
@@ -101,7 +101,7 @@ export default function AvatarUpload({
 
       // Update database
       const { error: updateError } = await supabase
-        .from('profiles')
+        .from('Talents')
         .update({ avatar_url: null, updated_at: new Date().toISOString() })
         .eq('id', talentId);
 

@@ -18,7 +18,7 @@ type ProfileRow = {
 };
 
 type VideoRow = {
-  candidate_id: string;
+  talent_id: string;
   video_type: string;
   video_url: string | null;
   thumbnail_url: string | null;
@@ -60,14 +60,14 @@ export default function CandidateProfile() {
       setUser(authUser);
 
       const { data: profileData } = await supabase
-        .from('profiles')
+        .from('Talents')
         .select('*')
         .eq('id', authUser.id)
         .maybeSingle();
 
       if (!profileData) {
         const { data: createdProfile } = await supabase
-          .from('profiles')
+          .from('Talents')
           .insert({
             id: authUser.id,
             title: "Mon Espace Talent",
@@ -82,9 +82,9 @@ export default function CandidateProfile() {
       }
 
       const { data: vids } = await supabase
-        .from('videos')
+        .from('Videos')
         .select('*')
-        .eq('candidate_id', authUser.id);
+        .eq('talent_id', authUser.id);
       
       const typedVids = (vids ?? []) as unknown as VideoRow[];
       const vidsObj = typedVids.reduce<VideosByType>((acc, v) => {
@@ -101,7 +101,7 @@ export default function CandidateProfile() {
     try {
       setLoading(true);
       const { error } = await supabase
-        .from('profiles')
+        .from('Talents')
         .update({ [field]: value, updated_at: new Date().toISOString() })
         .eq('id', user.id);
       if (error) throw error;
@@ -157,11 +157,11 @@ export default function CandidateProfile() {
         .from('candidate-videos')
         .getPublicUrl(filePath);
 
-      await supabase.from('videos').upsert({
-        candidate_id: user?.id,
+      await supabase.from('Videos').upsert({
+        talent_id: user?.id,
         video_url: publicUrl,
         video_type: type
-      }, { onConflict: 'candidate_id,video_type' });
+      }, { onConflict: 'talent_id,video_type' });
 
       alert("Vidéo mise en ligne !");
       setVideos((prev) => ({
@@ -198,11 +198,11 @@ export default function CandidateProfile() {
         .from('video-thumbnails')
         .getPublicUrl(filePath);
 
-      await supabase.from('videos').upsert({
-        candidate_id: user?.id,
+      await supabase.from('Videos').upsert({
+        talent_id: user?.id,
         thumbnail_url: publicUrl,
         video_type: type
-      }, { onConflict: 'candidate_id,video_type' });
+      }, { onConflict: 'talent_id,video_type' });
 
       alert("Miniature mise en ligne !");
       setVideos((prev) => ({
@@ -260,9 +260,9 @@ export default function CandidateProfile() {
       }
 
       const { error } = await supabase
-        .from("videos")
+        .from("Videos")
         .delete()
-        .eq("candidate_id", user.id)
+        .eq("talent_id", user.id)
         .eq("video_type", type);
       if (error) throw error;
 
@@ -293,7 +293,7 @@ export default function CandidateProfile() {
       }
 
       const { error } = await supabase
-        .from("profiles")
+        .from("Talents")
         .update({ avatar_url: null, updated_at: new Date().toISOString() })
         .eq("id", user.id);
       if (error) throw error;

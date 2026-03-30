@@ -1,19 +1,15 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { 
   Loader2, 
-  Search, 
-  Filter, 
   Calendar, 
   ArrowRight, 
-  Trophy, 
   Globe, 
   Heart,
-  ChevronDown,
   Flame,
   Brain,
   Star,
@@ -26,117 +22,155 @@ import {
   calculateVoterStatus, 
   getNextStatus, 
   getUniverseFromCategory,
-  VoterStatus,
-  VOTER_STATUSES
 } from "@/lib/voter-logic";
 import { VoterStatusBadge } from "@/components/voter/VoterStatusBadge";
 import { universes } from "@/lib/data/universes";
 import { cn } from "@/lib/utils";
+import type { Votant } from "@/types";
+
+type TalentMini = {
+  id: string;
+  slug: string;
+  prenom: string | null;
+  nom: string | null;
+  avatar_url: string | null;
+};
+
+type VoteRow = {
+  id: string;
+  vote_date: string;
+  talent_id: string;
+  votant_id: string;
+  categorie: string | null;
+  univers: string | null;
+  talents: TalentMini | null;
+};
 
 export default function VoterDashboard() {
   const router = useRouter();
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   
-  const [profile, setProfile] = useState<any>(null);
-  const [votes, setVotes] = useState<any[]>([]);
-  const [userStats, setUserStats] = useState<any>(null);
+  const [profile, setProfile] = useState<Votant | null>(null);
+  const [votes, setVotes] = useState<VoteRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [sqlGrade, setSqlGrade] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   // Filters
   const [selectedUniverse, setSelectedUniverse] = useState<string>("Tous les univers");
   const [selectedCategory, setSelectedCategory] = useState<string>("Toutes les catégories");
   const [searchQuery, setSearchQuery] = useState("");
 
+  const fetchVotes = useCallback(async (actualVotantId: string) => {
+    const { data, error } = await supabase
+      .from("Votes")
+      .select(`
+        id,
+        vote_date,
+        talent_id,
+        votant_id,
+        categorie,
+        univers,
+        talents:talents (
+          id,
+          slug,
+          prenom,
+          nom,
+          avatar_url
+        )
+      `)
+      .eq("votant_id", actualVotantId)
+      .order("vote_date", { ascending: false });
+
+    if (error) {
+      setErrorMsg(error.message);
+      setVotes([]);
+      return;
+    }
+
+    setVotes((data ?? []) as unknown as VoteRow[]);
+  }, [supabase]);
+
   useEffect(() => {
+    let active = true;
+    let realtimeChannel: ReturnType<typeof supabase.channel> | null = null;
+
     async function loadData() {
+      setLoading(true);
+      setErrorMsg(null);
+
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         router.push("/login");
         return;
       }
 
-      // Load profile
-      const { data: profileData } = await supabase
+      const { data: profileData, error: profileError } = await supabase
         .from("Votants")
         .select("*")
         .eq("id", user.id)
-        .single();
-      
-      setProfile(profileData);
+        .maybeSingle();
 
-      // Load stats from user_stats view
-      const { data: statsData } = await supabase
-        .from("user_stats")
-        .select("*")
-        .eq("voter_id", user.id)
-        .single();
-      
-      setUserStats(statsData);
+      if (profileError) {
+        setErrorMsg(profileError.message);
+      }
 
-      // Call the SQL grade function
-      const { data: gradeData } = await supabase.rpc('get_user_grade', { user_uuid: user.id });
-      if (gradeData) setSqlGrade(gradeData);
-
-      // Function to load votes
-      const fetchVotes = async (actualVotantId: string) => {
-        const { data: votesData } = await supabase
-          .from("Votes")
-          .select(`
-            id,
-            vote_date,
-            talent_id,
-            votant_id,
-            categorie,
-            univers,
-            talents:Talents (
-              id,
-              slug,
-              prenom,
-              nom,
-              avatar_url
-            )
-          `)
-          .eq("votant_id", actualVotantId)
-          .order("vote_date", { ascending: false });
-
-        if (votesData) {
-          setVotes(votesData);
-        }
+      const ensuredProfile = profileData ?? {
+        id: user.id,
+        role: "votant",
+        full_name: user.user_metadata?.full_name || user.user_metadata?.name || user.email || "Votant",
+        avatar_url: user.user_metadata?.avatar_url || user.user_metadata?.picture || null,
+        whatsapp: null,
+        created_at: new Date().toISOString(),
       };
 
-      await fetchVotes(user.id);
-      setLoading(false);
+      if (!profileData) {
+        await supabase.from("Votants").upsert({
+          id: user.id,
+          role: "votant",
+          full_name: ensuredProfile.full_name,
+          avatar_url: ensuredProfile.avatar_url,
+        });
+      }
 
-      // Realtime subscription for this voter's votes
-      const channel = supabase
+      if (active) {
+        setProfile(ensuredProfile as Votant);
+      }
+
+      await fetchVotes(user.id);
+
+      if (!active) return;
+
+      realtimeChannel = supabase
         .channel(`voter_realtime_${user.id}`)
         .on(
-          'postgres_changes',
-          { 
-            event: 'INSERT', 
-            schema: 'public', 
-            table: 'Votes', 
-            filter: `votant_id=eq.${user.id}` 
+          "postgres_changes",
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "Votes",
+            filter: `votant_id=eq.${user.id}`,
           },
           async () => {
             await fetchVotes(user.id);
-            // Also refresh grade
-            const { data: newGrade } = await supabase.rpc('get_user_grade', { user_uuid: user.id });
-            if (newGrade) setSqlGrade(newGrade);
-          }
+          },
         )
         .subscribe();
 
-      return () => {
-        supabase.removeChannel(channel);
-      };
+      setLoading(false);
     }
 
-    loadData();
-  }, [supabase, router]);
+    loadData().finally(() => {
+      if (active) setLoading(false);
+    });
 
-  // Derived stats using user_stats view for reliability
+    return () => {
+      active = false;
+      if (realtimeChannel) {
+        supabase.removeChannel(realtimeChannel);
+      }
+    };
+  }, [fetchVotes, router, supabase]);
+
   const stats = useMemo(() => {
     const totalVotes = votes.length;
     const distinctUniverses = Array.from(new Set(votes.map(v => v.univers).filter(Boolean)));
@@ -156,6 +190,22 @@ export default function VoterDashboard() {
 
   const nextStatus = useMemo(() => getNextStatus(stats.currentStatus.level), [stats.currentStatus.level]);
 
+  const availableCategories = useMemo(() => {
+    if (selectedUniverse === "Tous les univers") {
+      const cats = new Set(votes.map((vote) => vote.categorie).filter(Boolean));
+      return ["Toutes les catégories", ...Array.from(cats) as string[]];
+    }
+
+    const cats = new Set(
+      votes
+        .filter((vote) => (vote.univers || getUniverseFromCategory(vote.categorie ?? "")) === selectedUniverse)
+        .map((vote) => vote.categorie)
+        .filter(Boolean),
+    );
+
+    return ["Toutes les catégories", ...Array.from(cats) as string[]];
+  }, [selectedUniverse, votes]);
+
   // Filtering logic
   const filteredVotes = useMemo(() => {
     return votes.filter(vote => {
@@ -163,7 +213,7 @@ export default function VoterDashboard() {
       if (!talent) return false;
       
       const universe = vote.univers || getUniverseFromCategory(vote.categorie);
-      const fullName = `${talent.prenom} ${talent.nom}`.toLowerCase();
+                      const fullName = `${talent.prenom || ""} ${talent.nom || ""}`.toLowerCase();
       
       const matchesUniverse = selectedUniverse === "Tous les univers" || universe === selectedUniverse;
       const matchesCategory = selectedCategory === "Toutes les catégories" || vote.categorie === selectedCategory;
@@ -173,15 +223,20 @@ export default function VoterDashboard() {
     });
   }, [votes, selectedUniverse, selectedCategory, searchQuery]);
 
-  const allCategories = useMemo(() => {
-    const cats = new Set(votes.map(v => v.categorie).filter(Boolean));
-    return ["Toutes les catégories", ...Array.from(cats) as string[]];
-  }, [votes]);
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F9F9F7]">
         <Loader2 className="w-12 h-12 text-[#008751] animate-spin" />
+      </div>
+    );
+  }
+
+  if (errorMsg && votes.length === 0) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#F9F9F7] px-6 text-center">
+        <Heart className="w-12 h-12 text-[#E9B113] mb-4" />
+        <h2 className="text-2xl font-display font-bold text-black">Impossible de charger votre Dashboard Votant</h2>
+        <p className="text-sm text-gray-500 mt-3 max-w-xl">{errorMsg}</p>
       </div>
     );
   }
@@ -209,7 +264,7 @@ export default function VoterDashboard() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <VoterStatusBadge status={{...stats.currentStatus, label: sqlGrade || stats.currentStatus.label}} />
+              <VoterStatusBadge status={stats.currentStatus} />
             </motion.div>
             <motion.h1 
               initial={{ opacity: 0, y: 10 }}
@@ -337,9 +392,18 @@ export default function VoterDashboard() {
                 <h2 className="text-2xl font-display font-bold text-black">Mes votes</h2>
                 
                 <div className="flex flex-wrap gap-2">
+                  <input
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Rechercher un talent…"
+                    className="bg-white border border-[#F2EDE4] px-4 py-2 rounded-xl text-[10px] font-bold tracking-widest text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#006B3F]/20"
+                  />
                   <select 
                     value={selectedUniverse}
-                    onChange={(e) => setSelectedUniverse(e.target.value)}
+                    onChange={(e) => {
+                      setSelectedUniverse(e.target.value);
+                      setSelectedCategory("Toutes les catégories");
+                    }}
                     className="bg-white border border-[#F2EDE4] px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#006B3F]/20 cursor-pointer"
                   >
                     <option>Tous les univers</option>
@@ -351,7 +415,7 @@ export default function VoterDashboard() {
                     onChange={(e) => setSelectedCategory(e.target.value)}
                     className="bg-white border border-[#F2EDE4] px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#006B3F]/20 cursor-pointer"
                   >
-                    {allCategories.map(c => <option key={c} value={c}>{c}</option>)}
+                    {availableCategories.map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </div>
               </div>
@@ -365,7 +429,8 @@ export default function VoterDashboard() {
                   >
                     {filteredVotes.map((vote) => {
                       const talent = vote.talents;
-                      const universe = vote.universe || getUniverseFromCategory(vote.category);
+                      if (!talent) return null;
+                      const universe = vote.univers || getUniverseFromCategory(vote.categorie ?? "");
                       return (
                         <motion.div
                           layout
@@ -411,8 +476,14 @@ export default function VoterDashboard() {
                     className="py-16 text-center bg-white rounded-[32px] border border-dashed border-gray-200"
                   >
                     <Heart className="w-12 h-12 text-gray-200 mx-auto mb-4" />
-                    <h3 className="text-lg font-display font-bold text-black mb-1">Aucun talent trouvé</h3>
-                    <p className="text-xs text-gray-400">Ajustez vos filtres pour voir vos autres votes.</p>
+                    <h3 className="text-lg font-display font-bold text-black mb-1">
+                      {votes.length === 0 ? "Aucun vote pour le moment" : "Aucun talent trouvé"}
+                    </h3>
+                    <p className="text-xs text-gray-400">
+                      {votes.length === 0
+                        ? "Commencez à soutenir des talents pour débloquer votre progression."
+                        : "Ajustez vos filtres pour voir vos autres votes."}
+                    </p>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -433,7 +504,7 @@ export default function VoterDashboard() {
               </h3>
               
               <div className="grid grid-cols-4 gap-3">
-                {universes.map((u, index) => {
+                {universes.map((u) => {
                   const isExplored = stats.distinctUniverses.includes(u.name);
                   const Icon = u.icon;
                   return (

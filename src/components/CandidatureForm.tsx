@@ -4,32 +4,7 @@ import { useState } from "react";
 import { Video, Loader2 } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-
-const categories = [
-  "Tourisme & Découvertes",
-  "Coutumes & Traditions",
-  "Événementiel & Vie Nocturne",
-  "Hébergement & Séjour",
-  "Alimentation & Cuisine",
-  "Bien-être & Fitness",
-  "Mode & Beauté",
-  "Marchés & Produits Locaux",
-  "Transport & Mobilité",
-  "Assistance & Travaux",
-  "Santé & Médecine",
-  "Service & Assistance",
-  "Facilitateurs & Conciergerie",
-  "Création & Médias",
-  "Immobilier & Construction",
-  "Business & Entreprises",
-];
-
-const videos = [
-  "Personnalité / Présentation",
-  "Votre histoire",
-  "Votre service / offre",
-  "Pourquoi vous",
-];
+import { universes } from "@/lib/data/universes";
 
 const CandidatureForm = () => {
   const router = useRouter();
@@ -41,8 +16,8 @@ const CandidatureForm = () => {
   const [form, setForm] = useState({
     prenom: "",
     nom: "",
-    category: "",
-    subCategory: "",
+    univers: "",
+    categorie: "",
     location: "",
     whatsapp: "",
     date_naissance: "",
@@ -69,18 +44,19 @@ const CandidatureForm = () => {
       const slug = `${form.prenom}-${form.nom}`.toLowerCase().replace(/[^a-z0-9]/g, '-');
 
       const { error: submitError } = await supabase
-        .from('profiles')
+        .from('Talents')
         .insert([
           {
             prenom: form.prenom,
             nom: form.nom,
-            category: form.category,
-            whatsapp: form.whatsapp,
+            univers: form.univers,
+            categorie: form.categorie,
+            whatsapp_number: form.whatsapp,
             date_naissance: form.date_naissance,
             city: form.location,
             slug: slug,
             votes: 0,
-            // status: 'pending' // If you have a status field for moderation
+            role: 'candidat'
           }
         ]);
 
@@ -156,14 +132,33 @@ const CandidatureForm = () => {
 
           <div className="relative">
             <select
-              name="category"
-              value={form.category}
+              name="univers"
+              value={form.univers}
               onChange={handleChange}
               required
               className="w-full px-5 py-4 rounded-xl bg-background border-0 text-foreground font-body text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30"
             >
-              <option value="" disabled>Catégorie</option>
-              {categories.map((cat) => (
+              <option value="" disabled>Choisir votre Univers</option>
+              {universes.map((u) => (
+                <option key={u.name} value={u.name}>{u.name}</option>
+              ))}
+            </select>
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m6 9 6 6 6-6"/></svg>
+            </div>
+          </div>
+
+          <div className="relative">
+            <select
+              name="categorie"
+              value={form.categorie}
+              onChange={handleChange}
+              required
+              disabled={!form.univers}
+              className="w-full px-5 py-4 rounded-xl bg-background border-0 text-foreground font-body text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-50"
+            >
+              <option value="" disabled>Choisir votre Catégorie</option>
+              {form.univers && universes.find(u => u.name === form.univers)?.subs.map((cat) => (
                 <option key={cat} value={cat}>{cat}</option>
               ))}
             </select>

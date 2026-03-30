@@ -20,7 +20,7 @@ type JuryProfile = {
 };
 
 type VideoRow = {
-  candidate_id: string;
+  talent_id: string;
   video_type: string;
   video_url: string | null;
   thumbnail_url: string | null;
@@ -57,7 +57,7 @@ export default function JuryProfilePage({ params }: { params: { slug: string } }
       setLoading(true);
       setError(null);
       const { data: p, error: e1 } = await supabase
-        .from("profiles")
+        .from("Talents")
         .select("id, prenom, nom, avatar_url, city, description, type")
         .eq("id", id)
         .maybeSingle();
@@ -75,9 +75,9 @@ export default function JuryProfilePage({ params }: { params: { slug: string } }
         description: p.description,
       });
       const { data: vids } = await supabase
-        .from("videos")
+        .from("Videos")
         .select("*")
-        .eq("candidate_id", id);
+        .eq("talent_id", id);
       const typed = (vids ?? []) as unknown as VideoRow[];
       const map: VideosByType = typed.reduce((acc, v) => {
         acc[v.video_type] = v;

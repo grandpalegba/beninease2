@@ -7,27 +7,27 @@
 import { Suspense, useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Info, Loader2, Award } from "lucide-react";
+import { Loader2, Award } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import type { Profile } from "@/types";
+import type { Talent } from "@/types";
 
 function JuryList() {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
-  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [talents, setTalents] = useState<Talent[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchProfiles = async () => {
+    const fetchTalents = async () => {
       try {
         const { data, error } = await supabase
-          .from('profiles')
+          .from('talents')
           .select('*')
           .eq('role', 'jury')
           .eq('is_validated', true)
           .order('prenom', { ascending: true });
 
         if (error) throw error;
-        if (data) setProfiles(data as Profile[]);
+        if (data) setTalents(data as Talent[]);
       } catch (err) {
         console.error("Erreur lors de la récupération du jury:", err);
       } finally {
@@ -35,7 +35,7 @@ function JuryList() {
       }
     };
 
-    fetchProfiles();
+    fetchTalents();
   }, [supabase]);
 
   if (loading) {
@@ -63,7 +63,7 @@ function JuryList() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {profiles.map((jury) => {
+        {talents.map((jury) => {
           const fullName = `${jury.prenom || ''} ${jury.nom || ''}`.trim() || "Membre du Jury";
           return (
             <Link
@@ -97,7 +97,7 @@ function JuryList() {
         })}
       </div>
 
-      {profiles.length === 0 && (
+      {talents.length === 0 && (
         <div className="text-center py-20 bg-white rounded-[30px] border border-dashed border-gray-200">
           <p className="text-gray-500">Le jury est en cours de constitution.</p>
         </div>

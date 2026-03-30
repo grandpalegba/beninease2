@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import CandidateDashboard from "@/components/CandidateDashboard";
 import { Loader2, AlertCircle } from "lucide-react";
-import type { Profile } from "@/types";
+import type { Talent } from "@/types";
 
 export default function TalentDashboardPage() {
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profile, setProfile] = useState<Talent | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
@@ -23,13 +23,13 @@ export default function TalentDashboardPage() {
       }
 
       const { data, error } = await supabase
-        .from("profiles")
+        .from("Talents")
         .select("*")
         .eq("id", user.id)
         .single();
 
       if (error || !data) {
-        console.error("Error fetching profile:", error);
+        console.error("Error fetching talent profile:", error);
         setLoading(false);
         return;
       }
@@ -40,7 +40,7 @@ export default function TalentDashboardPage() {
         return;
       }
 
-      setProfile(data as Profile);
+      setProfile(data as Talent);
       setLoading(false);
     }
 

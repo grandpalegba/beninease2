@@ -8,24 +8,46 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createSupabaseServerClient();
-    const { data: { session }, error: sessionError } = await supabase.auth.exchangeCodeForSession(code);
+    const { data: { session } } = await supabase.auth.exchangeCodeForSession(code);
 
     if (session?.user && !next) {
-      // Logic for automatic redirection based on role
-      const { data: profile } = await supabase
-        .from("profiles")
+      const { data: talentProfile } = await supabase
+        .from("talents")
         .select("role")
         .eq("id", session.user.id)
-        .single();
+        .maybeSingle();
 
-      const role = profile?.role || 'votant';
+      let role = talentProfile?.role;
+
+      if (!role) {
+        const { data: votantProfile } = await supabase
+          .from("Votants")
+          .select("id, role")
+          .eq("id", session.user.id)
+          .maybeSingle();
+
+        if (!votantProfile) {
+          await supabase.from("Votants").upsert({
+            id: session.user.id,
+            role: "votant",
+            full_name:
+              session.user.user_metadata?.full_name ||
+              session.user.user_metadata?.name ||
+              session.user.email,
+            avatar_url:
+              session.user.user_metadata?.avatar_url ||
+              session.user.user_metadata?.picture ||
+              null,
+          });
+        }
+
+        role = votantProfile?.role || 'votant';
+      }
 
       if (role === 'votant') {
         return NextResponse.redirect(`${origin}/dashboard/votant`);
-      } else if (role === 'candidat') {
-        return NextResponse.redirect(`${origin}/dashboard/candidat`);
-      } else if (role === 'ambassadeur') {
-        return NextResponse.redirect(`${origin}/dashboard/ambassadeur`);
+      } else if (role === 'candidat' || role === 'ambassadeur') {
+        return NextResponse.redirect(`${origin}/dashboard/talent`);
       } else if (role === 'admin') {
         return NextResponse.redirect(`${origin}/admin`);
       }

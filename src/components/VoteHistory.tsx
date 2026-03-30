@@ -1,24 +1,41 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Heart, Calendar, ArrowRight } from "lucide-react";
-import { getVotesByUser } from "@/lib/supabase/queries";
+import { getUserVotes } from "@/lib/supabase/queries";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 interface VoteHistoryProps {
-  voterWhatsapp: string;
+  votantId: string;
 }
 
-export function VoteHistory({ voterWhatsapp }: VoteHistoryProps) {
-  const [votes, setVotes] = useState<any[]>([]);
+type TalentMini = {
+  id: string;
+  slug: string;
+  prenom: string | null;
+  nom: string | null;
+  avatar_url: string | null;
+};
+
+type VoteRow = {
+  id: string;
+  vote_date: string;
+  talents: TalentMini | null;
+};
+
+export function VoteHistory({ votantId }: VoteHistoryProps) {
+  const [votes, setVotes] = useState<VoteRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
   useEffect(() => {
     async function loadVotes() {
       try {
-        const data = await getVotesByUser(voterWhatsapp);
-        setVotes(data || []);
+        const { data, error } = await getUserVotes(supabase, votantId);
+        if (error) throw error;
+        setVotes((data ?? []) as unknown as VoteRow[]);
       } catch (err) {
         console.error("Error loading votes:", err);
       } finally {
@@ -26,7 +43,7 @@ export function VoteHistory({ voterWhatsapp }: VoteHistoryProps) {
       }
     }
     loadVotes();
-  }, [voterWhatsapp]);
+  }, [votantId, supabase]);
 
   if (loading) return <div className="animate-pulse h-40 bg-gray-100 rounded-2xl" />;
 
@@ -34,7 +51,7 @@ export function VoteHistory({ voterWhatsapp }: VoteHistoryProps) {
     return (
       <div className="p-8 text-center bg-white rounded-3xl border border-dashed border-gray-200">
         <Heart className="w-8 h-8 text-gray-300 mx-auto mb-3" />
-        <p className="text-gray-500 text-sm">Vous n'avez pas encore soutenu de talent.</p>
+        <p className="text-gray-500 text-sm">Vous n&apos;avez pas encore soutenu de talent.</p>
         <Link href="/talents" className="text-[#008751] font-bold text-sm mt-4 inline-block hover:underline">
           Découvrir les talents
         </Link>
@@ -45,17 +62,18 @@ export function VoteHistory({ voterWhatsapp }: VoteHistoryProps) {
   return (
     <div className="space-y-4">
       {votes.map((vote) => {
-        const profile = vote.profiles;
-        const fullName = `${profile.prenom || ''} ${profile.nom || ''}`.trim() || "Talent";
+        const talent = vote.talents;
+        if (!talent) return null;
+        const fullName = `${talent.prenom || ''} ${talent.nom || ''}`.trim() || "Talent";
         return (
           <Link
             key={vote.id}
-            href={`/talents/${profile.slug}`}
+            href={`/talents/${talent.slug}`}
             className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-[#F2EDE4] hover:shadow-md transition-all group"
           >
             <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
               <Image
-                src={profile.avatar_url || "/placeholder-portrait.jpg"}
+                src={talent.avatar_url || "/placeholder-portrait.jpg"}
                 alt={fullName}
                 fill
                 className="object-cover"

@@ -17,13 +17,14 @@ type AdminProfile = {
   avatar_url: string | null;
   city: string | null;
   description: string | null;
-  category: string | null;
+  categorie: string | null;
+  univers: string | null;
   type: "candidate" | "jury" | string;
   votes: number | null;
 };
 
 type VideoRow = {
-  candidate_id: string;
+  talent_id: string;
   video_type: string;
   video_url: string | null;
   thumbnail_url: string | null;
@@ -70,7 +71,7 @@ export default function AdminAdvancedDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [profiles, setProfiles] = useState<AdminProfile[]>([]);
+  const [talents, setTalents] = useState<AdminProfile[]>([]);
   const [videos, setVideos] = useState<VideosByCandidate>({});
   const [selectedDimension, setSelectedDimension] = useState<Record<string, string>>({});
 
@@ -86,40 +87,40 @@ export default function AdminAdvancedDashboardPage() {
     setError(null);
 
     const { data, error: e1 } = await supabase
-      .from("profiles")
-      .select("id, prenom, nom, avatar_url, city, description, category, type, votes, updated_at")
+      .from("Talents")
+      .select("id, prenom, nom, avatar_url, city, description, categorie, univers, type, votes, updated_at")
       .order("updated_at", { ascending: false })
       .limit(800);
 
     if (e1) {
       setError(e1.message);
-      setProfiles([]);
+      setTalents([]);
       setVideos({});
       setLoading(false);
       return;
     }
 
     const list = (data ?? []) as AdminProfile[];
-    setProfiles(list);
+    setTalents(list);
 
-    const candidateIds = list.filter((p) => p.type === "candidate").map((p) => p.id);
-    if (candidateIds.length === 0) {
+    const talentIds = list.filter((p) => p.type === "candidate").map((p) => p.id);
+    if (talentIds.length === 0) {
       setVideos({});
       setLoading(false);
       return;
     }
 
     const { data: vids } = await supabase
-      .from("videos")
-      .select("candidate_id, video_type, video_url, thumbnail_url")
-      .in("candidate_id", candidateIds)
+      .from("Videos")
+      .select("talent_id, video_type, video_url, thumbnail_url")
+      .in("talent_id", talentIds)
       .limit(4000);
 
     const map: VideosByCandidate = {};
     (vids ?? []).forEach((v) => {
       const row = v as unknown as VideoRow;
-      map[row.candidate_id] = map[row.candidate_id] ?? {};
-      map[row.candidate_id][row.video_type] = row;
+      map[row.talent_id] = map[row.talent_id] ?? {};
+      map[row.talent_id][row.video_type] = row;
     });
     setVideos(map);
     setLoading(false);
@@ -131,17 +132,17 @@ export default function AdminAdvancedDashboardPage() {
 
   const confirmOrReturn = (text: string) => window.confirm(text);
 
-  const handleSetCategory = async (profileId: string, category: string) => {
+  const handleSetCategory = async (profileId: string, categorie: string) => {
     if (!confirmOrReturn("Modifier la catégorie de ce profil ?")) return;
     try {
       setBusyId(profileId);
       setError(null);
       const { error: e } = await supabase.rpc("admin_set_profile_category", {
         p_profile_id: profileId,
-        p_category: category,
+        p_category: categorie,
       });
       if (e) throw e;
-      setProfiles((prev) => prev.map((p) => (p.id === profileId ? { ...p, category } : p)));
+      setTalents((prev) => prev.map((p) => (p.id === profileId ? { ...p, categorie } : p)));
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Erreur inconnue";
       setError(msg);
@@ -168,18 +169,18 @@ export default function AdminAdvancedDashboardPage() {
     }
   };
 
-  const handleDeleteVideo = async (candidateId: string) => {
-    const dim = selectedDimension[candidateId] ?? dimensions[0];
+  const handleDeleteVideo = async (talentId: string) => {
+    const dim = selectedDimension[talentId] ?? dimensions[0];
     if (!confirmOrReturn(`Êtes-vous sûr ? Supprimer la vidéo (${dim}) ?`)) return;
-    const row = videos[candidateId]?.[dim];
+    const row = videos[talentId]?.[dim];
     if (!row?.video_url) return;
 
     try {
-      setBusyId(candidateId);
+      setBusyId(talentId);
       setError(null);
       await removeFromBucketByPublicUrl("candidate-videos", row.video_url);
       const { error: e } = await supabase.rpc("admin_reset_candidate_media", {
-        p_candidate_id: candidateId,
+        p_candidate_id: talentId,
         p_video_type: dim,
         p_reset_video: true,
         p_reset_thumbnail: false,
@@ -188,11 +189,11 @@ export default function AdminAdvancedDashboardPage() {
 
       setVideos((prev) => {
         const next = { ...prev };
-        const byType = { ...(next[candidateId] ?? {}) };
+        const byType = { ...(next[talentId] ?? {}) };
         const updated = { ...(byType[dim] ?? row), video_url: null };
         if (!updated.video_url && !updated.thumbnail_url) delete byType[dim];
         else byType[dim] = updated;
-        next[candidateId] = byType;
+        next[talentId] = byType;
         return next;
       });
     } catch (e) {
@@ -293,17 +294,17 @@ export default function AdminAdvancedDashboardPage() {
                       Chargement…
                     </td>
                   </tr>
-                ) : profiles.length === 0 ? (
+                ) : talents.length === 0 ? (
                   <tr>
                     <td className="px-5 py-8 text-sm text-[#8E8E8E]" colSpan={6}>
-                      Aucun profil.
+                      Aucun talent.
                     </td>
                   </tr>
                 ) : (
-                  profiles.map((p) => {
+                  talents.map((p) => {
                     const isBusy = busyId === p.id;
                     const fullName = `${p.prenom || ""} ${p.nom || ""}`.trim() || "Profil";
-                    const cat = p.category ?? "";
+                    const cat = p.categorie ?? "";
                     const dim = selectedDimension[p.id] ?? dimensions[0];
                     const hasVideo = p.type === "candidate" ? !!videos[p.id]?.[dim]?.video_url : false;
 
@@ -343,8 +344,8 @@ export default function AdminAdvancedDashboardPage() {
                             <select
                               value={cat}
                               onChange={(e) =>
-                                setProfiles((prev) =>
-                                  prev.map((x) => (x.id === p.id ? { ...x, category: e.target.value } : x)),
+                                setTalents((prev) =>
+                                  prev.map((x) => (x.id === p.id ? { ...x, categorie: e.target.value } : x)),
                                 )
                               }
                               className="w-72 rounded-full border border-[#E9E2D6] bg-[#F9F9F7] px-4 py-2 text-xs text-[#1A1A1A] outline-none focus:ring-2 focus:ring-[#C5A267]/30"
@@ -360,7 +361,7 @@ export default function AdminAdvancedDashboardPage() {
                             <button
                               type="button"
                               disabled={isBusy}
-                              onClick={() => handleSetCategory(p.id, (p.category ?? "").trim())}
+                              onClick={() => handleSetCategory(p.id, (p.categorie ?? "").trim())}
                               className="inline-flex items-center justify-center gap-2 rounded-full border border-[#E9E2D6] bg-white px-4 py-2 text-[10px] font-semibold tracking-widest uppercase text-[#8E8E8E] hover:bg-[#C5A267] hover:text-white hover:border-[#C5A267] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                               title="Enregistrer la catégorie"
                             >

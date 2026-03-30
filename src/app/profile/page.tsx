@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import CandidateDashboard from "@/components/CandidateDashboard";
 import { Loader2 } from "lucide-react";
-import type { Profile } from "@/types";
+import type { Talent } from "@/types";
 
 export default function ProfilePage() {
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profile, setProfile] = useState<Talent | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
@@ -23,19 +23,19 @@ export default function ProfilePage() {
       }
 
       const { data, error } = await supabase
-        .from("profiles")
+        .from("Talents")
         .select("*")
         .eq("id", user.id)
         .single();
 
       if (error || !data) {
-        console.error("Error fetching profile:", error);
+        console.error("Error fetching talent profile:", error);
         // If profile doesn't exist, we might want to redirect to postuler or show an error
         setLoading(false);
         return;
       }
 
-      setProfile(data as Profile);
+      setProfile(data as Talent);
       setLoading(false);
     }
 

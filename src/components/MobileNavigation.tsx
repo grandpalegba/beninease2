@@ -3,22 +3,25 @@
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Heart, User, LogOut, LayoutDashboard, Settings, Trophy, UserCheck, Globe, Star } from "lucide-react";
-import { useVoter } from "@/lib/auth/use-voter";
+import { Menu, X, User, LogOut, LayoutDashboard, Settings, Trophy, Globe, Star } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { calculateVoterStatus } from "@/lib/voter-logic";
 import Image from "next/image";
+import type { User as SupabaseUser } from "@supabase/supabase-js";
+import type { Votant } from "@/types";
+
+type UserStats = {
+  unique_candidates_voted?: number | null;
+  unique_universes_voted?: number | null;
+};
 
 const MobileNavigation = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [profile, setProfile] = useState<any>(null);
-  const [userStats, setUserStats] = useState<any>(null);
-  const [user, setUser] = useState<any>(null);
-  
-  const [loading, setLoading] = useState(true);
-  
-  const { logout } = useVoter();
+  const [profile, setProfile] = useState<Votant | null>(null);
+  const [userStats, setUserStats] = useState<UserStats | null>(null);
+  const [user, setUser] = useState<SupabaseUser | null>(null);
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
+
 
   // Sync with Supabase Auth
   useEffect(() => {
@@ -29,15 +32,13 @@ const MobileNavigation = () => {
         if (currentUser) {
           const [profileRes, statsRes] = await Promise.all([
             supabase.from("Votants").select("*").eq("id", currentUser.id).single(),
-            supabase.from("user_stats").select("*").eq("voter_id", currentUser.id).single()
+            supabase.from("user_stats").select("*").eq("votant_id", currentUser.id).single()
           ]);
           if (profileRes.data) setProfile(profileRes.data);
           if (statsRes.data) setUserStats(statsRes.data);
         }
       } catch (err) {
         console.log("Public mobile user session:", err);
-      } finally {
-        setLoading(false);
       }
     };
     checkUser();
@@ -46,18 +47,15 @@ const MobileNavigation = () => {
       const currentUser = session?.user ?? null;
       setUser(currentUser);
       if (currentUser) {
-        setLoading(true);
         const [profileRes, statsRes] = await Promise.all([
           supabase.from("Votants").select("*").eq("id", currentUser.id).single(),
-          supabase.from("user_stats").select("*").eq("voter_id", currentUser.id).single()
+          supabase.from("user_stats").select("*").eq("votant_id", currentUser.id).single()
         ]);
         if (profileRes.data) setProfile(profileRes.data);
         if (statsRes.data) setUserStats(statsRes.data);
-        setLoading(false);
       } else {
         setProfile(null);
         setUserStats(null);
-        setLoading(false);
       }
     });
 
@@ -148,7 +146,7 @@ const MobileNavigation = () => {
                     onClick={() => setIsOpen(false)}
                     className="w-full py-4 rounded-full bg-[#F9F9F7] text-[#1A1A1A] font-display text-lg font-bold shadow-sm flex items-center justify-center border border-gray-100"
                   >
-                    Se connecter
+                    Voter
                   </Link>
                   <Link
                     href="/postuler"

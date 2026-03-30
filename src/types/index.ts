@@ -1,5 +1,11 @@
 export type UserRole = 'votant' | 'candidat' | 'ambassadeur' | 'jury' | 'admin';
 
+export interface VoterSession {
+  votant_id: string;
+  whatsapp: string;
+  role: UserRole;
+}
+
 export interface Video {
   id: string;
   url: string;
@@ -14,6 +20,7 @@ export interface Talent {
   slug: string;
   prenom: string | null;
   nom: string | null;
+  univers: string;
   categorie: string;
   avatar_url: string | null;
   votes: number;

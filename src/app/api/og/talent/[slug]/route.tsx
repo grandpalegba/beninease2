@@ -15,10 +15,10 @@ export async function GET(
   try {
     const { slug } = params;
 
-    // Fetch profile data
+    // Fetch talent data
     const { data: profile, error } = await supabase
-      .from('profiles')
-      .select('prenom, nom, avatar_url, category')
+      .from('Talents')
+      .select('prenom, nom, avatar_url, categorie')
       .eq('slug', slug)
       .single();
 
