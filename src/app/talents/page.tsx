@@ -23,11 +23,15 @@ function TalentsList() {
 
   useEffect(() => {
     const fetchTalents = async () => {
+      console.log("🚀 [DEBUG TALENTS] 1. Début de fetchTalents");
       try {
+        console.log("🚀 [DEBUG TALENTS] 2. Lancement de la requête Supabase (from talents)...");
         const { data, error } = await supabase
           .from("talents")
           .select("id, slug, prenom, nom, univers, categorie, avatar_url, votes, bio")
           .order("votes", { ascending: false });
+
+        console.log("🚀 [DEBUG TALENTS] 3. Requête terminée. Erreur:", error, "Données:", data ? `${data.length} items` : "null");
 
         if (error) {
           const msg = error.message;
