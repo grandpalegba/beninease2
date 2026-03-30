@@ -31,7 +31,7 @@ const MobileNavigation = () => {
         setUser(currentUser);
         if (currentUser) {
           const [profileRes, statsRes] = await Promise.all([
-            supabase.from("Votants").select("*").eq("id", currentUser.id).single(),
+            supabase.from("votants").select("*").eq("id", currentUser.id).single(),
             supabase.from("user_stats").select("*").eq("votant_id", currentUser.id).single()
           ]);
           if (profileRes.data) setProfile(profileRes.data);
@@ -49,7 +49,7 @@ const MobileNavigation = () => {
         setUser(currentUser);
         if (currentUser) {
           const [profileRes, statsRes] = await Promise.all([
-            supabase.from("Votants").select("*").eq("id", currentUser.id).single(),
+            supabase.from("votants").select("*").eq("id", currentUser.id).single(),
             supabase.from("user_stats").select("*").eq("votant_id", currentUser.id).single()
           ]);
           if (profileRes.data) setProfile(profileRes.data);

@@ -105,7 +105,7 @@ export default function VoterDashboard() {
       }
 
       const { data: profileData, error: profileError } = await supabase
-        .from("Votants")
+        .from("votants")
         .select("*")
         .eq("id", user.id)
         .maybeSingle();
@@ -124,7 +124,7 @@ export default function VoterDashboard() {
       };
 
       if (!profileData) {
-        await supabase.from("Votants").upsert({
+        await supabase.from("votants").upsert({
           id: user.id,
           role: "votant",
           full_name: ensuredProfile.full_name,

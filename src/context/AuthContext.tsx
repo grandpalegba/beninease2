@@ -28,12 +28,37 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(initialSession?.user ?? null);
 
       if (initialSession?.user) {
-        const { data: userProfile } = await supabase
-          .from('Votants') // Assuming 'Votants' is the primary profile table
+        const { data: profile, error: profileError } = await supabase
+          .from('votants')
           .select('*')
           .eq('id', initialSession.user.id)
           .single();
-        setProfile(userProfile as UserProfile | null);
+
+        if (profileError) {
+          const { data: talentProfile, error: talentError } = await supabase
+            .from('talents')
+            .select('*')
+            .eq('id', initialSession.user.id)
+            .single();
+
+          if (talentError) {
+            const { data: newProfile } = await supabase
+              .from('votants')
+              .upsert({
+                id: initialSession.user.id,
+                full_name: initialSession.user.user_metadata.full_name || initialSession.user.email,
+                avatar_url: initialSession.user.user_metadata.avatar_url,
+                role: 'votant'
+              })
+              .select()
+              .single();
+            setProfile(newProfile as UserProfile | null);
+          } else {
+            setProfile(talentProfile as UserProfile | null);
+          }
+        } else {
+          setProfile(profile as UserProfile | null);
+        }
       }
       setLoading(false);
     };
@@ -47,12 +72,37 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         if (newSession?.user) {
           if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-            const { data: userProfile } = await supabase
-              .from('Votants')
+            const { data: profile, error: profileError } = await supabase
+              .from('votants')
               .select('*')
               .eq('id', newSession.user.id)
               .single();
-            setProfile(userProfile as UserProfile | null);
+
+            if (profileError) {
+              const { data: talentProfile, error: talentError } = await supabase
+                .from('talents')
+                .select('*')
+                .eq('id', newSession.user.id)
+                .single();
+
+              if (talentError) {
+                const { data: newProfile } = await supabase
+                  .from('votants')
+                  .upsert({
+                    id: newSession.user.id,
+                    full_name: newSession.user.user_metadata.full_name || newSession.user.email,
+                    avatar_url: newSession.user.user_metadata.avatar_url,
+                    role: 'votant'
+                  })
+                  .select()
+                  .single();
+                setProfile(newProfile as UserProfile | null);
+              } else {
+                setProfile(talentProfile as UserProfile | null);
+              }
+            } else {
+              setProfile(profile as UserProfile | null);
+            }
           }
         } else {
           setProfile(null);

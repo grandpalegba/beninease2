@@ -47,9 +47,9 @@ export default function SettingsPage() {
         }
         setUser(authUser);
 
-        // Check Votants first as it's the primary table for general users
+        // Check votants first as it's the primary table for general users
         const { data: profileData } = await supabase
-          .from("Votants")
+          .from("votants")
           .select("*")
           .eq("id", authUser.id)
           .maybeSingle();
@@ -107,7 +107,7 @@ export default function SettingsPage() {
         if (error) throw error;
       } else {
         const { error } = await supabase
-          .from("Votants")
+          .from("votants")
           .update({
             full_name: fullName,
             updated_at: new Date().toISOString()
@@ -147,7 +147,7 @@ export default function SettingsPage() {
         .getPublicUrl(filePath);
 
       const { error: updateError } = await supabase
-        .from(isTalent ? 'talents' : 'Votants')
+        .from(isTalent ? 'talents' : 'votants')
         .update({ avatar_url: publicUrl })
         .eq('id', user.id);
 

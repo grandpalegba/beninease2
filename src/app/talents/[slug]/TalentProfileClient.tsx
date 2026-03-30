@@ -170,9 +170,9 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
     setVoteMessage(null);
 
     try {
-      // 1. Récupérer le votant_id réel depuis la table Votants (lié à l'auth_id)
+      // 1. Récupérer le votant_id réel depuis la table votants (lié à l'auth_id)
       const { data: votantData, error: votantError } = await supabase
-        .from('Votants')
+        .from('votants')
         .select('id')
         .eq('id', activeUser.id) // Ici on suppose que Votants.id = auth.id pour l'instant, ou on cherche une colonne spécifique si besoin
         .single();
@@ -180,7 +180,7 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
       if (votantError || !votantData) {
         // Si le votant n'existe pas encore, on le crée (Upsert préventif)
         await supabase
-          .from('Votants')
+          .from('votants')
           .upsert({ 
             id: activeUser.id, 
             role: 'votant',

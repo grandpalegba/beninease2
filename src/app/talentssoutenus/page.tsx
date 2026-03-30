@@ -38,7 +38,7 @@ export default function SupportedTalentsPage() {
       try {
         // 1. Fetch user profile
         const { data: userData, error: userError } = await supabase
-          .from('Votants')
+          .from('votants')
           .select('id')
           .eq('whatsapp', session?.whatsapp)
           .single();

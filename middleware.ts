@@ -28,9 +28,9 @@ export async function middleware(request: NextRequest) {
 
   let profile: PublicUserRow | null = null;
   if (user) {
-    // On vérifie d'abord dans Votants
+    // On vérifie d'abord dans votants
     const { data: votantData } = await supabase
-      .from("Votants")
+      .from("votants")
       .select("id, role")
       .eq("id", user.id)
       .maybeSingle();
