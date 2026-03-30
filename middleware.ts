@@ -28,12 +28,27 @@ export async function middleware(request: NextRequest) {
 
   let profile: PublicUserRow | null = null;
   if (user) {
-    const { data } = await supabase
-      .from("users")
-      .select("id, role, is_approved")
+    // On vérifie d'abord dans Votants
+    const { data: votantData } = await supabase
+      .from("Votants")
+      .select("id, role")
       .eq("id", user.id)
       .maybeSingle();
-    profile = (data as PublicUserRow | null) ?? null;
+      
+    if (votantData) {
+      profile = { id: votantData.id, role: votantData.role, is_approved: true };
+    } else {
+      // Sinon on vérifie dans Talents
+      const { data: talentData } = await supabase
+        .from("talents")
+        .select("id, role, is_validated")
+        .eq("id", user.id)
+        .maybeSingle();
+        
+      if (talentData) {
+        profile = { id: talentData.id, role: talentData.role, is_approved: talentData.is_validated };
+      }
+    }
   }
 
   const isHome = pathname === "/";

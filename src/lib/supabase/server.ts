@@ -15,14 +15,6 @@ export async function createSupabaseServerClient() {
     supabaseUrl,
     supabaseAnonKey,
     {
-      global: {
-        fetch: (url, options) => {
-          return fetch(url, {
-            ...options,
-            cache: 'no-store',
-          });
-        },
-      },
       cookies: {
         getAll() {
           return cookieStore.getAll();
