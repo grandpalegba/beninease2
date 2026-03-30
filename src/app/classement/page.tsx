@@ -78,22 +78,22 @@ function RankingList() {
     fetchTalents();
 
     // 2. Subscribe to real-time updates for Talents via supabase_realtime
-    const channel = supabase
-      .channel('supabase_realtime')
-      .on(
-        'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'talents' },
-        () => {
-          // Re-fetch and re-sort
-          fetchTalents();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [supabase]);
+    // const channel = supabase
+    //   .channel('supabase_realtime')
+    //   .on(
+    //     'postgres_changes',
+    //     { event: 'UPDATE', schema: 'public', table: 'talents' },
+    //     () => {
+    //       // Re-fetch and re-sort
+    //       fetchTalents();
+    //     }
+    //   )
+    //   .subscribe();
+    //
+    // return () => {
+    //   supabase.removeChannel(channel);
+    // };
+  }, [supabase, fetchTalents]);
 
   if (loading && talents.length === 0) {
     return (
