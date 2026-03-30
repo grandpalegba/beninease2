@@ -20,3 +20,4 @@ export function createSupabaseBrowserClient() {
   }
 }
 // trigger git
+// trigger git
