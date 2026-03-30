@@ -48,24 +48,19 @@ const Header = () => {
     
     // Check initial session
     const checkUser = async () => {
-      console.log("🚀 [DEBUG HEADER] 1. Début de checkUser");
       try {
-        console.log("🚀 [DEBUG HEADER] 2. Appel supabase.auth.getUser()...");
         const { data: { user: currentUser }, error: authError } = await supabase.auth.getUser();
-        console.log("🚀 [DEBUG HEADER] 3. getUser terminé. User:", currentUser?.id, "Erreur:", authError);
         
         if (authError) throw authError;
         
         setUser(currentUser);
         
         if (currentUser) {
-          console.log("🚀 [DEBUG HEADER] 4. Récupération du profil et des stats...");
           // Parallel fetch for profile and stats
           const [profileRes, statsRes] = await Promise.all([
             supabase.from("Votants").select("*").eq("id", currentUser.id).single(),
             supabase.from("user_stats").select("*").eq("votant_id", currentUser.id).single()
           ]);
-          console.log("🚀 [DEBUG HEADER] 5. Profil et stats récupérés.");
 
           if (profileRes.data) setProfile(profileRes.data);
           if (statsRes.data) setUserStats(statsRes.data);
@@ -80,7 +75,6 @@ const Header = () => {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setTimeout(async () => {
-        console.log(`[AUTH STATE CHANGE] Event: ${event}`, { session });
         const currentUser = session?.user ?? null;
         setUser(currentUser);
         

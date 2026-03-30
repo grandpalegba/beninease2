@@ -23,24 +23,14 @@ function TalentsList() {
 
   useEffect(() => {
     const fetchTalents = async () => {
-      console.log("🚀 [DEBUG TALENTS] 1. Début de fetchTalents");
       try {
-        console.log("🚀 [DEBUG TALENTS] 2. Lancement de la requête Supabase (from talents)...");
         const { data, error, status, statusText } = await supabase
           .from("talents")
           .select("id, slug, prenom, nom, univers, categorie, avatar_url, votes, bio")
           .order("votes", { ascending: false });
 
-        console.log("🚀 [DEBUG TALENTS] 3. Requête terminée.", {
-          status,
-          statusText,
-          error,
-          dataLength: data ? data.length : 0,
-          dataPreview: data ? data.slice(0, 2) : null
-        });
-
         if (error) {
-          console.error("🚨 [DEBUG TALENTS] Erreur Supabase:", error);
+          console.error("Erreur Supabase:", error);
           const msg = error.message;
           const stillMissing =
             msg.includes("schema cache") || msg.includes("does not exist") || msg.includes("relation");
@@ -49,11 +39,10 @@ function TalentsList() {
               ? `La table des talents est introuvable côté Supabase. Attendu: public.talents. Détail: ${msg}`
               : `Erreur Supabase (${status}): ${msg}`
           );
-          return; // Stop execution here, finally block will handle loading
+          return;
         }
         
         if (!data) {
-          console.warn("⚠️ [DEBUG TALENTS] Aucune donnée retournée, mais pas d'erreur.");
           setErrorMsg("Aucune donnée n'a été retournée par Supabase.");
           setTalents([]);
           return;
@@ -61,16 +50,14 @@ function TalentsList() {
 
         setTalents(data as Talent[]);
         if (data.length === 0) {
-          console.log("ℹ️ [DEBUG TALENTS] Base de données vide.");
           setErrorMsg("La base de données est vide (0 talents trouvés).");
         } else {
           setErrorMsg(null);
         }
       } catch (err) {
-        console.error("🚨 [DEBUG TALENTS] Exception inattendue:", err);
+        console.error("Exception inattendue:", err);
         setErrorMsg("Une erreur inattendue est survenue.");
       } finally {
-        console.log("🚀 [DEBUG TALENTS] 4. Fin de fetchTalents, setLoading(false)");
         setLoading(false);
       }
     };
