@@ -119,7 +119,9 @@ export default async function TalentProfilePage({ params }: { params: { slug: st
     nom: talent.nom
   });
 
-const candidate = candidates.find(c => c.slug === slug) || null;
+// PRIORITÉ AUX DONNÉES SUPABASE (toujours à jour)
+// const candidate = candidates.find(c => c.slug === slug) || null;
+const candidate = null; // Forcer l'utilisation des données Supabase
 
   // Inject Supabase data into the candidate object if needed, 
   // or pass them separately. Here we pass Supabase data as props.
