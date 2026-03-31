@@ -50,7 +50,14 @@ type Props = {
   } | null;
 };
 
-export default function TalentProfileClient({ candidate, initialVotesCount, profileId, avatarUrl, profileData }: Props) {
+export default function TalentProfileClient({
+  candidate,
+  initialVotesCount,
+  profileId,
+  avatarUrl,
+  profileData
+}: Props) {
+  console.log("PROPS REÇUES PAR LE CLIENT :", candidate);  // Debug au début du composant
   const router = useRouter();
   const { isAuthenticated, checkHasVoted } = useVoter();
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
@@ -101,7 +108,7 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
 
   useEffect(() => {
     const verifyVote = async () => {
-      if (isAuthenticated && profileId) {
+      if (isAuthenticated && profileId && !isVoting && !hasVoted) {
         console.log("🔍 Vérification du vote pour le talent:", profileId);
         const voted = await checkHasVoted(profileId);
         setHasVoted(voted);
@@ -109,7 +116,7 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
     };
   
     verifyVote();
-  }, [isAuthenticated, profileId, checkHasVoted]);
+  }, [isAuthenticated, profileId, checkHasVoted, isVoting, hasVoted]);
 
   // Share state
   const [showShareModal, setShowShareModal] = useState(false);
@@ -126,13 +133,22 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
     setVoteMessage(null);
 
     try {
-      // 1. On prépare le payload avec des valeurs de secours (fallback)
+      // 1. On prépare le payload avec validation stricte
       // On utilise les noms de colonnes exacts de ta table 'votes'
+      if (!candidate.univers) {
+        console.error("❌ ERREUR CRITIQUE: candidate.univers est manquant !");
+        console.error("Candidat complet:", candidate);
+      }
+      if (!candidate.categorie) {
+        console.error("❌ ERREUR CRITIQUE: candidate.categorie est manquant !");
+        console.error("Candidat complet:", candidate);
+      }
+
       const payload = {
         voter_id: activeUser.id,
         talent_id: profileId,
-        univers_nom: candidate.univers || "Non spécifié",
-        categorie_nom: candidate.categorie || "Non spécifié"
+        univers_nom: candidate.univers,  // Valeur directe depuis la base
+        categorie_nom: candidate.categorie  // Valeur directe depuis la base
       };
 
       console.log("🚀 TENTATIVE DE VOTE AVEC :", payload);
@@ -170,7 +186,7 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
       console.error("💥 Erreur critique:", err);
     } finally {
       setIsVoting(false);
-      router.refresh(); // Pour mettre à jour les compteurs serveurs
+      // router.refresh(); // Supprimé pour éviter le flicker d'état
     }
   };
 
