@@ -109,16 +109,27 @@ export default function TalentProfileClient({
   };
 
   useEffect(() => {
-    const verifyVote = async () => {
-      if (isAuthenticated && profileId && !isVoting && !hasVoted) {
-        console.log("🔍 Vérification du vote pour le talent:", profileId);
-        const voted = await checkHasVoted(profileId);
-        setHasVoted(voted);
-      }
-    };
+  async function checkIfVoted() {
+    if (!activeUser?.id || !candidate?.id) return;
+    
+    console.log("� VÉRIFICATION VOTE - voter_id:", activeUser.id, "| talent_id:", candidate.id);
+    
+    const { data, error } = await supabase
+      .from('votes')
+      .select('id')
+      .eq('talent_id', candidate.id)
+      .eq('voter_id', activeUser.id)
+      .maybeSingle();
+
+    console.log("📥 RÉPONSE SUPABASE (Vérification):", { data, error });
+    
+    if (data) {
+      setHasVoted(true);
+    }
+  }
   
-    verifyVote();
-  }, [isAuthenticated, profileId, checkHasVoted, isVoting, hasVoted]);
+  checkIfVoted();
+}, [activeUser?.id, candidate?.id, supabase]);
 
   // Share state
   const [showShareModal, setShowShareModal] = useState(false);
