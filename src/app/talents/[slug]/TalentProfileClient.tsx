@@ -133,16 +133,20 @@ export default function TalentProfileClient({
     setVoteMessage(null);
 
     try {
-      // 1. On prépare le payload avec le mapping exact
-      // talents.univers → votes.univers_nom
-      // talents.categorie → votes.categorie_nom
+      // 1. Sécurité et mapping exact
+      if (!candidate.univers || !candidate.categorie) {
+        console.error("Données manquantes dans l'objet candidate !");
+        return;
+      }
       
       const payload = {
         voter_id: activeUser.id,
         talent_id: profileId,
-        univers_nom: candidate.univers, // On prend 'univers' pour remplir 'univers_nom'
-        categorie_nom: candidate.categorie // On prend 'categorie' pour remplir 'categorie_nom'
+        univers_nom: candidate.univers, 
+        categorie_nom: candidate.categorie
       };
+
+      console.log("DÉBOGAGE FINAL - Univers:", candidate.univers, "Catégorie:", candidate.categorie);
 
       console.log("🚀 TENTATIVE DE VOTE AVEC :", payload);
 
@@ -155,9 +159,10 @@ export default function TalentProfileClient({
         // Si l'erreur est "déjà voté" (code 23505), c'est une réussite pour l'interface !
         if (recordError.code === '23505' || recordError.message?.includes('unique')) {
           console.log("✅ Vote déjà existant, on valide l'affichage.");
-          setHasVoted(true);  // Juste avant les logs de succès
-          await new Promise(r => setTimeout(r, 100));  // Laisse à React le temps de digérer
+          setHasVoted(true);  // DOIS appeler immédiatement
+          setIsVoting(false);  // DOIS appeler immédiatement
           setVoteMessage({ type: 'success', text: "Soutien déjà enregistré !" });
+          return;  // Sortir de la fonction
         } else {
           // Pour toute autre erreur (ex: NOT NULL constraint)
           console.error("❌ Erreur insertion:", recordError);
@@ -166,8 +171,8 @@ export default function TalentProfileClient({
       } else {
         // Succès total
         console.log("🎉 Vote inséré avec succès !");
-        setHasVoted(true);  // Juste avant les logs de succès
-        await new Promise(r => setTimeout(r, 100));  // Laisse à React le temps de digérer
+        setHasVoted(true);  // DOIS appeler immédiatement
+        setIsVoting(false);  // DOIS appeler immédiatement
         setVoteMessage({ type: 'success', text: "Soutien validé ! Merci." });
         
         // Petit effet visuel si ce n'est pas déjà fait
