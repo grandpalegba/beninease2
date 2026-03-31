@@ -116,101 +116,59 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
   const [isCopied, setIsShareCopied] = useState(false);
 
   const handleVote = async () => {
-    console.log("SUPABASE_INSTANCE", supabase)
-    if (!profileId) return;
-
     // Récupération forcée de la session actuelle
     const { data: { session: currentSession } } = await supabase.auth.getSession();
     const activeUser = currentSession?.user;
 
-    console.log("USER:", activeUser?.id)
-    console.log("TALENT:", profileId)
-
-    if (!activeUser) {
-      router.push("/login");
-      return;
-    }
-    
-    // --- OPTIMISTIC UPDATE START ---
-    setHasVoted(true);
-    setVotesCount(prev => prev + 1);
-    
-    // Feedback sensoriel
-    if (window.navigator.vibrate) {
-      window.navigator.vibrate(50);
-    }
-
-    const canvas = document.createElement('canvas');
-    document.body.appendChild(canvas);
-    try {
-      await confetti(canvas, {
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.7 },
-        colors: ["#008751", "#E9B113", "#D4AF37"],
-      });
-    } finally {
-      document.body.removeChild(canvas);
-    }
-    // --- OPTIMISTIC UPDATE END ---
+    if (!profileId || !activeUser) return;
 
     setIsVoting(true);
     setVoteMessage(null);
 
     try {
-      // Direct vote insertion using authenticated user ID avec les bons noms de colonnes
-      console.log("DEBUG CANDIDATE:", candidate);
-      
-      // Sécurité pour récupérer l'univers si candidate.univers est vide
-      const universData = candidate.univers || getUniverseFromCategory(candidate.categorie || "");
-
+      // 1. On prépare le payload avec des valeurs de secours (fallback)
+      // On utilise les noms de colonnes exacts de ta table 'votes'
       const payload = {
         voter_id: activeUser.id,
         talent_id: profileId,
-        // On ajoute "|| ''" pour éviter le 'undefined' qui fait planter la base
-        univers_nom: candidate.univers || '',
-        categorie_nom: candidate.categorie || ''
+        univers_nom: candidate.univers || "Non spécifié",
+        categorie_nom: candidate.categorie || "Non spécifié"
       };
 
-      console.log("📦 PAYLOAD FINAL AVANT ENVOI :", payload);
-  
+      console.log("🚀 TENTATIVE DE VOTE AVEC :", payload);
+
       const { error: recordError } = await supabase
         .from('votes')
         .insert([payload]);
 
-      console.log("Vote insert result:", { recordError });
-
+      // 2. Gestion des résultats
       if (recordError) {
-        console.error("Vote insert error:", recordError);
-        // Rollback optimistic update if error (except if already voted)
-        if (recordError.code !== '23505' && !recordError.message?.includes('unique')) {
-          setHasVoted(false);
-          setVotesCount(prev => prev - 1);
-          throw recordError;
-        } else {
-          // Si erreur de duplicate OU si insertion réussit, on marque comme voté
+        // Si l'erreur est "déjà voté" (code 23505), c'est une réussite pour l'interface !
+        if (recordError.code === '23505' || recordError.message?.includes('unique')) {
+          console.log("✅ Vote déjà existant, on valide l'affichage.");
           setHasVoted(true);
-          setIsVoting(false);
-          setVoteMessage({ type: 'error', text: "Vous avez déjà soutenu ce talent !" });
-          return;
+          setVoteMessage({ type: 'success', text: "Soutien déjà enregistré !" });
+        } else {
+          // Pour toute autre erreur (ex: NOT NULL constraint)
+          console.error("❌ Erreur insertion:", recordError);
+          setVoteMessage({ type: 'error', text: "Erreur technique lors du vote." });
         }
+      } else {
+        // Succès total
+        console.log("🎉 Vote inséré avec succès !");
+        setHasVoted(true);
+        setVoteMessage({ type: 'success', text: "Soutien validé ! Merci." });
+        
+        // Petit effet visuel si ce n'est pas déjà fait
+        const canvas = document.createElement('canvas');
+        confetti(canvas, { particleCount: 150, spread: 70, origin: { y: 0.6 } });
       }
-      
-      // Si insertion réussie, on marque comme voté
-      setHasVoted(true);
-      setIsVoting(false);
-      setVoteMessage({ type: 'success', text: "Soutien validé ! Merci." });
-      router.refresh();
 
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Erreur inconnue";
-      console.error("Critical Vote Error:", err);
-      setVoteMessage({ 
-        type: 'error', 
-        text: `Une erreur est survenue : ${message}` 
-      });
+      console.error("💥 Erreur critique:", err);
     } finally {
       setIsVoting(false);
+      router.refresh(); // Pour mettre à jour les compteurs serveurs
     }
   };
 
