@@ -93,10 +93,12 @@ export default async function TalentProfilePage({ params }: { params: { slug: st
     .limit(1)
     .single();
 
-  // Debug complet
+  // Debug complet pour vérifier les données du talent
   console.log("SLUG:", slug);
   console.log("DATA:", talent);
   console.log("ERROR:", error);
+  console.log("UNIVERS:", talent?.univers);
+  console.log("CATEGORIE:", talent?.categorie);
 
   // Gestion des erreurs
   if (error) {
