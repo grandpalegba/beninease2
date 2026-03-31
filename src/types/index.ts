@@ -1,7 +1,10 @@
 export type UserRole = 'votant' | 'candidat' | 'ambassadeur' | 'jury' | 'admin';
 
 export interface VoterSession {
-  votant_id: string;
+  user: {
+    id: string;
+    email: string;
+  };  // CORRECT: auth.users object structure
   email: string; // Changed from whatsapp to email for auth.users compatibility
   role: UserRole;
 }

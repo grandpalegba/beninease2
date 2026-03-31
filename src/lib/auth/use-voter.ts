@@ -25,18 +25,21 @@ export function useVoter() {
   const login = useCallback(async (email: string, fullName: string) => {
     setLoading(true);
     try {
-      // Use the RPC to get or register the voter
-      const { data: votantId, error } = await supabase.rpc("register_or_get_voter", {
-        p_full_name: fullName,
-        p_email: email,
+      // Direct login without RPC - use auth.users directly
+      const { data: { user }, error } = await supabase.auth.signInWithPassword({
+        email,
+        password: "voter123", // Fixed password for all voters
       });
 
       if (error) throw error;
 
+      // CORRECT Structure: session.user.id (auth.users.id)
       const newSession: VoterSession = {
-        votant_id: votantId,
-        email: email,
-        role: 'votant', // Default role for voters
+        user: {
+          id: user.id,
+          email: user.email || email,
+        },
+        role: 'votant',
       };
 
       localStorage.setItem("beninease_voter_session", JSON.stringify(newSession));
@@ -62,7 +65,7 @@ export function useVoter() {
       const { data, error } = await supabase
         .from("votes")
         .select("id")
-        .eq("voter_id", session.votant_id) // Using voter_id column from database
+        .eq("voter_id", session.user.id) // CORRECT: session.user.id (auth.users.id)
         .eq("talent_id", talentId)
         .maybeSingle();
 

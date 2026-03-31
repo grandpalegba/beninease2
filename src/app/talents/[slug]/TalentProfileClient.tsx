@@ -173,6 +173,9 @@ export default function TalentProfileClient({
         setIsVoting(false);  // DOIS appeler immédiatement
         setVoteMessage({ type: 'success', text: "Soutien validé ! Merci." });
         
+        // Mise à jour en temps réel du compteur de votes
+        setTalentVotes(prev => prev + 1);  // ← AJOUTÉ: incrémente le compteur local
+        
         // Petit effet visuel si ce n'est pas déjà fait
         const canvas = document.createElement('canvas');
         confetti(canvas, { particleCount: 150, spread: 70, origin: { y: 0.6 } });
