@@ -5,7 +5,6 @@ import useEmblaCarousel from "embla-carousel-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import TalentProfileClient from "@/app/talents/[slug]/TalentProfileClient";
 import type { Talent } from "@/types";
-import { candidates } from "@/data/candidates";
 import { ChevronLeft, ChevronRight, Info } from "lucide-react";
 
 interface CandidateSwiperProps {
@@ -97,15 +96,23 @@ export default function CandidateSwiper({ talents, initialSlug }: CandidateSwipe
       {/* Carousel Container */}
       <div className="embla overflow-hidden pt-20" ref={emblaRef}>
         <div className="embla__container flex">
-          {talents.map((talent) => {
-            // Combine Supabase talent with local data
-            const candidateData = candidates.find(c => c.slug === talent.slug);
-            if (!candidateData) return null;
+          {talents.map((talent: Talent) => {
+            // Use Supabase talent data directly (no more static candidates)
+            if (!talent) return null;
 
             return (
               <div key={talent.id} className="embla__slide flex-[0_0_100%] min-w-0">
                 <TalentProfileClient 
-                  candidate={candidateData}
+                  candidate={{
+                    slug: talent.slug,
+                    prenom: talent.prenom,
+                    nom: talent.nom,
+                    portrait: talent.avatar_url,
+                    city: talent.city,
+                    univers: talent.univers,
+                    categorie: talent.categorie,
+                    tabs: {}
+                  }}
                   initialVotesCount={talent.votes}
                   profileId={talent.id}
                   avatarUrl={talent.avatar_url}

@@ -1,7 +1,6 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { candidates } from "@/data/candidates";
 import TalentProfileClient from "./TalentProfileClient";
 
 /**
@@ -99,7 +98,7 @@ export default async function TalentProfilePage({ params }: { params: { slug: st
   console.log("ERROR:", error);
   console.log("UNIVERS:", talent?.univers);
   console.log("CATEGORIE:", talent?.categorie);
-  console.log("TALENT ID SUPABASE:", talent?.id);  // ← AJOUTÉ: Debug de l'ID réel
+  console.log("🔍 SOURCE SERVEUR - ID trouvé en base :", talent.id);  // ← MOUCHARD: ID Supabase
 
   // Gestion des erreurs
   if (error) {
@@ -122,7 +121,7 @@ export default async function TalentProfilePage({ params }: { params: { slug: st
 
 // PRIORITÉ AUX DONNÉES SUPABASE (toujours à jour)
 // const candidate = candidates.find(c => c.slug === slug) || null;
-const candidate = null; // Forcer l'utilisation des données Supabase
+const candidate = null; // Forcer l'utilisation des données Supabase (plus de fallback statique)
 
   // Inject Supabase data into the candidate object if needed, 
   // or pass them separately. Here we pass Supabase data as props.

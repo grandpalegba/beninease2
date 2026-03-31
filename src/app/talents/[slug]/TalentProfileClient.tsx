@@ -148,6 +148,7 @@ export default function TalentProfileClient({
 
       console.log("🚀 TENTATIVE DE VOTE AVEC :", payload);
       console.log("🔍 PROFILE ID UTILISÉ:", profileId);  // ← AJOUTÉ: Debug de l'ID envoyé
+      console.log("🚀 PAYLOAD CLIENT - ID envoyé pour le vote :", candidate.id);  // ← MOUCHARD: ID client
 
       const { error: recordError } = await supabase
         .from('votes')
