@@ -263,7 +263,7 @@ export default function TalentProfileClient({
                   <MapPin className="w-3.5 h-3.5 text-black" /> {candidate.city}, Bénin
                 </span>
                 <span className="inline-flex items-center gap-1.5">
-                  <Globe className="w-3.5 h-3.5" /> {candidate.languages || "Français"}
+                  <Globe className="w-3.5 h-3.5" /> {candidate.categorie || "Français"}
                 </span>
               </div>
             </div>

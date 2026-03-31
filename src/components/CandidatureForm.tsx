@@ -23,6 +23,7 @@ const CandidatureForm = () => {
     date_naissance: "",
     socials: "",
   });
+  const [videos, setVideos] = useState<string[]>([]);
   const [acceptVideos, setAcceptVideos] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -66,8 +67,8 @@ const CandidatureForm = () => {
       setForm({
         prenom: "",
         nom: "",
-        category: "",
-        subCategory: "",
+        categorie: "",  // Corrigé: category → categorie
+        univers: "",     // Ajouté pour cohérence
         location: "",
         whatsapp: "",
         date_naissance: "",
@@ -218,7 +219,7 @@ const CandidatureForm = () => {
               <span className="font-bold text-foreground text-sm font-body">4 vidéos requises</span>
             </div>
             <div className="space-y-3">
-              {videos.map((v, i) => (
+              {videos.map((v: string, i: number) => (
                 <div key={v} className="flex items-center gap-3">
                   <span className="w-6 h-6 rounded-md bg-primary/15 text-primary text-xs font-bold flex items-center justify-center font-body">
                     {i + 1}

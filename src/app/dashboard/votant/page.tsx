@@ -430,7 +430,7 @@ export default function VoterDashboard() {
                     {filteredVotes.map((vote) => {
                       const talent = vote.talents;
                       if (!talent) return null;
-                      const universe = vote.univers_nom || getUniverseFromCategory(vote.categorie_nom ?? "");
+                      const universe = vote.univers || getUniverseFromCategory(vote.categorie ?? "");
                       return (
                         <motion.div
                           layout
