@@ -133,14 +133,15 @@ export default function TalentProfileClient({
     setVoteMessage(null);
 
     try {
-      // 1. On prépare le payload avec validation stricte
-      // On utilise les noms de colonnes exacts de ta table 'votes'
+      // 1. On prépare le payload avec le mapping exact
+      // talents.univers → votes.univers_nom
+      // talents.categorie → votes.categorie_nom
       
       const payload = {
         voter_id: activeUser.id,
         talent_id: profileId,
-        univers_nom: candidate.univers,  // Utilise le format correct
-        categorie_nom: candidate.categorie  // Utilise le format correct
+        univers_nom: candidate.univers, // On prend 'univers' pour remplir 'univers_nom'
+        categorie_nom: candidate.categorie // On prend 'categorie' pour remplir 'categorie_nom'
       };
 
       console.log("🚀 TENTATIVE DE VOTE AVEC :", payload);
