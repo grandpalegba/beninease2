@@ -133,17 +133,15 @@ export default function TalentProfileClient({
     setVoteMessage(null);
 
     try {
-      // 1. Sécurité et mapping exact
-      if (!candidate.univers || !candidate.categorie) {
-        console.error("Données manquantes dans l'objet candidate !");
-        return;
-      }
+      // 0. Debug de la structure réelle du candidat
+      console.log("STRUCTURE RÉELLE DU CANDIDATE :", candidate);
       
+      // 1. Payload avec les noms exacts des colonnes (harmonisés)
       const payload = {
         voter_id: activeUser.id,
         talent_id: profileId,
-        univers_nom: candidate.univers, 
-        categorie_nom: candidate.categorie
+        univers: candidate.univers,  // ← depuis talents.univers vers votes.univers
+        categorie: candidate.categorie  // ← depuis talents.categorie vers votes.categorie
       };
 
       console.log("DÉBOGAGE FINAL - Univers:", candidate.univers, "Catégorie:", candidate.categorie);

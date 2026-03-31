@@ -41,8 +41,8 @@ type VoteRow = {
   created_at: string;
   talent_id: string;
   voter_id: string;
-  categorie_nom: string | null;
-  univers_nom: string | null;
+  categorie: string | null;
+  univers: string | null;
   talents: TalentMini | null;
 };
 
@@ -68,8 +68,8 @@ export default function VoterDashboard() {
         created_at,
         talent_id,
         voter_id,
-        categorie_nom,
-        univers_nom,
+        categorie,
+        univers,
         talents:talents (
           id,
           slug,
@@ -173,8 +173,8 @@ export default function VoterDashboard() {
 
   const stats = useMemo(() => {
     const totalVotes = votes.length;
-    const distinctUniverses = Array.from(new Set(votes.map(v => v.univers_nom).filter(Boolean)));
-    const distinctCategories = Array.from(new Set(votes.map(v => v.categorie_nom).filter(Boolean)));
+    const distinctUniverses = Array.from(new Set(votes.map(v => v.univers).filter(Boolean)));
+    const distinctCategories = Array.from(new Set(votes.map(v => v.categorie).filter(Boolean)));
     const universeCount = distinctUniverses.length;
     const categoryCount = distinctCategories.length;
     
@@ -192,14 +192,14 @@ export default function VoterDashboard() {
 
   const availableCategories = useMemo(() => {
     if (selectedUniverse === "Tous les univers") {
-      const cats = new Set(votes.map((vote) => vote.categorie_nom).filter(Boolean));
+      const cats = new Set(votes.map((vote) => vote.categorie).filter(Boolean));
       return ["Toutes les catégories", ...Array.from(cats) as string[]];
     }
 
     const cats = new Set(
       votes
-        .filter((vote) => (vote.univers_nom || getUniverseFromCategory(vote.categorie_nom ?? "")) === selectedUniverse)
-        .map((vote) => vote.categorie_nom)
+        .filter((vote) => (vote.univers || getUniverseFromCategory(vote.categorie ?? "")) === selectedUniverse)
+        .map((vote) => vote.categorie)
         .filter(Boolean),
     );
 
@@ -209,14 +209,14 @@ export default function VoterDashboard() {
   // Filtering logic
   const filteredVotes = useMemo(() => {
     return votes.filter(vote => {
+      const universe = vote.univers || getUniverseFromCategory(vote.categorie ?? "");
       const talent = vote.talents;
-      if (!talent) return false;
+      if (!talent) return null;
       
-      const universe = vote.univers_nom || getUniverseFromCategory(vote.categorie_nom);
-                      const fullName = `${talent.prenom || ""} ${talent.nom || ""}`.toLowerCase();
+      const fullName = `${talent.prenom || ""} ${talent.nom || ""}`.toLowerCase();
       
       const matchesUniverse = selectedUniverse === "Tous les univers" || universe === selectedUniverse;
-      const matchesCategory = selectedCategory === "Toutes les catégories" || vote.categorie_nom === selectedCategory;
+      const matchesCategory = selectedCategory === "Toutes les catégories" || vote.categorie === selectedCategory;
       const matchesSearch = fullName.includes(searchQuery.toLowerCase());
       
       return matchesUniverse && matchesCategory && matchesSearch;

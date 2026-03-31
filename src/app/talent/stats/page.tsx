@@ -8,7 +8,7 @@ export default async function TalentStatsPage() {
   // Fetch talent statistics
   const { data: votes } = await supabase
     .from('votes')
-    .select('created_at, univers_nom, categorie_nom')
+    .select('created_at, univers, categorie')
     .eq('talent_id', talent.id)
     .order('created_at', { ascending: false })
 
@@ -63,7 +63,7 @@ export default async function TalentStatsPage() {
                         <div>
                           <span className="text-sm font-medium">Vote received</span>
                           <div className="text-xs text-gray-500">
-                            {vote.univers_nom} • {vote.categorie_nom}
+                            {vote.univers} • {vote.categorie}
                           </div>
                         </div>
                         <div className="text-xs text-gray-500">
