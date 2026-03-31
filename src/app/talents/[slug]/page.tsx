@@ -71,20 +71,19 @@ export async function generateMetadata({ params }: { params: any }): Promise<Met
 }
 
 export default async function TalentProfilePage({ params }: { params: { slug: string } }) {
-  const resolvedParams = await params;
-  const slug = decodeURIComponent(resolvedParams.slug);
-
-  // Debug complet
+  // Debug des params
   console.log("PARAMS:", params);
-  console.log("SLUG:", slug);
+  console.log("SLUG:", params.slug);
 
-  // Vérifier tous les slugs disponibles
+  const slug = decodeURIComponent(params.slug);
+
+  // Vérification du slug
+  if (!slug) {
+    return <div>Slug manquant</div>;
+  }
+
+  // Connexion Supabase
   const supabase = await createSupabaseServerClient();
-  const { data: debugList } = await supabase
-    .from('profiles')
-    .select('slug');
-  
-  console.log("ALL SLUGS:", debugList);
 
   // Requête principale
   const { data: profile, error } = await supabase
@@ -93,9 +92,12 @@ export default async function TalentProfilePage({ params }: { params: { slug: st
     .eq('slug', slug)
     .maybeSingle();
 
+  // Debug complet
+  console.log("SLUG:", slug);
   console.log("DATA:", profile);
   console.log("ERROR:", error);
 
+  // Gestion des erreurs
   if (error) {
     return <div>Erreur: {error.message}</div>;
   }
@@ -103,13 +105,7 @@ export default async function TalentProfilePage({ params }: { params: { slug: st
   if (!profile) {
     return <div>Profil non trouvé pour le slug: {slug}</div>;
   }
-
-  // 2. Combine with local candidate data (for tabs content etc.)
-  const candidate = candidates.find(c => c.slug === slug);
-
-  if (!candidate) {
-    notFound();
-  }
+const candidate = candidates.find(c => c.slug === slug) || null;
 
   // Inject Supabase data into the candidate object if needed, 
   // or pass them separately. Here we pass Supabase data as props.
