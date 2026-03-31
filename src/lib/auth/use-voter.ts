@@ -22,20 +22,20 @@ export function useVoter() {
     setLoading(false);
   }, []);
 
-  const login = useCallback(async (whatsapp: string, fullName: string) => {
+  const login = useCallback(async (email: string, fullName: string) => {
     setLoading(true);
     try {
       // Use the RPC to get or register the voter
       const { data: votantId, error } = await supabase.rpc("register_or_get_voter", {
         p_full_name: fullName,
-        p_whatsapp: whatsapp,
+        p_email: email,
       });
 
       if (error) throw error;
 
       const newSession: VoterSession = {
         votant_id: votantId,
-        whatsapp: whatsapp,
+        email: email,
         role: 'votant', // Default role for voters
       };
 
@@ -56,13 +56,13 @@ export function useVoter() {
   }, []);
 
   const checkHasVoted = useCallback(async (talentId: string) => {
-    if (!session?.whatsapp) return false;
+    if (!session?.email) return false;
     
     try {
       const { data, error } = await supabase
         .from("votes")
         .select("id")
-        .eq("votant_id", session.votant_id)
+        .eq("voter_id", session.votant_id)
         .eq("talent_id", talentId)
         .maybeSingle();
 
@@ -80,6 +80,6 @@ export function useVoter() {
     login,
     logout,
     checkHasVoted,
-    isAuthenticated: !!session?.whatsapp,
+    isAuthenticated: !!session?.email,
   };
 }

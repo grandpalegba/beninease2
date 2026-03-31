@@ -40,7 +40,7 @@ type VoteRow = {
   id: string;
   created_at: string;
   talent_id: string;
-  votant_id: string;
+  voter_id: string;
   categorie_nom: string | null;
   univers_nom: string | null;
   talents: TalentMini | null;
@@ -78,7 +78,7 @@ export default function VoterDashboard() {
           avatar_url
         )
       `)
-      .eq("votant_id", actualVotantId)
+      .eq("voter_id", actualVotantId) // Changed from votant_id to voter_id
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -150,7 +150,7 @@ export default function VoterDashboard() {
             event: "INSERT",
             schema: "public",
             table: "votes",
-            filter: `votant_id=eq.${user.id}`,
+            filter: `voter_id=eq.${user.id}`, // Changed from votant_id to voter_id
           },
           async () => {
             await fetchVotes(user.id);

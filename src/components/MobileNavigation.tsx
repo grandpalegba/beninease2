@@ -11,7 +11,7 @@ import type { User as SupabaseUser } from "@supabase/supabase-js";
 import type { Votant } from "@/types";
 
 type UserStats = {
-  votant_id: string;
+  voter_id: string; // Changed from votant_id to voter_id
   total_votes: number;
   created_at?: string;
   updated_at?: string;
@@ -34,7 +34,7 @@ const MobileNavigation = () => {
         if (currentUser) {
           const [profileRes, statsRes] = await Promise.all([
             supabase.from("votants").select("*").eq("id", currentUser.id).single(),
-            supabase.from("user_stats").select("*").eq("votant_id", currentUser.id).single()
+            supabase.from("user_stats").select("*").eq("voter_id", currentUser.id).single() 
           ]);
           if (profileRes.data) setProfile(profileRes.data);
           if (statsRes.data) setUserStats(statsRes.data);
@@ -52,7 +52,7 @@ const MobileNavigation = () => {
         if (currentUser) {
           const [profileRes, statsRes] = await Promise.all([
             supabase.from("votants").select("*").eq("id", currentUser.id).single(),
-            supabase.from("user_stats").select("*").eq("votant_id", currentUser.id).single()
+            supabase.from("user_stats").select("*").eq("voter_id", currentUser.id).single() 
           ]);
           if (profileRes.data) setProfile(profileRes.data);
           if (statsRes.data) setUserStats(statsRes.data);

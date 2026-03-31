@@ -105,30 +105,6 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
     }
   }, [isAuthenticated, profileId, checkHasVoted, supabase]);
 
-  useEffect(() => {
-    if (candidate?.slug) {
-      /*
-      // Subscribe to real-time changes using supabase_realtime channel
-      const channel = supabase
-        .channel('supabase_realtime')
-        .on(
-          'postgres_changes',
-          { event: 'UPDATE', schema: 'public', table: 'talents', filter: `id=eq.${profileId}` },
-          (payload) => {
-            if (payload.new && typeof payload.new.votes === 'number') {
-              setVotesCount(payload.new.votes);
-            }
-          }
-        )
-        .subscribe();
-
-      return () => {
-        supabase.removeChannel(channel);
-      };
-      */
-    }
-  }, [candidate?.slug, profileId, supabase]);
-
   // Share state
   const [showShareModal, setShowShareModal] = useState(false);
   const [isCopied, setIsShareCopied] = useState(false);
@@ -176,7 +152,7 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
     setVoteMessage(null);
 
     try {
-      // Direct vote insertion using authenticated user ID
+      // Direct vote insertion using authenticated user ID avec les bons noms de colonnes
       const payload = {
         voter_id: activeUser.id,
         talent_id: profileId,
@@ -184,9 +160,11 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
         categorie_nom: candidate.categorie
       };
 
-        const { error: recordError } = await supabase
-          .from('votes')
-          .insert([payload]);
+      console.log("📦 PAYLOAD EXACT AVANT ENVOI :", payload);
+
+      const { error: recordError } = await supabase
+        .from('votes')
+        .insert([payload]);
 
       console.log("Vote insert result:", { recordError });
 
@@ -260,11 +238,8 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
                 className="object-cover"
                 priority
                 onError={() => {
-                  // Fallback 1: Portrait local (ex: /talents/slug.jpg)
-                  // Fallback 2: Image "Qui je suis" (ex: /talents/slug/qui-je-suis.jpg)
-                  // Fallback 3: Placeholder global
                   if (profileImage === avatarUrl) {
-                    setProfileImage(candidate.portrait);
+                    setProfileImage(candidate.portrait || "/placeholder-portrait.jpg");
                   } else if (profileImage === candidate.portrait) {
                     setProfileImage(quiJeSuisImage);
                   } else if (profileImage === quiJeSuisImage) {
@@ -278,9 +253,6 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
               <h1 className="text-[34px] font-display font-bold text-black leading-tight">
                 {fullName}
               </h1>
-              <p className="text-black/80 font-display text-lg mt-1">
-                {candidate.tagline}
-              </p>
 
               <div className="mt-6 bg-white px-6 py-4 rounded-2xl border border-[#F2EDE4] shadow-sm max-w-[240px] mx-auto md:mx-0">
                 <span className="block text-xs uppercase tracking-widest text-[#004d3d] font-bold mb-2 text-center">NOMBRE DE VOTES</span>
@@ -299,7 +271,7 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
                   <MapPin className="w-3.5 h-3.5 text-black" /> {candidate.city}, Bénin
                 </span>
                 <span className="inline-flex items-center gap-1.5">
-                  <Globe className="w-3.5 h-3.5" /> {candidate.languages}
+                  <Globe className="w-3.5 h-3.5" /> {candidate.languages || "Français"}
                 </span>
               </div>
             </div>
@@ -359,7 +331,7 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
                     }`}
                   >
                     <Image 
-                      src={imageErrors[tab] ? candidate.portrait : getImagePath(tab)} 
+                      src={imageErrors[tab] ? (candidate.portrait || "/placeholder-portrait.jpg") : getImagePath(tab)} 
                       alt={tab} 
                       fill 
                       className="object-cover"
@@ -380,7 +352,7 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
             <div className="px-8 md:px-12 pb-12">
               <div className="relative aspect-video bg-[#1A1A1A] rounded-[30px] overflow-hidden shadow-2xl group border-[8px] border-white ring-1 ring-[#008751]/20">
                 <Image 
-                  src={imageErrors[activeVideoTab] ? candidate.portrait : getImagePath(activeVideoTab)} 
+                  src={imageErrors[activeVideoTab] ? (candidate.portrait || "/placeholder-portrait.jpg") : getImagePath(activeVideoTab)} 
                   alt={activeVideoTab} 
                   fill 
                   className="object-cover"
@@ -545,7 +517,7 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
                       </div>
                       <div>
                         <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Langues</p>
-                        <p className="text-sm font-bold text-black">{candidate.languages}</p>
+                        <p className="text-sm font-bold text-black">{candidate.languages || "Français"}</p>
                       </div>
                     </div>
                   </div>
@@ -566,9 +538,6 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
           </div>
         )}
       </div>
-
-      {/* Vote Modal - Temporarily disabled for test phase */}
-      {/* ... */}
 
       {/* Share Modal Fallback */}
       {showShareModal && (

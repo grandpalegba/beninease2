@@ -11,7 +11,7 @@ import { calculateVoterStatus } from "@/lib/voter-logic";
 import type { Votant } from "@/types";
 
 type UserStats = {
-  votant_id: string;
+  voter_id: string; // Changed from votant_id to voter_id
   total_votes: number;
   created_at?: string;
   updated_at?: string;
@@ -64,7 +64,7 @@ const Header = () => {
           // Parallel fetch for profile and stats
           const [profileRes, statsRes] = await Promise.all([
             supabase.from("votants").select("*").eq("id", currentUser.id).single(),
-            supabase.from("user_stats").select("*").eq("votant_id", currentUser.id).single()
+            supabase.from("user_stats").select("*").eq("voter_id", currentUser.id).single() // Changed from votant_id to voter_id
           ]);
 
           if (profileRes.data) setProfile(profileRes.data);
@@ -87,7 +87,7 @@ const Header = () => {
           try {
             const [profileRes, statsRes] = await Promise.all([
               supabase.from("votants").select("*").eq("id", currentUser.id).single(),
-              supabase.from("user_stats").select("*").eq("votant_id", currentUser.id).single()
+              supabase.from("user_stats").select("*").eq("voter_id", currentUser.id).single() // Changed from votant_id to voter_id
             ]);
 
             if (profileRes.data) setProfile(profileRes.data);

@@ -2,7 +2,7 @@ export type UserRole = 'votant' | 'candidat' | 'ambassadeur' | 'jury' | 'admin';
 
 export interface VoterSession {
   votant_id: string;
-  whatsapp: string;
+  email: string; // Changed from whatsapp to email for auth.users compatibility
   role: UserRole;
 }
 
@@ -43,7 +43,7 @@ export interface Talent {
 
 export interface Votant {
   id: string;
-  whatsapp: string | null;
+  email: string | null; // Changed from whatsapp to email for auth.users compatibility
   full_name: string | null;
   avatar_url: string | null;
   role: UserRole;
@@ -52,7 +52,7 @@ export interface Votant {
 
 export interface Vote {
   id: string;
-  votant_id: string;
+  voter_id: string;
   talent_id: string;
   univers_nom: string;
   categorie_nom: string;

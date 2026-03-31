@@ -1,14 +1,14 @@
 import { createSupabaseBrowserClient } from "./client";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-export const getUserVotes = async (supabase: SupabaseClient, votantId: string) => {
+export const getUserVotes = async (supabase: SupabaseClient, voterId: string) => {
   return await supabase
     .from('votes')
     .select(`
       *,
       talents:talents(*)
     `)
-    .eq('votant_id', votantId)
+    .eq('voter_id', voterId) // Changed from votant_id to voter_id
     .order('created_at', { ascending: false });
 };
 
