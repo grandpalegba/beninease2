@@ -16,16 +16,23 @@ function normalizeName(str: string): string {
 
 export async function generateMetadata({ params }: { params: any }): Promise<Metadata> {
   const resolvedParams = await params;
-  const slug = resolvedParams.slug;
+  const slug = decodeURIComponent(resolvedParams.slug);
+
+  // Debug temporaire
+  console.log("metadata slug:", slug);
 
   const supabase = await createSupabaseServerClient();
-  const { data: talent } = await supabase
+  const { data: talent, error } = await supabase
     .from('profiles')
     .select('prenom, nom, avatar_url, category')
     .eq('slug', slug)
-    .single();
+    .maybeSingle();
 
-  if (!talent) return { title: "Talent non trouvé | Beninease" };
+  // Debug temporaire
+  console.log("metadata data:", talent);
+  console.log("metadata error:", error);
+
+  if (error || !talent) return { title: "Talent non trouvé | Beninease" };
 
   const fullName = `${talent.prenom} ${talent.nom}`;
   
@@ -65,18 +72,30 @@ export async function generateMetadata({ params }: { params: any }): Promise<Met
 
 export default async function TalentProfilePage({ params }: { params: any }) {
   const resolvedParams = await params;
-  const slug = resolvedParams.slug;
+  const slug = decodeURIComponent(resolvedParams.slug);
+
+  // Debug temporaire
+  console.log("slug:", slug);
 
   // 1. Fetch from Supabase
   const supabase = await createSupabaseServerClient();
-  const { data: profile } = await supabase
+  const { data: profile, error } = await supabase
     .from('profiles')
     .select('*') // Get everything including new fields
     .eq('slug', slug)
-    .single();
+    .maybeSingle();
+
+  // Debug temporaire
+  console.log("data:", profile);
+  console.log("error:", error);
+
+  if (error) {
+    console.error("Error fetching profile:", error);
+    return <div>Erreur: {error.message}</div>;
+  }
 
   if (!profile) {
-    notFound();
+    return <div>Profil non trouvé pour le slug: {slug}</div>;
   }
 
   // 2. Combine with local candidate data (for tabs content etc.)
