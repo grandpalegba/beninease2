@@ -100,10 +100,16 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
   };
 
   useEffect(() => {
-    if (isAuthenticated && profileId) {
-      checkHasVoted(profileId).then(setHasVoted);
-    }
-  }, [isAuthenticated, profileId, checkHasVoted, supabase]);
+    const verifyVote = async () => {
+      if (isAuthenticated && profileId) {
+        console.log("🔍 Vérification du vote pour le talent:", profileId);
+        const voted = await checkHasVoted(profileId);
+        setHasVoted(voted);
+      }
+    };
+  
+    verifyVote();
+  }, [isAuthenticated, profileId, checkHasVoted]);
 
   // Share state
   const [showShareModal, setShowShareModal] = useState(false);
