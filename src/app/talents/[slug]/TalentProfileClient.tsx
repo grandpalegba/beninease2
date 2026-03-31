@@ -135,20 +135,12 @@ export default function TalentProfileClient({
     try {
       // 1. On prépare le payload avec validation stricte
       // On utilise les noms de colonnes exacts de ta table 'votes'
-      if (!candidate.univers) {
-        console.error("❌ ERREUR CRITIQUE: candidate.univers est manquant !");
-        console.error("Candidat complet:", candidate);
-      }
-      if (!candidate.categorie) {
-        console.error("❌ ERREUR CRITIQUE: candidate.categorie est manquant !");
-        console.error("Candidat complet:", candidate);
-      }
-
+      
       const payload = {
         voter_id: activeUser.id,
         talent_id: profileId,
-        univers_nom: candidate.univers,  // Valeur directe depuis la base
-        categorie_nom: candidate.categorie  // Valeur directe depuis la base
+        univers_nom: candidate.univers,  // Utilise le format correct
+        categorie_nom: candidate.categorie  // Utilise le format correct
       };
 
       console.log("🚀 TENTATIVE DE VOTE AVEC :", payload);
