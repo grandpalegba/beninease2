@@ -106,9 +106,9 @@ export default function VoterDashboard() {
       }
 
       const { data: profileData, error: profileError } = await supabase
-        .from("votants")
-        .select("*")
-        .eq("id", user.id)
+        .from("votes")
+        .select("count")
+        .eq("voter_id", user.id)
         .maybeSingle();
 
       if (profileError) {
@@ -125,12 +125,7 @@ export default function VoterDashboard() {
       };
 
       if (!profileData) {
-        await supabase.from("votants").upsert({
-          id: user.id,
-          role: "votant",
-          full_name: ensuredProfile.full_name,
-          avatar_url: ensuredProfile.avatar_url,
-        });
+        console.log("No existing votes found for user:", user.id);
       }
 
       if (active) {

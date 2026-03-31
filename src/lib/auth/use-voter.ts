@@ -62,7 +62,7 @@ export function useVoter() {
       const { data, error } = await supabase
         .from("votes")
         .select("id")
-        .eq("voter_id", session.votant_id) // Fixed: Using voter_id column from database
+        .eq("voter_id", session.votant_id) // Using voter_id column from database
         .eq("talent_id", talentId)
         .maybeSingle();
 
