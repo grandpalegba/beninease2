@@ -146,7 +146,8 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
         // Si l'erreur est "déjà voté" (code 23505), c'est une réussite pour l'interface !
         if (recordError.code === '23505' || recordError.message?.includes('unique')) {
           console.log("✅ Vote déjà existant, on valide l'affichage.");
-          setHasVoted(true);
+          setHasVoted(true);  // Juste avant les logs de succès
+          await new Promise(r => setTimeout(r, 100));  // Laisse à React le temps de digérer
           setVoteMessage({ type: 'success', text: "Soutien déjà enregistré !" });
         } else {
           // Pour toute autre erreur (ex: NOT NULL constraint)
@@ -156,7 +157,8 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
       } else {
         // Succès total
         console.log("🎉 Vote inséré avec succès !");
-        setHasVoted(true);
+        setHasVoted(true);  // Juste avant les logs de succès
+        await new Promise(r => setTimeout(r, 100));  // Laisse à React le temps de digérer
         setVoteMessage({ type: 'success', text: "Soutien validé ! Merci." });
         
         // Petit effet visuel si ce n'est pas déjà fait
@@ -198,6 +200,8 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
   };
 
   const fullName = `${candidate.prenom || ""} ${candidate.nom || ""}`.trim() || "Talent";
+
+  console.log("ÉTAT ACTUEL HASVOTED :", hasVoted);  // Debug en temps réel
 
   return (
     <div className="min-h-screen bg-[#F9F9F7] p-4 md:p-8 font-sans">
