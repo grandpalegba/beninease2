@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { createSupabaseBrowserClient } from '@/lib/supabase/client';
-import { Mail, Loader2 } from 'lucide-react';
+import { Mail, Loader2, Lock, Eye, EyeOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface AuthButtonsProps {
@@ -13,9 +13,11 @@ export default function AuthButtons({ intent }: AuthButtonsProps) {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const [loading, setLoading] = useState<string | null>(null);
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
-  const handleLogin = async (provider: 'google' | 'facebook' | 'email', emailAddress?: string) => {
+  const handleLogin = async (provider: 'google' | 'facebook' | 'email', emailAddress?: string, userPassword?: string) => {
     setLoading(provider);
     setMessage(null);
 
@@ -27,13 +29,13 @@ export default function AuthButtons({ intent }: AuthButtonsProps) {
     };
 
     try {
-      if (provider === 'email' && emailAddress) {
-        const { error } = await supabase.auth.signInWithOtp({ 
+      if (provider === 'email' && emailAddress && userPassword) {
+        const { error } = await supabase.auth.signInWithPassword({ 
           email: emailAddress, 
-          options 
+          password: userPassword
         });
         if (error) throw error;
-        setMessage({ type: 'success', text: "Un lien magique a été envoyé à votre adresse email." });
+        setMessage({ type: 'success', text: "Connexion réussie!" });
       } else if (provider !== 'email') {
         const { error } = await supabase.auth.signInWithOAuth({ 
           provider: provider as 'google' | 'facebook', 
@@ -98,11 +100,11 @@ export default function AuthButtons({ intent }: AuthButtonsProps) {
         </div>
       </div>
 
-      {/* Email OTP Auth */}
+      {/* Email + Password Auth */}
       <form 
         onSubmit={(e) => {
           e.preventDefault();
-          handleLogin('email', email);
+          handleLogin('email', email, password);
         }}
         className="space-y-4"
       >
@@ -116,16 +118,45 @@ export default function AuthButtons({ intent }: AuthButtonsProps) {
             className="w-full px-6 py-4 rounded-2xl bg-[#F9F9F7] border-transparent focus:bg-white focus:border-[#008751] focus:ring-0 transition-all font-sans text-sm"
           />
         </div>
+
+        <div className="space-y-2">
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Mot de passe"
+              required
+              className="w-full px-6 py-4 pr-12 rounded-2xl bg-[#F9F9F7] border-transparent focus:bg-white focus:border-[#008751] focus:ring-0 transition-all font-sans text-sm"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            >
+              {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+            </button>
+          </div>
+        </div>
         
         <button
           type="submit"
-          disabled={!!loading || !email}
+          disabled={!!loading || !email || !password}
           className={cn(buttonBaseClasses, "bg-[#008751] text-white hover:bg-[#008751]/90 shadow-[#008751]/20 shadow-lg")}
         >
-          {loading === 'email' ? <Loader2 className="w-5 h-5 animate-spin" /> : <Mail className="w-5 h-5" />}
-          Recevoir un lien magique
+          {loading === 'email' ? <Loader2 className="w-5 h-5 animate-spin" /> : <Lock className="w-5 h-5" />}
+          Se connecter
         </button>
       </form>
+
+      {/* Forgot Password Link */}
+      {intent === 'talent' && (
+        <div className="text-center">
+          <a href="/talent/forgot-password" className="text-sm text-[#008751] hover:text-[#006B40]">
+            Mot de passe oublié?
+          </a>
+        </div>
+      )}
 
       {message && (
         <div className={cn(
