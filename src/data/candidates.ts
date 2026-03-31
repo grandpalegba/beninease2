@@ -4,7 +4,8 @@ export type Candidate = {
   prenom: string;
   nom: string;
   tagline: string;
-  category: string;
+  categorie: string;  // Corrigé: category → categorie
+  univers: string;   // Ajouté: champ manquant
   city: string;
   languages: string;
   portrait: string;
@@ -20,7 +21,8 @@ export const candidates: Candidate[] = [
     prenom: "Koffi",
     nom: "Ahouansou",
     tagline: "Solutions de mobilité urbaine à Cotonou",
-    category: "Transport & Mobilité",
+    categorie: "Transport & Mobilité",  // Corrigé: category → categorie
+    univers: "Transport & Mobilité",   // Ajouté: champ univers
     city: "Cotonou",
     languages: "Français, Fon, Mina",
     portrait: "/talents/koffi-ahouansou.jpg",
@@ -37,7 +39,8 @@ export const candidates: Candidate[] = [
     prenom: "Sènami",
     nom: "Dossou",
     tagline: "Artisanat bois modernisé à Abomey",
-    category: "Experts Métier",
+    categorie: "Experts Métier",  // Corrigé: category → categorie
+    univers: "Experts Métier",   // Ajouté: champ univers
     city: "Abomey",
     languages: "Français, Fon",
     portrait: "/talents/senami-dossou.jpg",
@@ -54,7 +57,8 @@ export const candidates: Candidate[] = [
     prenom: "Ibrahim",
     nom: "Lawani",
     tagline: "Médecine accessible à Parakou",
-    category: "Santé & Médecine",
+    categorie: "Santé & Médecine",  // Corrigé: category → categorie
+    univers: "Santé & Médecine",   // Ajouté: champ univers
     city: "Parakou",
     languages: "Français, Bariba, Dendi",
     portrait: "/talents/ibrahim-lawani.jpg",
@@ -71,7 +75,8 @@ export const candidates: Candidate[] = [
     prenom: "Arnaud",
     nom: "Zinsou",
     tagline: "Stratégie digitale & création de contenu",
-    category: "Médias & Digital",
+    categorie: "Médias & Digital",  // Corrigé: category → categorie
+    univers: "Médias & Digital",   // Ajouté: champ univers
     city: "Cotonou",
     languages: "Français, Anglais",
     portrait: "/talents/arnaud-zinsou.jpg",
@@ -88,7 +93,8 @@ export const candidates: Candidate[] = [
     prenom: "Nadège",
     nom: "Kiki",
     tagline: "Facilitation administrative à Porto-Novo",
-    category: "Facilitateurs & Conciergerie",
+    categorie: "Facilitateurs & Conciergerie",  // Corrigé: category → categorie
+    univers: "Facilitateurs & Conciergerie",   // Ajouté: champ univers
     city: "Porto-Novo",
     languages: "Français, Yoruba, Goun",
     portrait: "/talents/nadege-kiki.jpg",
@@ -105,7 +111,7 @@ export const candidates: Candidate[] = [
     prenom: "Lionel",
     nom: "Agossou",
     tagline: "Art visuel inspiré du Danxomè",
-    category: "Création & Culture",
+    categorie: "Création & Culture",
     city: "Ouidah",
     languages: "Français, Fon",
     portrait: "/talents/lionel-agossou.jpg",
@@ -122,7 +128,7 @@ export const candidates: Candidate[] = [
     prenom: "Romaric",
     nom: "Hountondji",
     tagline: "Promotion immobilière à Calavi",
-    category: "Immobilier & Construction",
+    categorie: "Immobilier & Construction",
     city: "Calavi",
     languages: "Français, Fon",
     portrait: "/talents/romaric-hountondji.jpg",
@@ -139,7 +145,7 @@ export const candidates: Candidate[] = [
     prenom: "Carine",
     nom: "Adjovi",
     tagline: "Conseil et stratégie d'entreprise",
-    category: "Business & Entreprises",
+    categorie: "Business & Entreprises",
     city: "Cotonou",
     languages: "Français, Anglais",
     portrait: "/talents/carine-adjovi.jpg",
@@ -156,7 +162,7 @@ export const candidates: Candidate[] = [
     prenom: "Jonas",
     nom: "Ahodehou",
     tagline: "Guide touristique culturel à Ouidah",
-    category: "Tourisme & Découvertes",
+    categorie: "Tourisme & Découvertes",
     city: "Ouidah",
     languages: "Français, Fon, Anglais",
     portrait: "/talents/jonas-ahodehou.jpg",
@@ -173,7 +179,7 @@ export const candidates: Candidate[] = [
     prenom: "Koffi",
     nom: "Adjakpa",
     tagline: "Gardien des traditions à Abomey",
-    category: "Coutumes & Traditions",
+    categorie: "Coutumes & Traditions",
     city: "Abomey",
     languages: "Fon, Français",
     portrait: "/talents/koffi-adjakpa.jpg",
@@ -190,7 +196,7 @@ export const candidates: Candidate[] = [
     prenom: "Steve",
     nom: "Kpadé",
     tagline: "Organisateur d'événements à Cotonou",
-    category: "Événementiel & Vie Nocturne",
+    categorie: "Événementiel & Vie Nocturne",
     city: "Cotonou",
     languages: "Français",
     portrait: "/talents/steve-kpade.jpg",
@@ -207,7 +213,7 @@ export const candidates: Candidate[] = [
     prenom: "Mireille",
     nom: "Tognifodé",
     tagline: "Hébergement touristique à Grand-Popo",
-    category: "Hébergement & Séjour",
+    categorie: "Hébergement & Séjour",
     city: "Grand-Popo",
     languages: "Français, Mina",
     portrait: "/talents/mireille-tognifode.jpg",
@@ -224,7 +230,7 @@ export const candidates: Candidate[] = [
     prenom: "Armand",
     nom: "Tossou",
     tagline: "Coach sportif à Bohicon",
-    category: "Bien-être & Fitness",
+    categorie: "Bien-être & Fitness",
     city: "Bohicon",
     languages: "Français, Fon",
     portrait: "/talents/armand-tossou.jpg",
@@ -241,7 +247,7 @@ export const candidates: Candidate[] = [
     prenom: "Grâce",
     nom: "Houessou",
     tagline: "Stylisme & mode africaine",
-    category: "Mode & Beauté",
+    categorie: "Mode & Beauté",
     city: "Cotonou",
     languages: "Français",
     portrait: "/talents/grace-houessou.jpg",
@@ -258,7 +264,7 @@ export const candidates: Candidate[] = [
     prenom: "Basile",
     nom: "Kora",
     tagline: "Produits du terroir à Djougou",
-    category: "Marchés & Produits Locaux",
+    categorie: "Marchés & Produits Locaux",
     city: "Djougou",
     languages: "Dendi, Français",
     portrait: "/talents/basile-kora.jpg",
@@ -275,7 +281,7 @@ export const candidates: Candidate[] = [
     prenom: "Aïcha",
     nom: "Hounkpatin",
     tagline: "Cuisine traditionnelle à domicile à Cotonou",
-    category: "Alimentation & Cuisine",
+    categorie: "Alimentation & Cuisine",
     city: "Cotonou",
     languages: "Français, Fon, Anglais",
     portrait: "/talents/aicha-hounkpatin.jpg",
