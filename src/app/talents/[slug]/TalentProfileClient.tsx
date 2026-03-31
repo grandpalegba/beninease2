@@ -161,8 +161,9 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
       const payload = {
         voter_id: activeUser.id,
         talent_id: profileId,
-        univers_nom: universData || "Non spécifié",
-        categorie_nom: candidate.categorie || "Non spécifié"
+        // On ajoute "|| ''" pour éviter le 'undefined' qui fait planter la base
+        univers_nom: candidate.univers || '',
+        categorie_nom: candidate.categorie || ''
       };
 
       console.log("📦 PAYLOAD FINAL AVANT ENVOI :", payload);
