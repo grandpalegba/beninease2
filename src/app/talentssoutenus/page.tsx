@@ -36,16 +36,15 @@ export default function SupportedTalentsPage() {
 
     const fetchSupportedTalents = async () => {
       try {
-        // 1. Fetch user profile
-        const { data: userData, error: userError } = await supabase
-          .from('votants')
-          .select('id')
-          .eq('whatsapp', session?.whatsapp)
-          .single();
+        // Get Supabase auth session for user ID
+        const { data: { session: supabaseSession } } = await supabase.auth.getSession();
+        
+        if (!supabaseSession?.user) {
+          router.push("/login");
+          return;
+        }
 
-        if (userError || !userData) throw userError || new Error('User not found');
-
-        // 2. Fetch votes
+        // Plus besoin de chercher dans l'ancienne table votants, on utilise direct l'ID de la session !
         const { data, error } = await supabase
           .from('votes')
           .select(`
@@ -63,7 +62,7 @@ export default function SupportedTalentsPage() {
               avatar_url
             )
           `)
-          .eq('votant_id', userData.id)
+          .eq('voter_id', supabaseSession.user.id) // Utilisation directe de la session ici
           .order('created_at', { ascending: false });
 
         if (error) {
@@ -87,7 +86,7 @@ export default function SupportedTalentsPage() {
     };
 
     fetchSupportedTalents();
-  }, [session, isAuthenticated, sessionLoading, router, supabase]);
+  }, [sessionLoading, isAuthenticated, router, supabase]);
 
   if (sessionLoading || loading) {
     return (

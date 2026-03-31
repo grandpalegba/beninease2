@@ -177,15 +177,16 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
 
     try {
       // Direct vote insertion using authenticated user ID
-      const { error: recordError } = await supabase
-        .from('votes')
-        .insert([{
-          voter_id: activeUser.id, // Use auth.users.id directly
-          talent_id: profileId,
-          univers_nom: candidate.univers || getUniverseFromCategory(candidate.categorie ?? ""),
-          categorie_nom: candidate.categorie,
-          created_at: new Date().toISOString()
-        }]);
+      const payload = {
+        voter_id: activeUser.id,
+        talent_id: profileId,
+        univers_nom: candidate.univers,
+        categorie_nom: candidate.categorie
+      };
+
+        const { error: recordError } = await supabase
+          .from('votes')
+          .insert([payload]);
 
       console.log("Vote insert result:", { recordError });
 
