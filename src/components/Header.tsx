@@ -61,9 +61,9 @@ const Header = () => {
         setUser(currentUser);
         
         if (currentUser) {
-          // Parallel fetch for profile and stats
+          // Parallel fetch for profile and stats using votes table directly
           const [profileRes, statsRes] = await Promise.all([
-            supabase.from("votants").select("*").eq("id", currentUser.id).single(),
+            supabase.from("votes").select("*", { count: 'exact', head: true }).eq("voter_id", currentUser.id),
             supabase.from("user_stats").select("*").eq("voter_id", currentUser.id).single() // Changed from votant_id to voter_id
           ]);
 
@@ -86,7 +86,7 @@ const Header = () => {
         if (currentUser) {
           try {
             const [profileRes, statsRes] = await Promise.all([
-              supabase.from("votants").select("*").eq("id", currentUser.id).single(),
+              supabase.from("votes").select("*").eq("voter_id", currentUser.id).single(),
               supabase.from("user_stats").select("*").eq("voter_id", currentUser.id).single() // Changed from votant_id to voter_id
             ]);
 

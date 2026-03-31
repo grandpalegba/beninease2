@@ -33,8 +33,8 @@ const MobileNavigation = () => {
         setUser(currentUser);
         if (currentUser) {
           const [profileRes, statsRes] = await Promise.all([
-            supabase.from("votants").select("*").eq("id", currentUser.id).single(),
-            supabase.from("user_stats").select("*").eq("voter_id", currentUser.id).single() 
+            supabase.from("votes").select("*", { count: 'exact', head: true }).eq("voter_id", currentUser.id),
+            supabase.from("user_stats").select("*").eq("voter_id", currentUser.id).single() // Changed from votant_id to voter_id
           ]);
           if (profileRes.data) setProfile(profileRes.data);
           if (statsRes.data) setUserStats(statsRes.data);
@@ -51,8 +51,8 @@ const MobileNavigation = () => {
         setUser(currentUser);
         if (currentUser) {
           const [profileRes, statsRes] = await Promise.all([
-            supabase.from("votants").select("*").eq("id", currentUser.id).single(),
-            supabase.from("user_stats").select("*").eq("voter_id", currentUser.id).single() 
+            supabase.from("votes").select("*", { count: 'exact', head: true }).eq("voter_id", currentUser.id),
+            supabase.from("user_stats").select("*").eq("voter_id", currentUser.id).single() // Changed from votant_id to voter_id
           ]);
           if (profileRes.data) setProfile(profileRes.data);
           if (statsRes.data) setUserStats(statsRes.data);

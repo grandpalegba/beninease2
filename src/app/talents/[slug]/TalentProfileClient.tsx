@@ -153,6 +153,8 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
 
     try {
       // Direct vote insertion using authenticated user ID avec les bons noms de colonnes
+      console.log("DEBUG CANDIDATE:", candidate);
+      
       const payload = {
         voter_id: activeUser.id,
         talent_id: profileId,
