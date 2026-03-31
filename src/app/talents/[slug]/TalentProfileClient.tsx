@@ -141,6 +141,9 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
     const { data: { session: currentSession } } = await supabase.auth.getSession();
     const activeUser = currentSession?.user;
 
+    console.log("USER:", activeUser?.id)
+    console.log("TALENT:", profileId)
+
     if (!activeUser) {
       router.push("/login");
       return;
@@ -173,40 +176,21 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
     setVoteMessage(null);
 
     try {
-      // 1. Récupérer le votant_id réel depuis la table votants (lié à l'auth_id)
-      const { data: votantData, error: votantError } = await supabase
-        .from('votants')
-        .select('id')
-        .eq('id', activeUser.id) // Ici on suppose que Votants.id = auth.id pour l'instant, ou on cherche une colonne spécifique si besoin
-        .single();
-
-      if (votantError || !votantData) {
-        // Si le votant n'existe pas encore, on le crée (Upsert préventif)
-        await supabase
-          .from('votants')
-          .upsert({ 
-            id: activeUser.id, 
-            role: 'votant',
-            full_name: activeUser.user_metadata?.full_name || activeUser.email,
-            avatar_url: activeUser.user_metadata?.avatar_url || activeUser.user_metadata?.picture,
-            updated_at: new Date().toISOString()
-          });
-      }
-
-      const finalVotantId = votantData?.id || activeUser.id;
-
-      // 2. Étape A : Insérer le vote dans votes avec les IDs réels
+      // Direct vote insertion using authenticated user ID
       const { error: recordError } = await supabase
         .from('votes')
-        .insert([{ 
-          votant_id: finalVotantId, 
+        .insert([{
+          voter_id: activeUser.id, // Use auth.users.id directly
           talent_id: profileId,
           univers_nom: candidate.univers || getUniverseFromCategory(candidate.categorie ?? ""),
-          categorie_nom: candidate.categorie
+          categorie_nom: candidate.categorie,
+          created_at: new Date().toISOString()
         }]);
 
+      console.log("Vote insert result:", { recordError });
+
       if (recordError) {
-        console.error("Talent Profile - Error inserting vote:", recordError);
+        console.error("Vote insert error:", recordError);
         // Rollback optimistic update if error (except if already voted)
         if (recordError.code !== '23505' && !recordError.message?.includes('unique')) {
           setHasVoted(false);
