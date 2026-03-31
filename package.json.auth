@@ -1,0 +1,13 @@
+{
+  "name": "beninease-auth-creator",
+  "version": "1.0.0",
+  "description": "Script to create auth users for talents",
+  "main": "create_talent_auth_users.js",
+  "scripts": {
+    "create-talent-users": "node create_talent_auth_users.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "dotenv": "^16.3.1"
+  }
+}

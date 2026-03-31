@@ -1,0 +1,114 @@
+[
+  {
+    "talentName": "Aïcha Hounkpatin",
+    "email": "aichahounkpatin@beninease.com",
+    "password": "Beninease2026!",
+    "auth_user_id": "ERROR",
+    "error": "Database error creating new user"
+  },
+  {
+    "talentName": "Armand Tossou",
+    "email": "armandtossou@beninease.com",
+    "password": "Beninease2026!",
+    "auth_user_id": "ERROR",
+    "error": "Database error creating new user"
+  },
+  {
+    "talentName": "Arnaud Zinsou",
+    "email": "arnaudzinsou@beninease.com",
+    "password": "Beninease2026!",
+    "auth_user_id": "ERROR",
+    "error": "Database error creating new user"
+  },
+  {
+    "talentName": "Basile Kora",
+    "email": "basilekora@beninease.com",
+    "password": "Beninease2026!",
+    "auth_user_id": "ERROR",
+    "error": "Database error creating new user"
+  },
+  {
+    "talentName": "Carine Adjovi",
+    "email": "carineadjovi@beninease.com",
+    "password": "Beninease2026!",
+    "auth_user_id": "ERROR",
+    "error": "Database error creating new user"
+  },
+  {
+    "talentName": "Grâce Houessou",
+    "email": "gracehouessou@beninease.com",
+    "password": "Beninease2026!",
+    "auth_user_id": "ERROR",
+    "error": "Database error creating new user"
+  },
+  {
+    "talentName": "Ibrahim Lawani",
+    "email": "ibrahimlawani@beninease.com",
+    "password": "Beninease2026!",
+    "auth_user_id": "ERROR",
+    "error": "Database error creating new user"
+  },
+  {
+    "talentName": "Jonas Ahodéhou",
+    "email": "jonasahodehou@beninease.com",
+    "password": "Beninease2026!",
+    "auth_user_id": "ERROR",
+    "error": "Database error creating new user"
+  },
+  {
+    "talentName": "Koffi Ahouansou",
+    "email": "koffiahouansou@beninease.com",
+    "password": "Beninease2026!",
+    "auth_user_id": "ERROR",
+    "error": "Database error creating new user"
+  },
+  {
+    "talentName": "Koffi Adjakpa",
+    "email": "koffiadjakpa@beninease.com",
+    "password": "Beninease2026!",
+    "auth_user_id": "ERROR",
+    "error": "Database error creating new user"
+  },
+  {
+    "talentName": "Lionel Agossou",
+    "email": "lionelagossou@beninease.com",
+    "password": "Beninease2026!",
+    "auth_user_id": "ERROR",
+    "error": "Database error creating new user"
+  },
+  {
+    "talentName": "Mireille Tognifodé",
+    "email": "mireilletognifode@beninease.com",
+    "password": "Beninease2026!",
+    "auth_user_id": "ERROR",
+    "error": "Database error creating new user"
+  },
+  {
+    "talentName": "Nadège Kiki",
+    "email": "nadegekiki@beninease.com",
+    "password": "Beninease2026!",
+    "auth_user_id": "ERROR",
+    "error": "Database error creating new user"
+  },
+  {
+    "talentName": "Romaric Hountondji",
+    "email": "romarichountondji@beninease.com",
+    "password": "Beninease2026!",
+    "auth_user_id": "ERROR",
+    "error": "Database error creating new user"
+  },
+  {
+    "talentName": "Sènami Dossou",
+    "email": "senamidossou@beninease.com",
+    "password": "Beninease2026!",
+    "auth_user_id": "ERROR",
+    "error": "Database error creating new user"
+  },
+  {
+    "talentName": "Steve Kpadé",
+    "email": "stevekpade@beninease.com",
+    "password": "Beninease2026!",
+    "auth_user_id": "ERROR",
+    "error": "Database error creating new user"
+  }
+]

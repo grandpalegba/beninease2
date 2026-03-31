@@ -173,20 +173,17 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
     setVoteMessage(null);
 
     try {
-      // 1. Utiliser directement profiles au lieu de votants (plus simple et direct)
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
+      // 1. Récupérer le votant_id réel depuis la table votants (lié à l'auth_id)
+      const { data: votantData, error: votantError } = await supabase
+        .from('votants')
         .select('id')
-        .eq('id', activeUser.id)
+        .eq('id', activeUser.id) // Ici on suppose que Votants.id = auth.id pour l'instant, ou on cherche une colonne spécifique si besoin
         .single();
 
-      console.log("PROFILE_QUERY_RESULT", { profileData, profileError })
-
-      if (profileError || !profileData) {
-        // Si le profil n'existe pas, on le crée
-        console.log("CREATING_PROFILE")
-        const { data: createResult, error: createError } = await supabase
-          .from('profiles')
+      if (votantError || !votantData) {
+        // Si le votant n'existe pas encore, on le crée (Upsert préventif)
+        await supabase
+          .from('votants')
           .upsert({ 
             id: activeUser.id, 
             role: 'votant',
@@ -194,26 +191,19 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
             avatar_url: activeUser.user_metadata?.avatar_url || activeUser.user_metadata?.picture,
             updated_at: new Date().toISOString()
           });
-        console.log("PROFILE_CREATE_RESULT", { createResult, createError })
       }
 
-      const finalVotantId = profileData?.id || activeUser.id;
+      const finalVotantId = votantData?.id || activeUser.id;
 
       // 2. Étape A : Insérer le vote dans votes avec les IDs réels
-      const voteData = [{ 
-        votant_id: finalVotantId, 
-        talent_id: profileId,
-        univers_nom: candidate.univers || getUniverseFromCategory(candidate.categorie ?? ""),
-        categorie_nom: candidate.categorie
-      }];
-      
-      console.log("INSERT_PAYLOAD", voteData)
-      
-      const { data, error: recordError } = await supabase
+      const { error: recordError } = await supabase
         .from('votes')
-        .insert(voteData);
-        
-      console.log("INSERT_RESULT", { data, error: recordError })
+        .insert([{ 
+          votant_id: finalVotantId, 
+          talent_id: profileId,
+          univers_nom: candidate.univers || getUniverseFromCategory(candidate.categorie ?? ""),
+          categorie_nom: candidate.categorie
+        }]);
 
       if (recordError) {
         console.error("Talent Profile - Error inserting vote:", recordError);

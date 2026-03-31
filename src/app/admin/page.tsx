@@ -160,7 +160,7 @@ export default function AdminAdvancedDashboardPage() {
       await removeFromBucketByPublicUrl("profile-avatars", p.avatar_url);
       const { error: e } = await supabase.rpc("admin_reset_avatar", { p_profile_id: p.id });
       if (e) throw e;
-      setProfiles((prev) => prev.map((x) => (x.id === p.id ? { ...x, avatar_url: null } : x)));
+      setTalents((prev) => prev.map((x) => (x.id === p.id ? { ...x, avatar_url: null } : x)));
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Erreur inconnue";
       setError(msg);
@@ -222,7 +222,7 @@ export default function AdminAdvancedDashboardPage() {
       const { error: e } = await supabase.rpc("admin_delete_profile", { p_profile_id: p.id });
       if (e) throw e;
 
-      setProfiles((prev) => prev.filter((x) => x.id !== p.id));
+      setTalents((prev) => prev.filter((x) => x.id !== p.id));
       setVideos((prev) => {
         const next = { ...prev };
         delete next[p.id];

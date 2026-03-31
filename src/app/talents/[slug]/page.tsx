@@ -23,10 +23,10 @@ export async function generateMetadata({ params }: { params: any }): Promise<Met
 
   const supabase = await createSupabaseServerClient();
   const { data: talent, error } = await supabase
-    .from('profiles')
-    .select('prenom, nom, avatar_url, category')
+    .from('talents')
+    .select('prenom, nom, avatar_url, categorie')
     .eq('slug', slug)
-    .maybeSingle();
+    .single();
 
   // Debug temporaire
   console.log("metadata data:", talent);
@@ -86,15 +86,16 @@ export default async function TalentProfilePage({ params }: { params: { slug: st
   const supabase = await createSupabaseServerClient();
 
   // Requête principale
-  const { data: profile, error } = await supabase
-    .from('profiles')
-    .select('*')
+  const { data: talent, error } = await supabase
+    .from('talents')
+    .select('id, slug, prenom, nom, avatar_url, votes, bio, categorie, univers, instagram_url, tiktok_url, whatsapp_number, city')
     .eq('slug', slug)
-    .maybeSingle();
+    .limit(1)
+    .single();
 
   // Debug complet
   console.log("SLUG:", slug);
-  console.log("DATA:", profile);
+  console.log("DATA:", talent);
   console.log("ERROR:", error);
 
   // Gestion des erreurs
@@ -102,8 +103,8 @@ export default async function TalentProfilePage({ params }: { params: { slug: st
     return <div>Erreur: {error.message}</div>;
   }
 
-  if (!profile) {
-    return <div>Profil non trouvé pour le slug: {slug}</div>;
+  if (!talent) {
+    return <div>Talent non trouvé pour le slug: {slug}</div>;
   }
 const candidate = candidates.find(c => c.slug === slug) || null;
 
@@ -111,21 +112,21 @@ const candidate = candidates.find(c => c.slug === slug) || null;
   // or pass them separately. Here we pass Supabase data as props.
   
   // On construit l'URL publique pour le composant client également
-  let publicAvatarUrl = profile.avatar_url;
+  let publicAvatarUrl = talent.avatar_url;
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://wtjhkqkqmexddroqwawk.supabase.co';
   
-  if (profile.avatar_url) {
-    if (profile.avatar_url.startsWith('http') || profile.avatar_url.startsWith('/')) {
-      publicAvatarUrl = profile.avatar_url;
-    } else if (profile.avatar_url.startsWith('talents/')) {
+  if (talent.avatar_url) {
+    if (talent.avatar_url.startsWith('http') || talent.avatar_url.startsWith('/')) {
+      publicAvatarUrl = talent.avatar_url;
+    } else if (talent.avatar_url.startsWith('talents/')) {
       // Cas des images locales dans public/talents/
-      publicAvatarUrl = `/${profile.avatar_url}`;
-    } else if (profile.avatar_url.endsWith('.jpg') || profile.avatar_url.endsWith('.png')) {
+      publicAvatarUrl = `/${talent.avatar_url}`;
+    } else if (talent.avatar_url.endsWith('.jpg') || talent.avatar_url.endsWith('.png')) {
       // Cas des images locales sans prefixe
-      publicAvatarUrl = `/talents/${profile.avatar_url}`;
+      publicAvatarUrl = `/talents/${talent.avatar_url}`;
     } else {
       // Cas des images dans Supabase Storage
-      const cleanPath = profile.avatar_url.startsWith('/') ? profile.avatar_url.slice(1) : profile.avatar_url;
+      const cleanPath = talent.avatar_url.startsWith('/') ? talent.avatar_url.slice(1) : talent.avatar_url;
       const bucketName = 'talents'; 
       const pathWithoutBucket = cleanPath.startsWith(`${bucketName}/`) 
         ? cleanPath.replace(`${bucketName}/`, '') 
@@ -141,11 +142,25 @@ const candidate = candidates.find(c => c.slug === slug) || null;
   return (
     <div className="min-h-screen bg-[#F9F9F7]">
       <TalentProfileClient 
-        candidate={candidate} 
-        initialVotesCount={profile.votes || 0}
-        profileId={profile.id}
+        candidate={candidate || {
+          slug: talent.slug,
+          prenom: talent.prenom,
+          nom: talent.nom,
+          portrait: talent.avatar_url,
+          city: null,
+          univers: talent.univers,
+          categorie: talent.categorie,
+          tabs: {}
+        }} 
+        initialVotesCount={talent.votes || 0}
+        profileId={talent.id}
         avatarUrl={publicAvatarUrl}
-        profileData={profile} // Pass all data
+        profileData={{
+          instagram_url: talent.instagram_url,
+          tiktok_url: talent.tiktok_url,
+          whatsapp_number: talent.whatsapp_number,
+          city: talent.city
+        }} 
       />
     </div>
   );
