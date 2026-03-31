@@ -108,6 +108,17 @@ export default async function TalentProfilePage({ params }: { params: { slug: st
   if (!talent) {
     return <div>Talent non trouvé pour le slug: {slug}</div>;
   }
+
+  // Debug: Vérifier ce que contient l'objet talent avant envoi au client
+  console.log("TALENT OBJECT BEFORE CLIENT:", {
+    id: talent.id,
+    slug: talent.slug,
+    univers: talent.univers,
+    categorie: talent.categorie,
+    prenom: talent.prenom,
+    nom: talent.nom
+  });
+
 const candidate = candidates.find(c => c.slug === slug) || null;
 
   // Inject Supabase data into the candidate object if needed, 

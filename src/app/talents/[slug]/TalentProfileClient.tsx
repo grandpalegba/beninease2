@@ -188,11 +188,17 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
           setVotesCount(prev => prev - 1);
           throw recordError;
         } else {
+          // Si erreur de duplicate OU si insertion réussit, on marque comme voté
+          setHasVoted(true);
+          setIsVoting(false);
           setVoteMessage({ type: 'error', text: "Vous avez déjà soutenu ce talent !" });
           return;
         }
       }
       
+      // Si insertion réussie, on marque comme voté
+      setHasVoted(true);
+      setIsVoting(false);
       setVoteMessage({ type: 'success', text: "Soutien validé ! Merci." });
       router.refresh();
 
