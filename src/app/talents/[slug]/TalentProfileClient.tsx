@@ -66,6 +66,7 @@ export default function TalentProfileClient({
   const [activeTab, setActiveTab] = useState("Vidéos");
   const [activeVideoTab, setActiveVideoTab] = useState("Qui je suis");
   const [votesCount, setVotesCount] = useState(initialVotesCount);
+  const [localVotes, setLocalVotes] = useState(initialVotesCount);  // ← CORRIGÉ: utilise initialVotesCount
   
   // Voting state
   const [hasVoted, setHasVoted] = useState(false);
@@ -177,7 +178,7 @@ export default function TalentProfileClient({
         setVoteMessage({ type: 'success', text: "Soutien validé ! Merci." });
         
         // Mise à jour en temps réel du compteur de votes
-        setTalentVotes(prev => prev + 1);  // ← AJOUTÉ: incrémente le compteur local
+        setLocalVotes(prev => prev + 1);  // ← CORRIGÉ: incrémente le compteur local
         
         // Petit effet visuel si ce n'est pas déjà fait
         const canvas = document.createElement('canvas');
@@ -254,7 +255,7 @@ export default function TalentProfileClient({
 
               <div className="mt-6 bg-white px-6 py-4 rounded-2xl border border-[#F2EDE4] shadow-sm max-w-[240px] mx-auto md:mx-0">
                 <span className="block text-xs uppercase tracking-widest text-[#004d3d] font-bold mb-2 text-center">NOMBRE DE VOTES</span>
-                <span className="block text-3xl font-bold text-black text-center">{votesCount}</span>
+                <span className="block text-3xl font-bold text-black text-center">{localVotes}</span>
               </div>
               
               <div className="mt-6 flex items-center justify-center md:justify-start gap-2">
@@ -393,7 +394,7 @@ export default function TalentProfileClient({
                   <button
                     type="button"
                     onClick={handleVote}
-                    disabled={isVoting}
+                    disabled={isVoting || hasVoted}
                     className="flex-[2] flex items-center justify-center gap-3 rounded-full bg-[#008751] px-8 py-5 text-sm font-bold tracking-widest uppercase text-white shadow-xl transition-all hover:bg-[#008751]/90 hover:shadow-[#008751]/20 hover:shadow-2xl active:scale-95 group"
                   >
                     {isVoting ? (
@@ -401,7 +402,7 @@ export default function TalentProfileClient({
                     ) : (
                       <>
                         <Heart className="w-5 h-5 fill-white text-white group-hover:animate-pulse" />
-                        Voter pour {candidate.prenom}
+                        {hasVoted ? "Soutien validé" : `Voter pour ${candidate.prenom}`}
                       </>
                     )}
                   </button>
