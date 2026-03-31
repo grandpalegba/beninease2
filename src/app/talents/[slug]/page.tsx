@@ -70,27 +70,33 @@ export async function generateMetadata({ params }: { params: any }): Promise<Met
   };
 }
 
-export default async function TalentProfilePage({ params }: { params: any }) {
+export default async function TalentProfilePage({ params }: { params: { slug: string } }) {
   const resolvedParams = await params;
   const slug = decodeURIComponent(resolvedParams.slug);
 
-  // Debug temporaire
-  console.log("slug:", slug);
+  // Debug complet
+  console.log("PARAMS:", params);
+  console.log("SLUG:", slug);
 
-  // 1. Fetch from Supabase
+  // Vérifier tous les slugs disponibles
   const supabase = await createSupabaseServerClient();
+  const { data: debugList } = await supabase
+    .from('profiles')
+    .select('slug');
+  
+  console.log("ALL SLUGS:", debugList);
+
+  // Requête principale
   const { data: profile, error } = await supabase
     .from('profiles')
-    .select('*') // Get everything including new fields
+    .select('*')
     .eq('slug', slug)
     .maybeSingle();
 
-  // Debug temporaire
-  console.log("data:", profile);
-  console.log("error:", error);
+  console.log("DATA:", profile);
+  console.log("ERROR:", error);
 
   if (error) {
-    console.error("Error fetching profile:", error);
     return <div>Erreur: {error.message}</div>;
   }
 
