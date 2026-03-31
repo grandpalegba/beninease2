@@ -67,7 +67,7 @@ export default function VoterDashboard() {
         id,
         created_at,
         talent_id,
-        votant_id,
+        voter_id,
         categorie_nom,
         univers_nom,
         talents:talents (
