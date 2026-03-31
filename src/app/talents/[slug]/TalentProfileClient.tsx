@@ -155,15 +155,18 @@ export default function TalentProfileClient({ candidate, initialVotesCount, prof
       // Direct vote insertion using authenticated user ID avec les bons noms de colonnes
       console.log("DEBUG CANDIDATE:", candidate);
       
+      // Sécurité pour récupérer l'univers si candidate.univers est vide
+      const universData = candidate.univers || getUniverseFromCategory(candidate.categorie || "");
+
       const payload = {
         voter_id: activeUser.id,
         talent_id: profileId,
-        univers_nom: candidate.univers,
-        categorie_nom: candidate.categorie
+        univers_nom: universData || "Non spécifié",
+        categorie_nom: candidate.categorie || "Non spécifié"
       };
 
-      console.log("📦 PAYLOAD EXACT AVANT ENVOI :", payload);
-
+      console.log("📦 PAYLOAD FINAL AVANT ENVOI :", payload);
+  
       const { error: recordError } = await supabase
         .from('votes')
         .insert([payload]);
