@@ -30,6 +30,7 @@ const Instagram = ({ className }: { className?: string }) => (
 
 type Props = {
   candidate: {
+    id: string;  // ← AJOUTÉ: ID manquant dans l'interface
     slug: string;
     prenom: string | null;
     nom: string | null;
@@ -139,7 +140,7 @@ export default function TalentProfileClient({
       // 1. Payload avec les noms exacts des colonnes (harmonisés)
       const payload = {
         voter_id: activeUser.id,
-        talent_id: profileId,
+        talent_id: candidate.id,  // ← STRICTEMENT candidate.id (pas de profileId)
         univers: candidate.univers,  // ← depuis talents.univers vers votes.univers
         categorie: candidate.categorie  // ← depuis talents.categorie vers votes.categorie
       };

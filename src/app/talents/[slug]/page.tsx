@@ -158,6 +158,7 @@ const candidate = null; // Forcer l'utilisation des données Supabase (plus de f
     <div className="min-h-screen bg-[#F9F9F7]">
       <TalentProfileClient 
         candidate={candidate || {
+          id: talent.id,  // ← AJOUTÉ: ID Supabase dans l'objet fallback
           slug: talent.slug,
           prenom: talent.prenom,
           nom: talent.nom,
