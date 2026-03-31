@@ -99,6 +99,7 @@ export default async function TalentProfilePage({ params }: { params: { slug: st
   console.log("ERROR:", error);
   console.log("UNIVERS:", talent?.univers);
   console.log("CATEGORIE:", talent?.categorie);
+  console.log("TALENT ID SUPABASE:", talent?.id);  // ← AJOUTÉ: Debug de l'ID réel
 
   // Gestion des erreurs
   if (error) {

@@ -147,6 +147,7 @@ export default function TalentProfileClient({
       console.log("DÉBOGAGE FINAL - Univers:", candidate.univers, "Catégorie:", candidate.categorie);
 
       console.log("🚀 TENTATIVE DE VOTE AVEC :", payload);
+      console.log("🔍 PROFILE ID UTILISÉ:", profileId);  // ← AJOUTÉ: Debug de l'ID envoyé
 
       const { error: recordError } = await supabase
         .from('votes')
