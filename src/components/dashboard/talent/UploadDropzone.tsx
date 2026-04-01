@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { X, Youtube, Link } from 'lucide-react';
+import { X, PlayCircle, Link } from 'lucide-react';
 
 interface UploadDropzoneProps {
   onSuccess: (videoId: string) => void;
@@ -39,7 +39,7 @@ export default function UploadDropzone({ onSuccess, onClose }: UploadDropzonePro
         </button>
 
         <div className="w-16 h-16 mx-auto mb-6 bg-red-500/10 text-red-500 rounded-2xl flex items-center justify-center">
-            <Youtube className="w-8 h-8"/>
+            <PlayCircle className="w-8 h-8"/>
         </div>
 
         <h2 className="text-2xl font-bold font-display text-black mb-2">Ajouter une vidéo</h2>

@@ -32,8 +32,6 @@ import { cn } from "@/lib/utils";
 import type { Votant } from "@/types";
 import * as htmlToImage from 'html-to-image';
 
-export const revalidate = 0;
-
 type TalentMini = {
   id: string;
   slug: string;
