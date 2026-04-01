@@ -72,19 +72,32 @@ const AvatarFallback = ({ profile, size = "large" }: { profile: any, size?: "lar
     );
   }
   
-  // Show initials or User icon as fallback
-  const initials = profile?.prenom && profile?.nom 
-    ? `${profile.prenom[0]}${profile.nom[0]}`.toUpperCase()
-    : profile?.prenom?.[0]?.toUpperCase() || 'U';
-  
+  // Show default avatar image if no custom avatar
   return (
-    <div className={`${sizeClasses} flex items-center justify-center bg-gray-100`}>
-      {initials !== 'U' ? (
-        <span className="text-2xl font-bold text-gray-600">{initials}</span>
-      ) : (
-        <User className={`${iconSize} text-gray-400`} />
-      )}
-    </div>
+    <Image 
+      src="/default-avatar.png" 
+      alt="Default Profile" 
+      fill 
+      className="object-cover"
+      onError={(e) => {
+        // If default image fails, show initials or User icon
+        e.currentTarget.style.display = 'none';
+        e.currentTarget.parentElement?.classList.add('bg-gray-100');
+        e.currentTarget.parentElement?.classList.add('flex');
+        e.currentTarget.parentElement?.classList.add('items-center');
+        e.currentTarget.parentElement?.classList.add('justify-center');
+        
+        const initials = profile?.prenom && profile?.nom 
+          ? `${profile.prenom[0]}${profile.nom[0]}`.toUpperCase()
+          : profile?.prenom?.[0]?.toUpperCase() || 'U';
+        
+        if (initials !== 'U') {
+          e.currentTarget.parentElement.innerHTML = `<span class="text-2xl font-bold text-gray-600">${initials}</span>`;
+        } else {
+          e.currentTarget.parentElement.innerHTML = `<svg class="${iconSize} text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>`;
+        }
+      }}
+    />
   );
 };
 
