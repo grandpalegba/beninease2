@@ -1,6 +1,6 @@
 /**
  * PAGE PUBLIQUE - ACCUEIL
- * Role: Vitrine principale du site Beninease.
+ * Role: Vitrine principale du site BeninEase.
  */
 import HeroSection from "@/components/HeroSection";
 import ConceptSection from "@/components/ConceptSection";

@@ -72,7 +72,7 @@ export default function TalentHeader({ profile }: TalentHeaderProps) {
         </div>
         <h1 className="font-display text-4xl md:text-5xl font-bold text-black tracking-tight">Mon Espace Talent</h1>
         <p className="text-gray-500 font-sans text-lg">
-          Gérez vos contenus et suivez votre impact sur Beninease.
+          Gérez vos contenus et suivez votre impact sur BeninEase.
         </p>
       </div>
 

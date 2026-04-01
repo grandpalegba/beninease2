@@ -62,7 +62,7 @@ const ConceptSection = () => {
           Le Bénin, un pays facile à aimer.
         </h2>
         <p className="text-lg md:text-xl text-muted-foreground mb-16 max-w-2xl mx-auto text-balance font-body" style={{ lineHeight: "2.1" }}>
-          Beninease est le premier label de confiance communautaire dédié à l&apos;excellence béninoise.
+          BeninEase est le premier label de confiance communautaire dédié à l'excellence béninoise.
           À travers un système de sélection transparent, ludique et validé par la communauté,
           nous transformons des pépites locales en véritables Ambassadeurs pour une vitrine de prestige célébrant un Bénin qui gagne.
         </p>

@@ -28,7 +28,7 @@ const SelectionSection = () => {
             className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-[#008751] text-balance"
             style={{ lineHeight: "1.15" }}
           >
-            ⚡ Parcours Beninease
+            ⚡ Parcours BeninEase
           </h2>
         </div>
 
@@ -62,7 +62,7 @@ const SelectionSection = () => {
               🏆 Résultat
             </h3>
             <p className="text-muted-foreground font-body text-sm md:text-base leading-relaxed">
-              Les 4 talents les mieux classés par catégorie deviennent Ambassadeurs et représentent le Bénin pendant 1 an. Sur Beninease, tous bénéficient d&apos;un espace de visibilité, de promotion et de vente de leurs services.
+              Les 4 talents les mieux classés par catégorie deviennent Ambassadeurs et représentent le Bénin pendant 1 an. Sur BeninEase, tous bénéficient d'un espace de visibilité, de promotion et de vente de leurs services.
             </p>
           </div>
         </div>

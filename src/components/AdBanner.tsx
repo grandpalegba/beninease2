@@ -27,7 +27,7 @@ export function AdBanner({ imageUrl, linkUrl, title }: AdBannerProps) {
               Votre marque ici
             </h3>
             <p className="text-sm text-white/70 max-w-md mx-auto">
-              Devenez partenaire de Beninease et touchez une audience engagée.
+              Devenez partenaire de BeninEase et touchez une audience engagée.
             </p>
           </div>
         )}

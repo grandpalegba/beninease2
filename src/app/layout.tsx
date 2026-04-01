@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 import MobileNavigation from "@/components/MobileNavigation";
 
 export const metadata: Metadata = {
-  title: "Beninease - Ambassadeurs du Bénin",
+  title: "BeninEase - Ambassadeurs du Bénin",
   description: "Découvrez et soutenez les talents qui font rayonner l'excellence béninoise.",
   icons: {
     icon: '/favicon.png',
@@ -13,12 +13,12 @@ export const metadata: Metadata = {
     apple: '/favicon.png',
   },
   openGraph: {
-    title: "Beninease - Ambassadeurs du Bénin",
+    title: "BeninEase - Ambassadeurs du Bénin",
     description: "Découvrez et soutenez les talents qui font rayonner l'excellence béninoise.",
     url: "https://beninease.space",
     type: "website",
     locale: "fr_BJ",
-    siteName: "Beninease",
+    siteName: "BeninEase",
   },
 };
 

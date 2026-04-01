@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: { params: any }): Promise<Met
   console.log("metadata data:", talent);
   console.log("metadata error:", error);
 
-  if (error || !talent) return { title: "Talent non trouvé | Beninease" };
+  if (error || !talent) return { title: "Talent non trouvé | BeninEase" };
 
   const fullName = `${talent.prenom} ${talent.nom}`;
   
@@ -42,13 +42,13 @@ export async function generateMetadata({ params }: { params: any }): Promise<Met
   }
   
   return {
-    title: `${fullName} | Vote Beninease`,
-    description: `Vote pour ${fullName} sur Beninease`,
+    title: `${fullName} | Vote BeninEase`,
+    description: `Vote pour ${fullName} sur BeninEase`,
     openGraph: {
       title: `${fullName} | Vote`,
       description: `Soutiens ${fullName}`,
       url: `https://beninease.space/talents/${slug}`,
-      siteName: 'Beninease',
+      siteName: 'BeninEase',
       locale: 'fr_BJ',
       images: [
         {

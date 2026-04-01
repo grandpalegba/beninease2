@@ -79,7 +79,7 @@ export default function TalentLoginPage() {
             Talent Login
           </h1>
           <p className="text-gray-600">
-            Access your Beninease talent dashboard
+            Access your BeninEase talent dashboard
           </p>
         </div>
 

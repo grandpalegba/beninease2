@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 const missionLines = [
-  "Beninease connecte le monde à l'Excellence Béninoise.",
+  "BeninEase connecte le monde à l'Excellence Béninoise.",
   "Les talents y sont sélectionnés et validés par les Béninois.",
   "À l'issue des votes, 256 talents représentent le Bénin.",
 ] as const;

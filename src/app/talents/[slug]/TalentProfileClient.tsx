@@ -223,7 +223,7 @@ export default function TalentProfileClient({
 
   const handleShare = async () => {
     const shareData = {
-      title: `Soutenez ${fullName} sur Beninease !`,
+      title: `Soutenez ${fullName} sur BeninEase !`,
       text: `Je viens de voter pour ${fullName} dans l'univers ${candidate.univers}. Rejoignez l'aventure pour choisir nos 256 ambassadeurs !`,
       url: window.location.href,
     };
@@ -557,7 +557,7 @@ export default function TalentProfileClient({
                     <span className="text-xs font-black uppercase tracking-widest text-[#004d3d]">Candidat Validé</span>
                   </div>
                   <p className="text-[11px] text-[#004d3d]/70 leading-relaxed font-medium">
-                    Ce profil a été vérifié par le comité de Beninease pour participer à la sélection des Ambassadeurs.
+                    Ce profil a été vérifié par le comité de BeninEase pour participer à la sélection des Ambassadeurs.
                   </p>
                 </div>
               </div>
