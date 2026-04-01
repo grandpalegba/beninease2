@@ -78,9 +78,19 @@ const Header = () => {
             supabase.from("talents").select("id").eq("auth_user_id", currentUser.id).maybeSingle()
           ]);
 
-          if (profileRes.data) setProfile(profileRes.data);
+          if (profileRes.data) {
+            setProfile(profileRes.data);
+            console.log('Données profil Header:', profileRes.data);
+          }
           if (statsRes.data) setUserStats(statsRes.data);
-          setIsTalent(!!talentRes.data);
+          
+          // Vérifier si l'utilisateur est un talent (soit dans table talents, soit via rôle dans profiles)
+          const isTalentFromTable = !!talentRes.data;
+          const isTalentFromRole = profileRes.data?.role === 'candidate' || profileRes.data?.role === 'candidat' || profileRes.data?.role === 'ambassadeur';
+          const finalIsTalent = isTalentFromTable || isTalentFromRole;
+          
+          setIsTalent(finalIsTalent);
+          console.log('Est talent (table):', isTalentFromTable, '(rôle):', isTalentFromRole, '(final):', finalIsTalent);
         }
       } catch (err) {
         console.log("Public user or session error in Header:", err);
@@ -103,9 +113,19 @@ const Header = () => {
               supabase.from("talents").select("id").eq("auth_user_id", currentUser.id).maybeSingle()
             ]);
 
-            if (profileRes.data) setProfile(profileRes.data);
+            if (profileRes.data) {
+              setProfile(profileRes.data);
+              console.log('Données profil Header (auth change):', profileRes.data);
+            }
             if (statsRes.data) setUserStats(statsRes.data);
-            setIsTalent(!!talentRes.data);
+            
+            // Vérifier si l'utilisateur est un talent (soit dans table talents, soit via rôle dans profiles)
+            const isTalentFromTable = !!talentRes.data;
+            const isTalentFromRole = profileRes.data?.role === 'candidate' || profileRes.data?.role === 'candidat' || profileRes.data?.role === 'ambassadeur';
+            const finalIsTalent = isTalentFromTable || isTalentFromRole;
+            
+            setIsTalent(finalIsTalent);
+            console.log('Est talent (auth change - table):', isTalentFromTable, '(rôle):', isTalentFromRole, '(final):', finalIsTalent);
           } catch (err) {
             console.error("Error updating user data in Header:", err);
           }
