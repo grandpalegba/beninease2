@@ -113,34 +113,36 @@ const AvatarFallback = ({ profile, size = "large" }: { profile: any, size?: "lar
 function UserNameDisplay() {
   const [userName, setUserName] = useState<{prenom: string | null, nom: string | null} | null>(null);
   const [loading, setLoading] = useState(true);
-  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
-
-  const fetchUserName = useCallback(async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { data, error } = await supabase
-        .from("profiles")
-        .select('prenom, nom')
-        .eq("id", user.id)
-        .single();
-
-      console.log('Test Colonnes:', data);
-      
-      if (data) {
-        setUserName({ prenom: data.prenom, nom: data.nom });
-      }
-    } catch (err) {
-      console.error("Erreur fetch nom:", err);
-    } finally {
-      setLoading(false);
-    }
-  }, [supabase]);
 
   useEffect(() => {
+    console.log('Fetch exécuté 1 seule fois');
+    
+    const fetchUserName = async () => {
+      try {
+        const supabase = createSupabaseBrowserClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const { data, error } = await supabase
+          .from("profiles")
+          .select('prenom, nom')
+          .eq("id", user.id)
+          .single();
+
+        console.log('Test Colonnes:', data);
+        
+        if (data) {
+          setUserName({ prenom: data.prenom, nom: data.nom });
+        }
+      } catch (err) {
+        console.error("Erreur fetch nom:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchUserName();
-  }, [fetchUserName]);
+  }, []); // Tableau de dépendances VIDE - exécution unique au montage
 
   if (loading) {
     return (
