@@ -15,59 +15,6 @@ type Profile = {
   avatar_url: string | null;
 };
 
-// Avatar Component with Fallback
-const AvatarFallback = ({ profile, size = "large" }: { profile: Profile | null, size?: "large" | "small" }) => {
-  const sizeClasses = size === "large" ? "w-32 h-32" : "w-16 h-16";
-  const iconSize = size === "large" ? "w-12 h-12" : "w-6 h-6";
-  
-  if (profile?.avatar_url) {
-    return (
-      <Image 
-        src={profile.avatar_url} 
-        alt="Profile" 
-        fill 
-        className="object-cover"
-        onError={(e) => {
-          // Hide broken image and show fallback
-          e.currentTarget.style.display = 'none';
-          e.currentTarget.parentElement?.classList.add('bg-gray-100');
-          e.currentTarget.parentElement?.classList.add('flex');
-          e.currentTarget.parentElement?.classList.add('items-center');
-          e.currentTarget.parentElement?.classList.add('justify-center');
-        }}
-      />
-    );
-  }
-  
-  // Show default avatar image if no custom avatar
-  return (
-    <Image 
-      src="/default-avatar.png" 
-      alt="Default Profile" 
-      fill 
-      className="object-cover"
-      onError={(e) => {
-        // If default image fails, show initials or User icon
-        e.currentTarget.style.display = 'none';
-        e.currentTarget.parentElement?.classList.add('bg-gray-100');
-        e.currentTarget.parentElement?.classList.add('flex');
-        e.currentTarget.parentElement?.classList.add('items-center');
-        e.currentTarget.parentElement?.classList.add('justify-center');
-        
-        const initials = profile?.prenom && profile?.nom 
-          ? `${profile.prenom[0]}${profile.nom[0]}`.toUpperCase()
-          : profile?.prenom?.[0]?.toUpperCase() || 'U';
-        
-        if (initials !== 'U') {
-          e.currentTarget.parentElement.innerHTML = `<span class="text-2xl font-bold text-gray-600">${initials}</span>`;
-        } else {
-          e.currentTarget.parentElement.innerHTML = `<svg class="${iconSize} text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>`;
-        }
-      }}
-    />
-  );
-};
-
 export default function ParametresPage() {
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
@@ -91,6 +38,7 @@ export default function ParametresPage() {
           return;
         }
 
+        // On cherche dans la table 'profiles' (id, prenom, nom, avatar_url)
         const { data: profileData, error } = await supabase
           .from("profiles")
           .select("*")
@@ -129,9 +77,8 @@ export default function ParametresPage() {
 
       const fileExt = file.name.split('.').pop();
       const fileName = `${user.id}-${Date.now()}.${fileExt}`;
-      const filePath = `avatars/${fileName}`;
+      const filePath = `${fileName}`; // Chemin dans le bucket 'avatars'
 
-      // Upload image to Supabase storage
       const { error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(filePath, file, {
@@ -139,16 +86,17 @@ export default function ParametresPage() {
           contentType: file.type
         });
 
-      if (uploadError) {
-        throw uploadError;
-      }
+      if (uploadError) throw uploadError;
 
-      // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('avatars')
         .getPublicUrl(filePath);
 
       setAvatarUrl(publicUrl);
+      
+      // Mise à jour immédiate du state local pour l'affichage
+      if (profile) setProfile({ ...profile, avatar_url: publicUrl });
+      
     } catch (error) {
       console.error("Error uploading image:", error);
       alert("Erreur lors du téléchargement de l'image");
@@ -159,7 +107,6 @@ export default function ParametresPage() {
 
   const handleSave = async () => {
     setSaving(true);
-    
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
@@ -171,24 +118,15 @@ export default function ParametresPage() {
           prenom: prenom.trim() || null,
           nom: nom.trim() || null,
           avatar_url: avatarUrl,
+          updated_at: new Date().toISOString(),
         });
 
-      if (error) {
-        throw error;
-      }
-
-      // Update local state
-      setProfile({
-        id: user.id,
-        prenom: prenom.trim() || null,
-        nom: nom.trim() || null,
-        avatar_url: avatarUrl,
-      });
-
-      alert("Profil mis à jour avec succès!");
+      if (error) throw error;
+      alert("Profil citoyen mis à jour !");
+      router.refresh(); // Pour forcer le dashboard à voir les changements
     } catch (error) {
       console.error("Error saving profile:", error);
-      alert("Erreur lors de la sauvegarde du profil");
+      alert("Erreur lors de la sauvegarde");
     } finally {
       setSaving(false);
     }
@@ -204,19 +142,17 @@ export default function ParametresPage() {
 
   return (
     <div className="min-h-screen bg-[#F9F9F7] pb-20">
-      {/* Header */}
       <div className="bg-white border-b border-[#F2EDE4] pt-12 pb-8 px-6">
         <div className="max-w-2xl mx-auto">
           <Link 
             href="/dashboard/votant"
-            className="inline-flex items-center gap-2 text-[#008751] font-medium text-sm mb-6 hover:text-[#006B3F] transition-colors"
+            className="inline-flex items-center gap-2 text-[#008751] font-medium text-sm mb-6 hover:underline"
           >
             <ArrowLeft size={16} />
             Retour au dashboard
           </Link>
-          
           <h1 className="text-3xl font-display font-bold text-black mb-2">Paramètres du profil</h1>
-          <p className="text-gray-600">Personnalisez vos informations pour votre parcours citoyen</p>
+          <p className="text-gray-600 text-sm">Prénom, Nom et Photo de profil</p>
         </div>
       </div>
 
@@ -224,86 +160,60 @@ export default function ParametresPage() {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-3xl p-8 border border-[#F2EDE4] shadow-xl shadow-black/5"
+          className="bg-white rounded-3xl p-8 border border-[#F2EDE4] shadow-sm"
         >
-          {/* Avatar Upload */}
-          <div className="flex flex-col items-center mb-8">
+          {/* AVATAR SECTION */}
+          <div className="flex flex-col items-center mb-10">
             <div className="relative group">
-              <div className="relative w-32 h-32 rounded-[30px] overflow-hidden border-4 border-white shadow-xl bg-gray-50">
-                <AvatarFallback profile={profile} size="large" />
-              </div>
-              
-              <label className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-[30px] opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                {uploading ? (
-                  <Loader2 className="w-8 h-8 text-white animate-spin" />
+              <div className="relative w-32 h-32 rounded-[30px] overflow-hidden border-4 border-white shadow-xl bg-gray-100 flex items-center justify-center">
+                {avatarUrl ? (
+                  <Image src={avatarUrl} alt="Profil" fill className="object-cover" />
                 ) : (
-                  <Camera className="w-8 h-8 text-white" />
+                  <div className="flex flex-col items-center">
+                    <User size={48} className="text-[#008751]" />
+                  </div>
                 )}
+              </div>
+              <label className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-[30px] opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                <Camera className="w-8 h-8 text-white" />
+                <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
               </label>
-              
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="hidden"
-                disabled={uploading}
-              />
             </div>
-            
-            <p className="text-sm text-gray-500 mt-3 text-center">
-              Cliquez sur votre avatar pour changer l'image
-            </p>
+            {uploading && <p className="text-[10px] text-[#008751] font-bold mt-2 animate-pulse uppercase">Téléchargement...</p>}
           </div>
 
-          {/* Form Fields */}
+          {/* FORM SECTION */}
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Prénom
-              </label>
+              <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Prénom</label>
               <input
                 type="text"
                 value={prenom}
                 onChange={(e) => setPrenom(e.target.value)}
-                placeholder="Votre prénom"
-                className="w-full px-4 py-3 border border-[#F2EDE4] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#008751]/20 focus:border-[#008751] transition-colors"
+                className="w-full px-4 py-3 border border-[#F2EDE4] rounded-xl focus:ring-2 focus:ring-[#008751]/20 outline-none transition-all"
+                placeholder="Ex: Koffi"
               />
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Nom
-              </label>
+              <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Nom</label>
               <input
                 type="text"
                 value={nom}
                 onChange={(e) => setNom(e.target.value)}
-                placeholder="Votre nom"
-                className="w-full px-4 py-3 border border-[#F2EDE4] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#008751]/20 focus:border-[#008751] transition-colors"
+                className="w-full px-4 py-3 border border-[#F2EDE4] rounded-xl focus:ring-2 focus:ring-[#008751]/20 outline-none transition-all"
+                placeholder="Ex: Ahouansou"
               />
             </div>
           </div>
 
-          {/* Save Button */}
-          <div className="mt-8">
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="w-full bg-[#008751] text-white font-medium py-3 px-6 rounded-xl hover:bg-[#006B3F] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            >
-              {saving ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  Sauvegarde...
-                </>
-              ) : (
-                <>
-                  <Save size={20} />
-                  Sauvegarder les modifications
-                </>
-              )}
-            </button>
-          </div>
+          <button
+            onClick={handleSave}
+            disabled={saving || uploading}
+            className="w-full mt-10 bg-[#008751] text-white font-bold py-4 rounded-xl hover:bg-[#006B3F] transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+          >
+            {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save size={18} />}
+            {saving ? "SAUVEGARDE EN COURS..." : "SAUVEGARDER MON PROFIL"}
+          </button>
         </motion.div>
       </div>
     </div>

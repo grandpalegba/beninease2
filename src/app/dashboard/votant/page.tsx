@@ -16,7 +16,8 @@ import {
   Star,
   Zap,
   CheckCircle2,
-  User
+  User,
+  BarChart3
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
@@ -400,7 +401,7 @@ export default function VoterDashboard() {
               transition={{ delay: 0.1 }}
               className="text-4xl font-display font-bold text-black"
             >
-              {(profile?.prenom && profile?.nom) ? `${profile.prenom} ${profile.nom}` : profile?.prenom || profile?.full_name || "Citoyen Béninois"}
+              {(profile?.prenom && profile?.nom) ? `${profile.prenom} ${profile.nom}` : profile?.prenom || "Citoyen Béninois"}
             </motion.h1>
             <motion.p 
               initial={{ opacity: 0, y: 10 }}
@@ -439,8 +440,8 @@ export default function VoterDashboard() {
           <div className="grid grid-cols-2 gap-4 w-full md:w-auto">
             <div className="bg-[#F9F9F7] p-4 rounded-2xl border border-[#F2EDE4] text-center">
               <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Total Votes</span>
-              <span className="text-2xl font-bold text-[#008751] flex items-center justify-center gap-2">
-                <Flame className="w-5 h-5 fill-[#008751]" />
+              <span className="text-2xl font-bold text-black flex items-center justify-center gap-2">
+                <BarChart3 className="w-5 h-5" />
                 {stats.totalVotes}
               </span>
             </div>
@@ -460,7 +461,7 @@ export default function VoterDashboard() {
             </div>
             <div className="bg-[#F9F9F7] p-4 rounded-2xl border border-[#F2EDE4] text-center">
               <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Profondeur</span>
-              <span className="text-2xl font-bold text-[#E9B113] flex items-center justify-center gap-2">
+              <span className="text-2xl font-bold text-[#E8112D] flex items-center justify-center gap-2">
                 <Target className="w-5 h-5" />
                 {stats.categoryCount}/64
               </span>
@@ -492,10 +493,10 @@ export default function VoterDashboard() {
                     <p className="text-sm text-gray-500 mt-1">
                       Encore 
                       {stats.totalVotes < nextStatus.minVotes && <span className="font-bold text-[#006B3F]"> {nextStatus.minVotes - stats.totalVotes} votes</span>}
-                      {stats.totalVotes < nextStatus.minVotes && (stats.universeCount < nextStatus.minUniverses || stats.categoryCount < nextStatus.minCategories) && " et"}
+                      {stats.totalVotes < nextStatus.minVotes && (stats.universeCount < nextStatus.minUniverses || stats.categoryCount < nextStatus.minCategories) && " / "}
                       {stats.universeCount < nextStatus.minUniverses && <span className="font-bold text-[#E9B113]"> {nextStatus.minUniverses - stats.universeCount} univers</span>}
-                      {stats.universeCount < nextStatus.minUniverses && stats.categoryCount < nextStatus.minCategories && " et"}
-                      {stats.categoryCount < nextStatus.minCategories && <span className="font-bold text-purple-500"> {nextStatus.minCategories - stats.categoryCount} catégories</span>}
+                      {stats.universeCount < nextStatus.minUniverses && stats.categoryCount < nextStatus.minCategories && " / "}
+                      {stats.categoryCount < nextStatus.minCategories && <span className="font-bold text-[#E8112D]"> {nextStatus.minCategories - stats.categoryCount} catégories</span>}
                       pour progresser.
                     </p>
                   ) : (
@@ -748,7 +749,7 @@ export default function VoterDashboard() {
             </div>
             <div>
               <h2 className="text-2xl font-bold text-black">
-                {(profile?.prenom && profile?.nom) ? `${profile.prenom} ${profile.nom}` : profile?.prenom || "Citoyen Béninois"}
+                {profile?.prenom} {profile?.nom || "Citoyen Béninois"}
               </h2>
               <div className="text-lg font-medium text-[#008751] mt-1">
                 {stats.currentStatus.label}
