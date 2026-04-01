@@ -15,7 +15,8 @@ import {
   Brain,
   Star,
   Zap,
-  CheckCircle2
+  CheckCircle2,
+  User
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
@@ -47,11 +48,51 @@ type VoteRow = {
   talents: TalentMini | null;
 };
 
+// Avatar Component with Fallback
+const AvatarFallback = ({ profile, size = "large" }: { profile: any, size?: "large" | "small" }) => {
+  const sizeClasses = size === "large" ? "w-32 h-32" : "w-16 h-16";
+  const iconSize = size === "large" ? "w-12 h-12" : "w-6 h-6";
+  
+  if (profile?.avatar_url) {
+    return (
+      <Image 
+        src={profile.avatar_url} 
+        alt="Profile" 
+        fill 
+        className="object-cover"
+        onError={(e) => {
+          // Hide broken image and show fallback
+          e.currentTarget.style.display = 'none';
+          e.currentTarget.parentElement?.classList.add('bg-gray-100');
+          e.currentTarget.parentElement?.classList.add('flex');
+          e.currentTarget.parentElement?.classList.add('items-center');
+          e.currentTarget.parentElement?.classList.add('justify-center');
+        }}
+      />
+    );
+  }
+  
+  // Show initials or User icon as fallback
+  const initials = profile?.prenom && profile?.nom 
+    ? `${profile.prenom[0]}${profile.nom[0]}`.toUpperCase()
+    : profile?.prenom?.[0]?.toUpperCase() || 'U';
+  
+  return (
+    <div className={`${sizeClasses} flex items-center justify-center bg-gray-100`}>
+      {initials !== 'U' ? (
+        <span className="text-2xl font-bold text-gray-600">{initials}</span>
+      ) : (
+        <User className={`${iconSize} text-gray-400`} />
+      )}
+    </div>
+  );
+};
+
 export default function VoterDashboard() {
   const router = useRouter();
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   
-  const [profile, setProfile] = useState<Votant | null>(null);
+  const [profile, setProfile] = useState<any>(null);
   const [votes, setVotes] = useState<VoteRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -149,7 +190,7 @@ export default function VoterDashboard() {
       };
 
       if (active) {
-        setProfile(profile as Votant);
+        setProfile(profile);
         await fetchVotes(user.id);
         setLoading(false);
       }
@@ -196,13 +237,21 @@ export default function VoterDashboard() {
     const universeCount = distinctUniverses.length;
     const categoryCount = distinctCategories.length;
     
+    const calculatedStatus = calculateVoterStatus(totalVotes, universeCount, categoryCount);
+    const currentStatus = {
+      ...calculatedStatus,
+      color: "#8E8E8E",
+      bg: "bg-[#8E8E8E]/10", 
+      icon: "🗳️"
+    };
+    
     return {
       totalVotes,
       universeCount,
       categoryCount,
       distinctUniverses,
       distinctCategories,
-      currentStatus: calculateVoterStatus(totalVotes, universeCount, categoryCount)
+      currentStatus
     };
   }, [votes]);
 
@@ -269,12 +318,7 @@ export default function VoterDashboard() {
             animate={{ opacity: 1, scale: 1 }}
             className="relative w-32 h-32 rounded-[30px] overflow-hidden border-4 border-white shadow-xl bg-gray-50"
           >
-            <Image 
-              src={profile?.avatar_url || "/placeholder-portrait.jpg"} 
-              alt="Profile" 
-              fill 
-              className="object-cover" 
-            />
+            <AvatarFallback profile={profile} size="large" />
           </motion.div>
           
           <div className="flex-1 text-center md:text-left space-y-3">

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, Camera, Save, ArrowLeft } from "lucide-react";
+import { Loader2, Camera, Save, ArrowLeft, User } from "lucide-react";
 import { motion } from "framer-motion";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import Image from "next/image";
@@ -13,6 +13,46 @@ type Profile = {
   prenom: string | null;
   nom: string | null;
   avatar_url: string | null;
+};
+
+// Avatar Component with Fallback
+const AvatarFallback = ({ profile, size = "large" }: { profile: Profile | null, size?: "large" | "small" }) => {
+  const sizeClasses = size === "large" ? "w-32 h-32" : "w-16 h-16";
+  const iconSize = size === "large" ? "w-12 h-12" : "w-6 h-6";
+  
+  if (profile?.avatar_url) {
+    return (
+      <Image 
+        src={profile.avatar_url} 
+        alt="Profile" 
+        fill 
+        className="object-cover"
+        onError={(e) => {
+          // Hide broken image and show fallback
+          e.currentTarget.style.display = 'none';
+          e.currentTarget.parentElement?.classList.add('bg-gray-100');
+          e.currentTarget.parentElement?.classList.add('flex');
+          e.currentTarget.parentElement?.classList.add('items-center');
+          e.currentTarget.parentElement?.classList.add('justify-center');
+        }}
+      />
+    );
+  }
+  
+  // Show initials or User icon as fallback
+  const initials = profile?.prenom && profile?.nom 
+    ? `${profile.prenom[0]}${profile.nom[0]}`.toUpperCase()
+    : profile?.prenom?.[0]?.toUpperCase() || 'U';
+  
+  return (
+    <div className={`${sizeClasses} flex items-center justify-center bg-gray-100`}>
+      {initials !== 'U' ? (
+        <span className="text-2xl font-bold text-gray-600">{initials}</span>
+      ) : (
+        <User className={`${iconSize} text-gray-400`} />
+      )}
+    </div>
+  );
 };
 
 export default function ParametresPage() {
@@ -177,18 +217,7 @@ export default function ParametresPage() {
           <div className="flex flex-col items-center mb-8">
             <div className="relative group">
               <div className="relative w-32 h-32 rounded-[30px] overflow-hidden border-4 border-white shadow-xl bg-gray-50">
-                {avatarUrl ? (
-                  <Image 
-                    src={avatarUrl} 
-                    alt="Avatar" 
-                    fill 
-                    className="object-cover" 
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                    <Camera className="w-8 h-8 text-gray-400" />
-                  </div>
-                )}
+                <AvatarFallback profile={profile} size="large" />
               </div>
               
               <label className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-[30px] opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
