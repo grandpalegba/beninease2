@@ -10,14 +10,15 @@ import {
   ArrowRight, 
   Target, 
   Globe, 
-  Heart,
+  Heart, 
   Flame,
   Brain,
   Star,
   Zap,
   CheckCircle2,
   User,
-  BarChart3
+  BarChart3,
+  Share2
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
@@ -107,6 +108,82 @@ const AvatarFallback = ({ profile, size = "large" }: { profile: any, size?: "lar
     />
   );
 };
+
+// Composant isolé pour l'affichage du nom utilisateur
+function UserNameDisplay() {
+  const [userName, setUserName] = useState<{prenom: string | null, nom: string | null} | null>(null);
+  const [loading, setLoading] = useState(true);
+  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
+
+  useEffect(() => {
+    const fetchUserName = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const { data, error } = await supabase
+          .from("profiles")
+          .select('prenom, nom')
+          .eq("id", user.id)
+          .single();
+
+        console.log('Test Colonnes:', data);
+        
+        if (data) {
+          setUserName({ prenom: data.prenom, nom: data.nom });
+        }
+      } catch (err) {
+        console.error("Erreur fetch nom:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserName();
+  }, [supabase]);
+
+  if (loading) {
+    return (
+      <motion.h1 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="text-4xl font-display font-bold text-gray-400"
+      >
+        Chargement de l'identité...
+      </motion.h1>
+    );
+  }
+
+  if (userName?.prenom || userName?.nom) {
+    return (
+      <motion.h1 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="text-4xl font-display font-bold text-black"
+      >
+        {`${userName.prenom || ''} ${userName.nom || ''}`.trim()}
+      </motion.h1>
+    );
+  }
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.1 }}
+      className="text-4xl font-display font-bold"
+    >
+      <Link 
+        href="/settings" 
+        className="text-[#008751] hover:text-[#006B3F] transition-colors underline"
+      >
+        Profil à compléter
+      </Link>
+    </motion.div>
+  );
+}
 
 export default function VoterDashboard() {
   const router = useRouter();
@@ -266,42 +343,6 @@ export default function VoterDashboard() {
     fetchProfile();
   }, [fetchProfile]);
 
-  // Recharger le profil quand la page redevient visible (retour des settings)
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        fetchProfile();
-      }
-    };
-
-    const handleFocus = () => {
-      fetchProfile();
-    };
-
-    // Recharger immédiatement au montage
-    fetchProfile();
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('focus', handleFocus);
-
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('focus', handleFocus);
-    };
-  }, [fetchProfile]);
-
-  // Recharger au clic sur la page (force refresh)
-  useEffect(() => {
-    const handleClick = () => {
-      fetchProfile();
-    };
-
-    document.addEventListener('click', handleClick);
-    return () => {
-      document.removeEventListener('click', handleClick);
-    };
-  }, [fetchProfile]);
-
   const stats = useMemo(() => {
     const totalVotes = votes.length;
     const distinctUniverses = Array.from(new Set(votes.map(v => v.univers).filter(Boolean)));
@@ -403,14 +444,7 @@ export default function VoterDashboard() {
             >
               <VoterStatusBadge status={stats.currentStatus} />
             </motion.div>
-            <motion.h1 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-4xl font-display font-bold text-black"
-            >
-              {(profile?.prenom || profile?.nom) ? `${profile.prenom || ""} ${profile.nom || ""}`.trim() : "Citoyen Béninois"}
-            </motion.h1>
+            <UserNameDisplay />
             <motion.p 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -425,14 +459,8 @@ export default function VoterDashboard() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="flex items-center gap-4"
+              className="flex justify-center"
             >
-              <button
-                onClick={() => fetchProfile()}
-                className="text-xs text-gray-400 hover:text-[#008751] transition-colors font-medium"
-              >
-                🔄 Actualiser
-              </button>
               <button
                 onClick={generateAndShareCard}
                 disabled={generatingCard}
@@ -445,6 +473,7 @@ export default function VoterDashboard() {
                   </>
                 ) : (
                   <>
+                    <Share2 className="w-4 h-4" />
                     Partager ma carte
                   </>
                 )}
