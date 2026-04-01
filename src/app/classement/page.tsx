@@ -138,10 +138,10 @@ function RankingList() {
                 >
                   {/* Rank Badge */}
                   <div className={`w-10 h-10 flex items-center justify-center rounded-xl font-bold text-sm ${
-                    index === 0 ? "bg-[#FFD700] text-white" : 
-                    index === 1 ? "bg-[#C0C0C0] text-white" : 
-                    index === 2 ? "bg-[#CD7F32] text-white" : 
-                    "bg-[#F9F9F7] text-gray-400"
+                    index === 0 ? "bg-[#008751] text-white" : 
+                    index === 1 ? "bg-[#E9B113] text-white" : 
+                    index === 2 ? "bg-[#E8112D] text-white" : 
+                    "bg-black text-white"
                   }`}>
                     {rankLabel}
                   </div>
