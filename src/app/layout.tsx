@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import "@/app/globals.css";
 import Header from "@/components/Header";
 import MobileNavigation from "@/components/MobileNavigation";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "BeninEase - Ambassadeurs du Bénin",
@@ -31,6 +32,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <div className="pt-20 md:pt-20">
           {children}
         </div>
+        <Toaster />
       </body>
     </html>
   );

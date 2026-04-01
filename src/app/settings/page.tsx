@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { User, Camera, ArrowLeft, Loader2, Save, Key, MessageCircle } from "lucide-react";
 import Image from "next/image";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
+import { toast } from "sonner";
 
 type Profile = {
   id: string;
@@ -30,8 +31,7 @@ const ParametresPage = () => {
   const supabase = createSupabaseBrowserClient();
   const router = useRouter();
 
-  useEffect(() => {
-    const getUserAndProfile = async () => {
+  const getUserAndProfile = useCallback(async () => {
       try {
         const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
         
@@ -67,14 +67,15 @@ const ParametresPage = () => {
       } finally {
         setLoading(false);
       }
-    };
+    }, [supabase, router]);
 
+  useEffect(() => {
     getUserAndProfile();
-  }, [supabase, router]);
+  }, [getUserAndProfile]);
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = useCallback((field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-  };
+  }, []);
 
   const handleSave = async () => {
     if (!user) return;
@@ -95,15 +96,15 @@ const ParametresPage = () => {
 
       if (error) {
         console.error("Erreur mise à jour:", error);
-        alert("Erreur lors de la sauvegarde");
+        toast.error("Erreur lors de la sauvegarde");
         return;
       }
 
       setProfile(prev => prev ? { ...prev, ...updateData } : null);
-      alert("Profil mis à jour avec succès!");
+      toast.success("✅ Profil mis à jour avec succès !");
     } catch (err) {
       console.error("Erreur:", err);
-      alert("Une erreur est survenue");
+      toast.error("Une erreur est survenue");
     } finally {
       setSaving(false);
     }
@@ -111,7 +112,7 @@ const ParametresPage = () => {
 
   const handlePasswordReset = async () => {
     if (!user?.email) {
-      alert("Email non disponible");
+      toast.error("Email non disponible");
       return;
     }
 
@@ -120,14 +121,14 @@ const ParametresPage = () => {
       
       if (error) {
         console.error("Erreur reset:", error);
-        alert("Erreur lors de l'envoi de l'email");
+        toast.error("Erreur lors de l'envoi de l'email");
         return;
       }
 
-      alert("Email de réinitialisation envoyé!");
+      toast.success("Email de réinitialisation envoyé!");
     } catch (err) {
       console.error("Erreur:", err);
-      alert("Une erreur est survenue");
+      toast.error("Une erreur est survenue");
     }
   };
 

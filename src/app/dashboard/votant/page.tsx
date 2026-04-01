@@ -32,6 +32,8 @@ import { cn } from "@/lib/utils";
 import type { Votant } from "@/types";
 import * as htmlToImage from 'html-to-image';
 
+export const revalidate = 0;
+
 type TalentMini = {
   id: string;
   slug: string;
@@ -64,11 +66,13 @@ const AvatarFallback = ({ profile, size = "large" }: { profile: any, size?: "lar
         className="object-cover"
         onError={(e) => {
           // Hide broken image and show fallback
-          e.currentTarget.style.display = 'none';
-          e.currentTarget.parentElement?.classList.add('bg-gray-100');
-          e.currentTarget.parentElement?.classList.add('flex');
-          e.currentTarget.parentElement?.classList.add('items-center');
-          e.currentTarget.parentElement?.classList.add('justify-center');
+          if (e.currentTarget.parentElement) {
+            e.currentTarget.style.display = 'none';
+            e.currentTarget.parentElement.classList.add('bg-gray-100');
+            e.currentTarget.parentElement.classList.add('flex');
+            e.currentTarget.parentElement.classList.add('items-center');
+            e.currentTarget.parentElement.classList.add('justify-center');
+          }
         }}
       />
     );
@@ -84,19 +88,22 @@ const AvatarFallback = ({ profile, size = "large" }: { profile: any, size?: "lar
       onError={(e) => {
         // If default image fails, show initials or User icon
         e.currentTarget.style.display = 'none';
-        e.currentTarget.parentElement?.classList.add('bg-gray-100');
-        e.currentTarget.parentElement?.classList.add('flex');
-        e.currentTarget.parentElement?.classList.add('items-center');
-        e.currentTarget.parentElement?.classList.add('justify-center');
-        
-        const initials = profile?.prenom && profile?.nom 
-          ? `${profile.prenom[0]}${profile.nom[0]}`.toUpperCase()
-          : profile?.prenom?.[0]?.toUpperCase() || 'U';
-        
-        if (initials !== 'U') {
-          e.currentTarget.parentElement.innerHTML = `<span class="text-2xl font-bold text-gray-600">${initials}</span>`;
-        } else {
-          e.currentTarget.parentElement.innerHTML = `<svg class="${iconSize} text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>`;
+        const parentElement = e.currentTarget.parentElement;
+        if (parentElement) {
+          parentElement.classList.add('bg-gray-100');
+          parentElement.classList.add('flex');
+          parentElement.classList.add('items-center');
+          parentElement.classList.add('justify-center');
+          
+          const initials = profile?.prenom && profile?.nom 
+            ? `${profile.prenom[0]}${profile.nom[0]}`.toUpperCase()
+            : profile?.prenom?.[0]?.toUpperCase() || 'U';
+          
+          if (initials !== 'U') {
+            parentElement.innerHTML = `<span class="text-2xl font-bold text-gray-600">${initials}</span>`;
+          } else {
+            parentElement.innerHTML = `<svg class="${iconSize} text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>`;
+          }
         }
       }}
     />
@@ -401,7 +408,7 @@ export default function VoterDashboard() {
               transition={{ delay: 0.1 }}
               className="text-4xl font-display font-bold text-black"
             >
-              {(profile?.prenom && profile?.nom) ? `${profile.prenom} ${profile.nom}` : profile?.prenom || "Citoyen Béninois"}
+              {(profile?.prenom || profile?.nom) ? `${profile.prenom || ""} ${profile.nom || ""}`.trim() : "Citoyen Béninois"}
             </motion.h1>
             <motion.p 
               initial={{ opacity: 0, y: 10 }}
