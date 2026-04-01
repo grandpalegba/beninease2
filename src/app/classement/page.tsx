@@ -84,7 +84,7 @@ function RankingList() {
     // };
   }, [supabase, fetchTalents]);
 
-  if (loading && talents.length === 0) {
+  if (loading && !errorMsg && talents.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20">
         <div className="w-12 h-12 border-4 border-[#008751]/20 border-t-[#008751] rounded-full animate-spin mb-4" />

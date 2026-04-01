@@ -106,7 +106,7 @@ function TalentsList() {
     });
   }, [talents, searchQuery, selectedUniverse, selectedCategory]);
 
-  if (loading) {
+  if (loading && !errorMsg && talents.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20">
         <Loader2 className="w-12 h-12 text-[#008751] animate-spin mb-4" />
