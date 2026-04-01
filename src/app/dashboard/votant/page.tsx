@@ -497,7 +497,7 @@ export default function VoterDashboard() {
                       {stats.universeCount < nextStatus.minUniverses && <span className="font-bold text-[#E9B113]"> {nextStatus.minUniverses - stats.universeCount} univers</span>}
                       {stats.universeCount < nextStatus.minUniverses && stats.categoryCount < nextStatus.minCategories && " / "}
                       {stats.categoryCount < nextStatus.minCategories && <span className="font-bold text-[#E8112D]"> {nextStatus.minCategories - stats.categoryCount} catégories</span>}
-                       pour progresser.
+                      {" "}pour progresser.
                     </p>
                   ) : (
                     <p className="text-sm text-[#006B3F] font-bold mt-1">Félicitations ! Vous êtes un Gardien de l&apos;excellence béninoise.</p>
