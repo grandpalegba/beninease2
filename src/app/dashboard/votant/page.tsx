@@ -365,7 +365,7 @@ export default function VoterDashboard() {
                       pour progresser.
                     </p>
                   ) : (
-                    <p className="text-sm text-[#006B3F] font-bold mt-1">Félicitations ! Vous êtes un Référent de l&apos;excellence béninoise.</p>
+                    <p className="text-sm text-[#006B3F] font-bold mt-1">Félicitations ! Vous êtes un Gardien de l&apos;excellence béninoise.</p>
                   )}
                 </div>
               </div>
@@ -396,7 +396,7 @@ export default function VoterDashboard() {
                   <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
                     <motion.div 
                       initial={{ width: 0 }}
-                      animate={{ width: `${Math.min(100, (stats.universeCount / 16) * 100)}%` }}
+                      animate={{ width: `${Math.min(100, nextStatus ? (stats.universeCount / nextStatus.minUniverses) * 100 : 100)}%` }}
                       className="h-full bg-yellow-500 rounded-full"
                     />
                   </div>
