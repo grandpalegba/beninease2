@@ -140,18 +140,6 @@ function UserNameDisplay() {
 
   useEffect(() => {
     fetchUserName();
-
-    // Écouter les mises à jour de profil
-    const handleProfileUpdate = () => {
-      console.log('Profil mis à jour, rechargement...');
-      fetchUserName();
-    };
-
-    window.addEventListener('profile-updated', handleProfileUpdate);
-    
-    return () => {
-      window.removeEventListener('profile-updated', handleProfileUpdate);
-    };
   }, [fetchUserName]);
 
   if (loading) {
