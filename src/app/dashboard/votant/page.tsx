@@ -278,12 +278,27 @@ export default function VoterDashboard() {
       fetchProfile();
     };
 
+    // Recharger immédiatement au montage
+    fetchProfile();
+
     document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('focus', handleFocus);
 
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('focus', handleFocus);
+    };
+  }, [fetchProfile]);
+
+  // Recharger au clic sur la page (force refresh)
+  useEffect(() => {
+    const handleClick = () => {
+      fetchProfile();
+    };
+
+    document.addEventListener('click', handleClick);
+    return () => {
+      document.removeEventListener('click', handleClick);
     };
   }, [fetchProfile]);
 
@@ -410,7 +425,14 @@ export default function VoterDashboard() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
+              className="flex items-center gap-4"
             >
+              <button
+                onClick={() => fetchProfile()}
+                className="text-xs text-gray-400 hover:text-[#008751] transition-colors font-medium"
+              >
+                🔄 Actualiser
+              </button>
               <button
                 onClick={generateAndShareCard}
                 disabled={generatingCard}
