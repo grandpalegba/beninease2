@@ -112,11 +112,13 @@ const AvatarFallback = ({ profile, size = "large" }: { profile: any, size?: "lar
 // Composant isolé pour l'affichage du nom utilisateur
 function UserNameDisplay() {
   const [userName, setUserName] = useState<{prenom: string | null, nom: string | null} | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // FORCÉ à false pour test d'exclusion
 
   useEffect(() => {
     console.log('Fetch exécuté 1 seule fois');
     
+    // COMMENTÉ TEMPORAIREMENT pour test d'exclusion
+    /*
     const fetchUserName = async () => {
       try {
         const supabase = createSupabaseBrowserClient();
@@ -161,6 +163,7 @@ function UserNameDisplay() {
     };
 
     fetchUserName();
+    */
   }, []); // Tableau de dépendances VIDE - exécution unique au montage
 
   if (loading) {
@@ -327,42 +330,42 @@ export default function VoterDashboard() {
     setRemainingVotes(remainingVotes);
   }, [supabase]);
 
-  const fetchProfile = useCallback(async () => {
-    setLoading(true);
-    setErrorMsg(null);
+  useEffect(() => {
+    const loadProfileAndVotes = async () => {
+      setLoading(true);
+      setErrorMsg(null);
 
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      router.push("/login");
-      return;
-    }
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        router.push("/login");
+        return;
+      }
 
-    // Charger le profil depuis la table profiles
-    const { data: profileData, error: profileError } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", user.id)
-      .single();
+      // Charger le profil depuis la table profiles
+      const { data: profileData, error: profileError } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
 
-    if (profileError && profileError.code !== "PGRST116") {
-      console.error("Error loading profile:", profileError);
-    }
+      if (profileError && profileError.code !== "PGRST116") {
+        console.error("Error loading profile:", profileError);
+      }
 
-    const profile = profileData || {
-      id: user.id,
-      prenom: null,
-      nom: null,
-      avatar_url: null,
+      const profile = profileData || {
+        id: user.id,
+        prenom: null,
+        nom: null,
+        avatar_url: null,
+      };
+
+      setProfile(profile);
+      await fetchVotes(user.id);
+      setLoading(false);
     };
 
-    setProfile(profile);
-    await fetchVotes(user.id);
-    setLoading(false);
-  }, [supabase, router, fetchVotes]);
-
-  useEffect(() => {
-    fetchProfile();
-  }, [fetchProfile]);
+    loadProfileAndVotes();
+  }, []); // Dépendances vides pour éviter la boucle
 
   const stats = useMemo(() => {
     const totalVotes = votes.length;
