@@ -60,14 +60,14 @@ export default function CandidateProfile() {
       setUser(authUser);
 
       const { data: profileData } = await supabase
-        .from('Talents')
+        .from("talents")
         .select('*')
         .eq('id', authUser.id)
         .maybeSingle();
 
       if (!profileData) {
         const { data: createdProfile } = await supabase
-          .from('Talents')
+          .from("talents")
           .insert({
             id: authUser.id,
             title: "Mon Espace Talent",
@@ -310,8 +310,8 @@ export default function CandidateProfile() {
   if (!user || !profile) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F9F9F7]">
-        <p className="text-orange-800 animate-pulse font-medium text-lg">
-          Chargement de votre sanctuaire...
+        <p className="text-[#008751] animate-pulse font-medium text-lg">
+          Chargement...
         </p>
       </div>
     );

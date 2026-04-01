@@ -45,7 +45,7 @@ const CandidatureForm = () => {
       const slug = `${form.prenom}-${form.nom}`.toLowerCase().replace(/[^a-z0-9]/g, '-');
 
       const { error: submitError } = await supabase
-        .from('Talents')
+        .from("talents")
         .insert([
           {
             prenom: form.prenom,

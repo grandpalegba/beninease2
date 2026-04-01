@@ -23,7 +23,7 @@ export default function ProfilePage() {
       }
 
       const { data, error } = await supabase
-        .from("Talents")
+        .from("talents")
         .select("*")
         .eq("id", user.id)
         .single();

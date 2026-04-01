@@ -48,7 +48,7 @@ export async function reportContent(contentId: string, reason: string, reporterI
 export async function getTalentByRole(role: string) {
   const supabase = createSupabaseBrowserClient();
   const { data, error } = await supabase
-    .from("Talents")
+    .from("talents")
     .select("*")
     .eq("role", role)
     .eq("is_validated", true);

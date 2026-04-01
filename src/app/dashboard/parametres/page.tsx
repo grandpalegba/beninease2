@@ -1,221 +1,271 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { Loader2, Camera, Save, ArrowLeft, User } from "lucide-react";
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
+import { User, Camera, ArrowLeft, Loader2, Save, Key, MessageCircle } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
+import type { User as SupabaseUser } from "@supabase/supabase-js";
 
 type Profile = {
   id: string;
   prenom: string | null;
   nom: string | null;
   avatar_url: string | null;
+  whatsapp: string | null;
+  email: string | null;
 };
 
-export default function ParametresPage() {
-  const router = useRouter();
-  const supabase = createSupabaseBrowserClient();
-  
+const ParametresPage = () => {
+  const [user, setUser] = useState<SupabaseUser | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  
-  // Form state
-  const [prenom, setPrenom] = useState("");
-  const [nom, setNom] = useState("");
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    prenom: "",
+    nom: "",
+    whatsapp: "",
+  });
+
+  const supabase = createSupabaseBrowserClient();
+  const router = useRouter();
 
   useEffect(() => {
-    async function loadProfile() {
+    const getUserAndProfile = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
+        const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
+        
+        if (authError || !authUser) {
           router.push("/login");
           return;
         }
 
-        // On cherche dans la table 'profiles' (id, prenom, nom, avatar_url)
-        const { data: profileData, error } = await supabase
+        setUser(authUser);
+
+        // Récupérer le profil depuis la table profiles
+        const { data: profileData, error: profileError } = await supabase
           .from("profiles")
           .select("*")
-          .eq("id", user.id)
-          .single();
+          .eq("id", authUser.id)
+          .maybeSingle();
 
-        if (error && error.code !== "PGRST116") {
-          console.error("Error loading profile:", error);
+        if (profileError) {
+          console.error("Erreur profil:", profileError);
         }
 
         if (profileData) {
           setProfile(profileData);
-          setPrenom(profileData.prenom || "");
-          setNom(profileData.nom || "");
-          setAvatarUrl(profileData.avatar_url);
+          setFormData({
+            prenom: profileData.prenom || "",
+            nom: profileData.nom || "",
+            whatsapp: profileData.whatsapp || "",
+          });
         }
-      } catch (error) {
-        console.error("Error:", error);
+      } catch (err) {
+        console.error("Erreur:", err);
       } finally {
         setLoading(false);
       }
-    }
+    };
 
-    loadProfile();
+    getUserAndProfile();
   }, [supabase, router]);
 
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    setUploading(true);
-    
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${user.id}-${Date.now()}.${fileExt}`;
-      const filePath = `${fileName}`; // Chemin dans le bucket 'avatars'
-
-      const { error: uploadError } = await supabase.storage
-        .from('avatars')
-        .upload(filePath, file, {
-          upsert: true,
-          contentType: file.type
-        });
-
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('avatars')
-        .getPublicUrl(filePath);
-
-      setAvatarUrl(publicUrl);
-      
-      // Mise à jour immédiate du state local pour l'affichage
-      if (profile) setProfile({ ...profile, avatar_url: publicUrl });
-      
-    } catch (error) {
-      console.error("Error uploading image:", error);
-      alert("Erreur lors du téléchargement de l'image");
-    } finally {
-      setUploading(false);
-    }
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const handleSave = async () => {
-    setSaving(true);
+    if (!user) return;
+
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      setSaving(true);
+
+      const updateData = {
+        prenom: formData.prenom || null,
+        nom: formData.nom || null,
+        whatsapp: formData.whatsapp || null,
+      };
 
       const { error } = await supabase
         .from("profiles")
-        .upsert({
-          id: user.id,
-          prenom: prenom.trim() || null,
-          nom: nom.trim() || null,
-          avatar_url: avatarUrl,
-          updated_at: new Date().toISOString(),
-        });
+        .update(updateData)
+        .eq("id", user.id);
 
-      if (error) throw error;
-      alert("Profil citoyen mis à jour !");
-      router.refresh(); // Pour forcer le dashboard à voir les changements
-    } catch (error) {
-      console.error("Error saving profile:", error);
-      alert("Erreur lors de la sauvegarde");
+      if (error) {
+        console.error("Erreur mise à jour:", error);
+        alert("Erreur lors de la sauvegarde");
+        return;
+      }
+
+      setProfile(prev => prev ? { ...prev, ...updateData } : null);
+      alert("Profil mis à jour avec succès!");
+    } catch (err) {
+      console.error("Erreur:", err);
+      alert("Une erreur est survenue");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handlePasswordReset = async () => {
+    if (!user?.email) {
+      alert("Email non disponible");
+      return;
+    }
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(user.email);
+      
+      if (error) {
+        console.error("Erreur reset:", error);
+        alert("Erreur lors de l'envoi de l'email");
+        return;
+      }
+
+      alert("Email de réinitialisation envoyé!");
+    } catch (err) {
+      console.error("Erreur:", err);
+      alert("Une erreur est survenue");
     }
   };
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F9F9F7]">
-        <Loader2 className="w-12 h-12 text-[#008751] animate-spin" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#008751]" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#F9F9F7] pb-20">
-      <div className="bg-white border-b border-[#F2EDE4] pt-12 pb-8 px-6">
-        <div className="max-w-2xl mx-auto">
-          <Link 
-            href="/dashboard/votant"
-            className="inline-flex items-center gap-2 text-[#008751] font-medium text-sm mb-6 hover:underline"
-          >
-            <ArrowLeft size={16} />
-            Retour au dashboard
-          </Link>
-          <h1 className="text-3xl font-display font-bold text-black mb-2">Paramètres du profil</h1>
-          <p className="text-gray-600 text-sm">Prénom, Nom et Photo de profil</p>
-        </div>
-      </div>
-
-      <div className="max-w-2xl mx-auto px-6 py-8">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-3xl p-8 border border-[#F2EDE4] shadow-sm"
-        >
-          {/* AVATAR SECTION */}
-          <div className="flex flex-col items-center mb-10">
-            <div className="relative group">
-              <div className="relative w-32 h-32 rounded-[30px] overflow-hidden border-4 border-white shadow-xl bg-gray-100 flex items-center justify-center">
-                {avatarUrl ? (
-                  <Image src={avatarUrl} alt="Profil" fill className="object-cover" />
-                ) : (
-                  <div className="flex flex-col items-center">
-                    <User size={48} className="text-[#008751]" />
-                  </div>
-                )}
-              </div>
-              <label className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-[30px] opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                <Camera className="w-8 h-8 text-white" />
-                <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
-              </label>
-            </div>
-            {uploading && <p className="text-[10px] text-[#008751] font-bold mt-2 animate-pulse uppercase">Téléchargement...</p>}
-          </div>
-
-          {/* FORM SECTION */}
-          <div className="space-y-6">
-            <div>
-              <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Prénom</label>
-              <input
-                type="text"
-                value={prenom}
-                onChange={(e) => setPrenom(e.target.value)}
-                className="w-full px-4 py-3 border border-[#F2EDE4] rounded-xl focus:ring-2 focus:ring-[#008751]/20 outline-none transition-all"
-                placeholder="Ex: Koffi"
-              />
-            </div>
-            <div>
-              <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Nom</label>
-              <input
-                type="text"
-                value={nom}
-                onChange={(e) => setNom(e.target.value)}
-                className="w-full px-4 py-3 border border-[#F2EDE4] rounded-xl focus:ring-2 focus:ring-[#008751]/20 outline-none transition-all"
-                placeholder="Ex: Ahouansou"
-              />
-            </div>
-          </div>
-
+    <div className="min-h-screen bg-[#F9F9F7] py-8 px-4">
+      <div className="max-w-2xl mx-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="font-display text-3xl font-bold text-black">Paramètres</h1>
           <button
-            onClick={handleSave}
-            disabled={saving || uploading}
-            className="w-full mt-10 bg-[#008751] text-white font-bold py-4 rounded-xl hover:bg-[#006B3F] transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+            onClick={() => router.push("/dashboard/votant")}
+            className="flex items-center gap-2 text-[#008751] hover:text-[#006B3F] transition-colors font-medium"
           >
-            {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save size={18} />}
-            {saving ? "SAUVEGARDE EN COURS..." : "SAUVEGARDER MON PROFIL"}
+            <ArrowLeft size={20} />
+            Retour au Dashboard
           </button>
-        </motion.div>
+        </div>
+
+        {/* Photo Section */}
+        <div className="bg-white rounded-3xl p-8 mb-6 shadow-sm border border-gray-100">
+          <div className="flex flex-col items-center">
+            <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-[#008751]/20 mb-4">
+              {profile?.avatar_url ? (
+                <Image
+                  src={profile.avatar_url}
+                  alt="Avatar"
+                  fill
+                  className="object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-[#008751]/10">
+                  <User size={48} className="text-[#008751]" />
+                </div>
+              )}
+            </div>
+            <button className="flex items-center gap-2 px-6 py-3 bg-[#008751] text-white rounded-full font-medium hover:bg-[#006B3F] transition-colors">
+              <Camera size={18} />
+              Changer la photo
+            </button>
+          </div>
+        </div>
+
+        {/* Formulaire */}
+        <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
+          <div className="space-y-6">
+            {/* Prénom */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Prénom</label>
+              <input
+                type="text"
+                value={formData.prenom}
+                onChange={(e) => handleInputChange("prenom", e.target.value)}
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#008751] focus:border-transparent"
+                placeholder="Votre prénom"
+              />
+            </div>
+
+            {/* Nom */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Nom</label>
+              <input
+                type="text"
+                value={formData.nom}
+                onChange={(e) => handleInputChange("nom", e.target.value)}
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#008751] focus:border-transparent"
+                placeholder="Votre nom"
+              />
+            </div>
+
+            {/* WhatsApp */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <div className="flex items-center gap-2">
+                  <MessageCircle size={16} className="text-green-500" />
+                  WhatsApp
+                </div>
+              </label>
+              <input
+                type="text"
+                value={formData.whatsapp}
+                onChange={(e) => handleInputChange("whatsapp", e.target.value)}
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#008751] focus:border-transparent"
+                placeholder="+229 XX XX XX XX"
+              />
+            </div>
+
+            {/* Email (readonly) */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+              <input
+                type="email"
+                value={user?.email || ""}
+                readOnly
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50 text-gray-500 cursor-not-allowed"
+                placeholder="Email"
+              />
+            </div>
+          </div>
+
+          {/* Boutons */}
+          <div className="mt-8 space-y-4">
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="w-full py-4 bg-[#008751] text-white rounded-full font-bold hover:bg-[#006B3F] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              {saving ? (
+                <>
+                  <Loader2 size={20} className="animate-spin" />
+                  Chargement...
+                </>
+              ) : (
+                <>
+                  <Save size={20} />
+                  Sauvegarder
+                </>
+              )}
+            </button>
+
+            <button
+              onClick={handlePasswordReset}
+              className="w-full py-3 text-gray-500 hover:text-[#008751] transition-colors font-medium flex items-center justify-center gap-2"
+            >
+              <Key size={16} />
+              Réinitialiser mon mot de passe
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
-}
+};
+
+export default ParametresPage;

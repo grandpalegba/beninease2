@@ -53,21 +53,21 @@ export default function AvatarUpload({
       const filePath = `${talentId}/${Date.now()}.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage
-        .from('talents')
+        .from("talents")
         .upload(filePath, file);
 
       if (uploadError) throw uploadError;
 
       // 3. Get Public URL
       const { data: { publicUrl } } = supabase.storage
-        .from('talents')
+        .from("talents")
         .getPublicUrl(filePath);
 
-      // 4. Update Talents table
+      // 4. Update talents table
       const { error: updateError } = await supabase
-        .from('Talents')
+        .from("talents")
         .update({ avatar_url: publicUrl, updated_at: new Date().toISOString() })
-        .eq('id', talentId);
+        .eq("id", talentId);
 
       if (updateError) throw updateError;
 
@@ -96,14 +96,14 @@ export default function AvatarUpload({
       const idx = url.pathname.indexOf(marker);
       if (idx !== -1) {
         const path = decodeURIComponent(url.pathname.slice(idx + marker.length));
-        await supabase.storage.from('talents').remove([path]);
+        await supabase.storage.from("talents").remove([path]);
       }
 
       // Update database
       const { error: updateError } = await supabase
-        .from('Talents')
+        .from("talents")
         .update({ avatar_url: null, updated_at: new Date().toISOString() })
-        .eq('id', talentId);
+        .eq("id", talentId);
 
       if (updateError) throw updateError;
 
