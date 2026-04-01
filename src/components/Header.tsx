@@ -136,6 +136,13 @@ const Header = () => {
     >
       <div className="container max-w-7xl mx-auto flex items-center justify-between px-6">
         <Link href="/" className="flex items-center gap-3 group">
+          <Image 
+            src="/logo.png" 
+            alt="Beninease Logo" 
+            width={40}
+            height={40}
+            className="w-10 h-10 object-contain"
+          />
           <span
             className="font-display text-2xl font-bold text-[#006B3F]"
             style={{ letterSpacing: "0.12em" }}

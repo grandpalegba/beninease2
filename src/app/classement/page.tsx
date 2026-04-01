@@ -141,7 +141,8 @@ function RankingList() {
                     index === 0 ? "bg-[#008751] text-white" : 
                     index === 1 ? "bg-[#E9B113] text-white" : 
                     index === 2 ? "bg-[#E8112D] text-white" : 
-                    "bg-black text-white"
+                    index === 3 ? "bg-black text-white" :
+                    "bg-[#F9F9F7] text-gray-400"
                   }`}>
                     {rankLabel}
                   </div>

@@ -109,6 +109,20 @@ const MobileNavigation = () => {
           >
             <div className="flex flex-col min-h-full pt-24 pb-10 px-8">
               
+              {/* Logo Beninease */}
+              <div className="flex justify-center mb-8">
+                <Link href="/" onClick={() => setIsOpen(false)} className="flex items-center gap-3">
+                  <Image 
+                    src="/logo.png" 
+                    alt="Beninease Logo" 
+                    width={32}
+                    height={32}
+                    className="w-8 h-8 object-contain"
+                  />
+                  <span className="font-display text-2xl font-bold text-[#006B3F]">Beninease</span>
+                </Link>
+              </div>
+
               {/* 1. Identity Section (Top) */}
               {user ? (
                 <div className="mb-10 bg-[#F9F9F7] p-6 rounded-[32px] border border-[#006B3F]/10 shadow-sm">

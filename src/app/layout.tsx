@@ -7,6 +7,11 @@ import MobileNavigation from "@/components/MobileNavigation";
 export const metadata: Metadata = {
   title: "Beninease - Ambassadeurs du Bénin",
   description: "Découvrez et soutenez les talents qui font rayonner l'excellence béninoise.",
+  icons: {
+    icon: '/favicon.png',
+    shortcut: '/favicon.png',
+    apple: '/favicon.png',
+  },
   openGraph: {
     title: "Beninease - Ambassadeurs du Bénin",
     description: "Découvrez et soutenez les talents qui font rayonner l'excellence béninoise.",
