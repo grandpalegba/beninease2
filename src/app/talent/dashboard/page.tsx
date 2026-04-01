@@ -1,529 +1,248 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { createSupabaseBrowserClient } from '@/lib/supabase/client';
 import Link from 'next/link';
 import Image from 'next/image';
-import { LogOut, Users, Trophy, ExternalLink, Share2, TrendingUp, User, Mail } from 'lucide-react';
+import { 
+  LogOut, Users, Trophy, ExternalLink, Share2, 
+  TrendingUp, Mail, Image as ImageIcon, Video, 
+  Plus, X, CheckCircle2, AlertCircle, Loader2 
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
+// --- INTERFACES ---
 interface Talent {
   id: string;
   prenom: string;
   nom: string;
   avatar_url: string | null;
-  votes: number;
   bio: string | null;
   categorie: string | null;
   univers: string | null;
   slug: string;
   email?: string;
+  cover_images: string[]; // Tableau de 4 max
+  video_urls: string[];   // Tableau de 4 max
 }
 
-interface DashboardStats {
-  totalVotes: number;
-  ranking: number;
-  totalTalents: number;
-  isTop3?: boolean;
-  top3Position?: number;
-  top3Talents?: Array<{id: string, prenom: string, nom: string, voteCount: number}>;
-}
-
-export default function TalentDashboardPage() {
+export default function MaPageTalent() {
   const [talent, setTalent] = useState<Talent | null>(null);
-  const [stats, setStats] = useState<DashboardStats>({
-    totalVotes: 0,
-    ranking: 0,
-    totalTalents: 0
-  });
+  const [stats, setStats] = useState({ totalVotes: 0, ranking: 0, totalTalents: 0 });
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [logoutLoading, setLogoutLoading] = useState(false);
+  const [uploading, setUploading] = useState<{ type: 'image' | 'video', index: number } | null>(null);
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
 
-  useEffect(() => {
-    const fetchTalentData = async () => {
-      try {
-        // Step 1: Get Supabase session
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        
-        if (sessionError || !session) {
-          router.push('/talent/login');
-          return;
-        }
-
-        // Step 2: Fetch talent data with votes
-        const { data: talentData, error: talentError } = await supabase
-          .from('talents')
-          .select('*')
-          .eq('auth_user_id', session.user.id)
-          .single();
-
-        if (talentError || !talentData) {
-          setError('Talent data not found');
-          return;
-        }
-
-        // Step 3: Efficient single query for votes and ranking
-        const { data: votesAndRanking, error: statsError } = await supabase
-          .from('votes')
-          .select(`
-            id,
-            talent_id,
-            talents!inner(
-              id,
-              prenom,
-              nom,
-              votes
-            )
-          `)
-          .order('created_at', { ascending: false });
-
-        if (statsError) {
-          console.error('Error fetching stats:', statsError);
-        }
-
-        // Count votes for current talent
-        const talentVotes = votesAndRanking?.filter(v => v.talent_id === talentData.id) || [];
-        const totalVotes = talentVotes.length;
-
-        // Calculate ranking from talents data
-        const allTalentsWithVotes = votesAndRanking?.reduce((acc: Array<{id: string, prenom: string, nom: string, voteCount: number}>, vote) => {
-          const talent = vote.talents as any;
-          const existing = acc.find(t => t.id === talent.id);
-          if (existing) {
-            existing.voteCount++;
-          } else {
-            acc.push({
-              id: talent.id,
-              prenom: talent.prenom,
-              nom: talent.nom,
-              voteCount: 1
-            });
-          }
-          return acc;
-        }, [] as Array<{id: string, prenom: string, nom: string, voteCount: number}>);
-
-        // Add talents with zero votes
-        const { data: allTalents } = await supabase
-          .from('talents')
-          .select('id, prenom, nom');
-
-        const completeTalentsList = allTalents?.map(talent => {
-          const found = allTalentsWithVotes?.find(t => t.id === talent.id);
-          return {
-            id: talent.id,
-            prenom: talent.prenom,
-            nom: talent.nom,
-            voteCount: found?.voteCount || 0
-          };
-        }) || [];
-
-        // Sort by votes descending
-        const sortedTalents = completeTalentsList.sort((a, b) => b.voteCount - a.voteCount);
-        const ranking = sortedTalents.findIndex(t => t.id === talentData.id) + 1;
-        const totalTalents = sortedTalents.length;
-
-        // Get top 3 for badge display
-        const top3 = sortedTalents.slice(0, 3);
-        const isTop3 = top3.some(t => t.id === talentData.id);
-        const top3Position = top3.findIndex(t => t.id === talentData.id) + 1;
-
-        // Step 4: Get user email
-        const userEmail = session.user.email || '';
-
-        setTalent({ ...talentData, email: userEmail });
-        setStats({
-          totalVotes,
-          ranking,
-          totalTalents,
-          isTop3,
-          top3Position,
-          top3Talents: top3
-        });
-
-      } catch (err) {
-        setError('Failed to load talent data');
-        console.error('Dashboard error:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTalentData();
-  }, [router, supabase]);
-
-  const handleLogout = async () => {
-    setLogoutLoading(true);
+  const fetchData = useCallback(async () => {
     try {
-      await supabase.auth.signOut();
-      router.push('/talent/login');
-    } catch (err) {
-      console.error('Logout error:', err);
-    } finally {
-      setLogoutLoading(false);
-    }
-  };
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) { router.push('/talent/login'); return; }
 
-  const handleShare = async () => {
-    const shareUrl = `${window.location.origin}/talents/${talent?.slug}`;
-    
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `Vote for ${talent?.prenom} ${talent?.nom} on Beninease`,
-          text: talent?.bio || `Support ${talent?.prenom} ${talent?.nom} in the Beninease competition`,
-          url: shareUrl
-        });
-      } catch (err) {
-        console.log('Share cancelled');
-      }
-    } else {
-      // Fallback: copy to clipboard
-      navigator.clipboard.writeText(shareUrl).then(() => {
-        alert('Link copied to clipboard!');
+      // 1. Récupérer le talent via auth_user_id
+      const { data: talentData, error: tError } = await supabase
+        .from('talents')
+        .select('*')
+        .eq('auth_user_id', session.user.id)
+        .single();
+
+      if (tError || !talentData) throw new Error("Talent non trouvé");
+
+      // 2. Calcul des stats (Total historique via voter_id)
+      const { count: totalVotes } = await supabase
+        .from('votes')
+        .select('*', { count: 'exact', head: true })
+        .eq('talent_id', talentData.id);
+
+      // 3. Calcul du Ranking simplifié
+      const { data: allRankings } = await supabase.rpc('get_talents_ranking'); 
+      // Note: get_talents_ranking est une fonction SQL recommandée pour la performance
+      
+      const currentRank = allRankings?.find((r: any) => r.id === talentData.id)?.rank || 0;
+      const totalT = allRankings?.length || 0;
+
+      setTalent({
+        ...talentData,
+        email: session.user.email,
+        cover_images: talentData.cover_images || [],
+        video_urls: talentData.video_urls || []
       });
+      setStats({ totalVotes: totalVotes || 0, ranking: currentRank, totalTalents: totalT });
+
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }, [supabase, router]);
+
+  useEffect(() => { fetchData(); }, [fetchData]);
+
+  // --- GESTION DES MÉDIAS ---
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'image' | 'video', index: number) => {
+    const file = e.target.files?.[0];
+    if (!file || !talent) return;
+
+    // Validation Vidéo (2 minutes max)
+    if (type === 'video') {
+      const video = document.createElement('video');
+      video.preload = 'metadata';
+      video.onloadedmetadata = () => {
+        if (video.duration > 120) {
+          alert("La vidéo ne doit pas dépasser 2 minutes.");
+          return;
+        }
+      };
+      if (file.size > 50 * 1024 * 1024) { // 50MB limit
+        alert("Fichier trop lourd (Max 50Mo)");
+        return;
+      }
+    }
+
+    setUploading({ type, index });
+    try {
+      const bucket = type === 'image' ? 'covers' : 'videos';
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${talent.id}-${type}-${index}-${Date.now()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage.from(bucket).upload(fileName, file);
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(fileName);
+
+      // Mise à jour de l'array dans la DB
+      const newUrls = type === 'image' ? [...talent.cover_images] : [...talent.video_urls];
+      newUrls[index] = publicUrl;
+
+      const updateField = type === 'image' ? { cover_images: newUrls } : { video_urls: newUrls };
+      await supabase.from('talents').update(updateField).eq('id', talent.id);
+      
+      setTalent({ ...talent, ...updateField });
+    } catch (err) {
+      console.error(uploading);
+    } finally {
+      setUploading(null);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#F9F9F7] flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-8 h-8 border-2 border-[#008751] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading dashboard...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error || !talent) {
-    return (
-      <div className="min-h-screen bg-[#F9F9F7] flex items-center justify-center px-4">
-        <div className="max-w-md w-full bg-white rounded-[20px] shadow-lg p-8 text-center">
-          <div className="text-red-600 mb-4">
-            {error || 'Talent data not found'}
-          </div>
-          <Link
-            href="/talent/login"
-            className="text-[#008751] hover:text-[#006B40] font-medium"
-          >
-            Return to Login
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  const fullName = `${talent.prenom} ${talent.nom}`;
-  const avatarUrl = talent.avatar_url || `/talents/default-talent.jpg`;
-  const publicProfileUrl = `/talents/${talent.slug}`;
-  const shareUrl = `${window.location.origin}${publicProfileUrl}`;
+  if (loading) return <div className="min-h-screen flex items-center justify-center bg-[#F9F9F7]"><Loader2 className="animate-spin text-[#008751]" /></div>;
 
   return (
-    <div className="min-h-screen bg-[#F9F9F7]">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-4">
-              <div className="w-10 h-10 rounded-full overflow-hidden">
-                <Image
-                  src={avatarUrl}
-                  alt={fullName}
-                  width={40}
-                  height={40}
-                  className="object-cover"
-                />
-              </div>
-              <div>
-                <h1 className="text-lg font-bold text-gray-900">
-                  {fullName}
-                </h1>
-                <p className="text-sm text-gray-500 flex items-center">
-                  <Mail className="w-3 h-3 mr-1" />
-                  {talent.email}
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={handleLogout}
-              disabled={logoutLoading}
-              className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              {logoutLoading ? (
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              ) : (
-                <LogOut className="w-4 h-4" />
-              )}
-              Logout
-            </button>
+    <div className="min-h-screen bg-[#F9F9F7] pb-20">
+      {/* Header Statut */}
+      <nav className="bg-white border-b border-gray-100 px-6 py-4 flex justify-between items-center sticky top-0 z-30">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden relative border border-gray-100">
+            {talent?.avatar_url && <Image src={talent.avatar_url} alt="" fill className="object-cover" />}
+          </div>
+          <div>
+            <h1 className="font-bold text-gray-900 leading-none">Ma Page</h1>
+            <p className="text-[10px] text-gray-400 uppercase tracking-widest mt-1">{talent?.prenom} {talent?.nom}</p>
           </div>
         </div>
-      </header>
+        <button onClick={() => supabase.auth.signOut().then(() => router.push('/'))} className="text-gray-400 hover:text-red-500 transition-colors">
+          <LogOut size={20} />
+        </button>
+      </nav>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Welcome Section */}
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Welcome to your Dashboard, {talent.prenom}!
-          </h2>
-          <p className="text-gray-600">
-            Track your performance and engage with your supporters
-          </p>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {/* Total Votes Card */}
-          <div className="bg-white rounded-[20px] shadow-lg p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-[#008751]/10 rounded-full flex items-center justify-center">
-                <Users className="w-6 h-6 text-[#008751]" />
-              </div>
-              <span className="text-sm text-gray-500">Total Votes</span>
-            </div>
-            <div className="text-3xl font-bold text-gray-900 mb-2">
-              {stats.totalVotes.toLocaleString()}
-            </div>
-            <div className="text-sm text-gray-600">
-              People supporting you
-            </div>
-          </div>
-
-          {/* Ranking Card */}
-          <div className="bg-white rounded-[20px] shadow-lg p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
-                <Trophy className="w-6 h-6 text-yellow-600" />
-              </div>
-              <span className="text-sm text-gray-500">Ranking</span>
-            </div>
-            <div className="text-3xl font-bold text-gray-900 mb-2">
-              #{stats.ranking}
-              {stats.isTop3 && (
-                <span className="ml-2 text-lg">
-                  {stats.top3Position === 1 && '🥇'}
-                  {stats.top3Position === 2 && '🥈'}
-                  {stats.top3Position === 3 && '🥉'}
-                </span>
-              )}
-            </div>
-            <div className="text-sm text-gray-600">
-              of {stats.totalTalents} talents
-              {stats.isTop3 && (
-                <span className="block text-yellow-600 font-medium mt-1">
-                  Top 3 Position!
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* Public Profile Card */}
-          <div className="bg-white rounded-[20px] shadow-lg p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                <ExternalLink className="w-6 h-6 text-blue-600" />
-              </div>
-              <span className="text-sm text-gray-500">Public Page</span>
-            </div>
-            <Link
-              href={publicProfileUrl}
-              target="_blank"
-              className="block w-full text-center bg-[#008751] text-white px-4 py-2 rounded-lg hover:bg-[#006B40] transition-colors"
-            >
-              View Profile
-            </Link>
-          </div>
-
-          {/* Share Card */}
-          <div className="bg-white rounded-[20px] shadow-lg p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                <Share2 className="w-6 h-6 text-purple-600" />
-              </div>
-              <span className="text-sm text-gray-500">Share</span>
-            </div>
-            <button
-              onClick={handleShare}
-              className="w-full bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors"
-            >
-              Share Profile
+      <main className="max-w-5xl mx-auto px-6 py-8">
+        {/* TOP STATS */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+          <StatCard icon={<Users className="text-[#008751]" />} label="Votes Cumulés" value={stats.totalVotes} />
+          <StatCard icon={<Trophy className="text-yellow-500" />} label="Classement" value={`#${stats.ranking}`} sub={`sur ${stats.totalTalents}`} />
+          <div className="bg-[#008751] rounded-3xl p-6 text-white flex flex-col justify-between">
+            <p className="text-xs font-bold uppercase opacity-80">Visibilité</p>
+            <button onClick={() => window.open(`/talents/${talent?.slug}`, '_blank')} className="flex items-center justify-between group">
+              <span className="text-lg font-bold italic">Voir ma fiche</span>
+              <ExternalLink size={20} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
             </button>
           </div>
         </div>
 
-        {/* Profile Overview */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Profile Card */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-[20px] shadow-lg p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">
-                Profile Overview
-              </h3>
-              
-              {/* Avatar */}
-              <div className="flex justify-center mb-6">
-                <div className="w-32 h-32 rounded-full overflow-hidden">
-                  <Image
-                    src={avatarUrl}
-                    alt={fullName}
-                    width={128}
-                    height={128}
-                    className="object-cover"
-                  />
-                </div>
-              </div>
-
-              {/* Basic Info */}
-              <div className="space-y-4">
-                <div className="text-center">
-                  <h4 className="text-xl font-bold text-gray-900">{fullName}</h4>
-                  {talent.categorie && (
-                    <p className="text-sm text-[#008751] font-medium mt-1">
-                      {talent.categorie}
-                    </p>
-                  )}
-                  {talent.univers && (
-                    <p className="text-sm text-gray-600 mt-1">
-                      {talent.univers}
-                    </p>
-                  )}
-                </div>
-                
-                {talent.bio && (
-                  <div className="pt-4 border-t">
-                    <h5 className="text-sm font-medium text-gray-700 mb-2">Bio</h5>
-                    <p className="text-sm text-gray-600 leading-relaxed">{talent.bio}</p>
-                  </div>
+        {/* MÉDIAS : PHOTOS DE COUVERTURE (4) */}
+        <section className="mb-12">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-bold flex items-center gap-2"><ImageIcon size={20} /> Mes photos de couverture <span className="text-xs text-gray-400 font-normal">(4 max)</span></h3>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[0, 1, 2, 3].map((i) => (
+              <div key={i} className="aspect-[3/4] rounded-2xl border-2 border-dashed border-gray-200 relative overflow-hidden group bg-white">
+                {talent?.cover_images[i] ? (
+                  <>
+                    <Image src={talent.cover_images[i]} alt="" fill className="object-cover" />
+                    <button className="absolute top-2 right-2 bg-black/50 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                      <X size={14} />
+                    </button>
+                  </>
+                ) : (
+                  <label className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors">
+                    {uploading?.type === 'image' && uploading.index === i ? <Loader2 className="animate-spin text-[#008751]" /> : <Plus className="text-gray-300" />}
+                    <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, 'image', i)} />
+                  </label>
                 )}
               </div>
-            </div>
+            ))}
           </div>
+        </section>
 
-          {/* Performance Chart */}
-          <div className="lg:col-span-2">
-            <div className="bg-white rounded-[20px] shadow-lg p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">
-                Performance Overview
-              </h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Vote Performance */}
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-gray-700">Vote Performance</span>
-                    <TrendingUp className="w-4 h-4 text-green-600" />
-                  </div>
-                  <div className="text-2xl font-bold text-gray-900">
-                    {stats.totalVotes}
-                  </div>
-                  <div className="text-xs text-gray-600 mt-1">
-                    Total votes received
-                  </div>
-                </div>
-
-                {/* Ranking Performance */}
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-gray-700">Ranking</span>
-                    <Trophy className="w-4 h-4 text-yellow-600" />
-                  </div>
-                  <div className="text-2xl font-bold text-gray-900">
-                    #{stats.ranking}
-                  </div>
-                  <div className="text-xs text-gray-600 mt-1">
-                    Position out of {stats.totalTalents} talents
-                  </div>
-                </div>
-              </div>
-
-              {/* Quick Actions */}
-              <div className="mt-6 pt-6 border-t">
-                <h4 className="text-lg font-bold text-gray-900 mb-4">
-                  Quick Actions
-                </h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Link
-                    href={publicProfileUrl}
-                    target="_blank"
-                    className="flex items-center justify-center gap-2 bg-gray-100 text-gray-700 px-4 py-3 rounded-lg hover:bg-gray-200 transition-colors"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    View Public Page
-                  </Link>
-                  <button
-                    onClick={handleShare}
-                    className="flex items-center justify-center gap-2 bg-gray-100 text-gray-700 px-4 py-3 rounded-lg hover:bg-gray-200 transition-colors"
-                  >
-                    <Share2 className="w-4 h-4" />
-                    Share Profile
-                  </button>
-                </div>
-              </div>
-
-              {/* Progress Indicator */}
-              <div className="mt-6 pt-6 border-t">
-                <h4 className="text-sm font-medium text-gray-700 mb-2">
-                  Competition Progress
-                </h4>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className="bg-[#008751] h-2 rounded-full transition-all duration-500"
-                    style={{ width: `${Math.max(5, (stats.totalVotes / Math.max(1, stats.totalTalents * 10)) * 100)}%` }}
-                  ></div>
-                </div>
-                <p className="text-xs text-gray-600 mt-2">
-                  {stats.isTop3 ? (
-                    <span className="text-yellow-600 font-medium">
-                      🎉 Congratulations! You're in the Top 3!
-                    </span>
-                  ) : (
-                    `Keep campaigning to improve your ranking! You're ${stats.ranking} of ${stats.totalTalents}`
-                  )}
-                </p>
-              </div>
-
-              {/* Top 3 Display */}
-              {stats.top3Talents && stats.top3Talents.length > 0 && (
-                <div className="mt-6 pt-6 border-t">
-                  <h4 className="text-sm font-medium text-gray-700 mb-3">
-                    🏆 Current Top 3
-                  </h4>
-                  <div className="space-y-2">
-                    {stats.top3Talents.map((topTalent, index) => (
-                      <div 
-                        key={topTalent.id}
-                        className={`flex justify-between items-center p-2 rounded-lg ${
-                          topTalent.id === talent?.id 
-                            ? 'bg-[#008751]/10 border border-[#008751]/20' 
-                            : 'bg-gray-50'
-                        }`}
-                      >
-                        <div className="flex items-center space-x-2">
-                          <span className="text-lg">
-                            {index === 0 && '🥇'}
-                            {index === 1 && '🥈'}
-                            {index === 2 && '🥉'}
-                          </span>
-                          <span className="text-sm font-medium">
-                            {topTalent.prenom} {topTalent.nom}
-                          </span>
-                        </div>
-                        <span className="text-sm font-bold text-[#008751]">
-                          {topTalent.voteCount}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+        {/* MÉDIAS : VIDÉOS (4) */}
+        <section className="mb-12">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-bold flex items-center gap-2"><Video size={20} /> Mes vidéos de présentation <span className="text-xs text-gray-400 font-normal">(2 min max)</span></h3>
           </div>
-        </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[0, 1, 2, 3].map((i) => (
+              <div key={i} className="aspect-video rounded-3xl border-2 border-dashed border-gray-200 relative overflow-hidden bg-white">
+                {talent?.video_urls[i] ? (
+                  <video src={talent.video_urls[i]} controls className="w-full h-full object-cover" />
+                ) : (
+                  <label className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors">
+                    {uploading?.type === 'video' && uploading.index === i ? <Loader2 className="animate-spin text-[#008751]" /> : (
+                      <>
+                        <Video size={32} className="text-gray-200 mb-2" />
+                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Ajouter Vidéo {i + 1}</span>
+                      </>
+                    )}
+                    <input type="file" accept="video/*" className="hidden" onChange={(e) => handleFileUpload(e, 'video', i)} />
+                  </label>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* MESSAGE AUX ÉLECTEURS */}
+        <section className="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm">
+          <h3 className="text-lg font-bold mb-4">Mon message aux électeurs</h3>
+          <textarea 
+            className="w-full h-32 p-4 rounded-2xl bg-[#F9F9F7] border-none focus:ring-2 focus:ring-[#008751] text-gray-700 resize-none"
+            placeholder="Convainquez les citoyens de voter pour vous..."
+            defaultValue={talent?.bio || ""}
+            onBlur={async (e) => {
+              await supabase.from('talents').update({ bio: e.target.value }).eq('id', talent?.id);
+            }}
+          />
+          <p className="text-[10px] text-gray-400 mt-4 italic flex items-center gap-1">
+            <CheckCircle2 size={12} className="text-[#008751]" /> Votre message est automatiquement mis à jour sur votre fiche publique.
+          </p>
+        </section>
       </main>
+    </div>
+  );
+}
+
+function StatCard({ icon, label, value, sub }: { icon: any, label: string, value: string | number, sub?: string }) {
+  return (
+    <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center">{icon}</div>
+        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{label}</span>
+      </div>
+      <div className="flex items-baseline gap-2">
+        <span className="text-3xl font-bold text-gray-900">{value}</span>
+        {sub && <span className="text-xs text-gray-400">{sub}</span>}
+      </div>
     </div>
   );
 }
