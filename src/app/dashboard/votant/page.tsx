@@ -229,78 +229,63 @@ export default function VoterDashboard() {
     setRemainingVotes(remainingVotes);
   }, [supabase]);
 
-  useEffect(() => {
-    let active = true;
-    let realtimeChannel: ReturnType<typeof supabase.channel> | null = null;
+  const fetchProfile = useCallback(async () => {
+    setLoading(true);
+    setErrorMsg(null);
 
-    async function loadData() {
-      setLoading(true);
-      setErrorMsg(null);
-
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        router.push("/login");
-        return;
-      }
-
-      // Charger le profil depuis la table profiles
-      const { data: profileData, error: profileError } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .single();
-
-      if (profileError && profileError.code !== "PGRST116") {
-        console.error("Error loading profile:", profileError);
-      }
-
-      const profile = profileData || {
-        id: user.id,
-        prenom: null,
-        nom: null,
-        avatar_url: null,
-      };
-
-      if (active) {
-        setProfile(profile);
-        await fetchVotes(user.id);
-        setLoading(false);
-      }
-
-      /*
-      realtimeChannel = supabase
-        .channel(`voter_realtime_${user.id}`)
-        .on(
-          "postgres_changes",
-          {
-            event: "INSERT",
-            schema: "public",
-            table: "votes",
-            filter: `voter_id=eq.${user.id}`, // Changed from votant_id to voter_id
-          },
-          async () => {
-            await fetchVotes(user.id);
-          },
-        )
-        .subscribe();
-      */
-
-      setLoading(false);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      router.push("/login");
+      return;
     }
 
-    loadData().finally(() => {
-      if (active) setLoading(false);
-    });
+    // Charger le profil depuis la table profiles
+    const { data: profileData, error: profileError } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", user.id)
+      .single();
+
+    if (profileError && profileError.code !== "PGRST116") {
+      console.error("Error loading profile:", profileError);
+    }
+
+    const profile = profileData || {
+      id: user.id,
+      prenom: null,
+      nom: null,
+      avatar_url: null,
+    };
+
+    setProfile(profile);
+    await fetchVotes(user.id);
+    setLoading(false);
+  }, [supabase, router, fetchVotes]);
+
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
+
+  // Recharger le profil quand la page redevient visible (retour des settings)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        fetchProfile();
+      }
+    };
+
+    const handleFocus = () => {
+      fetchProfile();
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleFocus);
 
     return () => {
-      active = false;
-      /*
-      if (realtimeChannel) {
-        supabase.removeChannel(realtimeChannel);
-      }
-      */
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleFocus);
     };
-  }, [fetchVotes, router, supabase]);
+  }, [fetchProfile]);
 
   const stats = useMemo(() => {
     const totalVotes = votes.length;
@@ -361,6 +346,9 @@ export default function VoterDashboard() {
       return matchesUniverse && matchesCategory && matchesSearch;
     });
   }, [votes, selectedUniverse, selectedCategory, searchQuery]);
+
+  // Debug: Vérifier les données du profil
+  console.log("Données du profil dans le Dashboard :", profile);
 
   if (loading) {
     return (
