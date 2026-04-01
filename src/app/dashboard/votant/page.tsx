@@ -8,6 +8,7 @@ import {
   Loader2, 
   Calendar, 
   ArrowRight, 
+  Target, 
   Globe, 
   Heart,
   Flame,
@@ -54,6 +55,10 @@ export default function VoterDashboard() {
   const [votes, setVotes] = useState<VoteRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  
+  // États pour le quota de votes
+  const [votesLast24h, setVotesLast24h] = useState(0);
+  const [remainingVotes, setRemainingVotes] = useState(16);
 
   // Filters
   const [selectedUniverse, setSelectedUniverse] = useState<string>("Tous les univers");
@@ -61,8 +66,23 @@ export default function VoterDashboard() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const fetchVotes = useCallback(async (actualVotantId: string) => {
-    const { data, error } = await supabase
+    // Récupérer les votes des 24 dernières heures pour le quota
+    const { data: recentVotes, error: recentError } = await supabase
       .from("votes")
+      .select("id, created_at")
+      .eq("voter_id", actualVotantId)
+      .gte("created_at", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
+      .order("created_at", { ascending: false });
+
+    if (recentError) {
+      console.error("Dashboard Votant - Error fetching recent votes:", recentError);
+    }
+
+    const votesLast24h = recentVotes?.length || 0;
+    const remainingVotes = Math.max(0, 16 - votesLast24h);
+
+    // Récupérer tous les votes pour l'affichage principal
+    const { data, error } = await supabase
       .select(`
         id,
         created_at,
@@ -89,6 +109,10 @@ export default function VoterDashboard() {
     }
 
     setVotes((data ?? []) as unknown as VoteRow[]);
+    
+    // Stocker les informations de quota pour l'affichage
+    setVotesLast24h(votesLast24h);
+    setRemainingVotes(remainingVotes);
   }, [supabase]);
 
   useEffect(() => {
@@ -299,6 +323,12 @@ export default function VoterDashboard() {
                 {stats.universeCount}/16
               </span>
             </div>
+            <div className="bg-[#F9F9F7] p-4 rounded-2xl border border-[#F2EDE4] text-center">
+              <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Profondeur</span>
+              <span className="text-2xl font-bold text-[#E9B113] flex items-center justify-center gap-2">
+                <Target className="w-5 h-5" />
+                {stats.categoryCount}/64
+              </span>
           </div>
         </div>
       </div>
@@ -342,14 +372,14 @@ export default function VoterDashboard() {
                 {/* Impact Bar */}
                 <div className="space-y-2">
                   <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest">
-                    <span className="flex items-center gap-1.5 text-gray-400"><Flame className="w-3 h-3 text-[#006B3F]" /> Impact (Votes)</span>
-                    <span className="text-[#006B3F]">{stats.totalVotes} {nextStatus && `/ ${nextStatus.minVotes}`}</span>
+                    <span className="flex items-center gap-1.5 text-gray-400"><Flame className="w-3 h-3 text-green-600" /> Impact (Votes)</span>
+                    <span className="text-green-600">{stats.totalVotes} {nextStatus && `/ ${nextStatus.minVotes}`}</span>
                   </div>
                   <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
                     <motion.div 
                       initial={{ width: 0 }}
                       animate={{ width: `${Math.min(100, nextStatus ? (stats.totalVotes / nextStatus.minVotes) * 100 : 100)}%` }}
-                      className="h-full bg-[#006B3F] rounded-full"
+                      className="h-full bg-green-600 rounded-full"
                     />
                   </div>
                 </div>
@@ -357,29 +387,29 @@ export default function VoterDashboard() {
                 {/* Exploration Bar */}
                 <div className="space-y-2">
                   <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest">
-                    <span className="flex items-center gap-1.5 text-gray-400"><Globe className="w-3 h-3 text-[#E9B113]" /> Exploration (Univers)</span>
-                    <span className="text-[#E9B113]">{stats.universeCount} {nextStatus && `/ ${nextStatus.minUniverses}`}</span>
+                    <span className="flex items-center gap-1.5 text-gray-400"><Globe className="w-3 h-3 text-yellow-500" /> Exploration (Univers)</span>
+                    <span className="text-yellow-500">{stats.universeCount} / 16</span>
                   </div>
                   <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
                     <motion.div 
                       initial={{ width: 0 }}
-                      animate={{ width: `${Math.min(100, nextStatus ? (stats.universeCount / nextStatus.minUniverses) * 100 : 100)}%` }}
-                      className="h-full bg-[#E9B113] rounded-full"
+                      animate={{ width: `${Math.min(100, (stats.universeCount / 16) * 100)}%` }}
+                      className="h-full bg-yellow-500 rounded-full"
                     />
                   </div>
                 </div>
-
-                {/* Profondeur Bar */}
+                
+                {/* Depth Bar */}
                 <div className="space-y-2">
                   <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest">
-                    <span className="flex items-center gap-1.5 text-gray-400"><Brain className="w-3 h-3 text-purple-500" /> Profondeur (Catégories)</span>
-                    <span className="text-purple-500">{stats.categoryCount} {nextStatus && `/ ${nextStatus.minCategories}`}</span>
+                    <span className="flex items-center gap-1.5 text-gray-400"><Target className="w-3 h-3 text-red-600" /> Profondeur (Catégories)</span>
+                    <span className="text-red-600">{stats.categoryCount} / 64</span>
                   </div>
                   <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
                     <motion.div 
                       initial={{ width: 0 }}
                       animate={{ width: `${Math.min(100, nextStatus ? (stats.categoryCount / nextStatus.minCategories) * 100 : 100)}%` }}
-                      className="h-full bg-purple-500 rounded-full"
+                      className="h-full bg-red-600 rounded-full"
                     />
                   </div>
                 </div>
@@ -565,7 +595,6 @@ export default function VoterDashboard() {
               </Link>
             </motion.div>
           </div>
-
         </div>
       </div>
     </div>
