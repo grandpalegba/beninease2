@@ -1,7 +1,23 @@
 import Image from "next/image";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import heroBg from "@/assets/hero-benin-2.png";
 
 const HeroSection = () => {
+  const words = ['Beautiful', 'Powerful', 'Creative', 'Space', 'Magic', 'United', 'Shining', 'Rich'];
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const currentWord = words[currentIndex];
+    const duration = currentWord === 'Rich' ? 4000 : 2500;
+    
+    const timer = setTimeout(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % words.length);
+    }, duration);
+
+    return () => clearTimeout(timer);
+  }, [currentIndex, words]);
+
   return (
     <section className="relative bg-[#F9F9F7] overflow-hidden">
       <div className="container max-w-6xl px-4 pt-28 pb-10 text-center md:pt-32 md:pb-14 relative z-10">
@@ -12,12 +28,24 @@ const HeroSection = () => {
           >
             Benin Is
           </h1>
-          <p
-            className="font-display text-xl font-medium text-[#006B3F] sm:text-2xl md:text-3xl lg:text-4xl"
-            style={{ letterSpacing: "0.02em" }}
-          >
-            US : Unity & Success
-          </p>
+          <div className="h-12 md:h-14 lg:h-16 flex items-center justify-center">
+            <AnimatePresence mode="wait">
+              <motion.p
+                key={currentIndex}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ 
+                  duration: 0.6,
+                  ease: "easeInOut"
+                }}
+                className="font-display text-xl font-medium text-[#008751] sm:text-2xl md:text-3xl lg:text-4xl"
+                style={{ letterSpacing: "0.02em" }}
+              >
+                {words[currentIndex]}
+              </motion.p>
+            </AnimatePresence>
+          </div>
         </div>
 
         <div
