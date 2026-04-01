@@ -120,23 +120,42 @@ function UserNameDisplay() {
     const fetchUserName = async () => {
       try {
         const supabase = createSupabaseBrowserClient();
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-
-        const { data, error } = await supabase
+        
+        // Timeout de 3 secondes pour éviter le gel
+        const fetchPromise = supabase
           .from("profiles")
           .select('prenom, nom')
-          .eq("id", user.id)
+          .eq("id", (await supabase.auth.getUser()).data.user?.id || '')
           .single();
+
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Timeout after 3 seconds')), 3000)
+        );
+
+        const { data, error } = await Promise.race([fetchPromise, timeoutPromise]) as any;
+
+        if (error) {
+          throw error;
+        }
 
         console.log('Test Colonnes:', data);
         
-        if (data) {
-          setUserName({ prenom: data.prenom, nom: data.nom });
+        // Gestion des données nulles/absentes
+        if (data === null || data === undefined) {
+          setUserName({ prenom: null, nom: null });
+          return;
         }
-      } catch (err) {
-        console.error("Erreur fetch nom:", err);
+
+        setUserName({ 
+          prenom: data.prenom || null, 
+          nom: data.nom || null 
+        });
+      } catch (err: any) {
+        console.error("Erreur Fetch Profil:", err?.message, err?.hint);
+        // En cas d'erreur, initialiser avec des valeurs vides
+        setUserName({ prenom: null, nom: null });
       } finally {
+        // ARRÊT D'URGENCE du chargement - OBLIGATOIRE
         setLoading(false);
       }
     };
