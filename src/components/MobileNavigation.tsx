@@ -203,7 +203,7 @@ const MobileNavigation = () => {
               {user && (
                 <div className="mt-auto space-y-4 pt-6">
                   <Link
-                    href="/dashboard/parametres"
+                    href="/settings"
                     onClick={() => setIsOpen(false)}
                     className="flex items-center gap-3 text-gray-500 font-bold text-sm hover:text-[#006B3F] transition-colors"
                   >

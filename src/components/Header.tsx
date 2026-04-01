@@ -245,7 +245,7 @@ const Header = () => {
                     </Link>
                     
                     <Link
-                      href="/dashboard/parametres"
+                      href="/settings"
                       onClick={() => setShowDropdown(false)}
                       className="flex items-center gap-4 px-6 py-3 text-sm font-bold text-gray-700 hover:bg-[#006B3F]/5 hover:text-[#006B3F] transition-all group"
                     >
