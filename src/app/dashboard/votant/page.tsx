@@ -130,36 +130,29 @@ export default function VoterDashboard() {
         return;
       }
 
+      // Charger le profil depuis la table profiles
       const { data: profileData, error: profileError } = await supabase
-        .from("votes")
-        .select("count")
-        .eq("voter_id", user.id)
-        .maybeSingle();
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
 
-      if (profileError) {
-        setErrorMsg(profileError.message);
+      if (profileError && profileError.code !== "PGRST116") {
+        console.error("Error loading profile:", profileError);
       }
 
-      const ensuredProfile = profileData ?? {
+      const profile = profileData || {
         id: user.id,
-        role: "votant",
-        full_name: user.user_metadata?.full_name || user.user_metadata?.name || user.email || "Votant",
-        avatar_url: user.user_metadata?.avatar_url || user.user_metadata?.picture || null,
-        whatsapp: null,
-        created_at: new Date().toISOString(),
+        prenom: null,
+        nom: null,
+        avatar_url: null,
       };
 
-      if (!profileData) {
-        console.log("No existing votes found for user:", user.id);
-      }
-
       if (active) {
-        setProfile(ensuredProfile as Votant);
+        setProfile(profile as Votant);
+        await fetchVotes(user.id);
+        setLoading(false);
       }
-
-      await fetchVotes(user.id);
-
-      if (!active) return;
 
       /*
       realtimeChannel = supabase
@@ -297,7 +290,7 @@ export default function VoterDashboard() {
               transition={{ delay: 0.1 }}
               className="text-4xl font-display font-bold text-black"
             >
-              {profile?.full_name || profile?.prenom || "Citoyen Béninois"}
+              {(profile?.prenom && profile?.nom) ? `${profile.prenom} ${profile.nom}` : profile?.prenom || profile?.full_name || "Citoyen Béninois"}
             </motion.h1>
             <motion.p 
               initial={{ opacity: 0, y: 10 }}
@@ -307,6 +300,35 @@ export default function VoterDashboard() {
             >
               Votre parcours citoyen contribue au rayonnement de l&apos;excellence béninoise.
             </motion.p>
+            
+            {/* Share Button */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <button
+                onClick={() => {
+                  const shareText = `Je suis fier d'avoir atteint le grade de ${stats.currentStatus.label} ! Découvrez l'excellence béninoise et votez vous aussi sur Benin Excellence.`;
+                  
+                  if (navigator.share) {
+                    navigator.share({
+                      title: "Mon parcours citoyen",
+                      text: shareText,
+                      url: window.location.href
+                    }).catch(err => console.log('Share failed:', err));
+                  } else {
+                    // Fallback: copy to clipboard
+                    navigator.clipboard.writeText(shareText).then(() => {
+                      alert("Texte copié dans le presse-papier !");
+                    }).catch(err => console.error('Copy failed:', err));
+                  }
+                }}
+                className="inline-flex items-center gap-2 bg-[#008751] text-white font-medium py-2 px-4 rounded-xl hover:bg-[#006B3F] transition-colors text-sm"
+              >
+                Partager mon statut
+              </button>
+            </motion.div>
           </div>
 
           <div className="grid grid-cols-2 gap-4 w-full md:w-auto">
