@@ -102,6 +102,11 @@ const ParametresPage = () => {
 
       setProfile(prev => prev ? { ...prev, ...updateData } : null);
       toast.success("✅ Profil mis à jour avec succès !");
+      
+      // Émettre un événement pour notifier les autres composants
+      window.dispatchEvent(new CustomEvent('profile-updated', { 
+        detail: updateData 
+      }));
     } catch (err) {
       console.error("Erreur:", err);
       toast.error("Une erreur est survenue");

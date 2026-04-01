@@ -115,32 +115,44 @@ function UserNameDisplay() {
   const [loading, setLoading] = useState(true);
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
-  useEffect(() => {
-    const fetchUserName = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+  const fetchUserName = useCallback(async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
-        const { data, error } = await supabase
-          .from("profiles")
-          .select('prenom, nom')
-          .eq("id", user.id)
-          .single();
+      const { data, error } = await supabase
+        .from("profiles")
+        .select('prenom, nom')
+        .eq("id", user.id)
+        .single();
 
-        console.log('Test Colonnes:', data);
-        
-        if (data) {
-          setUserName({ prenom: data.prenom, nom: data.nom });
-        }
-      } catch (err) {
-        console.error("Erreur fetch nom:", err);
-      } finally {
-        setLoading(false);
+      console.log('Test Colonnes:', data);
+      
+      if (data) {
+        setUserName({ prenom: data.prenom, nom: data.nom });
       }
+    } catch (err) {
+      console.error("Erreur fetch nom:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [supabase]);
+
+  useEffect(() => {
+    fetchUserName();
+
+    // Écouter les mises à jour de profil
+    const handleProfileUpdate = () => {
+      console.log('Profil mis à jour, rechargement...');
+      fetchUserName();
     };
 
-    fetchUserName();
-  }, [supabase]);
+    window.addEventListener('profile-updated', handleProfileUpdate);
+    
+    return () => {
+      window.removeEventListener('profile-updated', handleProfileUpdate);
+    };
+  }, [fetchUserName]);
 
   if (loading) {
     return (
