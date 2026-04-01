@@ -62,6 +62,7 @@ export default function TalentProfileClient({
   const router = useRouter();
   const { isAuthenticated, checkHasVoted } = useVoter();
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
+  const [activeUser, setActiveUser] = useState<any>(null);  // ← AJOUTÉ: État pour l'utilisateur courant
 
   const [activeTab, setActiveTab] = useState("Vidéos");
   const [activeVideoTab, setActiveVideoTab] = useState("Qui je suis");
@@ -79,6 +80,23 @@ export default function TalentProfileClient({
   const getFileName = (tabName: string) => {
     return tabName.toLowerCase().replace(/ /g, "-");
   };
+
+  // Récupérer l'utilisateur courant au chargement du composant
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setActiveUser(session?.user || null);
+    };
+    
+    getCurrentUser();
+    
+    // Écouter les changements de session
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setActiveUser(session?.user || null);
+    });
+    
+    return () => subscription.unsubscribe();
+  }, [supabase]);
 
   // Image de profil (avatar) prioritaire si elle vient de Supabase
   const [profileImage, setProfileImage] = useState(avatarUrl || candidate.portrait || "/placeholder-portrait.jpg");
@@ -112,7 +130,7 @@ export default function TalentProfileClient({
   async function checkIfVoted() {
     if (!activeUser?.id || !candidate?.id) return;
     
-    console.log("� VÉRIFICATION VOTE - voter_id:", activeUser.id, "| talent_id:", candidate.id);
+    console.log("🔄 VÉRIFICATION VOTE - voter_id:", activeUser.id, "| talent_id:", candidate.id);
     
     const { data, error } = await supabase
       .from('votes')
@@ -136,9 +154,8 @@ export default function TalentProfileClient({
   const [isCopied, setIsShareCopied] = useState(false);
 
   const handleVote = async () => {
-    // Récupération forcée de la session actuelle
-    const { data: { session: currentSession } } = await supabase.auth.getSession();
-    const activeUser = currentSession?.user;
+    // Utiliser l'état activeUser déjà défini
+    if (!activeUser) return;
 
     if (!profileId || !activeUser) return;
 
