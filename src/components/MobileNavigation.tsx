@@ -11,17 +11,27 @@ import type { User as SupabaseUser } from "@supabase/supabase-js";
 import type { Votant } from "@/types";
 
 type UserStats = {
-  voter_id: string; // Changed from votant_id to voter_id
+  voter_id: string;
   total_votes: number;
   created_at?: string;
   updated_at?: string;
 };
 
+type UserProfile = {
+  id: string;
+  prenom: string | null;
+  nom: string | null;
+  avatar_url: string | null;
+  role?: string;
+  full_name?: string;
+};
+
 const MobileNavigation = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [profile, setProfile] = useState<Votant | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [userStats, setUserStats] = useState<UserStats | null>(null);
   const [user, setUser] = useState<SupabaseUser | null>(null);
+  const [isTalent, setIsTalent] = useState(false);
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
 
@@ -32,12 +42,14 @@ const MobileNavigation = () => {
         const { data: { user: currentUser } } = await supabase.auth.getUser();
         setUser(currentUser);
         if (currentUser) {
-          const [profileRes, statsRes] = await Promise.all([
-            supabase.from("votes").select("*", { count: 'exact', head: true }).eq("voter_id", currentUser.id),
-            supabase.from("user_stats").select("*").eq("voter_id", currentUser.id).single() // Changed from votant_id to voter_id
+          const [profileRes, statsRes, talentRes] = await Promise.all([
+            supabase.from("profiles").select("*").eq("id", currentUser.id).maybeSingle(),
+            supabase.from("user_stats").select("*").eq("voter_id", currentUser.id).single(),
+            supabase.from("talents").select("id").eq("auth_user_id", currentUser.id).maybeSingle()
           ]);
           if (profileRes.data) setProfile(profileRes.data);
           if (statsRes.data) setUserStats(statsRes.data);
+          setIsTalent(!!talentRes.data);
         }
       } catch (err) {
         console.log("Public mobile user session:", err);
@@ -45,22 +57,23 @@ const MobileNavigation = () => {
     };
     checkUser();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setTimeout(async () => {
-        const currentUser = session?.user ?? null;
-        setUser(currentUser);
-        if (currentUser) {
-          const [profileRes, statsRes] = await Promise.all([
-            supabase.from("votes").select("*", { count: 'exact', head: true }).eq("voter_id", currentUser.id),
-            supabase.from("user_stats").select("*").eq("voter_id", currentUser.id).single() // Changed from votant_id to voter_id
-          ]);
-          if (profileRes.data) setProfile(profileRes.data);
-          if (statsRes.data) setUserStats(statsRes.data);
-        } else {
-          setProfile(null);
-          setUserStats(null);
-        }
-      }, 0);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+      if (currentUser) {
+        const [profileRes, statsRes, talentRes] = await Promise.all([
+          supabase.from("profiles").select("*").eq("id", currentUser.id).maybeSingle(),
+          supabase.from("user_stats").select("*").eq("voter_id", currentUser.id).single(),
+          supabase.from("talents").select("id").eq("auth_user_id", currentUser.id).maybeSingle()
+        ]);
+        if (profileRes.data) setProfile(profileRes.data);
+        if (statsRes.data) setUserStats(statsRes.data);
+        setIsTalent(!!talentRes.data);
+      } else {
+        setProfile(null);
+        setUserStats(null);
+        setIsTalent(false);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -141,7 +154,6 @@ const MobileNavigation = () => {
                       {userGrade && (
                         <div className="flex items-center gap-1.5 mt-1">
                           <span className="text-xs font-black uppercase tracking-widest text-[#006B3F]/70">{userGrade.label}</span>
-                          <span className="text-[10px]">{userGrade.icon}</span>
                         </div>
                       )}
                     </div>
@@ -191,12 +203,24 @@ const MobileNavigation = () => {
               {user && (
                 <div className="mt-auto space-y-4 pt-6">
                   <Link
-                    href="/profile/edit"
+                    href="/dashboard/parametres"
                     onClick={() => setIsOpen(false)}
                     className="flex items-center gap-3 text-gray-500 font-bold text-sm hover:text-[#006B3F] transition-colors"
                   >
-                    <Settings size={18} /> Paramètres du compte
+                    <Settings size={18} /> Paramètres
                   </Link>
+                  
+                  {/* Lien "Ma Page" - uniquement pour les talents */}
+                  {isTalent && (
+                    <Link
+                      href="/talent/dashboard"
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center gap-3 text-gray-500 font-bold text-sm hover:text-[#006B3F] transition-colors"
+                    >
+                      <LayoutDashboard size={18} /> Ma Page
+                    </Link>
+                  )}
+                  
                   <button
                     onClick={() => { handleSignOut(); setIsOpen(false); }}
                     className="flex items-center gap-3 text-red-500 font-bold text-sm hover:text-red-600 transition-colors w-full text-left"

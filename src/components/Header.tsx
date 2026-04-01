@@ -17,11 +17,21 @@ type UserStats = {
   updated_at?: string;
 };
 
+type UserProfile = {
+  id: string;
+  prenom: string | null;
+  nom: string | null;
+  avatar_url: string | null;
+  role?: string;
+  full_name?: string;
+};
+
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<Votant | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [userStats, setUserStats] = useState<UserStats | null>(null);
+  const [isTalent, setIsTalent] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
@@ -61,14 +71,16 @@ const Header = () => {
         setUser(currentUser);
         
         if (currentUser) {
-          // Parallel fetch for profile and stats using votes table directly
-          const [profileRes, statsRes] = await Promise.all([
-            supabase.from("votes").select("*", { count: 'exact', head: true }).eq("voter_id", currentUser.id),
-            supabase.from("user_stats").select("*").eq("voter_id", currentUser.id).single() // Changed from votant_id to voter_id
+          // Parallel fetch for profile, stats, and talent status
+          const [profileRes, statsRes, talentRes] = await Promise.all([
+            supabase.from("profiles").select("*").eq("id", currentUser.id).maybeSingle(),
+            supabase.from("user_stats").select("*").eq("voter_id", currentUser.id).single(),
+            supabase.from("talents").select("id").eq("auth_user_id", currentUser.id).maybeSingle()
           ]);
 
           if (profileRes.data) setProfile(profileRes.data);
           if (statsRes.data) setUserStats(statsRes.data);
+          setIsTalent(!!talentRes.data);
         }
       } catch (err) {
         console.log("Public user or session error in Header:", err);
@@ -78,26 +90,29 @@ const Header = () => {
     checkUser();
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       setTimeout(async () => {
         const currentUser = session?.user ?? null;
         setUser(currentUser);
         
         if (currentUser) {
           try {
-            const [profileRes, statsRes] = await Promise.all([
-              supabase.from("votes").select("*").eq("voter_id", currentUser.id).single(),
-              supabase.from("user_stats").select("*").eq("voter_id", currentUser.id).single() // Changed from votant_id to voter_id
+            const [profileRes, statsRes, talentRes] = await Promise.all([
+              supabase.from("profiles").select("*").eq("id", currentUser.id).maybeSingle(),
+              supabase.from("user_stats").select("*").eq("voter_id", currentUser.id).single(),
+              supabase.from("talents").select("id").eq("auth_user_id", currentUser.id).maybeSingle()
             ]);
 
             if (profileRes.data) setProfile(profileRes.data);
             if (statsRes.data) setUserStats(statsRes.data);
+            setIsTalent(!!talentRes.data);
           } catch (err) {
             console.error("Error updating user data in Header:", err);
           }
         } else {
           setProfile(null);
           setUserStats(null);
+          setIsTalent(false);
         }
 
         if (event === 'SIGNED_OUT') {
@@ -230,7 +245,7 @@ const Header = () => {
                     </Link>
                     
                     <Link
-                      href="/profile/edit"
+                      href="/dashboard/parametres"
                       onClick={() => setShowDropdown(false)}
                       className="flex items-center gap-4 px-6 py-3 text-sm font-bold text-gray-700 hover:bg-[#006B3F]/5 hover:text-[#006B3F] transition-all group"
                     >
@@ -239,6 +254,20 @@ const Header = () => {
                       </div>
                       ⚙️ Paramètres
                     </Link>
+
+                    {/* Lien "Ma Page" - uniquement pour les talents */}
+                    {isTalent && (
+                      <Link
+                        href="/talent/dashboard"
+                        onClick={() => setShowDropdown(false)}
+                        className="flex items-center gap-4 px-6 py-3 text-sm font-bold text-gray-700 hover:bg-[#006B3F]/5 hover:text-[#006B3F] transition-all group"
+                      >
+                        <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-[#006B3F]/10 transition-colors">
+                          <LayoutDashboard className="w-4 h-4" />
+                        </div>
+                          Ma Page
+                      </Link>
+                    )}
 
                     <div className="h-px bg-gray-50 my-2 mx-6" />
 
