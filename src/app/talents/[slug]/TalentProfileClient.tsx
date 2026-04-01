@@ -400,14 +400,6 @@ export default function TalentProfileClient({
                 </div>
               </div>
 
-              {/* Descriptive Text Section */}
-              <div className="mt-8 p-6 bg-[#F9F9F7] rounded-2xl border border-[#004d3d]/10">
-                <h3 className="text-xs font-bold uppercase tracking-widest text-[#004d3d] mb-3">Détails de la présentation</h3>
-                <p className="text-black/80 text-base leading-relaxed">
-                  {candidate.tabs[activeVideoTab]}
-                </p>
-              </div>
-
               {/* 5. Footer & Action Buttons */}
               <div className="mt-8 flex flex-col sm:flex-row gap-4">
                 {hasVoted ? (
