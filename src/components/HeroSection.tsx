@@ -10,13 +10,13 @@ const HeroSection = () => {
             className="font-display text-6xl font-bold text-black sm:text-7xl md:text-8xl lg:text-9xl mb-4"
             style={{ lineHeight: "1.05" }}
           >
-            Benin is US
+            Benin Is
           </h1>
           <p
             className="font-display text-xl font-medium text-[#006B3F] sm:text-2xl md:text-3xl lg:text-4xl"
             style={{ letterSpacing: "0.02em" }}
           >
-            Unity & Success
+            US : Unity & Success
           </p>
         </div>
 
