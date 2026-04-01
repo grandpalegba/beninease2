@@ -29,6 +29,7 @@ import { VoterStatusBadge } from "@/components/voter/VoterStatusBadge";
 import { universes } from "@/lib/data/universes";
 import { cn } from "@/lib/utils";
 import type { Votant } from "@/types";
+import * as htmlToImage from 'html-to-image';
 
 type TalentMini = {
   id: string;
@@ -109,6 +110,7 @@ export default function VoterDashboard() {
   const [votes, setVotes] = useState<VoteRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [generatingCard, setGeneratingCard] = useState(false);
   
   // États pour le quota de votes
   const [votesLast24h, setVotesLast24h] = useState(0);
@@ -118,6 +120,57 @@ export default function VoterDashboard() {
   const [selectedUniverse, setSelectedUniverse] = useState<string>("Tous les univers");
   const [selectedCategory, setSelectedCategory] = useState<string>("Toutes les catégories");
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Generate and Share Card
+  const generateAndShareCard = async () => {
+    setGeneratingCard(true);
+    
+    try {
+      const cardElement = document.getElementById('citizen-card');
+      if (!cardElement) {
+        throw new Error('Card element not found');
+      }
+
+      // Generate image from the hidden card element
+      const dataUrl = await htmlToImage.toPng(cardElement, {
+        width: 800,
+        height: 800,
+        style: {
+          transform: 'scale(1)',
+          transformOrigin: 'top left'
+        }
+      });
+
+      // Convert to blob for sharing
+      const response = await fetch(dataUrl);
+      const blob = await response.blob();
+      const file = new File([blob], 'citizen-card.png', { type: 'image/png' });
+
+      const shareText = `Je suis fier d'être ${stats.currentStatus.label} ! Découvrez l'excellence béninoise et votez vous aussi sur Benin Excellence.`;
+
+      if (navigator.share && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          title: 'Ma Carte Citoyenne',
+          text: shareText,
+          files: [file]
+        });
+      } else {
+        // Fallback: download image and copy text
+        const link = document.createElement('a');
+        link.download = 'citizen-card.png';
+        link.href = dataUrl;
+        link.click();
+
+        await navigator.clipboard.writeText(shareText);
+        alert('Carte téléchargée et texte copié dans le presse-papier !');
+      }
+    } catch (error) {
+      console.error('Error generating/sharing card:', error);
+      alert('Erreur lors de la génération de la carte');
+    } finally {
+      setGeneratingCard(false);
+    }
+  };
 
   const fetchVotes = useCallback(async (actualVotantId: string) => {
     // Récupérer les votes des 24 dernières heures pour le quota
@@ -365,30 +418,32 @@ export default function VoterDashboard() {
               transition={{ delay: 0.3 }}
             >
               <button
-                onClick={() => {
-                  const shareText = `Je suis fier d'avoir atteint le grade de ${stats.currentStatus.label} ! Découvrez l'excellence béninoise et votez vous aussi sur Benin Excellence.`;
-                  
-                  if (navigator.share) {
-                    navigator.share({
-                      title: "Mon parcours citoyen",
-                      text: shareText,
-                      url: window.location.href
-                    }).catch(err => console.log('Share failed:', err));
-                  } else {
-                    // Fallback: copy to clipboard
-                    navigator.clipboard.writeText(shareText).then(() => {
-                      alert("Texte copié dans le presse-papier !");
-                    }).catch(err => console.error('Copy failed:', err));
-                  }
-                }}
-                className="inline-flex items-center gap-2 bg-[#008751] text-white font-medium py-2 px-4 rounded-xl hover:bg-[#006B3F] transition-colors text-sm"
+                onClick={generateAndShareCard}
+                disabled={generatingCard}
+                className="inline-flex items-center gap-2 bg-[#008751] text-white font-medium py-2 px-4 rounded-xl hover:bg-[#006B3F] transition-colors text-sm disabled:opacity-50"
               >
-                Partager mon statut
+                {generatingCard ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Génération...
+                  </>
+                ) : (
+                  <>
+                    Partager ma carte
+                  </>
+                )}
               </button>
             </motion.div>
           </div>
 
           <div className="grid grid-cols-2 gap-4 w-full md:w-auto">
+            <div className="bg-[#F9F9F7] p-4 rounded-2xl border border-[#F2EDE4] text-center">
+              <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Total Votes</span>
+              <span className="text-2xl font-bold text-[#008751] flex items-center justify-center gap-2">
+                <Flame className="w-5 h-5 fill-[#008751]" />
+                {stats.totalVotes}
+              </span>
+            </div>
             <div className="bg-[#F9F9F7] p-4 rounded-2xl border border-[#F2EDE4] text-center">
               <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Impact (Votes)</span>
               <span className="text-2xl font-bold text-[#008751] flex items-center justify-center gap-2">
@@ -676,6 +731,77 @@ export default function VoterDashboard() {
                 Voter maintenant <ArrowRight size={14} />
               </Link>
             </motion.div>
+          </div>
+        </div>
+      </div>
+
+      {/* Hidden Citizen Card for Image Generation */}
+      <div 
+        id="citizen-card" 
+        className="fixed -top-[9999px] -left-[9999px] w-[800px] h-[800px] bg-white p-8"
+      >
+        <div className="h-full flex flex-col justify-between">
+          {/* Header */}
+          <div className="flex items-center gap-6">
+            <div className="w-24 h-24 rounded-2xl overflow-hidden bg-gray-50">
+              <AvatarFallback profile={profile} size="large" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-black">
+                {(profile?.prenom && profile?.nom) ? `${profile.prenom} ${profile.nom}` : profile?.prenom || "Citoyen Béninois"}
+              </h2>
+              <div className="text-lg font-medium text-[#008751] mt-1">
+                {stats.currentStatus.label}
+              </div>
+            </div>
+          </div>
+
+          {/* Progress Bars */}
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <div className="flex justify-between items-center text-sm font-bold uppercase">
+                <span className="text-gray-600">Impact (Votes)</span>
+                <span className="text-green-600">{stats.totalVotes}</span>
+              </div>
+              <div className="h-4 bg-gray-100 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-green-600 rounded-full"
+                  style={{ width: `${Math.min(100, (stats.totalVotes / 250) * 100)}%` }}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex justify-between items-center text-sm font-bold uppercase">
+                <span className="text-gray-600">Exploration (Univers)</span>
+                <span className="text-yellow-600">{stats.universeCount} / 16</span>
+              </div>
+              <div className="h-4 bg-gray-100 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-yellow-500 rounded-full"
+                  style={{ width: `${(stats.universeCount / 16) * 100}%` }}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex justify-between items-center text-sm font-bold uppercase">
+                <span className="text-gray-600">Profondeur (Catégories)</span>
+                <span className="text-red-600">{stats.categoryCount} / 64</span>
+              </div>
+              <div className="h-4 bg-gray-100 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-red-600 rounded-full"
+                  style={{ width: `${(stats.categoryCount / 64) * 100}%` }}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="text-center">
+            <div className="text-xs text-gray-500 mb-2">Benin Excellence</div>
+            <div className="text-lg font-bold text-black">🇧🇯</div>
           </div>
         </div>
       </div>
