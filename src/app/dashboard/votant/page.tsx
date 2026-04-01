@@ -5,237 +5,601 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { 
-  Loader2, Calendar, ArrowRight, Target, Globe, Heart,
-  Flame, Zap, CheckCircle2, Timer, Star, ShieldCheck, 
-  GraduationCap, Crown, Trophy, Search
+  Loader2, 
+  Calendar, 
+  ArrowRight, 
+  Target, 
+  Globe, 
+  Heart,
+  Flame,
+  Brain,
+  Star,
+  Zap,
+  CheckCircle2
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { 
+  calculateVoterStatus, 
+  getNextStatus, 
+  getUniverseFromCategory,
+} from "@/lib/voter-logic";
+import { VoterStatusBadge } from "@/components/voter/VoterStatusBadge";
 import { universes } from "@/lib/data/universes";
 import { cn } from "@/lib/utils";
+import type { Votant } from "@/types";
 
-// --- CONFIGURATION DES 8 GRADES BÉNINOIS ---
-const GRADES = [
-  { name: "Votant", votes: 0, univers: 0, categories: 0, icon: Star, color: "text-gray-400", hex: "#9ca3af" },
-  { name: "Électeur", votes: 5, univers: 2, categories: 3, icon: Zap, color: "text-[#008751]", hex: "#008751" },
-  { name: "Grand Électeur", votes: 15, univers: 4, categories: 8, icon: Trophy, color: "text-[#FCD116]", hex: "#FCD116" },
-  { name: "Citoyen", votes: 35, univers: 6, categories: 15, icon: Heart, color: "text-[#E8112D]", hex: "#E8112D" },
-  { name: "Citoyen Engagé", votes: 70, univers: 9, categories: 25, icon: ShieldCheck, color: "text-green-400", hex: "#4ade80" },
-  { name: "Citoyen Conscient", votes: 120, univers: 12, categories: 40, icon: GraduationCap, color: "text-yellow-400", hex: "#facc15" },
-  { name: "Référent", votes: 180, univers: 14, categories: 55, icon: Target, color: "text-red-400", hex: "#f87171" },
-  { name: "Gardien", votes: 250, univers: 16, categories: 64, icon: Crown, color: "text-amber-500", hex: "#f59e0b" },
-];
+type TalentMini = {
+  id: string;
+  slug: string;
+  prenom: string | null;
+  nom: string | null;
+  avatar_url: string | null;
+};
+
+type VoteRow = {
+  id: string;
+  created_at: string;
+  talent_id: string;
+  voter_id: string;
+  categorie: string | null;
+  univers: string | null;
+  talents: TalentMini | null;
+};
 
 export default function VoterDashboard() {
   const router = useRouter();
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   
-  const [user, setUser] = useState<any>(null);
-  const [votes, setVotes] = useState<any[]>([]);
+  const [profile, setProfile] = useState<Votant | null>(null);
+  const [votes, setVotes] = useState<VoteRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [timeRemaining, setTimeRemaining] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  
+  // États pour le quota de votes
+  const [votesLast24h, setVotesLast24h] = useState(0);
+  const [remainingVotes, setRemainingVotes] = useState(16);
 
-  // Filtres
-  const [selectedUniverse, setSelectedUniverse] = useState("Tous les univers");
+  // Filters
+  const [selectedUniverse, setSelectedUniverse] = useState<string>("Tous les univers");
+  const [selectedCategory, setSelectedCategory] = useState<string>("Toutes les catégories");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const loadData = useCallback(async () => {
-    setLoading(true);
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      router.push("/login");
-      return;
-    }
-    setUser(user);
-
-    // Correction de la requête Supabase (Ajout de .from("votes"))
-    const { data: votesData } = await supabase
+  const fetchVotes = useCallback(async (actualVotantId: string) => {
+    // Récupérer les votes des 24 dernières heures pour le quota
+    const { data: recentVotes, error: recentError } = await supabase
       .from("votes")
-      .select(`
-        id, created_at, talent_id, categorie, univers,
-        talents ( id, slug, prenom, nom, image_url )
-      `)
-      .eq("voter_id", user.id)
+      .select("id, created_at")
+      .eq("voter_id", actualVotantId)
+      .gte("created_at", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
       .order("created_at", { ascending: false });
 
-    if (votesData) {
-      setVotes(votesData);
-      
-      // Calcul du quota 16 votes / 24h
-      const last24h = votesData.filter(v => new Date(v.created_at) > new Date(Date.now() - 24*60*60*1000));
-      if (last24h.length >= 16) {
-        const oldest = new Date(last24h[last24h.length - 1].created_at);
-        const next = new Date(oldest.getTime() + 24*60*60*1000);
-        const diff = next.getTime() - Date.now();
-        if (diff > 0) {
-          setTimeRemaining(`${Math.floor(diff/(1000*60*60))}h ${Math.floor((diff%(1000*60*60))/(1000*60))}min`);
-        }
-      }
+    if (recentError) {
+      console.error("Dashboard Votant - Error fetching recent votes:", recentError);
     }
-    setLoading(false);
-  }, [supabase, router]);
 
-  useEffect(() => { loadData(); }, [loadData]);
+    const votesLast24h = recentVotes?.length || 0;
+    const remainingVotes = Math.max(0, 16 - votesLast24h);
 
-  // Stats & Grade Logic
-  const stats = useMemo(() => {
-    const uCount = new Set(votes.map(v => v.univers).filter(Boolean)).size;
-    const cCount = new Set(votes.map(v => v.categorie).filter(Boolean)).size;
+    // CORRECTION #1 : Ajout de .from("votes") ici
+    const { data, error } = await supabase
+      .from("votes")
+      .select(`
+        id,
+        created_at,
+        talent_id,
+        voter_id,
+        categorie,
+        univers,
+        talents:talents (
+          id,
+          slug,
+          prenom,
+          nom,
+          avatar_url
+        )
+      `)
+      .eq("voter_id", actualVotantId) // Changed from votant_id to voter_id
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Dashboard Votant - Error fetching votes:", error);
+      setErrorMsg(error.message);
+      setVotes([]);
+      return;
+    }
+
+    setVotes((data ?? []) as unknown as VoteRow[]);
     
-    let currentGrade = GRADES[0];
-    for (const g of GRADES) {
-      if (votes.length >= g.votes && uCount >= g.univers && cCount >= g.categories) {
-        currentGrade = g;
-      } else break;
+    // Stocker les informations de quota pour l'affichage
+    setVotesLast24h(votesLast24h);
+    setRemainingVotes(remainingVotes);
+  }, [supabase]);
+
+  useEffect(() => {
+    let active = true;
+    let realtimeChannel: ReturnType<typeof supabase.channel> | null = null;
+
+    async function loadData() {
+      setLoading(true);
+      setErrorMsg(null);
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        router.push("/login");
+        return;
+      }
+
+      const { data: profileData, error: profileError } = await supabase
+        .from("votes")
+        .select("count")
+        .eq("voter_id", user.id)
+        .maybeSingle();
+
+      if (profileError) {
+        setErrorMsg(profileError.message);
+      }
+
+      const ensuredProfile = profileData ?? {
+        id: user.id,
+        role: "votant",
+        full_name: user.user_metadata?.full_name || user.user_metadata?.name || user.email || "Votant",
+        avatar_url: user.user_metadata?.avatar_url || user.user_metadata?.picture || null,
+        whatsapp: null,
+        created_at: new Date().toISOString(),
+      };
+
+      if (!profileData) {
+        console.log("No existing votes found for user:", user.id);
+      }
+
+      if (active) {
+        setProfile(ensuredProfile as Votant);
+      }
+
+      await fetchVotes(user.id);
+
+      if (!active) return;
+
+      /*
+      realtimeChannel = supabase
+        .channel(`voter_realtime_${user.id}`)
+        .on(
+          "postgres_changes",
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "votes",
+            filter: `voter_id=eq.${user.id}`, // Changed from votant_id to voter_id
+          },
+          async () => {
+            await fetchVotes(user.id);
+          },
+        )
+        .subscribe();
+      */
+
+      setLoading(false);
     }
 
-    return { total: votes.length, univers: uCount, categories: cCount, currentGrade };
+    loadData().finally(() => {
+      if (active) setLoading(false);
+    });
+
+    return () => {
+      active = false;
+      /*
+      if (realtimeChannel) {
+        supabase.removeChannel(realtimeChannel);
+      }
+      */
+    };
+  }, [fetchVotes, router, supabase]);
+
+  const stats = useMemo(() => {
+    const totalVotes = votes.length;
+    const distinctUniverses = Array.from(new Set(votes.map(v => v.univers).filter(Boolean)));
+    const distinctCategories = Array.from(new Set(votes.map(v => v.categorie).filter(Boolean)));
+    const universeCount = distinctUniverses.length;
+    const categoryCount = distinctCategories.length;
+    
+    return {
+      totalVotes,
+      universeCount,
+      categoryCount,
+      distinctUniverses,
+      distinctCategories,
+      currentStatus: calculateVoterStatus(totalVotes, universeCount, categoryCount)
+    };
   }, [votes]);
 
-  const nextGrade = GRADES[GRADES.indexOf(stats.currentGrade) + 1] || null;
+  const nextStatus = useMemo(() => getNextStatus(stats.currentStatus.level), [stats.currentStatus.level]);
 
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0a0a0c]">
-      <Loader2 className="w-12 h-12 text-[#008751] animate-spin" />
-    </div>
-  );
+  const availableCategories = useMemo(() => {
+    if (selectedUniverse === "Tous les univers") {
+      const cats = new Set(votes.map((vote) => vote.categorie).filter(Boolean));
+      return ["Toutes les catégories", ...Array.from(cats) as string[]];
+    }
+
+    const cats = new Set(
+      votes
+        .filter((vote) => (vote.univers || getUniverseFromCategory(vote.categorie ?? "")) === selectedUniverse)
+        .map((vote) => vote.categorie)
+        .filter(Boolean),
+    );
+
+    return ["Toutes les catégories", ...Array.from(cats) as string[]];
+  }, [selectedUniverse, votes]);
+
+  // Filtering logic
+  const filteredVotes = useMemo(() => {
+    return votes.filter(vote => {
+      const universe = vote.univers || getUniverseFromCategory(vote.categorie ?? "");
+      const talent = vote.talents;
+      if (!talent) return false;
+      
+      const fullName = `${talent.prenom || ""} ${talent.nom || ""}`.toLowerCase();
+      
+      const matchesUniverse = selectedUniverse === "Tous les univers" || universe === selectedUniverse;
+      const matchesCategory = selectedCategory === "Toutes les catégories" || vote.categorie === selectedCategory;
+      const matchesSearch = fullName.includes(searchQuery.toLowerCase());
+      
+      return matchesUniverse && matchesCategory && matchesSearch;
+    });
+  }, [votes, selectedUniverse, selectedCategory, searchQuery]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#F9F9F7]">
+        <Loader2 className="w-12 h-12 text-[#008751] animate-spin" />
+      </div>
+    );
+  }
+
+  if (errorMsg && votes.length === 0) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#F9F9F7] px-6 text-center">
+        <Heart className="w-12 h-12 text-[#E9B113] mb-4" />
+        <h2 className="text-2xl font-display font-bold text-black">Impossible de charger votre Dashboard Votant</h2>
+        <p className="text-sm text-gray-500 mt-3 max-w-xl">{errorMsg}</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0c] text-white pb-20 selection:bg-[#008751]/30">
-      {/* EFFETS DE FOND CYBER */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#008751]/10 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#E8112D]/10 blur-[120px] rounded-full" />
-        <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-[#FCD116]/5 blur-[100px] rounded-full" />
+    <div className="min-h-screen bg-[#F9F9F7] pb-20">
+      {/* Header / Hero Section */}
+      <div className="bg-white border-b border-[#F2EDE4] pt-12 pb-16 px-6">
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-8">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="relative w-32 h-32 rounded-[30px] overflow-hidden border-4 border-white shadow-xl bg-gray-50"
+          >
+            <Image 
+              src={profile?.avatar_url || "/placeholder-portrait.jpg"} 
+              alt="Profile" 
+              fill 
+              className="object-cover" 
+            />
+          </motion.div>
+          
+          <div className="flex-1 text-center md:text-left space-y-3">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <VoterStatusBadge status={stats.currentStatus} />
+            </motion.div>
+            <motion.h1 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-4xl font-display font-bold text-black"
+            >
+              {profile?.full_name || profile?.prenom || "Citoyen Béninois"}
+            </motion.h1>
+            <motion.p 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-gray-500 font-sans max-w-lg"
+            >
+              Votre parcours citoyen contribue au rayonnement de l&apos;excellence béninoise.
+            </motion.p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 w-full md:w-auto">
+            <div className="bg-[#F9F9F7] p-4 rounded-2xl border border-[#F2EDE4] text-center">
+              <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Impact (Votes)</span>
+              <span className="text-2xl font-bold text-[#008751] flex items-center justify-center gap-2">
+                <Flame className="w-5 h-5 fill-[#008751]" />
+                {stats.totalVotes}
+              </span>
+            </div>
+            <div className="bg-[#F9F9F7] p-4 rounded-2xl border border-[#F2EDE4] text-center">
+              <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Exploration</span>
+              <span className="text-2xl font-bold text-[#E9B113] flex items-center justify-center gap-2">
+                <Globe className="w-5 h-5" />
+                {stats.universeCount}/16
+              </span>
+            </div>
+            <div className="bg-[#F9F9F7] p-4 rounded-2xl border border-[#F2EDE4] text-center">
+              <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Profondeur</span>
+              <span className="text-2xl font-bold text-[#E9B113] flex items-center justify-center gap-2">
+                <Target className="w-5 h-5" />
+                {stats.categoryCount}/64
+              </span>
+            </div>
+          </div>
+        {/* CORRECTION #2 : Il manquait ce </div> de fermeture ici */}
+        </div>
       </div>
 
-      <div className="relative max-w-6xl mx-auto px-6 pt-12">
-        {/* HEADER HOLOGRAPHIQUE */}
-        <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
-          <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }}>
-            <div className="flex items-center gap-4 mb-2">
-              <div className={cn("p-2 rounded-xl bg-white/5 border border-white/10", stats.currentGrade.color)}>
-                <stats.currentGrade.icon size={24} />
-              </div>
-              <span className="text-[10px] font-black tracking-[0.3em] uppercase text-white/40">Statut Citoyen</span>
-            </div>
-            <h1 className="text-4xl md:text-6xl font-display font-black tracking-tighter uppercase italic">
-              {stats.currentGrade.name}
-            </h1>
-          </motion.div>
-
-          {timeRemaining && (
-            <motion.div animate={{ scale: [1, 1.02, 1] }} transition={{ repeat: Infinity, duration: 2 }} className="bg-red-500/10 border border-red-500/20 p-4 rounded-2xl backdrop-blur-md flex items-center gap-3">
-              <Timer className="text-red-500 w-5 h-5" />
-              <div className="text-[10px] font-bold uppercase leading-tight text-red-500">
-                Quota 24h atteint<br/>Prochain vote dans {timeRemaining}
-              </div>
-            </motion.div>
-          )}
-        </header>
-
-        {/* GRILLE DE PROGRESSION CYBER-BÉNIN */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <StatCard label="Impact (Votes)" current={stats.total} target={nextGrade?.votes || 250} color="#008751" icon={<Flame size={16}/>} />
-          <StatCard label="Exploration" current={stats.univers} target={16} color="#FCD116" icon={<Globe size={16}/>} />
-          <StatCard label="Profondeur" current={stats.categories} target={64} color="#E8112D" icon={<Target size={16}/>} />
-        </div>
-
+      <div className="max-w-5xl mx-auto px-6 -mt-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          {/* Main Content (Left 2/3) */}
           <div className="lg:col-span-2 space-y-8">
-            {/* PROVERBE DU JOUR */}
-            <motion.div className="bg-gradient-to-br from-white/10 to-transparent border border-white/10 p-8 rounded-[2rem] backdrop-blur-xl relative group">
-              <Zap className="absolute top-6 right-6 text-[#FCD116] opacity-20 group-hover:opacity-100 transition-opacity" />
-              <h3 className="text-[#FCD116] text-[10px] font-black uppercase tracking-[0.3em] mb-4">Proverbe du jour</h3>
-              <p className="text-2xl font-display italic font-light leading-relaxed">
-                "La forêt est immense, on n'y finit jamais de faire des découvertes. Chaque vote est un nouveau chemin pour le Bénin."
-              </p>
-              <Link href="/talents" className="mt-8 inline-flex items-center gap-2 text-[#008751] font-black text-xs uppercase tracking-widest group">
-                Voter maintenant <ArrowRight className="group-hover:translate-x-2 transition-transform" size={16} />
-              </Link>
-            </motion.div>
-
-            {/* LISTE DES VOTES FILTRÉE */}
-            <div className="space-y-6">
-              <div className="flex justify-between items-center px-2">
-                <h2 className="text-sm font-black uppercase tracking-[0.2em] text-white/40">Archives Citoyennes</h2>
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-white/20" size={14} />
-                  <input 
-                    type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Filtrer..." className="bg-white/5 border border-white/10 rounded-full py-2 pl-10 pr-4 text-[10px] focus:outline-none focus:border-[#008751] transition-all"
-                  />
+            
+            {/* Progress Section */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white rounded-3xl p-8 border border-[#F2EDE4] shadow-xl shadow-black/5"
+            >
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                <div>
+                  <h3 className="text-xl font-display font-bold text-black flex items-center gap-2">
+                    {nextStatus ? `Vers le grade : ${nextStatus.label}` : "Grade Maximum Atteint"}
+                    {nextStatus && <Star className="w-5 h-5 text-[#E9B113] fill-[#E9B113]" />}
+                  </h3>
+                  {nextStatus ? (
+                    <p className="text-sm text-gray-500 mt-1">
+                      Encore 
+                      {stats.totalVotes < nextStatus.minVotes && <span className="font-bold text-[#006B3F]"> {nextStatus.minVotes - stats.totalVotes} votes</span>}
+                      {stats.totalVotes < nextStatus.minVotes && (stats.universeCount < nextStatus.minUniverses || stats.categoryCount < nextStatus.minCategories) && " et"}
+                      {stats.universeCount < nextStatus.minUniverses && <span className="font-bold text-[#E9B113]"> {nextStatus.minUniverses - stats.universeCount} univers</span>}
+                      {stats.universeCount < nextStatus.minUniverses && stats.categoryCount < nextStatus.minCategories && " et"}
+                      {stats.categoryCount < nextStatus.minCategories && <span className="font-bold text-purple-500"> {nextStatus.minCategories - stats.categoryCount} catégories</span>}
+                      pour progresser.
+                    </p>
+                  ) : (
+                    <p className="text-sm text-[#006B3F] font-bold mt-1">Félicitations ! Vous êtes un Référent de l&apos;excellence béninoise.</p>
+                  )}
                 </div>
               </div>
-              
-              <div className="grid gap-3">
-                {votes.filter(v => `${v.talents?.prenom} ${v.talents?.nom}`.toLowerCase().includes(searchQuery.toLowerCase())).map((vote, i) => (
-                  <motion.div key={vote.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-                    className="group flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-white/20 transition-all">
-                    <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-white/10 border border-white/10">
-                      <Image src={vote.talents?.image_url || "/placeholder.jpg"} alt="" fill className="object-cover grayscale group-hover:grayscale-0 transition-all" />
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-bold text-sm">{vote.talents?.prenom} {vote.talents?.nom}</h4>
-                      <div className="flex gap-2 mt-1">
-                        <span className="text-[8px] font-black uppercase bg-[#008751]/20 text-[#008751] px-2 py-0.5 rounded-full">{vote.univers}</span>
-                        <span className="text-[8px] font-medium text-white/30 uppercase tracking-tighter">{new Date(vote.created_at).toLocaleDateString()}</span>
-                      </div>
-                    </div>
-                    <Link href={`/talents/${vote.talents?.slug}`}>
-                      <div className="p-2 rounded-full bg-white/5 group-hover:bg-[#008751] transition-colors">
-                        <ChevronRight size={14} />
-                      </div>
-                    </Link>
-                  </motion.div>
-                ))}
+
+              {/* Progress Bars */}
+              <div className="space-y-6">
+                {/* Impact Bar */}
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest">
+                    <span className="flex items-center gap-1.5 text-gray-400"><Flame className="w-3 h-3 text-green-600" /> Impact (Votes)</span>
+                    <span className="text-green-600">{stats.totalVotes} {nextStatus && `/ ${nextStatus.minVotes}`}</span>
+                  </div>
+                  <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ width: `${Math.min(100, nextStatus ? (stats.totalVotes / nextStatus.minVotes) * 100 : 100)}%` }}
+                      className="h-full bg-green-600 rounded-full"
+                    />
+                  </div>
+                </div>
+                
+                {/* Exploration Bar */}
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest">
+                    <span className="flex items-center gap-1.5 text-gray-400"><Globe className="w-3 h-3 text-yellow-500" /> Exploration (Univers)</span>
+                    <span className="text-yellow-500">{stats.universeCount} / 16</span>
+                  </div>
+                  <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ width: `${Math.min(100, (stats.universeCount / 16) * 100)}%` }}
+                      className="h-full bg-yellow-500 rounded-full"
+                    />
+                  </div>
+                </div>
+                
+                {/* Depth Bar */}
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest">
+                    <span className="flex items-center gap-1.5 text-gray-400"><Target className="w-3 h-3 text-red-600" /> Profondeur (Catégories)</span>
+                    <span className="text-red-600">{stats.categoryCount} / 64</span>
+                  </div>
+                  <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ width: `${Math.min(100, nextStatus ? (stats.categoryCount / nextStatus.minCategories) * 100 : 100)}%` }}
+                      className="h-full bg-red-600 rounded-full"
+                    />
+                  </div>
+                </div>
               </div>
+            </motion.div>
+
+            {/* History & Filters */}
+            <div className="space-y-6 pt-4">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <h2 className="text-2xl font-display font-bold text-black">Mes votes</h2>
+                
+                <div className="flex flex-wrap gap-2">
+                  <input
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Rechercher un talent…"
+                    className="bg-white border border-[#F2EDE4] px-4 py-2 rounded-xl text-[10px] font-bold tracking-widest text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#006B3F]/20"
+                  />
+                  <select 
+                    value={selectedUniverse}
+                    onChange={(e) => {
+                      setSelectedUniverse(e.target.value);
+                      setSelectedCategory("Toutes les catégories");
+                    }}
+                    className="bg-white border border-[#F2EDE4] px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#006B3F]/20 cursor-pointer"
+                  >
+                    <option>Tous les univers</option>
+                    {universes.map(u => <option key={u.name} value={u.name}>{u.name}</option>)}
+                  </select>
+
+                  <select 
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    className="bg-white border border-[#F2EDE4] px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#006B3F]/20 cursor-pointer"
+                  >
+                    {availableCategories.map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              {/* Results Grid */}
+              <AnimatePresence mode="popLayout">
+                {filteredVotes.length > 0 ? (
+                  <motion.div 
+                    layout
+                    className="grid grid-cols-1 gap-4"
+                  >
+                    {filteredVotes.map((vote) => {
+                      const talent = vote.talents;
+                      if (!talent) return null;
+                      const universe = vote.univers || getUniverseFromCategory(vote.categorie ?? "");
+                      return (
+                        <motion.div
+                          layout
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.95 }}
+                          key={vote.id}
+                        >
+                          <Link 
+                            href={`/talents/${talent.slug}`}
+                            className="group flex items-center gap-4 p-4 bg-white rounded-2xl border border-[#F2EDE4] hover:shadow-lg transition-all"
+                          >
+                            <div className="relative w-16 h-16 rounded-xl overflow-hidden shadow-inner flex-shrink-0">
+                              <Image 
+                                src={talent.avatar_url || "/placeholder-portrait.jpg"} 
+                                alt={talent.prenom || ""} 
+                                fill 
+                                className="object-cover" 
+                              />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <span className="text-[8px] font-black uppercase tracking-widest text-[#006B3F] bg-[#006B3F]/5 px-2 py-0.5 rounded-full mb-1 inline-block">
+                                {universe}
+                              </span>
+                              <h4 className="text-base font-display font-bold text-black truncate group-hover:text-[#006B3F] transition-colors">
+                                {talent.prenom} {talent.nom}
+                              </h4>
+                              <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest flex items-center gap-1 mt-0.5">
+                                <Calendar className="w-2.5 h-2.5" />
+                                {new Date(vote.created_at).toLocaleDateString()}
+                              </p>
+                            </div>
+                            <ArrowRight className="w-5 h-5 text-gray-200 group-hover:text-[#006B3F] transition-colors" />
+                          </Link>
+                        </motion.div>
+                      );
+                    })}
+                  </motion.div>
+                ) : (
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="py-16 text-center bg-white rounded-[32px] border border-dashed border-gray-200"
+                  >
+                    <Heart className="w-12 h-12 text-gray-200 mx-auto mb-4" />
+                    <h3 className="text-lg font-display font-bold text-black mb-1">
+                      {votes.length === 0 ? "Aucun vote pour le moment" : "Aucun talent trouvé"}
+                    </h3>
+                    <p className="text-xs text-gray-400">
+                      {votes.length === 0
+                        ? "Commencez à soutenir des talents pour débloquer votre progression."
+                        : "Ajustez vos filtres pour voir vos autres votes."}
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
 
-          {/* SIDEBAR : UNIVERS & GRADE */}
+          {/* Sidebar (Right 1/3) */}
           <div className="space-y-8">
-            <div className="bg-white/5 border border-white/10 p-8 rounded-[2rem] backdrop-blur-md text-center">
-              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mb-8">Niveau d'Exploration</h3>
+            {/* 16 Universes Grid */}
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="bg-white rounded-3xl p-6 border border-[#F2EDE4] shadow-xl shadow-black/5"
+            >
+              <h3 className="text-sm font-display font-bold text-black mb-6 flex items-center gap-2">
+                <Globe className="w-4 h-4 text-[#E9B113]" />
+                Exploration des 16 Univers
+              </h3>
+              
               <div className="grid grid-cols-4 gap-3">
                 {universes.map((u) => {
-                  const isDone = votes.some(v => v.univers === u.name);
+                  const isExplored = stats.distinctUniverses.includes(u.name);
                   const Icon = u.icon;
                   return (
-                    <div key={u.name} className={cn("aspect-square rounded-xl flex items-center justify-center transition-all", isDone ? "bg-[#FCD116] text-black shadow-[0_0_15px_rgba(252,209,22,0.3)]" : "bg-white/5 text-white/20")}>
-                      <Icon size={16} />
+                    <div key={u.name} className="relative group">
+                      <motion.div 
+                        whileHover={{ scale: 1.1 }}
+                        className={cn(
+                          "w-full aspect-square rounded-xl flex items-center justify-center transition-all duration-500",
+                          isExplored 
+                            ? "bg-[#E9B113] text-white shadow-lg shadow-[#E9B113]/20" 
+                            : "bg-gray-50 text-gray-300 grayscale"
+                        )}
+                      >
+                        <Icon size={20} />
+                        {isExplored && (
+                          <motion.div 
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            className="absolute -top-1 -right-1 bg-[#006B3F] text-white rounded-full p-0.5 border border-white"
+                          >
+                            <CheckCircle2 size={8} />
+                          </motion.div>
+                        )}
+                      </motion.div>
+                      {/* Tooltip */}
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-[8px] rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-20">
+                        {u.name}
+                      </div>
                     </div>
                   );
                 })}
               </div>
-              <p className="mt-8 text-[10px] text-white/30 font-medium leading-relaxed">
-                {nextGrade ? `Plus que ${nextGrade.univers - stats.univers} univers à découvrir pour devenir ${nextGrade.name}.` : "Vous avez exploré tout le Bénin !"}
+              
+              <div className="mt-6 pt-6 border-t border-gray-50">
+                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest leading-relaxed">
+                  Découvrez de nouveaux univers pour élever votre grade de citoyen.
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Quick Tips */}
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.1 }}
+              className="bg-[#006B3F] rounded-3xl p-6 text-white shadow-xl shadow-[#006B3F]/20"
+            >
+              <Zap className="w-6 h-6 mb-4 text-[#E9B113] fill-[#E9B113]" />
+              <h4 className="text-lg font-display font-bold mb-2">Conseil du jour</h4>
+              <p className="text-sm text-white/80 leading-relaxed mb-6">
+                Chaque vote compte pour le rayonnement du Bénin. Explorez les catégories moins connues pour diversifier votre impact !
               </p>
-            </div>
+              <Link 
+                href="/talents" 
+                className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-[#E9B113] hover:translate-x-1 transition-transform"
+              >
+                Voter maintenant <ArrowRight size={14} />
+              </Link>
+            </motion.div>
           </div>
         </div>
       </div>
     </div>
   );
-}
-
-function StatCard({ label, current, target, color, icon }: any) {
-  const progress = Math.min((current / target) * 100, 100);
-  return (
-    <div className="bg-white/5 border border-white/10 p-6 rounded-3xl backdrop-blur-sm relative overflow-hidden group">
-      <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center gap-2 text-white/40 uppercase font-black text-[9px] tracking-widest">
-          {icon} {label}
-        </div>
-        <div className="text-xl font-mono font-bold">{current}<span className="text-white/20 text-xs">/{target}</span></div>
-      </div>
-      <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden">
-        <motion.div initial={{ width: 0 }} animate={{ width: `${progress}%` }} className="h-full rounded-full" style={{ backgroundColor: color, boxShadow: `0 0 10px ${color}` }} />
-      </div>
-    </div>
-  );
-}
-
-function ChevronRight(props: any) {
-  return <svg {...props} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/></svg>;
 }
