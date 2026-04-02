@@ -10,19 +10,17 @@ import Image from "next/image";
 // --- HEADER PRESTIGIEUX ---
 function PrestigiousHeader() {
   return (
-    <div className="bg-white border-b border-[#F2EDE4] py-16 px-4">
-      <div className="max-w-7xl mx-auto text-center">
-        <Star 
-          className="w-16 h-16 text-[#D4AF37] fill-[#D4AF37] mx-auto mb-6" 
-          strokeWidth={1.5}
-        />
-        <h1 className="text-5xl font-serif font-extrabold tracking-tight text-black mb-4">
-          Découvrez les Ambassadeurs
-        </h1>
-        <p className="text-xl text-gray-600 font-medium max-w-2xl mx-auto">
-          Parcourez la galerie des meilleurs talents du Bénin et votez pour ceux qui porteront nos couleurs.
-        </p>
-      </div>
+    <div className="bg-white border-b border-[#F2EDE4] py-16 px-4 text-center">
+      <Star 
+        className="w-16 h-16 mx-auto mb-6 text-[#D4AF37] fill-[#D4AF37]" 
+        strokeWidth={1.5}
+      />
+      <h1 className="font-serif text-5xl md:text-6xl font-extrabold text-black mb-4 tracking-tight">
+        Découvrez les Ambassadeurs
+      </h1>
+      <p className="text-xl text-gray-600 max-w-2xl mx-auto font-medium">
+        Parcourez la galerie des meilleurs talents du Bénin et votez pour ceux qui porteront nos couleurs.
+      </p>
     </div>
   );
 }

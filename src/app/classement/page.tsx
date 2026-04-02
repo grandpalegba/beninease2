@@ -200,12 +200,17 @@ function RankingList() {
   return (
     <div className="min-h-screen bg-[#F9F9F7]">
       {/* Header */}
-      <div className="bg-white border-b border-[#F2EDE4] px-6 py-8">
-        <div className="max-w-7xl mx-auto text-center">
-          <Trophy className="w-12 h-12 text-[#E9B113] mx-auto mb-4" />
-          <h1 className="text-3xl font-display font-bold text-black mb-2">Classement des Talents</h1>
-          <p className="text-gray-600">Les meilleurs talents du Bénin selon vos votes</p>
-        </div>
+      <div className="bg-white border-b border-[#F2EDE4] py-16 px-4 text-center">
+        <Trophy 
+          className="w-16 h-16 mx-auto mb-6 text-[#D4AF37] fill-[#D4AF37]" 
+          strokeWidth={1.5}
+        />
+        <h1 className="font-serif text-5xl md:text-6xl font-extrabold text-black mb-4 tracking-tight">
+          Classement des Talents
+        </h1>
+        <p className="text-xl text-gray-600 max-w-2xl mx-auto font-medium">
+          Les meilleurs talents du Bénin selon vos votes
+        </p>
       </div>
 
       {/* Filtres */}
