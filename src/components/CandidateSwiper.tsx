@@ -56,31 +56,22 @@ export default function CandidateSwiper({ talents, onBack }: CandidateSwiperProp
       {/* HEADER DU SWIPER */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-[#F2EDE4] px-6 py-4 flex items-center justify-between">
         
-        {/* 3. LE BOUTON RETOUR QUI UTILISE LA PROP */}
+        {/* Bouton de retour */}
         <button
-          onClick={onBack} // Quand on clique, on appelle la fonction onBack
+          onClick={onBack}
           className="bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors border border-gray-200"
         >
           <X className="w-5 h-5 text-gray-700" />
         </button>
 
-        <div className="flex items-center gap-4">
-          {/* Bouton Filtres */}
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className="bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors border border-gray-200"
-            title="Filtrer les talents"
-          >
-            <Settings className="w-5 h-5 text-gray-700" />
-          </button>
-          
-          <div className="flex flex-col items-end">
-            <span className="text-[10px] font-bold text-[#008751] uppercase tracking-widest">Expérience Swipe</span>
-            <h2 className="text-sm font-bold text-black">
-              {currentIndex + 1} / {talents.length}
-            </h2>
-          </div>
-        </div>
+        {/* Bouton Filtres */}
+        <button
+          onClick={() => setShowFilters(!showFilters)}
+          className="bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors border border-gray-200"
+          title="Filtrer les talents"
+        >
+          <Settings className="w-5 h-5 text-gray-700" />
+        </button>
       </div>
 
       {/* CONTROLES NAVIGATION */}
