@@ -54,7 +54,7 @@ export default function CandidateSwiper({ talents, initialSlug }: CandidateSwipe
     // Update URL without full page reload
     const talent = talents[index];
     if (talent) {
-      window.history.replaceState(null, "", `/talents/swipe?slug=${talent.slug}`);
+      window.history.replaceState(null, "", `/talents/swipe?id=${talent.id}`);
     }
   }, [emblaApi, talents]);
 
