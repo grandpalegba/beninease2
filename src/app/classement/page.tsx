@@ -202,10 +202,10 @@ function RankingList() {
       {/* Header */}
       <div className="bg-white border-b border-[#F2EDE4] py-16 px-4 text-center">
         <Trophy 
-          className="w-16 h-16 mx-auto mb-6 text-[#D4AF37] fill-[#D4AF37]" 
+          className="w-12 h-12 mx-auto mb-6 text-[#D4AF37] fill-[#D4AF37]" 
           strokeWidth={1.5}
         />
-        <h1 className="font-serif text-5xl md:text-6xl font-extrabold text-black mb-4 tracking-tight">
+        <h1 className="font-serif text-3xl md:text-4xl font-semibold text-black mb-4 tracking-wide">
           Classement des Talents
         </h1>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto font-medium">
