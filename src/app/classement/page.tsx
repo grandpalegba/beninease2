@@ -72,7 +72,7 @@ function RankCard({ talent, rank }: { talent: TalentRank; rank: number }) {
 function RankingList() {
   // Machine à états simple
   const [status, setStatus] = useState<'loading' | 'success' | 'empty' | 'error'>('loading');
-  const [talents, setTalents] = useState<TalentRank[]>([]);
+  const [talents, setTalents] = useState<TalentRank[] | null>(null);
 
   useEffect(() => {
     const fetchRanking = async () => {
@@ -161,7 +161,7 @@ function RankingList() {
       {/* Ranking */}
       <div className="max-w-4xl mx-auto px-6 py-8">
         <div className="space-y-4">
-          {talents.map((talent, index) => (
+          {talents?.map((talent, index) => (
             <RankCard key={talent.id} talent={talent} rank={index + 1} />
           ))}
         </div>
