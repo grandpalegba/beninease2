@@ -4,7 +4,7 @@ import React, { useEffect, useCallback, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import TalentProfileClient from "@/app/talents/[slug]/TalentProfileClient";
 import type { Talent } from "@/types";
-import { ChevronLeft, ChevronRight, X, Filter, Settings } from "lucide-react";
+import { ChevronLeft, ChevronRight, X, Filter } from "lucide-react";
 
 interface CandidateSwiperProps {
   talents: Talent[];
@@ -32,7 +32,6 @@ export default function CandidateSwiper({ talents, onBack }: CandidateSwiperProp
   const [currentIndex, setCurrentIndex] = useState(0);
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(true);
-  const [showFilters, setShowFilters] = useState(false);
 
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
@@ -54,7 +53,7 @@ export default function CandidateSwiper({ talents, onBack }: CandidateSwiperProp
   return (
     <div className="relative min-h-screen bg-[#F9F9F7]">
       {/* HEADER DU SWIPER */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-[#F2EDE4] px-6 py-4 flex items-center justify-between">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-[#F2EDE4] px-6 py-4 flex items-center justify-start">
         
         {/* Bouton de retour */}
         <button
@@ -62,15 +61,6 @@ export default function CandidateSwiper({ talents, onBack }: CandidateSwiperProp
           className="bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors border border-gray-200"
         >
           <X className="w-5 h-5 text-gray-700" />
-        </button>
-
-        {/* Bouton Filtres */}
-        <button
-          onClick={() => setShowFilters(!showFilters)}
-          className="bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors border border-gray-200"
-          title="Filtrer les talents"
-        >
-          <Settings className="w-5 h-5 text-gray-700" />
         </button>
       </div>
 
