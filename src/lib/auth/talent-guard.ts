@@ -1,4 +1,5 @@
 import { createSupabaseServerClient } from '@/lib/supabase/server'
+import { supabase } from '@/utils/supabase/client'
 import { redirect } from 'next/navigation'
 
 /**

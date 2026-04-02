@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from 'react';
-import { supabase } from '@/lib/supabase/client';
+import { supabase } from '@/utils/supabase/client';
 import { Loader2, Lock, Eye, EyeOff, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 

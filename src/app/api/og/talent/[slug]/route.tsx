@@ -1,5 +1,5 @@
 import { ImageResponse } from 'next/og';
-import { supabase } from '@/lib/supabase/client';
+import { supabase } from '@/utils/supabase/client';
 
 export const runtime = 'edge';
 

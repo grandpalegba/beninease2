@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, User, LogOut, LayoutDashboard, Settings, Trophy, Globe, Star } from "lucide-react";
-import { createSupabaseBrowserClient, supabase } from "@/lib/supabase/client";
+import { supabase } from "@/utils/supabase/client";
 import { calculateVoterStatus } from "@/lib/voter-logic";
 import Image from "next/image";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
