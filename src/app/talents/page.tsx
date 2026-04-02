@@ -109,7 +109,7 @@ function TalentsList() {
 
   // Catégories uniques basées sur l'univers sélectionné
   const categories = selectedUniverse === "Tous les univers" 
-    ? ["Toutes les catégories", ...Array.from(new Set(talents.map(t => t.categorie).filter(Boolean))]
+    ? ["Toutes les catégories", ...Array.from(new Set(talents.map(t => t.categorie).filter(Boolean)))]
     : ["Toutes les catégories", ...Array.from(new Set(filteredTalents.map(t => t.categorie).filter(Boolean)))];
 
   // Rendu conditionnel strict
