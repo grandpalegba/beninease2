@@ -129,7 +129,7 @@ export default function VoterDashboard() {
   
   const [profile, setProfile] = useState<any>(null);
   const [votes, setVotes] = useState<VoteRow[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // FORCÉ à false pour test
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [generatingCard, setGeneratingCard] = useState(false);
   
@@ -244,6 +244,8 @@ export default function VoterDashboard() {
     setRemainingVotes(remainingVotes);
   }, [supabase]);
 
+  // COMMENTÉ POUR TEST - si le site s'affiche, le problème vient du fetch des votes
+/*
   useEffect(() => {
     const loadProfileAndVotes = async () => {
       setLoading(true);
@@ -280,6 +282,7 @@ export default function VoterDashboard() {
 
     loadProfileAndVotes();
   }, []); // Dépendances vides pour éviter la boucle
+*/
 
   const stats = useMemo(() => {
     const totalVotes = votes.length;
