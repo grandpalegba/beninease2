@@ -13,6 +13,18 @@ interface CandidateSwiperProps {
 }
 
 export default function CandidateSwiper({ talents, initialSlug }: CandidateSwiperProps) {
+  // Protection défensive - éviter le crash si pas de talents
+  if (!talents || talents.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#F9F9F7]">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-gray-200 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Chargement des talents...</p>
+        </div>
+      </div>
+    );
+  }
+
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -97,25 +109,26 @@ export default function CandidateSwiper({ talents, initialSlug }: CandidateSwipe
       <div className="embla overflow-hidden pt-20" ref={emblaRef}>
         <div className="embla__container flex">
           {talents.map((talent: Talent) => {
-            // Use Supabase talent data directly (no more static candidates)
-            if (!talent) return null;
+            // Protection défensive pour chaque talent
+            if (!talent || !talent.id) return null;
 
             return (
               <div key={talent.id} className="embla__slide flex-[0_0_100%] min-w-0">
                 <TalentProfileClient 
                   candidate={{
-                    slug: talent.slug,
-                    prenom: talent.prenom,
-                    nom: talent.nom,
-                    portrait: talent.avatar_url,
-                    city: talent.city,
-                    univers: talent.univers,
-                    categorie: talent.categorie,
+                    id: talent.id,
+                    slug: talent.slug || `talent-${talent.id}`,
+                    prenom: talent.prenom || 'Prénom',
+                    nom: talent.nom || 'Nom',
+                    portrait: talent.avatar_url || '/placeholder-avatar.png',
+                    city: talent.city || 'Bénin',
+                    univers: talent.univers || 'Non spécifié',
+                    categorie: talent.categorie || 'Non spécifié',
                     tabs: {}
                   }}
-                  initialVotesCount={talent.votes}
+                  initialVotesCount={talent.votes || 0}
                   profileId={talent.id}
-                  avatarUrl={talent.avatar_url}
+                  avatarUrl={talent.avatar_url || '/placeholder-avatar.png'}
                 />
               </div>
             );
