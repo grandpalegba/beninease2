@@ -6,7 +6,7 @@
 
 import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { Info, Trophy, Star, AlertCircle } from "lucide-react";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { createSupabaseBrowserClient, supabase } from "@/lib/supabase/client";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -23,7 +23,6 @@ type TalentRank = {
 };
 
 function RankingList() {
-  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const [talents, setTalents] = useState<TalentRank[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);

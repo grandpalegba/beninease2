@@ -8,12 +8,11 @@ import { Suspense, useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Info, Loader2, LayoutGrid, Smartphone, Search, Filter, X, AlertCircle } from "lucide-react";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { createSupabaseBrowserClient, supabase } from "@/lib/supabase/client";
 import type { Talent } from "@/types";
 import { universes } from "@/lib/data/universes";
 
 function TalentsList() {
-  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const [talents, setTalents] = useState<Talent[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);

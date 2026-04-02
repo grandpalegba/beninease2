@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { createSupabaseBrowserClient, supabase } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { User, Camera, ArrowLeft, Loader2, Save, Key, MessageCircle } from "lucide-react";
 import Image from "next/image";

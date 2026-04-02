@@ -21,7 +21,7 @@ import {
   Share2
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { createSupabaseBrowserClient, supabase } from "@/lib/supabase/client";
 import { 
   calculateVoterStatus, 
   getNextStatus, 
@@ -125,7 +125,6 @@ function UserNameDisplay() {
 
 export default function VoterDashboard() {
   const router = useRouter();
-  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   
   const [profile, setProfile] = useState<any>(null);
   const [votes, setVotes] = useState<VoteRow[]>([]);
@@ -244,45 +243,49 @@ export default function VoterDashboard() {
     setRemainingVotes(remainingVotes);
   }, [supabase]);
 
-  // COMMENTÉ POUR TEST - si le site s'affiche, le problème vient du fetch des votes
-/*
+  // RÉACTIVÉ avec protection robuste
   useEffect(() => {
     const loadProfileAndVotes = async () => {
-      setLoading(true);
-      setErrorMsg(null);
+      try {
+        setLoading(true);
+        setErrorMsg(null);
 
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        router.push("/login");
-        return;
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          router.push("/login");
+          return;
+        }
+
+        // Charger le profil depuis la table profiles
+        const { data: profileData, error: profileError } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", user.id)
+          .single();
+
+        if (profileError && profileError.code !== "PGRST116") {
+          console.error("Error loading profile:", profileError);
+        }
+
+        const profile = profileData || {
+          id: user.id,
+          prenom: null,
+          nom: null,
+          avatar_url: null,
+        };
+
+        setProfile(profile);
+        await fetchVotes(user.id);
+      } catch (err) {
+        console.error("Erreur générale:", err);
+        setErrorMsg("Erreur de chargement");
+      } finally {
+        setLoading(false);
       }
-
-      // Charger le profil depuis la table profiles
-      const { data: profileData, error: profileError } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .single();
-
-      if (profileError && profileError.code !== "PGRST116") {
-        console.error("Error loading profile:", profileError);
-      }
-
-      const profile = profileData || {
-        id: user.id,
-        prenom: null,
-        nom: null,
-        avatar_url: null,
-      };
-
-      setProfile(profile);
-      await fetchVotes(user.id);
-      setLoading(false);
     };
 
     loadProfileAndVotes();
   }, []); // Dépendances vides pour éviter la boucle
-*/
 
   const stats = useMemo(() => {
     const totalVotes = votes.length;
