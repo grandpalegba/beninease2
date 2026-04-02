@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState, useMemo } from "react";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { createSupabaseBrowserClient, supabase } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 import { User as UserIcon, LogOut, LayoutDashboard, ChevronDown, Trophy, UserCheck, Settings } from "lucide-react";
@@ -27,6 +27,8 @@ type UserProfile = {
 };
 
 const Header = () => {
+  console.log('🚨 HEADER COMPOSANT MOUNTED - RENDERING HEADER 🚨');
+  
   const [scrolled, setScrolled] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -34,7 +36,7 @@ const Header = () => {
   const [isTalent, setIsTalent] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
-  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
+  // Utiliser le singleton directement
   const router = useRouter();
 
   // Calculate grade dynamically

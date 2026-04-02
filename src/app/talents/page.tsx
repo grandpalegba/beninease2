@@ -115,8 +115,8 @@ function TalentsList() {
   // Rendu conditionnel strict
   if (status === 'loading') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F9F9F7]">
-        <Loader2 className="w-8 h-8 animate-spin text-[#008751]" />
+      <div style={{fontSize: '24px', color: 'red', padding: '20px', background: 'yellow'}}>
+        🚨 CHARGEMENT PAGE TALENTS... SPINNER ACTIF 🚨
       </div>
     );
   }
