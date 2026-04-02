@@ -6,7 +6,7 @@
 
 import { useEffect, useState } from "react";
 import { Info, Trophy, Star, AlertCircle } from "lucide-react";
-import { createBrowserClient } from "@supabase/ssr";
+import { supabase } from "@/utils/supabase/client";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -77,12 +77,6 @@ function RankingList() {
   useEffect(() => {
     const fetchRanking = async () => {
       try {
-        // Client Supabase propre
-        const supabase = createBrowserClient(
-          process.env.NEXT_PUBLIC_SUPABASE_URL!,
-          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-        );
-
         const { data, error } = await supabase
           .from("talents")
           .select("id, slug, prenom, nom, categorie, votes, avatar_url")

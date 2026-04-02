@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { createSupabaseBrowserClient, supabase } from '@/lib/supabase/client';
+import { supabase } from '@/lib/supabase/client';
 import type { User, Session } from '@supabase/supabase-js';
 import type { Votant, Talent } from '@/types';
 

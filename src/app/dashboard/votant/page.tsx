@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createBrowserClient } from "@supabase/ssr";
+import { supabase } from "@/utils/supabase/client";
 import { motion } from "framer-motion";
 import { Loader2, Heart, Share2 } from "lucide-react";
 import { VoterStatusBadge } from "@/components/voter/VoterStatusBadge";
@@ -86,13 +86,6 @@ export default function VoterDashboard() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        // Client Supabase propre
-        const supabase = createBrowserClient(
-          process.env.NEXT_PUBLIC_SUPABASE_URL!,
-          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-        );
-
-        // Récupérer l'utilisateur
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) {
           setStatus('empty');
