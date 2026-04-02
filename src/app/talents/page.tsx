@@ -15,7 +15,7 @@ function PrestigiousHeader() {
         className="w-12 h-12 mx-auto mb-6 text-[#D4AF37] fill-[#D4AF37]" 
         strokeWidth={1.5}
       />
-      <h1 className="font-serif text-3xl md:text-4xl font-semibold text-black mb-4 tracking-wide">
+      <h1 className="font-serif text-3xl md:text-4xl font-bold text-black mb-4 tracking-wide">
         Découvrez les Ambassadeurs
       </h1>
       <p className="text-xl text-gray-600 max-w-2xl mx-auto font-medium">

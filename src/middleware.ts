@@ -20,6 +20,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/talent/:path*',
+    // Pas de routes spécifiques pour le moment
   ],
 }

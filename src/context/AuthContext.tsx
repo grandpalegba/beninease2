@@ -23,91 +23,101 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const getInitialSession = async () => {
-      const { data: { session: initialSession } } = await supabase.auth.getSession();
-      setSession(initialSession);
-      setUser(initialSession?.user ?? null);
+      try {
+        const { data: { session: initialSession } } = await supabase.auth.getSession();
+        setSession(initialSession);
+        setUser(initialSession?.user ?? null);
 
-      if (initialSession?.user) {
-        const { data: profile, error: profileError } = await supabase
-          .from('votants')
-          .select('*')
-          .eq('id', initialSession.user.id)
-          .single();
-
-        if (profileError) {
-          const { data: talentProfile, error: talentError } = await supabase
-            .from('talents')
+        if (initialSession?.user) {
+          const { data: profile, error: profileError } = await supabase
+            .from('votants')
             .select('*')
             .eq('id', initialSession.user.id)
             .single();
 
-          if (talentError) {
-            const { data: newProfile } = await supabase
-              .from('votants')
-              .upsert({
-                id: initialSession.user.id,
-                full_name: initialSession.user.user_metadata.full_name || initialSession.user.email,
-                avatar_url: initialSession.user.user_metadata.avatar_url,
-                role: 'votant'
-              })
-              .select()
+          if (profileError) {
+            const { data: talentProfile, error: talentError } = await supabase
+              .from('talents')
+              .select('*')
+              .eq('id', initialSession.user.id)
               .single();
-            setProfile(newProfile as UserProfile | null);
+
+            if (talentError) {
+              const { data: newProfile } = await supabase
+                .from('votants')
+                .upsert({
+                  id: initialSession.user.id,
+                  full_name: initialSession.user.user_metadata.full_name || initialSession.user.email,
+                  avatar_url: initialSession.user.user_metadata.avatar_url,
+                  role: 'votant'
+                })
+                .select()
+                .single();
+              setProfile(newProfile as UserProfile | null);
+            } else {
+              setProfile(talentProfile as UserProfile | null);
+            }
           } else {
-            setProfile(talentProfile as UserProfile | null);
+            setProfile(profile as UserProfile | null);
           }
-        } else {
-          setProfile(profile as UserProfile | null);
         }
+      } catch (error) {
+        console.error('Erreur lors de la récupération de la session:', error);
+      } finally {
+        setLoading(false); // Garanti que loading passe à false
       }
-      setLoading(false);
     };
 
     getInitialSession();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, newSession) => {
       setTimeout(async () => {
-        setSession(newSession);
-        setUser(newSession?.user ?? null);
+        try {
+          setSession(newSession);
+          setUser(newSession?.user ?? null);
 
-        if (newSession?.user) {
-          if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-            const { data: profile, error: profileError } = await supabase
-              .from('votants')
-              .select('*')
-              .eq('id', newSession.user.id)
-              .single();
-
-            if (profileError) {
-              const { data: talentProfile, error: talentError } = await supabase
-                .from('talents')
+          if (newSession?.user) {
+            if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+              const { data: profile, error: profileError } = await supabase
+                .from('votants')
                 .select('*')
                 .eq('id', newSession.user.id)
                 .single();
 
-              if (talentError) {
-                const { data: newProfile } = await supabase
-                  .from('votants')
-                  .upsert({
-                    id: newSession.user.id,
-                    full_name: newSession.user.user_metadata.full_name || newSession.user.email,
-                    avatar_url: newSession.user.user_metadata.avatar_url,
-                    role: 'votant'
-                  })
-                  .select()
+              if (profileError) {
+                const { data: talentProfile, error: talentError } = await supabase
+                  .from('talents')
+                  .select('*')
+                  .eq('id', newSession.user.id)
                   .single();
-                setProfile(newProfile as UserProfile | null);
+
+                if (talentError) {
+                  const { data: newProfile } = await supabase
+                    .from('votants')
+                    .upsert({
+                      id: newSession.user.id,
+                      full_name: newSession.user.user_metadata.full_name || newSession.user.email,
+                      avatar_url: newSession.user.user_metadata.avatar_url,
+                      role: 'votant'
+                    })
+                    .select()
+                    .single();
+                  setProfile(newProfile as UserProfile | null);
+                } else {
+                  setProfile(talentProfile as UserProfile | null);
+                }
               } else {
-                setProfile(talentProfile as UserProfile | null);
+                setProfile(profile as UserProfile | null);
               }
-            } else {
-              setProfile(profile as UserProfile | null);
             }
+          } else {
+            setProfile(null);
           }
-        } else {
-          setProfile(null);
+        } catch (error) {
+          console.error('Erreur lors du changement d\'état d\'auth:', error);
+        } finally {
+          setLoading(false); // Garanti que loading passe à false
         }
-        setLoading(false);
       }, 0);
     });
 
