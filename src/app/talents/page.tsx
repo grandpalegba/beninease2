@@ -161,11 +161,6 @@ export default function TalentsPage() {
           
           {/* Ligne inférieure : Filtres */}
           <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <Filter className="w-4 h-4" />
-              Filtres :
-            </div>
-            
             {/* Filtre Univers */}
             <div className="flex items-center gap-2">
               <label className="text-sm text-gray-600">Univers:</label>
