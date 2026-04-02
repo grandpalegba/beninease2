@@ -1,5 +1,5 @@
-import { createContext, useContext, useEffect, useState, useMemo } from 'react';
-import { createSupabaseBrowserClient } from '@/lib/supabase/client';
+import { createContext, useContext, useEffect, useState } from 'react';
+import { createSupabaseBrowserClient, supabase } from '@/lib/supabase/client';
 import type { User, Session } from '@supabase/supabase-js';
 import type { Votant, Talent } from '@/types';
 
@@ -15,7 +15,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
+  // Utiliser le singleton directement pour éviter les boucles
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -114,7 +114,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => {
       subscription.unsubscribe();
     };
-  }, [supabase]);
+  }, []); // Pas de dépendances pour éviter les boucles
 
   const value = {
     user,

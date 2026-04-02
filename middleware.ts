@@ -6,28 +6,27 @@ import { createSupabaseMiddlewareClient } from "@/lib/supabase/middleware";
 export async function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
 
-  // DÉSACTIVÉ TEMPORAIREMENT pour test - si le site s'affiche, le problème vient du middleware
-  return NextResponse.next();
-
   // --- ACCÈS PUBLIC ---
-  // On autorise immédiatement l'accès aux talents, au classement et aux images OG pour les robots et visiteurs
-  // Cette exception est impérative pour que les réseaux sociaux (WhatsApp, Facebook) voient les métadonnées.
+  // On autorise immédiatement l'accès aux talents, au classement et aux images OG
   if (
     pathname.startsWith("/talents") || 
     pathname.startsWith("/classement") || 
-    pathname.startsWith("/api/og")
+    pathname.startsWith("/api/og") ||
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/signup")
   ) {
     return NextResponse.next();
   }
 
+  // Pour les autres routes, on vérifie la session
   const { supabase, response } = createSupabaseMiddlewareClient(request);
 
-  // Utilisation de getSession pour une vérification rapide de la session
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  try {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
-  const user = session?.user;
+    const user = session?.user;
 
   let profile: PublicUserRow | null = null;
   if (user) {
@@ -119,6 +118,10 @@ export async function middleware(request: NextRequest) {
   }
 
   return response;
+  } catch (error) {
+    console.error("Middleware error:", error);
+    return NextResponse.next();
+  }
 }
 
 export const config = {
