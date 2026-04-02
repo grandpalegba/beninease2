@@ -4,18 +4,60 @@
  */
 "use client";
 
-import { Suspense, useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Info, Loader2, LayoutGrid, Smartphone, Search, Filter, X, AlertCircle } from "lucide-react";
-import { createSupabaseBrowserClient, supabase } from "@/lib/supabase/client";
+import { createBrowserClient } from "@supabase/ssr";
 import type { Talent } from "@/types";
 import { universes } from "@/lib/data/universes";
 
+// Composant pour afficher un talent
+function TalentCard({ talent }: { talent: Talent }) {
+  return (
+    <Link href={`/talents/${talent.slug}`}>
+      <div className="bg-white rounded-2xl border border-[#F2EDE4] overflow-hidden hover:shadow-lg transition-shadow">
+        <div className="relative aspect-[4/3] overflow-hidden">
+          <Image
+            src={talent.avatar_url || "/placeholder-avatar.png"}
+            alt={`${talent.prenom} ${talent.nom}`}
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
+          <div className="absolute top-4 right-4 bg-[#008751] text-white px-3 py-1 rounded-full text-xs font-bold">
+            {talent.votes || 0} votes
+          </div>
+        </div>
+        <div className="p-6">
+          <div className="flex items-start justify-between mb-4">
+            <div>
+              <h3 className="text-lg font-bold text-black mb-1">
+                {talent.prenom} {talent.nom}
+              </h3>
+              <p className="text-sm text-gray-600 mb-2">{talent.categorie}</p>
+              <div className="flex items-center gap-2">
+                <span className="text-xs bg-[#F9F9F7] px-2 py-1 rounded-full text-gray-600">
+                  {talent.univers}
+                </span>
+              </div>
+            </div>
+          </div>
+          {talent.bio && (
+            <p className="text-sm text-gray-700 line-clamp-3">
+              {talent.bio}
+            </p>
+          )}
+        </div>
+      </div>
+    </Link>
+  );
+}
+
 function TalentsList() {
+  // Machine à états simple
+  const [status, setStatus] = useState<'loading' | 'success' | 'empty' | 'error'>('loading');
   const [talents, setTalents] = useState<Talent[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedUniverse, setSelectedUniverse] = useState("Tous les univers");
   const [selectedCategory, setSelectedCategory] = useState("Toutes les catégories");
@@ -23,274 +65,174 @@ function TalentsList() {
   useEffect(() => {
     const fetchTalents = async () => {
       try {
-        const { data, error, status, statusText } = await supabase
+        // Client Supabase propre
+        const supabase = createBrowserClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+        );
+
+        const { data, error } = await supabase
           .from("talents")
           .select("id, slug, prenom, nom, univers, categorie, avatar_url, votes, bio")
           .order("votes", { ascending: false });
 
         if (error) {
-          console.error("Erreur Supabase:", error);
-          const msg = error.message;
-          const stillMissing =
-            msg.includes("schema cache") || msg.includes("does not exist") || msg.includes("relation");
-          setErrorMsg(
-            stillMissing
-              ? `La table des talents est introuvable côté Supabase. Attendu: public.talents. Détail: ${msg}`
-              : `Erreur Supabase (${status}): ${msg}`
-          );
-          return;
-        }
-        
-        if (!data) {
-          setErrorMsg("Aucune donnée n'a été retournée par Supabase.");
-          setTalents([]);
+          console.error("Erreur talents:", error);
+          setStatus('error');
           return;
         }
 
-        setTalents(data as Talent[]);
-        if (data.length === 0) {
-          setErrorMsg("La base de données est vide (0 talents trouvés).");
+        if (data && data.length > 0) {
+          setTalents(data);
+          setStatus('success');
         } else {
-          setErrorMsg(null);
+          setTalents([]);
+          setStatus('empty');
         }
       } catch (err) {
-        console.error("Exception inattendue:", err);
-        setErrorMsg("Une erreur inattendue est survenue.");
-      } finally {
-        setLoading(false);
+        console.error("Erreur générale:", err);
+        setStatus('error');
       }
     };
 
     fetchTalents();
-  }, [supabase]);
+  }, []); // UN SEUL useEffect au montage
 
-  // useEffect(() => {
-  //   const channel = supabase
-  //     .channel("supabase_realtime")
-  //     .on(
-  //       "postgres_changes",
-  //       { event: "UPDATE", schema: "public", table: "talents" },
-  //       (payload) => {
-  //         setTalents((prev) =>
-  //           prev.map((t) => (t.id === payload.new.id ? { ...t, votes: payload.new.votes } : t)),
-  //         );
-  //       },
-  //     )
-  //     .subscribe();
-  //
-  //   return () => {
-  //     supabase.removeChannel(channel);
-  //   };
-  // }, [supabase]);
+  // Filtrage simple
+  const filteredTalents = talents.filter(talent => {
+    const matchesUniverse = selectedUniverse === "Tous les univers" || talent.univers === selectedUniverse;
+    const matchesCategory = selectedCategory === "Toutes les catégories" || talent.categorie === selectedCategory;
+    const matchesSearch = `${talent.prenom} ${talent.nom}`.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    return matchesUniverse && matchesCategory && matchesSearch;
+  });
 
-  // Derived categories based on selected universe
-  const availableCategories = useMemo(() => {
-    if (selectedUniverse === "Tous les univers") {
-      const allCats = new Set(talents.map(t => t.categorie).filter(Boolean));
-      return ["Toutes les catégories", ...Array.from(allCats).sort()];
-    }
-    const universeData = universes.find(u => u.name === selectedUniverse);
-    return ["Toutes les catégories", ...(universeData?.subs || []).sort()];
-  }, [selectedUniverse, talents]);
+  // Catégories uniques basées sur l'univers sélectionné
+  const categories = selectedUniverse === "Tous les univers" 
+    ? ["Toutes les catégories", ...Array.from(new Set(talents.map(t => t.categorie).filter(Boolean))]
+    : ["Toutes les catégories", ...Array.from(new Set(filteredTalents.map(t => t.categorie).filter(Boolean)))];
 
-  // Filtering logic
-  const filteredTalents = useMemo(() => {
-    return talents.filter(talent => {
-      const fullName = `${talent.prenom} ${talent.nom}`.toLowerCase();
-      const matchesSearch = fullName.includes(searchQuery.toLowerCase());
-      const matchesUniverse = selectedUniverse === "Tous les univers" || talent.univers === selectedUniverse;
-      const matchesCategory = selectedCategory === "Toutes les catégories" || talent.categorie === selectedCategory;
-      
-      return matchesSearch && matchesUniverse && matchesCategory;
-    });
-  }, [talents, searchQuery, selectedUniverse, selectedCategory]);
-
-  if (loading && !errorMsg && talents.length === 0) {
+  // Rendu conditionnel strict
+  if (status === 'loading') {
     return (
-      <div className="flex flex-col items-center justify-center py-20">
-        <Loader2 className="w-12 h-12 text-[#008751] animate-spin mb-4" />
-        <p className="text-[#8E8E8E] font-sans">Chargement de la galerie...</p>
+      <div className="min-h-screen flex items-center justify-center bg-[#F9F9F7]">
+        <Loader2 className="w-8 h-8 animate-spin text-[#008751]" />
       </div>
     );
   }
 
-  if (errorMsg) {
+  if (status === 'error') {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-red-500">
-        <AlertCircle className="w-12 h-12 mb-4" />
-        <p className="font-sans font-bold">Une erreur est survenue lors de la récupération des talents.</p>
-        <p className="font-sans text-sm mt-2">{errorMsg}</p>
-        <button 
-          onClick={() => window.location.reload()}
-          className="mt-6 px-6 py-3 bg-[#008751] text-white rounded-2xl font-bold uppercase tracking-widest text-xs"
-        >
-          Réessayer
-        </button>
+      <div className="min-h-screen flex items-center justify-center bg-[#F9F9F7]">
+        <div className="text-center max-w-md">
+          <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+          <h2 className="text-xl font-bold text-black mb-2">Erreur de chargement</h2>
+          <p className="text-gray-600 mb-4">Impossible de charger la liste des talents</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="text-[#008751] hover:underline"
+          >
+            Réessayer
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (status === 'empty') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#F9F9F7]">
+        <div className="text-center max-w-md">
+          <Info className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+          <h2 className="text-xl font-bold text-black mb-2">Aucun talent trouvé</h2>
+          <p className="text-gray-600">Les talents seront bientôt disponibles</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto">
-      <div className="mb-12 text-center">
-        <h1 className="font-display text-4xl md:text-5xl font-bold text-black">
-          Talents du Bénin
-        </h1>
-        <p className="mt-4 font-sans text-lg md:text-xl text-black/80 max-w-2xl mx-auto">
-          Découvrez les femmes et les hommes qui font rayonner l&apos;excellence béninoise.
-        </p>
-
-        {/* Filters Section */}
-        <div className="mt-10 flex flex-col gap-6">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-4">
-            {/* Search Bar */}
-            <div className="relative w-full max-w-md">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input 
-                type="text"
-                placeholder="Rechercher un talent..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-white border border-[#F2EDE4] pl-12 pr-10 py-4 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-[#008751]/20 shadow-sm"
-              />
-              {searchQuery && (
-                <button 
-                  onClick={() => setSearchQuery("")}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              )}
+    <div className="min-h-screen bg-[#F9F9F7]">
+      {/* Header */}
+      <div className="bg-white border-b border-[#F2EDE4] px-6 py-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-display font-bold text-black mb-2">Découvrez les Talents</h1>
+              <p className="text-gray-600">Explorez et votez pour les meilleurs talents du Bénin</p>
             </div>
-
-            {/* Universe Filter */}
-            <div className="relative w-full max-w-[240px]">
-              <Filter className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#008751]" />
-              <select 
-                value={selectedUniverse}
-                onChange={(e) => {
-                  setSelectedUniverse(e.target.value);
-                  setSelectedCategory("Toutes les catégories");
-                }}
-                className="w-full appearance-none bg-white border border-[#F2EDE4] pl-10 pr-10 py-4 rounded-2xl text-xs font-bold uppercase tracking-widest text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#008751]/20 shadow-sm cursor-pointer"
-              >
-                <option>Tous les univers</option>
-                {universes.map(u => <option key={u.name} value={u.name}>{u.name}</option>)}
-              </select>
-            </div>
-
-            {/* Category Filter */}
-            <div className="relative w-full max-w-[240px]">
-              <LayoutGrid className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#008751]" />
-              <select 
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full appearance-none bg-white border border-[#F2EDE4] pl-10 pr-10 py-4 rounded-2xl text-xs font-bold uppercase tracking-widest text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#008751]/20 shadow-sm cursor-pointer"
-              >
-                {availableCategories.map(c => <option key={c} value={c}>{c}</option>)}
-              </select>
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <div className="inline-flex items-start gap-3 bg-white/50 border border-[#004d3d]/20 p-4 rounded-xl text-left max-w-2xl shadow-sm backdrop-blur-sm">
-              <Info className="w-5 h-5 flex-shrink-0 mt-0.5 text-[#004d3d]" />
-              <p className="text-sm text-gray-700 leading-relaxed">
-                <span className="block font-semibold text-black mb-1">Votez pour vos Talents</span>
-                Explorez les portraits de nos ambassadeurs et soutenez ceux qui vous inspirent. Chaque vote compte pour le classement final !
-              </p>
-            </div>
-
-            <Link 
-              href="/talents/swipe"
-              className="group flex items-center gap-3 px-6 py-4 bg-[#008751] text-white rounded-2xl font-bold text-sm uppercase tracking-widest hover:bg-[#004d3d] transition-all shadow-lg shadow-[#008751]/20 active:scale-95"
-            >
-              <Smartphone className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-              Mode Swipe Mobile
-            </Link>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {filteredTalents.map((talent) => {
-          const fullName = `${talent.prenom} ${talent.nom}`;
-          let imageUrl = talent.avatar_url || "";
-          
-          if (!imageUrl) {
-            imageUrl = `/talents/${talent.slug}.jpg`;
-          } else if (!imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
-            if (imageUrl.startsWith('talents/')) {
-              imageUrl = `/${imageUrl}`;
-            } else {
-              imageUrl = `/talents/${imageUrl}`;
-            }
-          }
-          
-          return (
-            <Link
-              key={talent.id}
-              href={`/talents/${talent.slug}`}
-              className="group block bg-white border border-[#F2EDE4] rounded-[20px] overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer relative z-10 pointer-events-auto"
+      {/* Filters */}
+      <div className="bg-white border-b border-[#F2EDE4] px-6 py-4">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Rechercher un talent..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#008751] focus:border-transparent"
+            />
+          </div>
+          <div className="relative">
+            <select
+              value={selectedUniverse}
+              onChange={(e) => setSelectedUniverse(e.target.value)}
+              className="appearance-none bg-white border border-gray-200 rounded-xl px-4 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#008751] focus:border-transparent"
             >
-              {/* Image Section */}
-              <div className="relative aspect-[4/5] w-full overflow-hidden">
-                <Image
-                  src={imageUrl}
-                  alt={fullName}
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                
-                {/* Vote Badge */}
-                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full shadow-sm flex items-center gap-1.5">
-                  <span className="text-[10px] font-black text-[#008751]">{talent.votes}</span>
-                  <span className="text-[8px] font-bold uppercase tracking-tighter text-gray-400">Votes</span>
-                </div>
-              </div>
-
-              {/* Text Section */}
-              <div className="p-5">
-                <span className="text-[8px] font-black uppercase tracking-widest text-[#008751] bg-[#008751]/5 px-2 py-0.5 rounded-full mb-2 inline-block">
-                  {talent.univers}
-                </span>
-                <h2 className="font-display text-xl font-bold text-black truncate group-hover:text-[#008751] transition-colors">
-                  {fullName}
-                </h2>
-                <p className="font-sans text-gray-500 text-xs mt-1 truncate uppercase tracking-wider font-bold">
-                  {talent.categorie}
-                </p>
-              </div>
-            </Link>
-          );
-        })}
+              {["Tous les univers", ...universes.map(u => u.name)].map(universe => (
+                <option key={universe} value={universe}>{universe}</option>
+              ))}
+            </select>
+            <Filter className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+          </div>
+          <div className="relative">
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="appearance-none bg-white border border-gray-200 rounded-xl px-4 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#008751] focus:border-transparent"
+            >
+              {categories.map(category => (
+                <option key={category} value={category}>{category}</option>
+              ))}
+            </select>
+            <Filter className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+          </div>
+        </div>
       </div>
 
-      {filteredTalents.length === 0 && (
-        <div className="text-center py-20 bg-white rounded-[30px] border border-dashed border-gray-200">
-          <p className="text-gray-500 font-sans">Aucun talent ne correspond à votre recherche.</p>
-        </div>
-      )}
+      {/* Grid */}
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        {filteredTalents.length === 0 ? (
+          <div className="text-center py-12">
+            <Info className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-bold text-black mb-2">Aucun talent trouvé</h3>
+            <p className="text-gray-600">
+              {searchQuery || selectedUniverse !== "Tous les univers" || selectedCategory !== "Toutes les catégories"
+                ? "Essayez de modifier vos filtres pour voir plus de talents."
+                : "Aucun talent ne correspond à votre recherche."}
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredTalents.map((talent) => (
+              <TalentCard key={talent.id} talent={talent} />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
 
-export default function TalentsListPage() {
+export default function TalentsPage() {
   return (
-    <div className="min-h-screen bg-[#F9F9F7] px-4 py-10 md:p-8 md:py-14">
-      <Suspense fallback={
-        <div className="flex items-center justify-center min-h-[50vh]">
-          <div className="text-center text-[#8E8E8E] animate-pulse">
-            Chargement de la galerie...
-          </div>
-        </div>
-      }>
-        <TalentsList />
-      </Suspense>
+    <div className="min-h-screen bg-[#F9F9F7]">
+      <TalentsList />
     </div>
   );
 }
-// trigger git
-// trigger git
