@@ -177,15 +177,7 @@ const MobileNavigation = () => {
                     onClick={() => setIsOpen(false)}
                     className="w-full py-4 rounded-full bg-[#F9F9F7] text-[#1A1A1A] font-display text-lg font-bold shadow-sm flex items-center justify-center border border-gray-100"
                   >
-                    Voter
-                  </Link>
-                  <Link
-                    href="/postuler"
-                    onClick={() => setIsOpen(false)}
-                    className="w-full py-4 rounded-full bg-[#006B3F] text-white font-display text-lg font-bold shadow-xl flex items-center justify-center"
-                  >
-                    <Star size={20} className="mr-2 fill-current" />
-                    Postuler
+                    S'inscrire / Se connecter
                   </Link>
                 </div>
               )}

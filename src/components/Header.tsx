@@ -311,13 +311,7 @@ const Header = () => {
                   href="/login"
                   className="text-sm font-bold text-[#1A1A1A] hover:text-[#006B3F] transition-colors font-display tracking-wide"
                 >
-                  Voter
-                </Link>
-                <Link
-                  href="/postuler"
-                  className="rounded-full bg-[#006B3F] px-8 py-3.5 text-[11px] font-black tracking-[0.15em] uppercase text-white transition-all hover:bg-[#008751] active:scale-95 shadow-lg shadow-[#006B3F]/20"
-                >
-                  Postuler
+                  S'inscrire / Se connecter
                 </Link>
               </div>
             )}

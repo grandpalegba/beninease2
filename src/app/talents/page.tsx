@@ -11,6 +11,7 @@ import { Info, Loader2, LayoutGrid, Smartphone, Search, Filter, X, AlertCircle }
 import { createBrowserClient } from "@supabase/ssr";
 import type { Talent } from "@/types";
 import { universes } from "@/lib/data/universes";
+import CandidateSwiper from "@/components/CandidateSwiper";
 
 // Composant pour afficher un talent
 function TalentCard({ talent }: { talent: Talent }) {
@@ -83,7 +84,7 @@ function TalentsList() {
         }
 
         if (data && data.length > 0) {
-          setTalents(data);
+          setTalents(data as Talent[]);
           setStatus('success');
         } else {
           setTalents([]);
@@ -115,8 +116,11 @@ function TalentsList() {
   // Rendu conditionnel strict
   if (status === 'loading') {
     return (
-      <div style={{fontSize: '24px', color: 'red', padding: '20px', background: 'yellow'}}>
-        🚨 CHARGEMENT PAGE TALENTS... SPINNER ACTIF 🚨
+      <div className="min-h-screen flex items-center justify-center bg-[#F9F9F7]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-[#008751] border-t-transparent border-r-transparent rounded-full animate-spin"></div>
+          <p className="text-gray-600 font-medium">Chargement des talents...</p>
+        </div>
       </div>
     );
   }
@@ -153,77 +157,9 @@ function TalentsList() {
 
   return (
     <div className="min-h-screen bg-[#F9F9F7]">
-      {/* Header */}
-      <div className="bg-white border-b border-[#F2EDE4] px-6 py-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-display font-bold text-black mb-2">Découvrez les Talents</h1>
-              <p className="text-gray-600">Explorez et votez pour les meilleurs talents du Bénin</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Filters */}
-      <div className="bg-white border-b border-[#F2EDE4] px-6 py-4">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Rechercher un talent..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#008751] focus:border-transparent"
-            />
-          </div>
-          <div className="relative">
-            <select
-              value={selectedUniverse}
-              onChange={(e) => setSelectedUniverse(e.target.value)}
-              className="appearance-none bg-white border border-gray-200 rounded-xl px-4 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#008751] focus:border-transparent"
-            >
-              {["Tous les univers", ...universes.map(u => u.name)].map(universe => (
-                <option key={universe} value={universe}>{universe}</option>
-              ))}
-            </select>
-            <Filter className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-          </div>
-          <div className="relative">
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="appearance-none bg-white border border-gray-200 rounded-xl px-4 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#008751] focus:border-transparent"
-            >
-              {categories.map(category => (
-                <option key={category} value={category}>{category}</option>
-              ))}
-            </select>
-            <Filter className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-          </div>
-        </div>
-      </div>
-
-      {/* Grid */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        {filteredTalents.length === 0 ? (
-          <div className="text-center py-12">
-            <Info className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-bold text-black mb-2">Aucun talent trouvé</h3>
-            <p className="text-gray-600">
-              {searchQuery || selectedUniverse !== "Tous les univers" || selectedCategory !== "Toutes les catégories"
-                ? "Essayez de modifier vos filtres pour voir plus de talents."
-                : "Aucun talent ne correspond à votre recherche."}
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredTalents.map((talent) => (
-              <TalentCard key={talent.id} talent={talent} />
-            ))}
-          </div>
-        )}
+      {/* Mode Swipe - CandidateSwiper */}
+      <div className="min-h-screen bg-[#F9F9F7]">
+        <CandidateSwiper talents={filteredTalents} />
       </div>
     </div>
   );
