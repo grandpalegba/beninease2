@@ -2,17 +2,15 @@
 
 import React, { useEffect, useCallback, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-import { useRouter, useSearchParams } from "next/navigation";
 import TalentProfileClient from "@/app/talents/[slug]/TalentProfileClient";
 import type { Talent } from "@/types";
-import { ChevronLeft, ChevronRight, Info } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface CandidateSwiperProps {
   talents: Talent[];
-  initialSlug?: string;
 }
 
-export default function CandidateSwiper({ talents, initialSlug }: CandidateSwiperProps) {
+export default function CandidateSwiper({ talents }: CandidateSwiperProps) {
   // Protection défensive - éviter le crash si pas de talents
   if (!talents || talents.length === 0) {
     return (
@@ -25,38 +23,25 @@ export default function CandidateSwiper({ talents, initialSlug }: CandidateSwipe
     );
   }
 
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  
-  // Find initial index based on slug
-  const initialIndex = initialSlug 
-    ? talents.findIndex(t => t.slug === initialSlug) 
-    : 0;
-
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: false,
     dragFree: false,
-    startIndex: initialIndex !== -1 ? initialIndex : 0,
+    startIndex: 0,
     containScroll: "trimSnaps"
   });
 
-  const [currentIndex, setCurrentIndex] = useState(initialIndex !== -1 ? initialIndex : 0);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(true);
 
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
-    const index = emblaApi.selectedScrollSnap();
-    setCurrentIndex(index);
+    setCurrentIndex(emblaApi.selectedScrollSnap());
     setCanScrollPrev(emblaApi.canScrollPrev());
     setCanScrollNext(emblaApi.canScrollNext());
     
-    // Update URL without full page reload
-    const talent = talents[index];
-    if (talent) {
-      window.history.replaceState(null, "", `/talents/swipe?slug=${talent.slug}`);
-    }
-  }, [emblaApi, talents]);
+    // ❌ LE REMPLACEMENT D'URL A ÉTÉ ÉRADIQUÉ ICI ❌
+  }, [emblaApi]);
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -140,7 +125,6 @@ export default function CandidateSwiper({ talents, initialSlug }: CandidateSwipe
         .embla__slide {
           transition: transform 0.5s cubic-bezier(0.2, 0, 0, 1);
         }
-        /* Bounce effect logic is handled by Embla default behavior with friction */
       `}</style>
     </div>
   );
