@@ -8,9 +8,9 @@ import { Loader2, AlertCircle, Search, MousePointer2, Info, Filter, X } from "lu
 import Image from "next/image";
 
 // --- SOUS-COMPOSANT CARTE (Isolation) ---
-function TalentCard({ talent, onClick }: { talent: Talent; onClick: () => void }) {
+function TalentCard({ talent }: { talent: Talent }) {
   return (
-    <div onClick={onClick} className="bg-white rounded-2xl border border-[#F2EDE4] overflow-hidden hover:shadow-lg transition-all cursor-pointer group">
+    <div className="bg-white rounded-2xl border border-[#F2EDE4] overflow-hidden hover:shadow-lg transition-all cursor-pointer group">
       <div className="relative aspect-[4/3] overflow-hidden">
         <Image
           src={talent.avatar_url || "/placeholder-avatar.png"}
@@ -36,8 +36,6 @@ export default function TalentsPage() {
   const [talents, setTalents] = useState<Talent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [viewMode, setViewMode] = useState<'grid' | 'swipe'>('grid');
-  const [searchQuery, setSearchQuery] = useState("");
   const [selectedUnivers, setSelectedUnivers] = useState<string>("");
   const [selectedCategorie, setSelectedCategorie] = useState<string>("");
 
@@ -106,10 +104,9 @@ export default function TalentsPage() {
   }, [selectedUnivers]);
 
   const filteredTalents = talents.filter(t => {
-    const matchesSearch = `${t.prenom} ${t.nom}`.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesUnivers = !selectedUnivers || t.univers === selectedUnivers;
     const matchesCategorie = !selectedCategorie || t.categorie === selectedCategorie;
-    return matchesSearch && matchesUnivers && matchesCategorie;
+    return matchesUnivers && matchesCategorie;
   });
 
   if (loading) return (
@@ -128,38 +125,12 @@ export default function TalentsPage() {
     </div>
   );
 
-  // Bascule vers le mode Swipe
-  if (viewMode === 'swipe') {
-    return <CandidateSwiper talents={filteredTalents} onBack={() => setViewMode('grid')} />;
-  }
-
   return (
     <div className="min-h-screen bg-[#F9F9F7]">
-      {/* Barre de Recherche & Switch */}
+      {/* Barre de Filtres */}
       <div className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-[#F2EDE4] p-4">
-        <div className="max-w-7xl mx-auto flex flex-col gap-4">
-          {/* Ligne supérieure : Recherche et Swipe */}
-          <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
-            <div className="relative w-full md:w-96">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <input 
-                type="text" 
-                placeholder="Rechercher..." 
-                className="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#008751] outline-none"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-            <button 
-              onClick={() => setViewMode('swipe')}
-              className="flex items-center gap-2 bg-[#008751] text-white px-6 py-2 rounded-xl font-bold hover:bg-[#006B3F] transition-all shadow-md active:scale-95"
-            >
-              <MousePointer2 className="w-4 h-4" />
-              Lancer le mode Swipe
-            </button>
-          </div>
-          
-          {/* Ligne inférieure : Filtres */}
+        <div className="max-w-7xl mx-auto">
+          {/* Filtres */}
           <div className="flex flex-wrap items-center gap-3">
             {/* Filtre Univers */}
             <div className="flex items-center gap-2">
@@ -207,11 +178,6 @@ export default function TalentsPage() {
                 Réinitialiser
               </button>
             )}
-            
-            {/* Compteur de résultats */}
-            <div className="ml-auto text-sm text-gray-500">
-              {filteredTalents.length} talent{filteredTalents.length > 1 ? 's' : ''}
-            </div>
           </div>
         </div>
       </div>
@@ -221,7 +187,7 @@ export default function TalentsPage() {
         {filteredTalents.length === 0 ? (
           <div className="text-center py-20">
             <Info className="mx-auto text-gray-400 mb-4" />
-            <p>Aucun talent ne correspond à votre recherche.</p>
+            <p>Aucun talent ne correspond aux filtres sélectionnés.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -229,7 +195,6 @@ export default function TalentsPage() {
               <TalentCard 
                 key={talent.id} 
                 talent={talent} 
-                onClick={() => setViewMode('swipe')} 
               />
             ))}
           </div>
