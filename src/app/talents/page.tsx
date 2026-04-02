@@ -89,7 +89,21 @@ export default function TalentsPage() {
 
   // Extraire les univers et catégories uniques
   const universOptions = Array.from(new Set(talents.map(t => t.univers).filter(Boolean)));
-  const categorieOptions = Array.from(new Set(talents.map(t => t.categorie).filter(Boolean)));
+  
+  // Catégories dépendantes de l'univers sélectionné
+  const categorieOptions = selectedUnivers 
+    ? Array.from(new Set(
+        talents
+          .filter(t => t.univers === selectedUnivers)
+          .map(t => t.categorie)
+          .filter(Boolean)
+      ))
+    : []; // Vide si pas d'univers sélectionné
+
+  // Effet pour réinitialiser la catégorie quand l'univers change
+  useEffect(() => {
+    setSelectedCategorie("");
+  }, [selectedUnivers]);
 
   const filteredTalents = talents.filter(t => {
     const matchesSearch = `${t.prenom} ${t.nom}`.toLowerCase().includes(searchQuery.toLowerCase());
@@ -173,9 +187,12 @@ export default function TalentsPage() {
               <select
                 value={selectedCategorie}
                 onChange={(e) => setSelectedCategorie(e.target.value)}
-                className="px-3 py-1.5 rounded-lg border border-gray-200 text-sm focus:ring-2 focus:ring-[#E9B113] outline-none bg-white"
+                disabled={!selectedUnivers}
+                className="px-3 py-1.5 rounded-lg border border-gray-200 text-sm focus:ring-2 focus:ring-[#E9B113] outline-none bg-white disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
               >
-                <option value="">Toutes</option>
+                <option value="">
+                  {selectedUnivers ? "Sélectionnez une catégorie" : "Sélectionnez d'abord un univers"}
+                </option>
                 {categorieOptions.map(categorie => (
                   <option key={categorie} value={categorie}>{categorie}</option>
                 ))}
