@@ -4,15 +4,14 @@
  */
 "use client";
 
-import { Suspense, useEffect, useState, useMemo } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Info, Loader2, Sparkles } from "lucide-react";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { supabase } from "@/utils/supabase/client";
 import type { Treasure } from "@/types";
 
 function TreasuresList() {
-  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const [treasures, setTreasures] = useState<Treasure[]>([]);
   const [loading, setLoading] = useState(true);
 

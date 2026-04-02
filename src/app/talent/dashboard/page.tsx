@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { createSupabaseBrowserClient } from '@/lib/supabase/client';
+import { supabase } from '@/utils/supabase/client';
 import Link from 'next/link';
 import Image from 'next/image';
 import { 
@@ -33,7 +33,6 @@ export default function MaPageTalent() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState<{ type: 'image' | 'video', index: number } | null>(null);
   const router = useRouter();
-  const supabase = createSupabaseBrowserClient();
 
   const fetchData = useCallback(async () => {
     try {

@@ -4,15 +4,14 @@
  */
 "use client";
 
-import { Suspense, useEffect, useState, useMemo } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Loader2, Award } from "lucide-react";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { supabase } from "@/utils/supabase/client";
 import type { Talent } from "@/types";
 
 function JuryList() {
-  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const [talents, setTalents] = useState<Talent[]>([]);
   const [loading, setLoading] = useState(true);
 

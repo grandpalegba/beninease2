@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Heart, MapPin, ArrowLeft, Loader2, User } from "lucide-react";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { supabase } from "@/utils/supabase/client";
 import { useVoter } from "@/lib/auth/use-voter";
 
 type SupportedTalent = {
@@ -21,7 +21,6 @@ type SupportedTalent = {
 export default function SupportedTalentsPage() {
   const router = useRouter();
   const { session, isAuthenticated, loading: sessionLoading, logout } = useVoter();
-  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
   const [talents, setTalents] = useState<SupportedTalent[]>([]);
   const [loading, setLoading] = useState(true);

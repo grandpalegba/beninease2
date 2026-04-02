@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import type { ComponentType } from "react";
 import { useRouter } from "next/navigation";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { supabase } from "@/utils/supabase/client";
 import { VideoTabs } from "@/components/VideoTabs";
 import { VoteHistory } from "@/components/VoteHistory";
 import { AdBanner } from "@/components/AdBanner";
@@ -16,7 +16,6 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(0);
   const router = useRouter();
-  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
   useEffect(() => {
     async function getProfile() {

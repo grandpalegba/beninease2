@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { supabase } from "@/utils/supabase/client";
 import CandidateDashboard from "@/components/CandidateDashboard";
 import { Loader2 } from "lucide-react";
 import type { Talent } from "@/types";
@@ -11,7 +11,6 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<Talent | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  const supabase = createSupabaseBrowserClient();
 
   useEffect(() => {
     async function getProfile() {

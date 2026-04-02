@@ -4,10 +4,10 @@
  */
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { supabase } from "@/utils/supabase/client";
 import { Image as ImageIcon, MapPin } from "lucide-react";
 
 type JuryProfile = {
@@ -29,7 +29,6 @@ type VideoRow = {
 type VideosByType = Record<string, VideoRow>;
 
 export default function JuryProfilePage({ params }: { params: { slug: string } }) {
-  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const id = params?.slug;
   const router = useRouter();
 
