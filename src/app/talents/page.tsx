@@ -4,19 +4,22 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase/client";
 import type { Talent } from "@/types";
 import CandidateSwiper from "@/components/CandidateSwiper";
-import { Loader2, AlertCircle, Search, MousePointer2, Info, Filter, X, Sparkles } from "lucide-react";
+import { Loader2, AlertCircle, Search, MousePointer2, Info, Filter, X, Star } from "lucide-react";
 import Image from "next/image";
 
 // --- HEADER PRESTIGIEUX ---
 function PrestigiousHeader() {
   return (
-    <div className="bg-white border-b border-[#F2EDE4] px-6 py-12">
+    <div className="bg-white border-b border-[#F2EDE4] py-16 px-4">
       <div className="max-w-7xl mx-auto text-center">
-        <Sparkles className="w-16 h-16 text-[#D4AF37] mx-auto mb-6" />
-        <h1 className="text-5xl font-display font-bold text-black mb-4">
+        <Star 
+          className="w-16 h-16 text-[#D4AF37] fill-[#D4AF37] mx-auto mb-6" 
+          strokeWidth={1.5}
+        />
+        <h1 className="text-5xl font-serif font-extrabold tracking-tight text-black mb-4">
           Découvrez les Ambassadeurs
         </h1>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+        <p className="text-xl text-gray-600 font-medium max-w-2xl mx-auto">
           Parcourez la galerie des meilleurs talents du Bénin et votez pour ceux qui porteront nos couleurs.
         </p>
       </div>
