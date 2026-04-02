@@ -1,14 +1,13 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { supabase } from '@/utils/supabase/client';
 import type { VoterSession } from "@/types";
 
 export function useVoter() {
   const [session, setSession] = useState<VoterSession | null>(null);
   const [loading, setLoading] = useState(true);
-  const supabase = createSupabaseBrowserClient();
-
+  
   useEffect(() => {
     // Load from localStorage
     const stored = localStorage.getItem("beninease_voter_session");

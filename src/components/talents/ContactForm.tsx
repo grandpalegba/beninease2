@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { supabase } from '@/utils/supabase/client';
 import { Send, Loader2, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -11,8 +11,7 @@ interface ContactFormProps {
 }
 
 export function ContactForm({ receiverId, talentName }: ContactFormProps) {
-  const supabase = createSupabaseBrowserClient();
-  const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [isHuman, setIsHuman] = useState(false);
   const [honeypot, setHoneypot] = useState("");

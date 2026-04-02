@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import type { Talent } from '@/types';
 import { cn } from '@/lib/utils';
-import { createSupabaseBrowserClient } from '@/lib/supabase/client';
+import { supabase } from '@/utils/supabase/client';
 import { Award, User, Heart, TrendingUp } from 'lucide-react';
 
 interface TalentHeaderProps {
@@ -18,7 +18,6 @@ type ImpactStats = {
 export default function TalentHeader({ profile }: TalentHeaderProps) {
   const isAmbassadeur = profile.role === 'ambassadeur' || profile.role === 'admin';
   const [stats, setStats] = useState<ImpactStats | null>(null);
-  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
   useEffect(() => {
     const fetchImpactStats = async () => {

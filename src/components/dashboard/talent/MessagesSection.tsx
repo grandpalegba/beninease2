@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from 'react';
-import { createSupabaseBrowserClient } from '@/lib/supabase/client';
+import { supabase } from '@/utils/supabase/client';
 import type { Talent } from '@/types';
 import { cn } from '@/lib/utils';
 import { Loader2, Mail, MessageSquare, Send, CheckCircle2 } from 'lucide-react';
@@ -26,7 +26,6 @@ export default function MessagesSection({ profile }: MessagesSectionProps) {
   const [loadingMessages, setLoadingMessages] = useState(true);
   const [replyContent, setReplyContent] = useState('');
   const [isReplying, setIsReplying] = useState(false);
-  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
   const unreadCount = useMemo(() => messages.filter(m => m.status === 'unread').length, [messages]);
 

@@ -2,13 +2,12 @@
 
 import { useState } from "react";
 import { Video, Loader2 } from "lucide-react";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { supabase } from '@/utils/supabase/client';
 import { useRouter } from "next/navigation";
 import { universes } from "@/lib/data/universes";
 
 const CandidatureForm = () => {
   const router = useRouter();
-  const supabase = createSupabaseBrowserClient();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);

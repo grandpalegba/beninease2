@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { createSupabaseBrowserClient } from '@/lib/supabase/client';
+import { supabase } from '@/utils/supabase/client';
 import { Loader2 } from 'lucide-react';
 
 interface TalentAuthGuardProps {
@@ -14,8 +14,7 @@ export default function TalentAuthGuard({ children, fallback }: TalentAuthGuardP
   const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
   const router = useRouter();
-  const supabase = createSupabaseBrowserClient();
-
+  
   useEffect(() => {
     const checkAuth = async () => {
       try {

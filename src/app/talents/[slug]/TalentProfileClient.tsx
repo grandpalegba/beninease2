@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { Heart, MapPin, Play, Globe, Clock, Share2, X, CheckCircle2, AlertCircle, Mail, Phone, Trophy } from "lucide-react";
 import { confetti } from "tsparticles-confetti";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { supabase } from '@/utils/supabase/client';
 import { useVoter } from "@/lib/auth/use-voter";
 import { ContactForm } from "@/components/talents/ContactForm";
 import { cn } from "@/lib/utils";
@@ -61,7 +61,7 @@ export default function TalentProfileClient({
   console.log("PROPS REÇUES PAR LE CLIENT :", candidate);  // Debug au début du composant
   const router = useRouter();
   const { isAuthenticated, checkHasVoted } = useVoter();
-  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
+  const supabaseClient = useMemo(() => supabase, []);
   const [activeUser, setActiveUser] = useState<any>(null);  // ← AJOUTÉ: État pour l'utilisateur courant
 
   const [activeTab, setActiveTab] = useState("Vidéos");

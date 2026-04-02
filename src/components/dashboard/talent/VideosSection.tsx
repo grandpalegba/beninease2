@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { createSupabaseBrowserClient } from '@/lib/supabase/client';
+import { supabase } from '@/utils/supabase/client';
 import { VIDEO_STEPS } from '@/lib/constants/video-steps';
 import type { Talent } from '@/types';
 import VideoSlot from './VideoSlot';
@@ -13,8 +13,7 @@ interface VideosSectionProps {
 
 export default function VideosSection({ profile: initialProfile }: VideosSectionProps) {
   const [profile, setProfile] = useState(initialProfile);
-  const supabase = createSupabaseBrowserClient();
-
+  
   const isAmbassadeur = profile.role === 'ambassadeur' || profile.role === 'admin';
 
   const handleUpdateVideo = async (key: string, videoId: string | null) => {

@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { Camera, Upload, Trash2, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
 import Image from "next/image";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { supabase } from '@/utils/supabase/client';
 
 type AvatarUploadProps = {
   talentId: string;
@@ -18,8 +18,7 @@ export default function AvatarUpload({
   onUploadSuccess,
   onDeleteSuccess 
 }: AvatarUploadProps) {
-  const supabase = createSupabaseBrowserClient();
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(initialAvatarUrl || null);
+    const [avatarUrl, setAvatarUrl] = useState<string | null>(initialAvatarUrl || null);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);

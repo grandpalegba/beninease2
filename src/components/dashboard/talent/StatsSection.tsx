@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from 'react';
-import { createSupabaseBrowserClient } from '@/lib/supabase/client';
+import { supabase } from '@/utils/supabase/client';
 import type { Talent } from '@/types';
 import { Award, TrendingUp, Zap } from 'lucide-react';
 
@@ -18,7 +18,6 @@ type TalentStats = {
 
 export default function StatsSection({ profile }: StatsSectionProps) {
   const [stats, setStats] = useState<TalentStats | null>(null);
-  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
   useEffect(() => {
     const fetchTalentStats = async () => {

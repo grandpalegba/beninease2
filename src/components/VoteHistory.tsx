@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Heart, Calendar, ArrowRight } from "lucide-react";
 import { getUserVotes } from "@/lib/supabase/queries";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { supabase } from '@/utils/supabase/client';
 
 interface VoteHistoryProps {
   votantId: string;
@@ -28,7 +28,6 @@ type VoteRow = {
 export function VoteHistory({ votantId }: VoteHistoryProps) {
   const [votes, setVotes] = useState<VoteRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
   useEffect(() => {
     async function loadVotes() {
