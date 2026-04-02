@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, User, LogOut, LayoutDashboard, Settings, Trophy, Globe, Star } from "lucide-react";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { createSupabaseBrowserClient, supabase } from "@/lib/supabase/client";
 import { calculateVoterStatus } from "@/lib/voter-logic";
 import Image from "next/image";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
@@ -27,12 +27,13 @@ type UserProfile = {
 };
 
 const MobileNavigation = () => {
+  console.log('🚨 MOBILE NAVIGATION COMPOSANT MOUNTED - RENDERING 🚨');
+  
   const [isOpen, setIsOpen] = useState(false);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [userStats, setUserStats] = useState<UserStats | null>(null);
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [isTalent, setIsTalent] = useState(false);
-  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
 
   // Sync with Supabase Auth
