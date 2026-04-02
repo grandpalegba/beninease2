@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from 'react';
-import { createSupabaseBrowserClient } from '@/lib/supabase/client';
+import { supabase } from '@/lib/supabase/client';
 import { Loader2, Lock, Eye, EyeOff, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -11,7 +11,6 @@ interface SignupFormProps {
 }
 
 export default function SignupForm({ intent, onSuccess }: SignupFormProps) {
-  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

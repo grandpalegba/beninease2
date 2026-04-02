@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { supabase } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { Upload, MapPin, Globe, Edit, Save, Camera, Image as ImageIcon, Trash2 } from "lucide-react";
 import type { User } from "@supabase/supabase-js";
@@ -29,7 +29,6 @@ type VideosByType = Record<string, VideoRow>;
 type ProfileUpdatableField = "prenom" | "nom" | "avatar_url" | "title" | "description" | "city";
 
 export default function CandidateProfile() {
-  const supabase = createSupabaseBrowserClient();
   const router = useRouter();
   
   const [activeTab, setActiveTab] = useState("Qui je suis");

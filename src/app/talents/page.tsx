@@ -9,7 +9,7 @@ import Image from "next/image";
 import { supabase } from "@/utils/supabase/client";
 import type { Talent } from "@/types";
 import CandidateSwiper from "@/components/CandidateSwiper";
-import { Loader2, AlertCircle, Info, Search, X, Grid, Swipe } from "lucide-react";
+import { Loader2, AlertCircle, Info, Search, X, Grid, MousePointer2 } from "lucide-react";
 
 // Composant pour afficher une carte de talent
 function TalentCard({ talent, index, onClick }: { talent: Talent; index: number; onClick: (index: number) => void }) {
@@ -227,7 +227,7 @@ function TalentsList() {
               onClick={() => setViewMode('swipe')}
               className="flex items-center gap-2 bg-[#008751] text-white px-4 py-2 rounded-lg hover:bg-[#006B3F] transition-colors"
             >
-              <Swipe className="w-4 h-4" />
+              <MousePointer2 className="w-4 h-4" />
               Mode Swipe
             </button>
           </div>

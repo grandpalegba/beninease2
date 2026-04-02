@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from 'react';
-import { createSupabaseBrowserClient } from '@/lib/supabase/client';
+import { supabase } from '@/lib/supabase/client';
 import { Mail, Loader2, Lock, Eye, EyeOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -10,7 +10,6 @@ interface AuthButtonsProps {
 }
 
 export default function AuthButtons({ intent }: AuthButtonsProps) {
-  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const [loading, setLoading] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
