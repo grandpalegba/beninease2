@@ -6,6 +6,9 @@ import { createSupabaseMiddlewareClient } from "@/lib/supabase/middleware";
 export async function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
 
+  // DÉSACTIVÉ TEMPORAIREMENT pour test - si le site s'affiche, le problème vient du middleware
+  return NextResponse.next();
+
   // --- ACCÈS PUBLIC ---
   // On autorise immédiatement l'accès aux talents, au classement et aux images OG pour les robots et visiteurs
   // Cette exception est impérative pour que les réseaux sociaux (WhatsApp, Facebook) voient les métadonnées.
