@@ -22,7 +22,7 @@ export default function TalentDashboardPage() {
       }
 
       const { data, error } = await supabase
-        .from("Talents")
+        .from('talents')
         .select("*")
         .eq("id", user.id)
         .single();

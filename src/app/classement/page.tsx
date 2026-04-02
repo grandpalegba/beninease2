@@ -18,6 +18,7 @@ type TalentRank = {
   prenom: string | null;
   nom: string | null;
   categorie: string | null;
+  univers: string | null;
   votes: number;
   avatar_url: string; 
 };
@@ -73,37 +74,72 @@ function RankingList() {
   // Machine à états simple
   const [status, setStatus] = useState<'loading' | 'success' | 'empty' | 'error'>('loading');
   const [talents, setTalents] = useState<TalentRank[] | null>(null);
+  const [selectedUnivers, setSelectedUnivers] = useState<string>("");
+  const [selectedCategorie, setSelectedCategorie] = useState<string>("");
 
   useEffect(() => {
     const fetchRanking = async () => {
       try {
-        const { data, error } = await supabase
-          .from("talents")
-          .select("id, slug, prenom, nom, categorie, votes, avatar_url")
-          .order("votes", { ascending: false })
-          .limit(50); // Top 50 pour éviter les temps de chargement
+        console.log('🏆 Chargement classement...');
+        
+        // Vérifier la session avant de lancer la requête
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        console.log('🔐 Session check (classement):', session ? '✅ Connecté' : '❌ Anonyme');
+        
+        if (sessionError) {
+          console.error('❌ Erreur session (classement):', sessionError);
+        }
+        
+        let data, error;
+        try {
+          // La requête fonctionne pour les utilisateurs connectés et anonymes
+          const result = await supabase
+            .from("talents")
+            .select("id, slug, prenom, nom, categorie, univers, votes, avatar_url")
+            .order("votes", { ascending: false })
+            .limit(50); // Top 50 pour éviter les temps de chargement
+          data = result.data;
+          error = result.error;
+        } catch (supabaseError) {
+          console.error('💥 SUPABASE_ERROR (classement):', supabaseError);
+          setStatus('error');
+          return;
+        }
 
         if (error) {
-          console.error("Erreur classement:", error);
+          console.error('💥 SUPABASE_ERROR (classement):', error);
           setStatus('error');
           return;
         }
 
         if (data && data.length > 0) {
+          console.log('✅ Classement chargé:', data.length, 'talents');
           setTalents(data);
           setStatus('success');
         } else {
+          console.log('📭 Classement vide');
           setTalents([]);
           setStatus('empty');
         }
       } catch (err) {
-        console.error("Erreur générale:", err);
+        console.error('💥 GENERAL_ERROR (classement):', err);
         setStatus('error');
       }
     };
 
     fetchRanking();
   }, []); // UN SEUL useEffect au montage
+
+  // Extraire les univers et catégories uniques
+  const universOptions = Array.from(new Set(talents?.map(t => t.univers).filter(Boolean) || []));
+  const categorieOptions = Array.from(new Set(talents?.map(t => t.categorie).filter(Boolean) || []));
+
+  // Filtrer les talents selon les sélections
+  const filteredTalents = talents?.filter(t => {
+    const matchesUnivers = !selectedUnivers || t.univers === selectedUnivers;
+    const matchesCategorie = !selectedCategorie || t.categorie === selectedCategorie;
+    return matchesUnivers && matchesCategorie;
+  }) || [];
 
   // Rendu conditionnel strict
   if (status === 'loading') {
@@ -158,10 +194,69 @@ function RankingList() {
         </div>
       </div>
 
+      {/* Filtres */}
+      <div className="bg-white border-b border-[#F2EDE4] px-6 py-4">
+        <div className="max-w-4xl mx-auto flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <Trophy className="w-4 h-4" />
+            Filtres :
+          </div>
+          
+          {/* Filtre Univers */}
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-gray-600">Univers:</label>
+            <select
+              value={selectedUnivers}
+              onChange={(e) => setSelectedUnivers(e.target.value)}
+              className="px-3 py-1.5 rounded-lg border border-gray-200 text-sm focus:ring-2 focus:ring-[#008751] outline-none bg-white"
+            >
+              <option value="">Tous</option>
+              {universOptions.map(univers => (
+                <option key={univers} value={univers}>{univers}</option>
+              ))}
+            </select>
+          </div>
+          
+          {/* Filtre Catégorie */}
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-gray-600">Catégorie:</label>
+            <select
+              value={selectedCategorie}
+              onChange={(e) => setSelectedCategorie(e.target.value)}
+              className="px-3 py-1.5 rounded-lg border border-gray-200 text-sm focus:ring-2 focus:ring-[#E9B113] outline-none bg-white"
+            >
+              <option value="">Toutes</option>
+              {categorieOptions.map(categorie => (
+                <option key={categorie} value={categorie}>{categorie}</option>
+              ))}
+            </select>
+          </div>
+          
+          {/* Bouton de réinitialisation */}
+          {(selectedUnivers || selectedCategorie) && (
+            <button
+              onClick={() => {
+                setSelectedUnivers("");
+                setSelectedCategorie("");
+              }}
+              className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 text-sm hover:bg-gray-50 transition-colors"
+            >
+              <AlertCircle className="w-3 h-3" />
+              Réinitialiser
+            </button>
+          )}
+          
+          {/* Compteur de résultats */}
+          <div className="ml-auto text-sm text-gray-500">
+            {filteredTalents.length} talent{filteredTalents.length > 1 ? 's' : ''}
+          </div>
+        </div>
+      </div>
+
       {/* Ranking */}
       <div className="max-w-4xl mx-auto px-6 py-8">
         <div className="space-y-4">
-          {talents?.map((talent, index) => (
+          {filteredTalents.map((talent, index) => (
             <RankCard key={talent.id} talent={talent} rank={index + 1} />
           ))}
         </div>

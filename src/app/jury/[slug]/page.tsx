@@ -56,7 +56,7 @@ export default function JuryProfilePage({ params }: { params: { slug: string } }
       setLoading(true);
       setError(null);
       const { data: p, error: e1 } = await supabase
-        .from("Talents")
+        .from('talents')
         .select("id, prenom, nom, avatar_url, city, description, type")
         .eq("id", id)
         .maybeSingle();

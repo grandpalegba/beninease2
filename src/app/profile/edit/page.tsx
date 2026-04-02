@@ -100,7 +100,7 @@ export default function CandidateProfile() {
     try {
       setLoading(true);
       const { error } = await supabase
-        .from('Talents')
+        .from('talents')
         .update({ [field]: value, updated_at: new Date().toISOString() })
         .eq('id', user.id);
       if (error) throw error;

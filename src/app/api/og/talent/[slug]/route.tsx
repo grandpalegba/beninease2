@@ -12,7 +12,7 @@ export async function GET(
 
     // Fetch talent data
     const { data: profile, error } = await supabase
-      .from('Talents')
+      .from('talents')
       .select('prenom, nom, avatar_url, categorie')
       .eq('slug', slug)
       .single();

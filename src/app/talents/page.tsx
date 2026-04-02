@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase/client";
 import type { Talent } from "@/types";
 import CandidateSwiper from "@/components/CandidateSwiper";
-import { Loader2, AlertCircle, Search, MousePointer2, Info } from "lucide-react";
+import { Loader2, AlertCircle, Search, MousePointer2, Info, Filter, X } from "lucide-react";
 import Image from "next/image";
 
 // --- SOUS-COMPOSANT CARTE (Isolation) ---
@@ -38,19 +38,47 @@ export default function TalentsPage() {
   const [error, setError] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'swipe'>('grid');
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedUnivers, setSelectedUnivers] = useState<string>("");
+  const [selectedCategorie, setSelectedCategorie] = useState<string>("");
 
   useEffect(() => {
     async function loadTalents() {
       try {
-        const { data, error: sbError } = await supabase
-          .from("talents")
-          .select("*")
-          .order("votes", { ascending: false });
+        console.log('🔍 Chargement talents...');
+        
+        // Vérifier la session avant de lancer la requête
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        console.log('🔐 Session check:', session ? '✅ Connecté' : '❌ Anonyme');
+        
+        if (sessionError) {
+          console.error('❌ Erreur session:', sessionError);
+        }
+        
+        let data, error;
+        try {
+          // La requête fonctionne pour les utilisateurs connectés et anonymes
+          const result = await supabase
+            .from("talents")
+            .select("*")
+            .order("votes", { ascending: false });
+          data = result.data;
+          error = result.error;
+        } catch (supabaseError) {
+          console.error('💥 SUPABASE_ERROR:', supabaseError);
+          setError(true);
+          return;
+        }
 
-        if (sbError) throw sbError;
+        if (error) {
+          console.error('💥 SUPABASE_ERROR:', error);
+          setError(true);
+          return;
+        }
+
+        console.log('✅ Talents chargés:', data?.length || 0);
         setTalents(data || []);
       } catch (err) {
-        console.error(err);
+        console.error('💥 GENERAL_ERROR:', err);
         setError(true);
       } finally {
         setLoading(false);
@@ -59,9 +87,16 @@ export default function TalentsPage() {
     loadTalents();
   }, []);
 
-  const filteredTalents = talents.filter(t => 
-    `${t.prenom} ${t.nom}`.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Extraire les univers et catégories uniques
+  const universOptions = Array.from(new Set(talents.map(t => t.univers).filter(Boolean)));
+  const categorieOptions = Array.from(new Set(talents.map(t => t.categorie).filter(Boolean)));
+
+  const filteredTalents = talents.filter(t => {
+    const matchesSearch = `${t.prenom} ${t.nom}`.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesUnivers = !selectedUnivers || t.univers === selectedUnivers;
+    const matchesCategorie = !selectedCategorie || t.categorie === selectedCategorie;
+    return matchesSearch && matchesUnivers && matchesCategorie;
+  });
 
   if (loading) return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#F9F9F7]">
@@ -88,24 +123,84 @@ export default function TalentsPage() {
     <div className="min-h-screen bg-[#F9F9F7]">
       {/* Barre de Recherche & Switch */}
       <div className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-[#F2EDE4] p-4">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-4 justify-between items-center">
-          <div className="relative w-full md:w-96">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <input 
-              type="text" 
-              placeholder="Rechercher..." 
-              className="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#008751] outline-none"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+        <div className="max-w-7xl mx-auto flex flex-col gap-4">
+          {/* Ligne supérieure : Recherche et Swipe */}
+          <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
+            <div className="relative w-full md:w-96">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <input 
+                type="text" 
+                placeholder="Rechercher..." 
+                className="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#008751] outline-none"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <button 
+              onClick={() => setViewMode('swipe')}
+              className="flex items-center gap-2 bg-[#008751] text-white px-6 py-2 rounded-xl font-bold hover:bg-[#006B3F] transition-all shadow-md active:scale-95"
+            >
+              <MousePointer2 className="w-4 h-4" />
+              Lancer le mode Swipe
+            </button>
           </div>
-          <button 
-            onClick={() => setViewMode('swipe')}
-            className="flex items-center gap-2 bg-[#008751] text-white px-6 py-2 rounded-xl font-bold hover:bg-[#006B3F] transition-all shadow-md active:scale-95"
-          >
-            <MousePointer2 className="w-4 h-4" />
-            Lancer le mode Swipe
-          </button>
+          
+          {/* Ligne inférieure : Filtres */}
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <Filter className="w-4 h-4" />
+              Filtres :
+            </div>
+            
+            {/* Filtre Univers */}
+            <div className="flex items-center gap-2">
+              <label className="text-sm text-gray-600">Univers:</label>
+              <select
+                value={selectedUnivers}
+                onChange={(e) => setSelectedUnivers(e.target.value)}
+                className="px-3 py-1.5 rounded-lg border border-gray-200 text-sm focus:ring-2 focus:ring-[#008751] outline-none bg-white"
+              >
+                <option value="">Tous</option>
+                {universOptions.map(univers => (
+                  <option key={univers} value={univers}>{univers}</option>
+                ))}
+              </select>
+            </div>
+            
+            {/* Filtre Catégorie */}
+            <div className="flex items-center gap-2">
+              <label className="text-sm text-gray-600">Catégorie:</label>
+              <select
+                value={selectedCategorie}
+                onChange={(e) => setSelectedCategorie(e.target.value)}
+                className="px-3 py-1.5 rounded-lg border border-gray-200 text-sm focus:ring-2 focus:ring-[#E9B113] outline-none bg-white"
+              >
+                <option value="">Toutes</option>
+                {categorieOptions.map(categorie => (
+                  <option key={categorie} value={categorie}>{categorie}</option>
+                ))}
+              </select>
+            </div>
+            
+            {/* Bouton de réinitialisation */}
+            {(selectedUnivers || selectedCategorie) && (
+              <button
+                onClick={() => {
+                  setSelectedUnivers("");
+                  setSelectedCategorie("");
+                }}
+                className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 text-sm hover:bg-gray-50 transition-colors"
+              >
+                <X className="w-3 h-3" />
+                Réinitialiser
+              </button>
+            )}
+            
+            {/* Compteur de résultats */}
+            <div className="ml-auto text-sm text-gray-500">
+              {filteredTalents.length} talent{filteredTalents.length > 1 ? 's' : ''}
+            </div>
+          </div>
         </div>
       </div>
 
