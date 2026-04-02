@@ -4,13 +4,30 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase/client";
 import type { Talent } from "@/types";
 import CandidateSwiper from "@/components/CandidateSwiper";
-import { Loader2, AlertCircle, Search, MousePointer2, Info, Filter, X } from "lucide-react";
+import { Loader2, AlertCircle, Search, MousePointer2, Info, Filter, X, Sparkles } from "lucide-react";
 import Image from "next/image";
 
-// --- SOUS-COMPOSANT CARTE (Isolation) ---
-function TalentCard({ talent }: { talent: Talent }) {
+// --- HEADER PRESTIGIEUX ---
+function PrestigiousHeader() {
   return (
-    <div className="bg-white rounded-2xl border border-[#F2EDE4] overflow-hidden hover:shadow-lg transition-all cursor-pointer group">
+    <div className="bg-white border-b border-[#F2EDE4] px-6 py-12">
+      <div className="max-w-7xl mx-auto text-center">
+        <Sparkles className="w-16 h-16 text-[#D4AF37] mx-auto mb-6" />
+        <h1 className="text-5xl font-display font-bold text-black mb-4">
+          Découvrez les Ambassadeurs
+        </h1>
+        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          Parcourez la galerie des meilleurs talents du Bénin et votez pour ceux qui porteront nos couleurs.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// --- SOUS-COMPOSANT CARTE (Isolation) ---
+function TalentCard({ talent, onClick }: { talent: Talent; onClick: () => void }) {
+  return (
+    <div onClick={onClick} className="bg-white rounded-2xl border border-[#F2EDE4] overflow-hidden hover:shadow-lg transition-all cursor-pointer group">
       <div className="relative aspect-[4/3] overflow-hidden">
         <Image
           src={talent.avatar_url || "/placeholder-avatar.png"}
@@ -36,6 +53,7 @@ export default function TalentsPage() {
   const [talents, setTalents] = useState<Talent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [viewMode, setViewMode] = useState<'grid' | 'swipe'>('grid');
   const [selectedUnivers, setSelectedUnivers] = useState<string>("");
   const [selectedCategorie, setSelectedCategorie] = useState<string>("");
 
@@ -125,11 +143,30 @@ export default function TalentsPage() {
     </div>
   );
 
+  // Bascule vers le mode Swipe
+  if (viewMode === 'swipe') {
+    return <CandidateSwiper talents={filteredTalents} onBack={() => setViewMode('grid')} />;
+  }
+
   return (
     <div className="min-h-screen bg-[#F9F9F7]">
-      {/* Barre de Filtres */}
+      {/* Header Prestigieux */}
+      <PrestigiousHeader />
+      
+      {/* Barre de Filtres & Switch */}
       <div className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-[#F2EDE4] p-4">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto flex flex-col gap-4">
+          {/* Ligne supérieure : Swipe */}
+          <div className="flex justify-end">
+            <button 
+              onClick={() => setViewMode('swipe')}
+              className="flex items-center gap-2 bg-[#008751] text-white px-6 py-2 rounded-xl font-bold hover:bg-[#006B3F] transition-all shadow-md active:scale-95"
+            >
+              <MousePointer2 className="w-4 h-4" />
+              Lancer le mode Swipe
+            </button>
+          </div>
+          
           {/* Filtres */}
           <div className="flex flex-wrap items-center gap-3">
             {/* Filtre Univers */}
@@ -195,6 +232,7 @@ export default function TalentsPage() {
               <TalentCard 
                 key={talent.id} 
                 talent={talent} 
+                onClick={() => setViewMode('swipe')} 
               />
             ))}
           </div>
