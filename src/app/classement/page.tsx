@@ -132,9 +132,23 @@ function RankingList() {
 
   // Extraire les univers et catégories uniques
   const universOptions = Array.from(new Set(talents?.map(t => t.univers).filter(Boolean) || []));
-  const categorieOptions = Array.from(new Set(talents?.map(t => t.categorie).filter(Boolean) || []));
+  
+  // Catégories dépendantes de l'univers sélectionné
+  const categorieOptions = selectedUnivers 
+    ? Array.from(new Set(
+        talents
+          ?.filter(t => t.univers === selectedUnivers)
+          .map(t => t.categorie)
+          .filter(Boolean) || []
+      ))
+    : []; // Vide si pas d'univers sélectionné
 
-  // Filtrer les talents selon les sélections
+  // Effet pour réinitialiser la catégorie quand l'univers change
+  useEffect(() => {
+    setSelectedCategorie("");
+  }, [selectedUnivers]);
+
+  // Filtrer les talents selon les sélections et conserver le tri par votes
   const filteredTalents = talents?.filter(t => {
     const matchesUnivers = !selectedUnivers || t.univers === selectedUnivers;
     const matchesCategorie = !selectedCategorie || t.categorie === selectedCategorie;
@@ -197,11 +211,6 @@ function RankingList() {
       {/* Filtres */}
       <div className="bg-white border-b border-[#F2EDE4] px-6 py-4">
         <div className="max-w-4xl mx-auto flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <Trophy className="w-4 h-4" />
-            Filtres :
-          </div>
-          
           {/* Filtre Univers */}
           <div className="flex items-center gap-2">
             <label className="text-sm text-gray-600">Univers:</label>
@@ -211,7 +220,7 @@ function RankingList() {
               className="px-3 py-1.5 rounded-lg border border-gray-200 text-sm focus:ring-2 focus:ring-[#008751] outline-none bg-white"
             >
               <option value="">Tous</option>
-              {universOptions.map(univers => (
+              {universOptions.filter(Boolean).map(univers => (
                 <option key={univers} value={univers}>{univers}</option>
               ))}
             </select>
@@ -223,10 +232,13 @@ function RankingList() {
             <select
               value={selectedCategorie}
               onChange={(e) => setSelectedCategorie(e.target.value)}
-              className="px-3 py-1.5 rounded-lg border border-gray-200 text-sm focus:ring-2 focus:ring-[#E9B113] outline-none bg-white"
+              disabled={!selectedUnivers}
+              className="px-3 py-1.5 rounded-lg border border-gray-200 text-sm focus:ring-2 focus:ring-[#E9B113] outline-none bg-white disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
             >
-              <option value="">Toutes</option>
-              {categorieOptions.map(categorie => (
+              <option value="">
+                {selectedUnivers ? "Sélectionnez une catégorie" : "Sélectionnez d'abord un univers"}
+              </option>
+              {categorieOptions.filter(Boolean).map(categorie => (
                 <option key={categorie} value={categorie}>{categorie}</option>
               ))}
             </select>
@@ -245,11 +257,6 @@ function RankingList() {
               Réinitialiser
             </button>
           )}
-          
-          {/* Compteur de résultats */}
-          <div className="ml-auto text-sm text-gray-500">
-            {filteredTalents.length} talent{filteredTalents.length > 1 ? 's' : ''}
-          </div>
         </div>
       </div>
 
