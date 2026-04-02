@@ -109,103 +109,17 @@ const AvatarFallback = ({ profile, size = "large" }: { profile: any, size?: "lar
   );
 };
 
-// Composant isolé pour l'affichage du nom utilisateur
+// Affichage statique simple - plus de fetch pour éviter les blocages
 function UserNameDisplay() {
-  const [userName, setUserName] = useState<{prenom: string | null, nom: string | null} | null>(null);
-  const [loading, setLoading] = useState(false); // FORCÉ à false pour test d'exclusion
-
-  useEffect(() => {
-    console.log('Fetch exécuté 1 seule fois');
-    
-    // COMMENTÉ TEMPORAIREMENT pour test d'exclusion
-    /*
-    const fetchUserName = async () => {
-      try {
-        const supabase = createSupabaseBrowserClient();
-        
-        // Timeout de 3 secondes pour éviter le gel
-        const fetchPromise = supabase
-          .from("profiles")
-          .select('prenom, nom')
-          .eq("id", (await supabase.auth.getUser()).data.user?.id || '')
-          .single();
-
-        const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout after 3 seconds')), 3000)
-        );
-
-        const { data, error } = await Promise.race([fetchPromise, timeoutPromise]) as any;
-
-        if (error) {
-          throw error;
-        }
-
-        console.log('Test Colonnes:', data);
-        
-        // Gestion des données nulles/absentes
-        if (data === null || data === undefined) {
-          setUserName({ prenom: null, nom: null });
-          return;
-        }
-
-        setUserName({ 
-          prenom: data.prenom || null, 
-          nom: data.nom || null 
-        });
-      } catch (err: any) {
-        console.error("Erreur Fetch Profil:", err?.message, err?.hint);
-        // En cas d'erreur, initialiser avec des valeurs vides
-        setUserName({ prenom: null, nom: null });
-      } finally {
-        // ARRÊT D'URGENCE du chargement - OBLIGATOIRE
-        setLoading(false);
-      }
-    };
-
-    fetchUserName();
-    */
-  }, []); // Tableau de dépendances VIDE - exécution unique au montage
-
-  if (loading) {
-    return (
-      <motion.h1 
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="text-4xl font-display font-bold text-gray-400"
-      >
-        Chargement de l'identité...
-      </motion.h1>
-    );
-  }
-
-  if (userName?.prenom || userName?.nom) {
-    return (
-      <motion.h1 
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="text-4xl font-display font-bold text-black"
-      >
-        {`${userName.prenom || ''} ${userName.nom || ''}`.trim()}
-      </motion.h1>
-    );
-  }
-
   return (
-    <motion.div 
+    <motion.h1 
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1 }}
-      className="text-4xl font-display font-bold"
+      className="text-4xl font-display font-bold text-black"
     >
-      <Link 
-        href="/settings" 
-        className="text-[#008751] hover:text-[#006B3F] transition-colors underline"
-      >
-        Profil à compléter
-      </Link>
-    </motion.div>
+      Mon Profil
+    </motion.h1>
   );
 }
 
