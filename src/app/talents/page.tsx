@@ -16,7 +16,7 @@ import CandidateSwiper from "@/components/CandidateSwiper";
 // Composant pour afficher un talent
 function TalentCard({ talent }: { talent: Talent }) {
   return (
-    <Link href={`/talents/${talent.id}`}>
+    <Link href={`/talents/${talent.slug}`}>
       <div className="bg-white rounded-2xl border border-[#F2EDE4] overflow-hidden hover:shadow-lg transition-shadow">
         <div className="relative aspect-[4/3] overflow-hidden">
           <Image
