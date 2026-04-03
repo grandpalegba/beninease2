@@ -9,13 +9,15 @@ export function useVoter() {
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
-    // Load from localStorage
-    const stored = localStorage.getItem("beninease_voter_session");
-    if (stored) {
-      try {
-        setSession(JSON.parse(stored));
-      } catch (e) {
-        console.error("Error parsing stored session", e);
+    // Load from localStorage - only on client side
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem("beninease_voter_session");
+      if (stored) {
+        try {
+          setSession(JSON.parse(stored));
+        } catch (e) {
+          console.error("Error parsing stored session", e);
+        }
       }
     }
     setLoading(false);
@@ -41,7 +43,10 @@ export function useVoter() {
         role: 'votant',
       };
 
-      localStorage.setItem("beninease_voter_session", JSON.stringify(newSession));
+      // Store session
+      if (typeof window !== 'undefined') {
+        localStorage.setItem("beninease_voter_session", JSON.stringify(newSession));
+      }
       setSession(newSession);
       return { success: true, session: newSession };
     } catch (err) {
@@ -53,7 +58,9 @@ export function useVoter() {
   }, [supabase]);
 
   const logout = useCallback(() => {
-    localStorage.removeItem("beninease_voter_session");
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem("beninease_voter_session");
+    }
     setSession(null);
   }, []);
 
