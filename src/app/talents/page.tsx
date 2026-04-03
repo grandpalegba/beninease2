@@ -30,12 +30,12 @@ export default function TalentsPage() {
       console.log('🔍 Testing simple Supabase query...');
       setLoading(true);
       
-      // Test 2: Ajouter le filtre is_validated
+      // Montrer tous les talents temporairement (pas de filtre is_validated)
       const { data, error } = await supabase
         .from('talents')
         .select('*')
-        .eq('is_validated', true)
-        .limit(5);
+        .order('created_at', { ascending: false })
+        .limit(10);
       
       console.log("📊 Supabase test:", { data, error });
       
@@ -64,7 +64,6 @@ export default function TalentsPage() {
       const { data, error } = await supabase
         .from('talents')
         .select('*')
-        .eq('is_validated', true)
         .order('created_at', { ascending: false })
         .limit(10);
       
@@ -100,7 +99,6 @@ export default function TalentsPage() {
       const { data, error } = await supabase
         .from('talents')
         .select('*')
-        .eq('is_validated', true)
         .or(`prenom.ilike.%${query}%,nom.ilike.%${query}%`)
         .order('created_at', { ascending: false })
         .limit(10);
@@ -123,7 +121,6 @@ export default function TalentsPage() {
       let query = supabase
         .from('talents')
         .select('*')
-        .eq('is_validated', true)
         .order('created_at', { ascending: false })
         .limit(15);
       
