@@ -27,10 +27,24 @@ export default function TalentsPage() {
   // Load 10 random talents on page entry
   const loadRandomTalents = useCallback(async () => {
     try {
-      console.log('🔍 Testing simple Supabase query...');
+      console.log('🔍 Testing Supabase connection and table...');
       setLoading(true);
       
-      // Montrer tous les talents temporairement (pas de filtre is_validated)
+      // Test 1: Vérifier si la table talents existe
+      console.log('📋 Checking if talents table exists...');
+      const { data: tableCheck, error: tableError } = await supabase
+        .from('talents')
+        .select('count')
+        .limit(1);
+      
+      if (tableError) {
+        console.error('❌ Table does not exist or not accessible:', tableError);
+        throw new Error(`Table 'talents' not found: ${tableError.message}`);
+      }
+      
+      console.log('✅ Talents table exists, loading data...');
+      
+      // Test 2: Charger les talents
       const { data, error } = await supabase
         .from('talents')
         .select('*')
