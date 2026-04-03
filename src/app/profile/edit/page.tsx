@@ -2,7 +2,6 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
 import { Upload, MapPin, Globe, Edit, Save, Camera, Image as ImageIcon, Trash2 } from "lucide-react";
 import type { User } from "@supabase/supabase-js";
 
@@ -53,7 +52,8 @@ export default function CandidateProfile() {
       
       if (authError || !authUser) {
         console.log("Utilisateur non connecté");
-        return router.push("/login");
+        window.location.href = "/login";
+        return;
       }
       
       setUser(authUser);

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import type { ComponentType } from "react";
-import { useRouter } from "next/navigation";
 import { supabase } from "@/utils/supabase/client";
 import { VideoTabs } from "@/components/VideoTabs";
 import { VoteHistory } from "@/components/VoteHistory";
@@ -15,13 +14,12 @@ export default function DashboardPage() {
   const [profile, setProfile] = useState<Talent | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(0);
-  const router = useRouter();
 
   useEffect(() => {
     async function getProfile() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        router.push("/login");
+        window.location.href = "/login";
         return;
       }
 
@@ -75,8 +73,7 @@ export default function DashboardPage() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    router.push("/");
-    router.refresh();
+    window.location.href = "/";
   };
 
   if (loading) {

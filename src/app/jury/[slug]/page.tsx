@@ -6,7 +6,6 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { supabase } from "@/utils/supabase/client";
 import { Image as ImageIcon, MapPin } from "lucide-react";
 
@@ -105,7 +104,7 @@ export default function JuryProfilePage({ params }: { params: { slug: string } }
           <p className="text-sm text-red-700">{error ?? "Profil introuvable."}</p>
           <button
             type="button"
-            onClick={() => router.push("/jury")}
+            onClick={() => window.location.href = "/jury"}
             className="mt-6 rounded-full border border-[#E9E2D6] px-5 py-3 text-xs font-semibold tracking-[0.15em] uppercase text-[#8E8E8E] hover:bg-[#004d3d] hover:text-white hover:border-[#004d3d] transition-colors"
           >
             Retour au jury

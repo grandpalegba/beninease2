@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/utils/supabase/client"; 
-import { useRouter } from "next/navigation";
 import { User, Camera, ArrowLeft, Loader2, Save, Key, MessageCircle } from "lucide-react";
 import Image from "next/image";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
@@ -15,13 +14,11 @@ const ParametresPage = () => {
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({ prenom: "", nom: "", whatsapp: "" });
 
-  const router = useRouter();
-
   const getUserAndProfile = useCallback(async () => {
     try {
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (!authUser) {
-        router.push("/login");
+        window.location.href = "/login";
         return;
       }
       setUser(authUser);

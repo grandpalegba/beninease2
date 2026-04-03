@@ -89,14 +89,7 @@ export default function TalentProfileClient({
     };
     
     getCurrentUser();
-    
-    // Écouter les changements de session
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setActiveUser(session?.user || null);
-    });
-    
-    return () => subscription.unsubscribe();
-  }, [supabase]);
+  }, []);
 
   // Image de profil (avatar) prioritaire si elle vient de Supabase
   const [profileImage, setProfileImage] = useState(avatarUrl || candidate.portrait || "/placeholder-portrait.jpg");

@@ -49,9 +49,6 @@ export default function AuthButtons({ intent }: AuthButtonsProps) {
       if (provider !== "email") {
         const { error } = await supabase.auth.signInWithOAuth({
           provider: provider as "google" | "facebook",
-          options: {
-            redirectTo: redirectUrl,
-          },
         });
 
         if (error) throw error;
