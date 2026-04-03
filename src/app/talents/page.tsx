@@ -17,6 +17,13 @@ export default function TalentsPage() {
   const [hasMore, setHasMore] = useState(true);
   const [currentFilter, setCurrentFilter] = useState({categorie: '', univers: ''});
 
+  console.log('🔄 TalentsPage render - State:', { 
+    talentsCount: talents.length, 
+    loading, 
+    error, 
+    hasMore 
+  });
+
   // Load 10 random talents on page entry
   const loadRandomTalents = useCallback(async () => {
     try {
@@ -25,7 +32,7 @@ export default function TalentsPage() {
       const { data, error } = await supabase
         .from('talents')
         .select('*')
-        .eq('is_validated', true)
+        // .eq('is_validated', true) // Temporairement désactivé pour test
         .order('RANDOM()')
         .limit(10);
       
@@ -145,9 +152,26 @@ export default function TalentsPage() {
 
   if (error) return (
     <div className="min-h-screen flex items-center justify-center">
-      <div className="text-center">
+      <div className="text-center max-w-md mx-auto p-6">
         <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-        <button onClick={() => window.location.reload()} className="text-[#008751] font-bold">Réessayer</button>
+        <h2 className="text-xl font-bold text-gray-800 mb-2">Erreur de chargement</h2>
+        <p className="text-gray-600 mb-4">
+          Impossible de charger les talents. Vérifiez la console pour plus de détails.
+        </p>
+        <div className="bg-gray-100 p-3 rounded-lg mb-4 text-left">
+          <p className="text-sm text-gray-500">
+            Ouvrez les outils de développement (F12) et consultez l'onglet Console.
+          </p>
+        </div>
+        <button 
+          onClick={() => {
+            setError(false);
+            loadRandomTalents();
+          }} 
+          className="text-[#008751] font-bold hover:underline"
+        >
+          Réessayer
+        </button>
       </div>
     </div>
   );
