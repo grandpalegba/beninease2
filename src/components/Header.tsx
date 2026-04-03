@@ -117,6 +117,7 @@ const Header = () => {
         <div className="flex items-center gap-6">
 
           <Link href="/talents" className={navLinkClasses}>Talents</Link>
+          <Link href="/tresors" className={navLinkClasses}>Trésors</Link>
           <Link href="/classement" className={navLinkClasses}>Classement</Link>
 
           {user ? (

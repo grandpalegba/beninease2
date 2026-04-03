@@ -159,6 +159,10 @@ const MobileNavigation = () => {
                 <Globe /> Talents
               </Link>
 
+              <Link href="/tresors" onClick={() => setIsOpen(false)} className={menuLinkClasses}>
+                <Trophy /> Trésors
+              </Link>
+
               <Link href="/classement" onClick={() => setIsOpen(false)} className={menuLinkClasses}>
                 <Trophy /> Classement
               </Link>
