@@ -1,7 +1,9 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import { supabase } from '@/utils/supabase/client';
-import type { User, Session } from '@supabase/supabase-js';
-import type { Votant, Talent } from '@/types';
+"use client";
+
+import { createContext, useContext, useEffect, useState } from "react";
+import { supabase } from "@/utils/supabase/client";
+import type { User, Session } from "@supabase/supabase-js";
+import type { Votant, Talent } from "@/types";
 
 type UserProfile = Votant | Talent;
 
@@ -15,114 +17,104 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  // Utiliser le singleton directement pour éviter les boucles
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const getInitialSession = async () => {
+    const loadProfile = async (currentUser: User) => {
       try {
-        const { data: { session: initialSession } } = await supabase.auth.getSession();
-        setSession(initialSession);
-        setUser(initialSession?.user ?? null);
+        // 🔎 1. Chercher votant
+        const { data: votant } = await supabase
+          .from("votants")
+          .select("*")
+          .eq("id", currentUser.id)
+          .maybeSingle(); // ✅ FIX
 
-        if (initialSession?.user) {
-          const { data: profile, error: profileError } = await supabase
-            .from('votants')
-            .select('*')
-            .eq('id', initialSession.user.id)
-            .single();
-
-          if (profileError) {
-            const { data: talentProfile, error: talentError } = await supabase
-              .from('talents')
-              .select('*')
-              .eq('id', initialSession.user.id)
-              .single();
-
-            if (talentError) {
-              const { data: newProfile } = await supabase
-                .from('votants')
-                .upsert({
-                  id: initialSession.user.id,
-                  full_name: initialSession.user.user_metadata.full_name || initialSession.user.email,
-                  avatar_url: initialSession.user.user_metadata.avatar_url,
-                  role: 'votant'
-                })
-                .select()
-                .single();
-              setProfile(newProfile as UserProfile | null);
-            } else {
-              setProfile(talentProfile as UserProfile | null);
-            }
-          } else {
-            setProfile(profile as UserProfile | null);
-          }
+        if (votant) {
+          setProfile(votant);
+          return;
         }
+
+        // 🔎 2. Chercher talent
+        const { data: talent } = await supabase
+          .from("talents")
+          .select("*")
+          .eq("id", currentUser.id)
+          .maybeSingle(); // ✅ FIX
+
+        if (talent) {
+          setProfile(talent);
+          return;
+        }
+
+        // 🆕 3. Créer votant si rien trouvé
+        const { data: newProfile } = await supabase
+          .from("votants")
+          .upsert({
+            id: currentUser.id,
+            full_name:
+              currentUser.user_metadata.full_name ||
+              currentUser.email,
+            avatar_url: currentUser.user_metadata.avatar_url,
+            role: "votant",
+          })
+          .select()
+          .maybeSingle(); // ✅ FIX
+
+        setProfile(newProfile ?? null);
       } catch (error) {
-        console.error('Erreur lors de la récupération de la session:', error);
-      } finally {
-        setLoading(false); // Garanti que loading passe à false
+        console.error("Erreur loadProfile:", error);
+        setProfile(null);
       }
     };
 
-    getInitialSession();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, newSession) => {
+    const init = async () => {
       try {
-        setSession(newSession);
-        setUser(newSession?.user ?? null);
+        const { data: { session: initialSession } } =
+          await supabase.auth.getSession();
 
-        if (newSession?.user) {
-          if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-            const { data: profile, error: profileError } = await supabase
-              .from('votants')
-              .select('*')
-              .eq('id', newSession.user.id)
-              .single();
+        const currentUser = initialSession?.user ?? null;
 
-            if (profileError) {
-              const { data: talentProfile, error: talentError } = await supabase
-                .from('talents')
-                .select('*')
-                .eq('id', newSession.user.id)
-                .single();
+        setSession(initialSession);
+        setUser(currentUser);
 
-              if (talentError) {
-                const { data: newProfile } = await supabase
-                  .from('votants')
-                  .upsert({
-                    id: newSession.user.id,
-                    full_name: newSession.user.user_metadata.full_name || newSession.user.email,
-                    avatar_url: newSession.user.user_metadata.avatar_url,
-                    role: 'votant'
-                  })
-                  .select()
-                  .single();
-                setProfile(newProfile as UserProfile | null);
-              } else {
-                setProfile(talentProfile as UserProfile | null);
-              }
-            } else {
-              setProfile(profile as UserProfile | null);
-            }
-          }
-        } else {
-          setProfile(null);
+        if (currentUser) {
+          await loadProfile(currentUser);
         }
       } catch (error) {
-        console.error('Erreur lors du changement d\'état d\'auth:', error);
+        console.error("Erreur init auth:", error);
       } finally {
-        setLoading(false); // Garanti que loading passe à false
+        setLoading(false);
       }
-    });
+    };
+
+    init();
+
+    const { data: { subscription } } =
+      supabase.auth.onAuthStateChange(async (event, newSession) => {
+        const currentUser = newSession?.user ?? null;
+
+        // ✅ éviter re-render inutile
+        if (currentUser?.id !== user?.id) {
+          setSession(newSession);
+          setUser(currentUser);
+
+          if (currentUser) {
+            await loadProfile(currentUser);
+          } else {
+            setProfile(null);
+          }
+        }
+
+        setLoading(false);
+      });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, []); // Pas de dépendances pour éviter les boucles
+  }, []); // ✅ IMPORTANT
 
   const value = {
     user,
@@ -131,13 +123,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     loading,
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
