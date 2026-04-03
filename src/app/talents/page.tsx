@@ -30,10 +30,11 @@ export default function TalentsPage() {
       console.log('🔍 Testing simple Supabase query...');
       setLoading(true);
       
-      // Test 1: Requête la plus simple
+      // Test 2: Ajouter le filtre is_validated
       const { data, error } = await supabase
         .from('talents')
         .select('*')
+        .eq('is_validated', true)
         .limit(5);
       
       console.log("📊 Supabase test:", { data, error });
