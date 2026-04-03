@@ -1,5 +1,5 @@
 "use client";
-
+console.log("🔥 TALENTS PAGE RENDER");
 import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase/client";
 import type { Talent } from "@/types";

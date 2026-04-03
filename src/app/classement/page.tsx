@@ -3,7 +3,7 @@
  * Role: Afficher le classement en temps réel des talents.
  */
 "use client";
-
+console.log("🔥 CLASSEMENT PAGE RENDER");
 import { useEffect, useState } from "react";
 import { Info, Trophy, Star, AlertCircle } from "lucide-react";
 import { supabase } from "@/utils/supabase/client";
