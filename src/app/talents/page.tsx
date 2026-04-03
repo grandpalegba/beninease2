@@ -77,7 +77,7 @@ export default function TalentsPage() {
       setLoading(true);
       const { data, error } = await supabase
         .from('talents')
-        .select('*')
+        .select('id, slug, prenom, nom, avatar_url, votes, created_at, categorie, univers, bio, city')
         .order('created_at', { ascending: false })
         .limit(10);
       
@@ -112,7 +112,7 @@ export default function TalentsPage() {
       setLoading(true);
       const { data, error } = await supabase
         .from('talents')
-        .select('*')
+        .select('id, slug, prenom, nom, avatar_url, votes, created_at, categorie, univers, bio, city')
         .or(`prenom.ilike.%${query}%,nom.ilike.%${query}%`)
         .order('created_at', { ascending: false })
         .limit(10);
@@ -134,7 +134,7 @@ export default function TalentsPage() {
       setLoading(true);
       let query = supabase
         .from('talents')
-        .select('*')
+        .select('id, slug, prenom, nom, avatar_url, votes, created_at, categorie, univers, bio, city')
         .order('created_at', { ascending: false })
         .limit(15);
       
