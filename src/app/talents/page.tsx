@@ -59,6 +59,28 @@ export default function TalentsPage() {
       }
       
       console.log('✅ Talents found:', data?.length || 0);
+      
+      // Logger tous les univers et catégories pour référence
+      const uniqueUnivers = [...new Set(data?.map(t => t.univers).filter(Boolean))];
+      const uniqueCategories = [...new Set(data?.map(t => t.categorie).filter(Boolean))];
+      
+      console.log('🎭 UNIVERS DISPONIBLES:', uniqueUnivers.sort());
+      console.log('📂 CATÉGORIES DISPONIBLES:', uniqueCategories.sort());
+      
+      // Grouper par univers pour voir les catégories par univers
+      const universWithCategories = data?.reduce((acc, talent) => {
+        if (talent.univers && talent.categorie) {
+          if (!acc[talent.univers]) acc[talent.univers] = new Set();
+          acc[talent.univers].add(talent.categorie);
+        }
+        return acc;
+      }, {} as Record<string, Set<string>>);
+      
+      console.log('📊 UNIVERS ET LEURS CATÉGORIES:');
+      Object.entries(universWithCategories || {}).forEach(([univers, categories]) => {
+        console.log(`  🎭 ${univers}:`, Array.from(categories).sort());
+      });
+      
       setTalents(data || []);
       setHasMore(true);
     } catch (err) {
