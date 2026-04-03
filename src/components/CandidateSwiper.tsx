@@ -13,8 +13,10 @@ interface CandidateSwiperProps {
 }
 
 export default function CandidateSwiper({ talents, loading = false, onScrollEnd }: CandidateSwiperProps) {
+  console.log('🎯 CandidateSwiper render - talents:', talents.length, 'loading:', loading);
   
   if (!talents || talents.length === 0) {
+    console.log('❌ No talents to display');
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F9F9F7]">
         <p className="text-gray-600">Aucun talent à afficher.</p>
@@ -102,26 +104,38 @@ export default function CandidateSwiper({ talents, loading = false, onScrollEnd 
       {/* CAROUSEL */}
       <div className="embla overflow-hidden h-screen pt-20" ref={emblaRef}>
         <div className="embla__container flex h-full">
-          {talents.map((talent: Talent) => (
-            <div key={talent.id} className="embla__slide flex-[0_0_100%] min-w-0 h-full overflow-y-auto pt-4">
-              <TalentProfileClient 
-                candidate={{
-                  id: talent.id,
-                  slug: talent.slug || `talent-${talent.id}`,
-                  prenom: talent.prenom || 'Prénom',
-                  nom: talent.nom || 'Nom',
-                  portrait: talent.avatar_url || '/placeholder-avatar.png',
-                  city: talent.city || 'Bénin',
-                  univers: talent.univers || 'Non spécifié',
-                  categorie: talent.categorie || 'Non spécifié',
-                  tabs: {}
-                }}
-                initialVotesCount={talent.votes || 0}
-                profileId={talent.id}
-                avatarUrl={talent.avatar_url || '/placeholder-avatar.png'}
-              />
-            </div>
-          ))}
+          {talents.map((talent: Talent, index) => {
+            console.log(`🎭 Talent ${index}:`, {
+              id: talent.id,
+              prenom: talent.prenom,
+              nom: talent.nom,
+              categorie: talent.categorie,
+              univers: talent.univers,
+              avatar_url: talent.avatar_url,
+              votes: talent.votes
+            });
+            
+            return (
+              <div key={talent.id} className="embla__slide flex-[0_0_100%] min-w-0 h-full overflow-y-auto pt-4">
+                <TalentProfileClient 
+                  candidate={{
+                    id: talent.id,
+                    slug: talent.slug || `talent-${talent.id}`,
+                    prenom: talent.prenom || 'Prénom',
+                    nom: talent.nom || 'Nom',
+                    portrait: talent.avatar_url || '/placeholder-avatar.png',
+                    city: talent.city || 'Bénin',
+                    univers: talent.univers || 'Non spécifié',
+                    categorie: talent.categorie || 'Non spécifié',
+                    tabs: {}
+                  }}
+                  initialVotesCount={talent.votes || 0}
+                  profileId={talent.id}
+                  avatarUrl={talent.avatar_url || '/placeholder-avatar.png'}
+                />
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
