@@ -32,7 +32,7 @@ export default function TalentsPage() {
       const { data, error } = await supabase
         .from('talents')
         .select('*')
-        .eq('is_validated', true)
+        // .eq('is_validated', true) // Temporairement désactivé pour test
         .order('created_at', { ascending: false })
         .limit(10);
       
