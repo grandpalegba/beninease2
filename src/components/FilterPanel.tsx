@@ -23,8 +23,7 @@ export default function FilterPanel({ currentFilter, onFilterChange, onClose }: 
       try {
         const { data, error } = await supabase
           .from('talents')
-          .select('categorie, univers')
-          .eq('is_validated', true);
+          .select('categorie, univers');
         
         if (error) throw error;
         
