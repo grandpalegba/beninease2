@@ -102,7 +102,7 @@ export default function CandidateSwiper({ talents, loading = false, onScrollEnd 
       </div>
 
       {/* CAROUSEL */}
-      <div className="embla overflow-hidden h-screen pt-20" ref={emblaRef}>
+      <div className="embla overflow-hidden h-screen pt-16" ref={emblaRef}>
         <div className="embla__container flex h-full">
           {talents.map((talent: Talent, index) => {
             console.log(`🎭 Talent ${index}:`, {
@@ -116,7 +116,7 @@ export default function CandidateSwiper({ talents, loading = false, onScrollEnd 
             });
             
             return (
-              <div key={talent.id} className="embla__slide flex-[0_0_100%] min-w-0 h-full overflow-y-auto pt-4">
+              <div key={talent.id} className="embla__slide flex-[0_0_100%] min-w-0 h-full overflow-y-auto pt-2">
                 <TalentProfileClient 
                   candidate={{
                     id: talent.id,

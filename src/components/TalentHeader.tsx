@@ -15,7 +15,7 @@ export default function TalentHeader({ onSearch, onFilterToggle, searchQuery }: 
   };
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-[#F2EDE4] px-6 py-4">
+    <div className="fixed top-0 left-0 right-0 z-[60] bg-white/80 backdrop-blur-md border-b border-[#F2EDE4] px-6 py-4">
       <div className="max-w-7xl mx-auto flex items-center gap-4">
         {/* Search bar */}
         <form onSubmit={handleSubmit} className="flex-1 relative">
