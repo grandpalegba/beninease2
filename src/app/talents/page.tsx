@@ -44,10 +44,10 @@ export default function TalentsPage() {
       
       console.log('✅ Talents table exists, loading data...');
       
-      // Test 2: Charger les talents
+      // Test 2: Charger les talents avec colonnes de base uniquement
       const { data, error } = await supabase
         .from('talents')
-        .select('*')
+        .select('id, slug, prenom, nom, avatar_url, votes, created_at')
         .order('created_at', { ascending: false })
         .limit(10);
       
