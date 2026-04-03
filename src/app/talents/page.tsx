@@ -27,21 +27,25 @@ export default function TalentsPage() {
   // Load 10 random talents on page entry
   const loadRandomTalents = useCallback(async () => {
     try {
-      console.log('🔍 Loading random talents...');
+      console.log('🔍 Testing simple Supabase query...');
       setLoading(true);
+      
+      // Test 1: Requête la plus simple
       const { data, error } = await supabase
         .from('talents')
         .select('*')
-        // .eq('is_validated', true) // Temporairement désactivé pour test
-        .order('created_at', { ascending: false })
-        .limit(10);
+        .limit(5);
       
-      console.log('📊 Supabase response:', { data, error });
+      console.log("📊 Supabase test:", { data, error });
       
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Supabase error:', error);
+        throw error;
+      }
+      
+      console.log('✅ Talents found:', data?.length || 0);
       setTalents(data || []);
       setHasMore(true);
-      console.log('✅ Talents loaded:', data?.length || 0);
     } catch (err) {
       console.error('❌ Error loading talents:', err);
       setError(true);
