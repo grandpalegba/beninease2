@@ -59,29 +59,11 @@ const MobileNavigation = () => {
 
     const init = async () => {
       const { data: { user: currentUser } } = await supabase.auth.getUser();
-
-      if (currentUser?.id !== user?.id) {
-        setUser(currentUser);
-      }
-
+      setUser(currentUser);
       await loadUserData(currentUser);
     };
 
     init();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        const currentUser = session?.user ?? null;
-
-        if (currentUser?.id !== user?.id) {
-          setUser(currentUser);
-        }
-
-        await loadUserData(currentUser);
-      }
-    );
-
-    return () => subscription.unsubscribe();
   }, []); // ✅ IMPORTANT
 
   const userGrade = useMemo(() => {

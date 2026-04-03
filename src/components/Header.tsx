@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 import { User as UserIcon, LogOut, LayoutDashboard, ChevronDown, Trophy, UserCheck, Settings } from "lucide-react";
 import Image from "next/image";
@@ -33,7 +32,6 @@ const Header = () => {
   const [isTalent, setIsTalent] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
-  const router = useRouter();
 
   const userGrade = useMemo(() => {
     if (!userStats) return null;
@@ -89,37 +87,14 @@ const Header = () => {
     // 🔹 Chargement initial
     const init = async () => {
       const { data: { user: currentUser } } = await supabase.auth.getUser();
-
-      if (currentUser?.id !== user?.id) {
-        setUser(currentUser);
-      }
-
+      setUser(currentUser);
       await loadUserData(currentUser);
     };
 
     init();
 
-    // 🔹 Listener auth
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        const currentUser = session?.user ?? null;
-
-        if (currentUser?.id !== user?.id) {
-          setUser(currentUser);
-        }
-
-        await loadUserData(currentUser);
-
-        if (event === 'SIGNED_OUT') {
-          router.push('/');
-          router.refresh();
-        }
-      }
-    );
-
     return () => {
       window.removeEventListener("scroll", onScroll);
-      subscription.unsubscribe();
     };
   }, []); // ✅ TRÈS IMPORTANT
 

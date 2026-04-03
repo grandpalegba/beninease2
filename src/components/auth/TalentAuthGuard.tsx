@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { supabase } from '@/utils/supabase/client';
 import { Loader2 } from 'lucide-react';
 
@@ -13,7 +12,6 @@ interface TalentAuthGuardProps {
 export default function TalentAuthGuard({ children, fallback }: TalentAuthGuardProps) {
   const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
-  const router = useRouter();
   
   useEffect(() => {
     const checkAuth = async () => {
@@ -22,7 +20,7 @@ export default function TalentAuthGuard({ children, fallback }: TalentAuthGuardP
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
         if (sessionError || !session) {
-          router.push('/talent/login');
+          window.location.href = '/talent/login';
           return;
         }
 
@@ -36,21 +34,21 @@ export default function TalentAuthGuard({ children, fallback }: TalentAuthGuardP
         if (talentError || !talent) {
           // Sign out invalid user
           await supabase.auth.signOut();
-          router.push('/talent/login');
+          window.location.href = '/talent/login';
           return;
         }
 
         setAuthenticated(true);
       } catch (error) {
         console.error('Auth guard error:', error);
-        router.push('/talent/login');
+        window.location.href = '/talent/login';
       } finally {
         setLoading(false);
       }
     };
 
     checkAuth();
-  }, [router, supabase]);
+  }, []);
 
   if (loading) {
     return fallback || (

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { supabase } from "@/utils/supabase/client";
 import CandidateDashboard from "@/components/CandidateDashboard";
 import { Loader2 } from "lucide-react";
@@ -10,14 +9,13 @@ import type { Talent } from "@/types";
 export default function ProfilePage() {
   const [profile, setProfile] = useState<Talent | null>(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
 
   useEffect(() => {
     async function getProfile() {
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
-        router.push("/login");
+        window.location.href = "/login";
         return;
       }
 
@@ -58,7 +56,7 @@ export default function ProfilePage() {
           Nous n&apos;avons pas pu charger vos informations. Assurez-vous d&apos;avoir complété votre inscription.
         </p>
         <button 
-          onClick={() => router.push("/postuler")}
+          onClick={() => window.location.href = "/postuler"}
           className="px-8 py-3 bg-[#008751] text-white rounded-full font-bold uppercase tracking-widest hover:bg-[#008751]/90 transition-all"
         >
           Devenir Ambassadeur
