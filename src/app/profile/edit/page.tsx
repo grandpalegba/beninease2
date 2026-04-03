@@ -28,8 +28,6 @@ type VideosByType = Record<string, VideoRow>;
 type ProfileUpdatableField = "prenom" | "nom" | "avatar_url" | "title" | "description" | "city";
 
 export default function CandidateProfile() {
-  const router = useRouter();
-  
   const [activeTab, setActiveTab] = useState("Qui je suis");
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<User | null>(null);
@@ -93,7 +91,7 @@ export default function CandidateProfile() {
       setVideos(vidsObj || {});
     };
     fetchData();
-  }, [supabase, router]);
+  }, []);
 
   const handleProfileUpdate = async (field: ProfileUpdatableField, value: string) => {
     if (!user) return;

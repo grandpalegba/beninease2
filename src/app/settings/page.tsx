@@ -42,7 +42,7 @@ const ParametresPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [router]);
+  }, []);
 
   useEffect(() => {
     getUserAndProfile();
@@ -64,7 +64,7 @@ const ParametresPage = () => {
       toast.error("Erreur lors de la sauvegarde");
     } else {
       toast.success("Profil mis à jour !");
-      router.refresh();
+      window.location.reload();
     }
     setSaving(false);
   };
