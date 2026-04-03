@@ -4,15 +4,15 @@ import React, { useEffect, useCallback, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import TalentProfileClient from "@/app/talents/[slug]/TalentProfileClient";
 import type { Talent } from "@/types";
-import { ChevronLeft, ChevronRight, X, Filter } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface CandidateSwiperProps {
   talents: Talent[];
-  onBack: () => void; // 1. On déclare que le composant DOIT recevoir cette fonction
+  loading?: boolean;
+  onScrollEnd?: () => void;
 }
 
-export default function CandidateSwiper({ talents, onBack }: CandidateSwiperProps) {
-  // 2. On récupère "onBack" ici
+export default function CandidateSwiper({ talents, loading = false, onScrollEnd }: CandidateSwiperProps) {
   
   if (!talents || talents.length === 0) {
     return (
@@ -32,13 +32,23 @@ export default function CandidateSwiper({ talents, onBack }: CandidateSwiperProp
   const [currentIndex, setCurrentIndex] = useState(0);
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(true);
+  const [hasTriggeredLoad, setHasTriggeredLoad] = useState(false);
 
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
-    setCurrentIndex(emblaApi.selectedScrollSnap());
+    const currentIndex = emblaApi.selectedScrollSnap();
+    setCurrentIndex(currentIndex);
     setCanScrollPrev(emblaApi.canScrollPrev());
     setCanScrollNext(emblaApi.canScrollNext());
-  }, [emblaApi]);
+    
+    // Trigger lazy loading when approaching end
+    if (currentIndex >= talents.length - 3 && onScrollEnd && !hasTriggeredLoad) {
+      setHasTriggeredLoad(true);
+      onScrollEnd();
+      // Reset trigger after delay to prevent multiple calls
+      setTimeout(() => setHasTriggeredLoad(false), 1000);
+    }
+  }, [emblaApi, talents.length, onScrollEnd, hasTriggeredLoad]);
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -53,15 +63,22 @@ export default function CandidateSwiper({ talents, onBack }: CandidateSwiperProp
   return (
     <div className="relative min-h-screen bg-[#F9F9F7]">
       {/* HEADER DU SWIPER */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-[#F2EDE4] px-6 py-4 flex items-center justify-start">
-        
-        {/* Bouton de retour */}
-        <button
-          onClick={onBack}
-          className="bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors border border-gray-200"
-        >
-          <X className="w-5 h-5 text-gray-700" />
-        </button>
+      <div className="fixed top-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-md border-b border-[#F2EDE4] px-6 py-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          {/* Spacer for header content from parent */}
+          <div className="w-10" />
+          
+          {/* Loading indicator */}
+          {loading && (
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-[#008751] rounded-full animate-pulse" />
+              <span className="text-sm text-gray-600">Chargement...</span>
+            </div>
+          )}
+          
+          {/* Spacer */}
+          <div className="w-10" />
+        </div>
       </div>
 
       {/* CONTROLES NAVIGATION */}
@@ -83,10 +100,10 @@ export default function CandidateSwiper({ talents, onBack }: CandidateSwiperProp
       </div>
 
       {/* CAROUSEL */}
-      <div className="embla overflow-hidden h-screen" ref={emblaRef}>
+      <div className="embla overflow-hidden h-screen pt-20" ref={emblaRef}>
         <div className="embla__container flex h-full">
           {talents.map((talent: Talent) => (
-            <div key={talent.id} className="embla__slide flex-[0_0_100%] min-w-0 h-full overflow-y-auto pt-20">
+            <div key={talent.id} className="embla__slide flex-[0_0_100%] min-w-0 h-full overflow-y-auto pt-4">
               <TalentProfileClient 
                 candidate={{
                   id: talent.id,
