@@ -8,13 +8,10 @@ import type { User } from "@supabase/supabase-js";
 import { User as UserIcon, LogOut, LayoutDashboard, ChevronDown, Trophy, UserCheck, Settings } from "lucide-react";
 import Image from "next/image";
 import { calculateVoterStatus } from "@/lib/voter-logic";
-import type { Votant } from "@/types";
 
 type UserStats = {
-  voter_id: string; // Changed from votant_id to voter_id
+  voter_id: string;
   total_votes: number;
-  created_at?: string;
-  updated_at?: string;
 };
 
 type UserProfile = {
@@ -27,8 +24,8 @@ type UserProfile = {
 };
 
 const Header = () => {
-  console.log('🚨 HEADER COMPOSANT MOUNTED - RENDERING HEADER 🚨');
-  
+  console.log('HEADER RENDER');
+
   const [scrolled, setScrolled] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -36,19 +33,14 @@ const Header = () => {
   const [isTalent, setIsTalent] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
-  // Utiliser le singleton directement
   const router = useRouter();
 
-  // Calculate grade dynamically
   const userGrade = useMemo(() => {
     if (!userStats) return null;
-    // Note: On utilise total_votes pour le calcul du statut. 
-    // Si la table ne fournit plus unique_universes_voted ou unique_categories_voted, 
-    // on passe 0 ou on adapte la logique selon les besoins.
     return calculateVoterStatus(userStats.total_votes || 0, 0, 0);
   }, [userStats]);
 
-  // Close dropdown when clicking outside
+  // 👉 fermer dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (showDropdown && !(event.target as Element).closest('.user-menu-container')) {
@@ -59,263 +51,135 @@ const Header = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showDropdown]);
 
+  // ✅ USEEFFECT CORRIGÉ (LE PLUS IMPORTANT)
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", onScroll);
-    
-    // Check initial session
-    const checkUser = async () => {
-      try {
-        const { data: { user: currentUser }, error: authError } = await supabase.auth.getUser();
-        
-        if (authError) throw authError;
-        
-        setUser(currentUser);
-        
-        if (currentUser) {
-          // Parallel fetch for profile, stats, and talent status
-          const [profileRes, statsRes, talentRes] = await Promise.all([
-            supabase.from("profiles").select("*").eq("id", currentUser.id).maybeSingle(),
-            supabase.from("user_stats").select("*").eq("voter_id", currentUser.id).single(),
-            supabase.from("talents").select("id").eq("auth_user_id", currentUser.id).maybeSingle()
-          ]);
 
-          if (profileRes.data) {
-            setProfile(profileRes.data);
-            console.log('Données profil Header:', profileRes.data);
-          }
-          if (statsRes.data) setUserStats(statsRes.data);
-          
-          // Vérifier si l'utilisateur est un talent (soit dans table talents, soit via rôle dans profiles)
-          const isTalentFromTable = !!talentRes.data;
-          const isTalentFromRole = profileRes.data?.role === 'candidate' || profileRes.data?.role === 'candidat' || profileRes.data?.role === 'ambassadeur';
-          const finalIsTalent = isTalentFromTable || isTalentFromRole;
-          
-          setIsTalent(finalIsTalent);
-          console.log('Est talent (table):', isTalentFromTable, '(rôle):', isTalentFromRole, '(final):', finalIsTalent);
-        }
+    const loadUserData = async (currentUser: User | null) => {
+      if (!currentUser) {
+        setProfile(null);
+        setUserStats(null);
+        setIsTalent(false);
+        return;
+      }
+
+      try {
+        const [profileRes, statsRes, talentRes] = await Promise.all([
+          supabase.from("profiles").select("*").eq("id", currentUser.id).maybeSingle(),
+          supabase.from("user_stats").select("*").eq("voter_id", currentUser.id).single(),
+          supabase.from("talents").select("id").eq("auth_user_id", currentUser.id).maybeSingle()
+        ]);
+
+        if (profileRes.data) setProfile(profileRes.data);
+        if (statsRes.data) setUserStats(statsRes.data);
+
+        const isTalentFromTable = !!talentRes.data;
+        const isTalentFromRole =
+          profileRes.data?.role === 'candidate' ||
+          profileRes.data?.role === 'candidat' ||
+          profileRes.data?.role === 'ambassadeur';
+
+        setIsTalent(isTalentFromTable || isTalentFromRole);
       } catch (err) {
-        console.log("Public user or session error in Header:", err);
-        setUser(null);
+        console.error("Erreur load user:", err);
       }
     };
-    checkUser();
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setTimeout(async () => {
-        const currentUser = session?.user ?? null;
+    // 🔹 Chargement initial
+    const init = async () => {
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+
+      if (currentUser?.id !== user?.id) {
         setUser(currentUser);
-        
-        if (currentUser) {
-          try {
-            const [profileRes, statsRes, talentRes] = await Promise.all([
-              supabase.from("profiles").select("*").eq("id", currentUser.id).maybeSingle(),
-              supabase.from("user_stats").select("*").eq("voter_id", currentUser.id).single(),
-              supabase.from("talents").select("id").eq("auth_user_id", currentUser.id).maybeSingle()
-            ]);
+      }
 
-            if (profileRes.data) {
-              setProfile(profileRes.data);
-              console.log('Données profil Header (auth change):', profileRes.data);
-            }
-            if (statsRes.data) setUserStats(statsRes.data);
-            
-            // Vérifier si l'utilisateur est un talent (soit dans table talents, soit via rôle dans profiles)
-            const isTalentFromTable = !!talentRes.data;
-            const isTalentFromRole = profileRes.data?.role === 'candidate' || profileRes.data?.role === 'candidat' || profileRes.data?.role === 'ambassadeur';
-            const finalIsTalent = isTalentFromTable || isTalentFromRole;
-            
-            setIsTalent(finalIsTalent);
-            console.log('Est talent (auth change - table):', isTalentFromTable, '(rôle):', isTalentFromRole, '(final):', finalIsTalent);
-          } catch (err) {
-            console.error("Error updating user data in Header:", err);
-          }
-        } else {
-          setProfile(null);
-          setUserStats(null);
-          setIsTalent(false);
+      await loadUserData(currentUser);
+    };
+
+    init();
+
+    // 🔹 Listener auth
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        const currentUser = session?.user ?? null;
+
+        if (currentUser?.id !== user?.id) {
+          setUser(currentUser);
         }
+
+        await loadUserData(currentUser);
 
         if (event === 'SIGNED_OUT') {
           router.push('/');
           router.refresh();
         }
-      }, 0);
-    });
+      }
+    );
 
     return () => {
       window.removeEventListener("scroll", onScroll);
       subscription.unsubscribe();
     };
-  }, [supabase]);
+  }, []); // ✅ TRÈS IMPORTANT
 
   const handleSignOut = async () => {
-    setUser(null);
-    setProfile(null);
-    setUserStats(null);
     await supabase.auth.signOut();
-    window.location.href = '/'; // Force un rechargement complet à la racine pour nettoyer le cache
+    window.location.href = "/";
   };
 
-  const handleDropdownSignOut = async () => {
-    setShowDropdown(false);
-    await handleSignOut();
-  };
-
-  const navLinkClasses = "text-sm font-bold text-[#1A1A1A] hover:text-[#006B3F] transition-colors font-display tracking-wide";
+  const navLinkClasses = "text-sm font-bold text-[#1A1A1A] hover:text-[#006B3F] transition-colors";
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 hidden md:block ${
-        scrolled ? "bg-white/95 backdrop-blur-md shadow-sm py-3" : "bg-white py-5"
-      }`}
-    >
+    <header className={`fixed top-0 left-0 right-0 z-50 ${scrolled ? "bg-white shadow-sm py-3" : "bg-white py-5"}`}>
       <div className="container max-w-7xl mx-auto flex items-center justify-between px-6">
-        <Link href="/" className="flex items-center gap-3 group">
-          <Image 
-            src="/logo.png" 
-            alt="BeninEase Logo" 
-            width={40}
-            height={40}
-            className="w-10 h-10 object-contain"
-          />
-          <span
-            className="font-display text-2xl font-bold text-[#006B3F]"
-            style={{ letterSpacing: "0.12em" }}
-          >
-            BeninEase
-          </span>
+
+        <Link href="/" className="flex items-center gap-3">
+          <Image src="/logo.png" alt="logo" width={40} height={40} />
+          <span className="text-xl font-bold text-[#006B3F]">BeninEase</span>
         </Link>
 
-        <div className="flex items-center gap-10">
-          <nav className="flex items-center gap-8">
-            <Link href="/talents" className={navLinkClasses}>
-              Talents
-            </Link>
-            <Link href="/classement" className={navLinkClasses}>
-              Classement
-            </Link>
-          </nav>
+        <div className="flex items-center gap-6">
 
-          <div className="flex items-center gap-4 border-l border-[#006B3F]/10 pl-8">
-            {user ? (
-              <div className="flex items-center gap-4 user-menu-container relative">
-                {/* User Identity Block */}
-                <button
-                  onClick={() => setShowDropdown(!showDropdown)}
-                  className="flex items-center gap-3 pl-3 pr-2 py-1.5 rounded-full hover:bg-white transition-all border border-transparent hover:border-gray-100 group shadow-sm hover:shadow-md"
-                >
-                  <div className="flex flex-col items-end">
-                    <span className="text-xs font-bold text-gray-900 group-hover:text-[#006B3F] transition-colors font-sans leading-tight">
-                      {profile?.prenom || profile?.full_name?.split(' ')[0] || 'Mon Compte'}
-                    </span>
-                    {userGrade && (
-                      <span className="text-[9px] font-black uppercase tracking-tighter text-[#006B3F]/70">
-                        {userGrade.label}
-                      </span>
-                    )}
-                  </div>
-                  
-                  <div className="relative w-9 h-9 rounded-full overflow-hidden border-2 border-white shadow-inner bg-gray-50">
-                    {profile?.avatar_url ? (
-                      <Image 
-                        src={profile.avatar_url} 
-                        alt="Profile" 
-                        fill 
-                        className="object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-[#006B3F]/5">
-                        <UserIcon className="w-5 h-5 text-[#006B3F]" />
-                      </div>
-                    )}
-                  </div>
-                  <ChevronDown className={`w-3.5 h-3.5 text-gray-400 transition-transform duration-300 ${showDropdown ? 'rotate-180' : ''}`} />
-                </button>
+          <Link href="/talents" className={navLinkClasses}>Talents</Link>
+          <Link href="/classement" className={navLinkClasses}>Classement</Link>
 
-                {/* Dropdown Menu - 32px rounded */}
-                {showDropdown && (
-                  <div className="absolute top-full right-0 mt-3 w-64 bg-white rounded-[32px] shadow-[0_10px_40px_rgba(0,0,0,0.08)] border border-gray-50 py-3 animate-in fade-in zoom-in-95 duration-200 origin-top-right overflow-hidden">
-                    <div className="px-6 py-3 border-b border-gray-50 mb-2">
-                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Espace Personnel</p>
-                      <div className="flex items-center gap-2">
-                        {profile?.role === 'candidat' || profile?.role === 'ambassadeur' ? (
-                          <Trophy className="w-3.5 h-3.5 text-[#E9B113]" />
-                        ) : (
-                          <UserCheck className="w-3.5 h-3.5 text-[#006B3F]" />
-                        )}
-                        <p className="text-sm font-bold text-gray-900 truncate">
-                          {profile?.role === 'candidat' || profile?.role === 'ambassadeur' ? 'Talent' : 'Votant'}
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <Link
-                      href={
-                        profile?.role === 'admin' ? '/admin' :
-                        (profile?.role === 'candidat' || profile?.role === 'ambassadeur') ? '/profile/dashboard' :
-                        '/dashboard/votant'
-                      }
-                      onClick={() => setShowDropdown(false)}
-                      className="flex items-center gap-4 px-6 py-3 text-sm font-bold text-gray-700 hover:bg-[#006B3F]/5 hover:text-[#006B3F] transition-all group"
-                    >
-                      <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-[#006B3F]/10 transition-colors">
-                        <LayoutDashboard className="w-4 h-4" />
-                      </div>
-                      📊 Mon Dashboard
-                    </Link>
-                    
-                    <Link
-                      href="/settings"
-                      onClick={() => setShowDropdown(false)}
-                      className="flex items-center gap-4 px-6 py-3 text-sm font-bold text-gray-700 hover:bg-[#006B3F]/5 hover:text-[#006B3F] transition-all group"
-                    >
-                      <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-[#006B3F]/10 transition-colors">
-                        <Settings className="w-4 h-4" />
-                      </div>
-                      ⚙️ Paramètres
-                    </Link>
+          {user ? (
+            <div className="relative user-menu-container">
+              <button onClick={() => setShowDropdown(!showDropdown)} className="flex items-center gap-2">
 
-                    {/* Lien "Ma Page" - uniquement pour les talents */}
-                    {isTalent && (
-                      <Link
-                        href="/talent/dashboard"
-                        onClick={() => setShowDropdown(false)}
-                        className="flex items-center gap-4 px-6 py-3 text-sm font-bold text-gray-700 hover:bg-[#006B3F]/5 hover:text-[#006B3F] transition-all group"
-                      >
-                        <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-[#006B3F]/10 transition-colors">
-                          <LayoutDashboard className="w-4 h-4" />
-                        </div>
-                          Ma Page
-                      </Link>
-                    )}
-
-                    <div className="h-px bg-gray-50 my-2 mx-6" />
-
-                    <button
-                      onClick={handleDropdownSignOut}
-                      className="flex items-center gap-4 w-full px-6 py-3 text-sm font-bold text-red-600 hover:bg-red-50 transition-all group"
-                    >
-                      <div className="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center group-hover:bg-red-100 transition-colors">
-                        <LogOut className="w-4 h-4" />
-                      </div>
-                      🚪 Déconnexion
-                    </button>
-                  </div>
+                {profile?.avatar_url ? (
+                  <Image src={profile.avatar_url} alt="avatar" width={30} height={30} className="rounded-full" />
+                ) : (
+                  <UserIcon />
                 )}
-              </div>
-            ) : (
-              <div className="flex items-center gap-4">
-                <Link
-                  href="/login"
-                  className="text-sm font-bold text-[#1A1A1A] hover:text-[#006B3F] transition-colors font-display tracking-wide"
-                >
-                  S'inscrire / Se connecter
-                </Link>
-              </div>
-            )}
-          </div>
+
+                <ChevronDown size={14} />
+              </button>
+
+              {showDropdown && (
+                <div className="absolute right-0 mt-2 bg-white shadow rounded p-3">
+
+                  <Link href="/dashboard" className="block py-1">Dashboard</Link>
+                  <Link href="/settings" className="block py-1">Paramètres</Link>
+
+                  {isTalent && (
+                    <Link href="/talent/dashboard" className="block py-1">
+                      Ma Page
+                    </Link>
+                  )}
+
+                  <button onClick={handleSignOut} className="block py-1 text-red-500">
+                    Déconnexion
+                  </button>
+                </div>
+              )}
+
+            </div>
+          ) : (
+            <Link href="/login">Connexion</Link>
+          )}
+
         </div>
       </div>
     </header>
