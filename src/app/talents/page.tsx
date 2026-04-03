@@ -32,8 +32,8 @@ export default function TalentsPage() {
       const { data, error } = await supabase
         .from('talents')
         .select('*')
-        // .eq('is_validated', true) // Temporairement désactivé pour test
-        .order('RANDOM()')
+        .eq('is_validated', true)
+        .order('created_at', { ascending: false })
         .limit(10);
       
       console.log('📊 Supabase response:', { data, error });
@@ -60,7 +60,7 @@ export default function TalentsPage() {
         .from('talents')
         .select('*')
         .eq('is_validated', true)
-        .order('RANDOM()')
+        .order('created_at', { ascending: false })
         .limit(10);
       
       if (error) throw error;
@@ -97,7 +97,7 @@ export default function TalentsPage() {
         .select('*')
         .eq('is_validated', true)
         .or(`prenom.ilike.%${query}%,nom.ilike.%${query}%`)
-        .order('RANDOM()')
+        .order('created_at', { ascending: false })
         .limit(10);
       
       if (error) throw error;
@@ -119,7 +119,7 @@ export default function TalentsPage() {
         .from('talents')
         .select('*')
         .eq('is_validated', true)
-        .order('RANDOM()')
+        .order('created_at', { ascending: false })
         .limit(15);
       
       if (categorie) query = query.eq('categorie', categorie);
