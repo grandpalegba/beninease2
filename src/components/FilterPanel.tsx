@@ -5,15 +5,15 @@ import { X, RotateCcw } from "lucide-react";
 import { supabase } from "@/utils/supabase/client";
 
 interface FilterPanelProps {
-  currentFilter: { category: string; univers: string };
-  onFilterChange: (category: string, univers: string) => void;
+  currentFilter: { categorie: string; univers: string };
+  onFilterChange: (categorie: string, univers: string) => void;
   onClose: () => void;
 }
 
 export default function FilterPanel({ currentFilter, onFilterChange, onClose }: FilterPanelProps) {
   const [categories, setCategories] = useState<string[]>([]);
   const [univers, setUnivers] = useState<string[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState(currentFilter.category);
+  const [selectedCategory, setSelectedCategory] = useState(currentFilter.categorie);
   const [selectedUnivers, setSelectedUnivers] = useState(currentFilter.univers);
   const [loading, setLoading] = useState(false);
 
@@ -23,12 +23,12 @@ export default function FilterPanel({ currentFilter, onFilterChange, onClose }: 
       try {
         const { data, error } = await supabase
           .from('talents')
-          .select('category, univers')
+          .select('categorie, univers')
           .eq('is_validated', true);
         
         if (error) throw error;
         
-        const uniqueCategories = [...new Set(data?.map(t => t.category).filter(Boolean))];
+        const uniqueCategories = [...new Set(data?.map(t => t.categorie).filter(Boolean))];
         const uniqueUnivers = [...new Set(data?.map(t => t.univers).filter(Boolean))];
         
         setCategories(uniqueCategories);

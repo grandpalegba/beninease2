@@ -15,11 +15,12 @@ export default function TalentsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const [currentFilter, setCurrentFilter] = useState({category: '', univers: ''});
+  const [currentFilter, setCurrentFilter] = useState({categorie: '', univers: ''});
 
   // Load 10 random talents on page entry
   const loadRandomTalents = useCallback(async () => {
     try {
+      console.log('🔍 Loading random talents...');
       setLoading(true);
       const { data, error } = await supabase
         .from('talents')
@@ -28,11 +29,14 @@ export default function TalentsPage() {
         .order('RANDOM()')
         .limit(10);
       
+      console.log('📊 Supabase response:', { data, error });
+      
       if (error) throw error;
       setTalents(data || []);
       setHasMore(true);
+      console.log('✅ Talents loaded:', data?.length || 0);
     } catch (err) {
-      console.error('Error loading talents:', err);
+      console.error('❌ Error loading talents:', err);
       setError(true);
     } finally {
       setLoading(false);
@@ -92,7 +96,7 @@ export default function TalentsPage() {
       if (error) throw error;
       setTalents(data || []);
       setHasMore(true);
-      setCurrentFilter({category: '', univers: ''});
+      setCurrentFilter({categorie: '', univers: ''});
     } catch (err) {
       console.error('Error searching talents:', err);
     } finally {
@@ -101,7 +105,7 @@ export default function TalentsPage() {
   }, [loadRandomTalents]);
 
   // Apply filters
-  const applyFilters = useCallback(async (category: string, univers: string) => {
+  const applyFilters = useCallback(async (categorie: string, univers: string) => {
     try {
       setLoading(true);
       let query = supabase
@@ -111,7 +115,7 @@ export default function TalentsPage() {
         .order('RANDOM()')
         .limit(15);
       
-      if (category) query = query.eq('category', category);
+      if (categorie) query = query.eq('categorie', categorie);
       if (univers) query = query.eq('univers', univers);
       
       const { data, error } = await query;
@@ -119,7 +123,7 @@ export default function TalentsPage() {
       if (error) throw error;
       setTalents(data || []);
       setHasMore(true);
-      setCurrentFilter({category, univers});
+      setCurrentFilter({categorie, univers});
     } catch (err) {
       console.error('Error filtering talents:', err);
     } finally {
