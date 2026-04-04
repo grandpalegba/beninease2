@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import QuizCard from "./QuizCard";
 import type { Mystere } from "@/types/treasures";
 
 interface ArtefactSwiperProps {
@@ -27,6 +28,13 @@ export default function ArtefactSwiper({
       setCurrentIndex(prev => prev - 1);
     }
   }, [currentIndex]);
+
+  const handleQuizComplete = useCallback(() => {
+    // Passer au mystère suivant
+    if (currentIndex < mysteres.length - 1) {
+      setCurrentIndex(prev => prev + 1);
+    }
+  }, [currentIndex, mysteres.length]);
 
   if (!mysteres || mysteres.length === 0) {
     return (
@@ -69,66 +77,17 @@ export default function ArtefactSwiper({
       {/* Container principal */}
       <div className="relative h-screen pt-20 flex items-center justify-center">
         <div className="relative w-full max-w-md h-[80vh]">
-          {/* Carte Artefact statique */}
-          <div className="w-full h-full bg-gradient-to-br from-terre-sombre to-black rounded-2xl border border-or-royal/20 shadow-2xl overflow-hidden">
-            {currentMystere && (
-              <div className="h-full flex flex-col">
-                {/* Header de la carte */}
-                <div className="p-4 border-b border-or-royal/20 flex justify-between bg-terre-sombre/90">
-                  <span className="text-or-royal font-bold uppercase tracking-wider">
-                    {currentMystere.title}
-                  </span>
-                  <div className="flex gap-1 items-center">
-                    {[...Array(6)].map((_, i) => (
-                      <div 
-                        key={i} 
-                        className={`w-2 h-2 rounded-full transition-all ${
-                          i < 6 ? 'bg-or-royal shadow-lg shadow-or-royal/50' : 'bg-white/10'
-                        }`}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                {/* Contenu principal */}
-                <div className="flex-1 overflow-y-auto p-6">
-                  {/* Image/Icon de l'artefact */}
-                  <div className="w-full h-48 bg-gradient-to-br from-or-royal/20 to-terre-sombre rounded-xl flex items-center justify-center mb-6">
-                    <div className="text-6xl">{currentMystere.icon || '🏺'}</div>
-                  </div>
-
-                  {/* Informations */}
-                  <div className="text-center mb-8">
-                    <h2 className="text-ivoire text-2xl font-bold mb-2">{currentMystere.title}</h2>
-                    <p className="text-or-royal/80 text-sm mb-4">{currentMystere.subtitle}</p>
-                    <div className="text-ivoire/60 text-sm bg-terre-sombre/50 p-4 rounded-lg">
-                      <p className="italic">"{currentMystere.mise_en_abyme}"</p>
-                    </div>
-                  </div>
-
-                  {/* Thème */}
-                  <div className="text-center">
-                    <div className="inline-block bg-or-royal/10 border border-or-royal/30 px-4 py-2 rounded-full">
-                      <span className="text-or-royal text-sm font-medium">
-                        {currentMystere.theme?.name || 'Thème'}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Mini Jarre Trouée (statique pour l'instant) */}
-                  <div className="mt-8 flex justify-center">
-                    <div className="w-24 h-32 bg-gradient-to-b from-or-royal/20 to-terre-sombre rounded-lg border border-or-royal/30 flex items-center justify-center">
-                      <span className="text-3xl">🏺</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
+          {/* QuizCard interactive */}
+          {currentMystere && (
+            <QuizCard 
+              mystere={currentMystere} 
+              onComplete={handleQuizComplete}
+            />
+          )}
         </div>
       </div>
 
-      {/* Contrôles de navigation simplifiés */}
+      {/* Contrôles de navigation (désactivés pendant le quiz) */}
       <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 flex gap-4">
         <button
           onClick={handlePrev}

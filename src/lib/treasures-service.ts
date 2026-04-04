@@ -200,4 +200,22 @@ export class TreasuresService {
   static getQuestionOptions(question: Question): string[] {
     return [question.choice_a, question.choice_b, question.choice_c, question.choice_d];
   }
+
+  // Obtenir les questions pour un mystère spécifique
+  static async getQuestionsForMystere(mystereId: string): Promise<{ data: Question[] | null; error: any }> {
+    try {
+      const { data, error } = await supabase
+        .from('questions')
+        .select('*')
+        .eq('mystere_id', mystereId)
+        .order('question_number', { ascending: true });
+
+      if (error) throw error;
+
+      return { data, error: null };
+    } catch (error) {
+      console.error('Error fetching questions for mystere:', error);
+      return { data: null, error };
+    }
+  }
 }
