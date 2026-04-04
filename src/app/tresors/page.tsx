@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import ArtefactSwiper from "@/components/ArtefactSwiper";
+import TreasureSwiper from "@/components/TreasureSwiperNew";
 import { TreasuresService } from "@/lib/treasures-service";
 import type { Mystere } from "@/types/treasures";
 
@@ -81,10 +81,14 @@ export default function TreasuresPage() {
   }
 
   return (
-    <ArtefactSwiper
+    <TreasureSwiper
       mysteres={mysteres}
       loading={loading}
-      onScrollEnd={() => {}}
+      onScrollEnd={() => {
+        if (!loading) {
+          setPage(prev => prev + 1);
+        }
+      }}
     />
   );
 }
