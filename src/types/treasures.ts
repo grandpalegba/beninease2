@@ -14,7 +14,7 @@ export interface Question {
   choice_b: string;
   choice_c: string;
   choice_d: string;
-  correct_choice: number;
+  correct_choice: string;
   explication: string;
 }
 

@@ -122,7 +122,7 @@ export default function TreasuresPage() {
     
     if (!currentQuestion || !currentMystere) return;
 
-    const isCorrect = answerIndex === currentQuestion.correct_choice;
+    const isCorrect = TreasuresService.isCorrectAnswer(currentQuestion, answerIndex);
     const user = await getCurrentUser();
     
     if (!user) return;
@@ -409,7 +409,7 @@ export default function TreasuresPage() {
                                     disabled={selectedAnswer !== null}
                                     className={`w-full p-4 rounded-xl text-left transition-all ${
                                       selectedAnswer === oIndex
-                                        ? oIndex === question.correct_choice
+                                        ? TreasuresService.isCorrectAnswer(question, oIndex)
                                           ? 'bg-green-100 border-2 border-green-500'
                                           : 'bg-red-100 border-2 border-red-500'
                                         : 'bg-gray-50 hover:bg-gray-100 border-2 border-gray-200'

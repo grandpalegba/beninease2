@@ -187,6 +187,14 @@ export class TreasuresService {
     return userProgress.lives_remaining;
   }
 
+  // Vérifier si une réponse est correcte
+  static isCorrectAnswer(question: Question, answerIndex: number): boolean {
+    return answerIndex === 0 && question.correct_choice === 'a' || 
+           answerIndex === 1 && question.correct_choice === 'b' ||
+           answerIndex === 2 && question.correct_choice === 'c' ||
+           answerIndex === 3 && question.correct_choice === 'd';
+  }
+
   // Obtenir les options de question sous forme de tableau
   static getQuestionOptions(question: Question): string[] {
     return [question.choice_a, question.choice_b, question.choice_c, question.choice_d];
