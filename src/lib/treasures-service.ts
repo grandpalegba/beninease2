@@ -15,13 +15,14 @@ export class TreasuresService {
           questions:questions(
             id,
             mystere_id,
+            question_number,
             question,
             choice_a,
             choice_b,
             choice_c,
             choice_d,
-            correct_choice,
-            explication
+            correct_answer,
+            explanation
           )
         `)
         .order('mystere_number', { ascending: true })
@@ -189,10 +190,10 @@ export class TreasuresService {
 
   // Vérifier si une réponse est correcte
   static isCorrectAnswer(question: Question, answerIndex: number): boolean {
-    return answerIndex === 0 && question.correct_choice === 'a' || 
-           answerIndex === 1 && question.correct_choice === 'b' ||
-           answerIndex === 2 && question.correct_choice === 'c' ||
-           answerIndex === 3 && question.correct_choice === 'd';
+    return answerIndex === 0 && question.correct_answer === 'A' || 
+           answerIndex === 1 && question.correct_answer === 'B' ||
+           answerIndex === 2 && question.correct_answer === 'C' ||
+           answerIndex === 3 && question.correct_answer === 'D';
   }
 
   // Obtenir les options de question sous forme de tableau

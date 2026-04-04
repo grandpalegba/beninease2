@@ -429,7 +429,7 @@ export default function TreasuresPage() {
                               animate={{ opacity: 1 }}
                               className="mt-6 p-6 bg-amber-50 rounded-xl border border-amber-200"
                             >
-                              <p className="text-gray-700 mb-4">{question.explication}</p>
+                              <p className="text-gray-700 mb-4">{question.explanation}</p>
                               {currentQuestionIndex < 3 && (
                                 <div className="text-center">
                                   <div className="w-1 h-8 bg-gradient-to-b from-amber-400 to-orange-400 rounded-full mx-auto mb-4"></div>

@@ -9,13 +9,14 @@ export interface Theme {
 export interface Question {
   id: string;
   mystere_id: string;
+  question_number: number;
   question: string;
   choice_a: string;
   choice_b: string;
   choice_c: string;
   choice_d: string;
-  correct_choice: string;
-  explication: string;
+  correct_answer: string;
+  explanation: string;
 }
 
 export interface Mystere {
