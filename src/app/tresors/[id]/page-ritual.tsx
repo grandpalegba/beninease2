@@ -2,9 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { supabase } from "@/utils/supabase/client";
-import LockedMysteryOverlay from "@/components/canari/LockedMysteryOverlay";
-import { MysteryPersistence, MYSTERY_MODES, type MysteryMode } from "@/lib/mystery-persistence";
+import { createClient } from "@supabase/supabase-js";
 
 const ORGANIC_SHAPES = [
   "polygon(10% 0%, 90% 5%, 95% 40%, 85% 95%, 15% 90%, 0% 50%)",
@@ -21,13 +19,12 @@ export default function TreasurePage({ params }: { params: { id: string } }) {
   const [showEclair, setShowEclair] = useState(false);
   const [jarreIlluminee, setJarreIlluminee] = useState(false);
   const [completedQuestions, setCompletedQuestions] = useState<number[]>([]);
-  const [mode, setMode] = useState<MysteryMode>(MYSTERY_MODES.RITUAL);
-  const [errors, setErrors] = useState(0);
-  const [lockedUntil, setLockedUntil] = useState<number | null>(null);
 
   useEffect(() => {
     const loadMystere = async () => {
       try {
+        const supabase = createClient();
+        
         // Récupérer le mystère
         const { data: mystereData, error: mystereError } = await supabase
           .from('mysteres')
@@ -70,58 +67,17 @@ export default function TreasurePage({ params }: { params: { id: string } }) {
     }
   }, [params.id]);
 
-  useEffect(() => {
-    if (!params.id) return;
-
-    // Charger la progression depuis localStorage
-    const progress = MysteryPersistence.getProgress(params.id);
-    const isLocked = MysteryPersistence.isLocked(params.id);
-    
-    setErrors(progress.errors);
-    setCurrentQuestion(progress.currentQuestion);
-    setCompletedQuestions(progress.completedQuestions);
-    setLockedUntil(progress.lockedUntil);
-    
-    if (isLocked) {
-      setMode(MYSTERY_MODES.LOCKED);
-    } else {
-      setMode(MYSTERY_MODES.RITUAL);
-    }
-  }, [params.id]);
-
   const handleFragmentDrop = (choice: string) => {
-    if (!mystere?.questions[currentQuestion] || mode !== MYSTERY_MODES.RITUAL) return;
+    if (!mystere?.questions[currentQuestion]) return;
     
     const question = mystere.questions[currentQuestion];
     const correct = question.correct_answer;
     
     if (choice === correct) {
-      // Bonne réponse
       setJarreIlluminee(true);
       setTimeout(() => {
         setShowEclair(true);
       }, 500);
-      
-      // Sauvegarder la progression
-      const newCompleted = [...completedQuestions, currentQuestion];
-      setCompletedQuestions(newCompleted);
-      MysteryPersistence.updateQuestionProgress(params.id, currentQuestion, newCompleted);
-    } else {
-      // Mauvaise réponse - système de sanction
-      const result = MysteryPersistence.addError(params.id);
-      setErrors(result.errors);
-      
-      if (result.locked) {
-        // Transition vers le mode bloqué
-        setLockedUntil(result.lockedUntil);
-        setMode(MYSTERY_MODES.LOCKED);
-      } else {
-        // Animation d'erreur mais on continue
-        setJarreIlluminee(false);
-        setTimeout(() => {
-          setJarreIlluminee(true);
-        }, 200);
-      }
     }
   };
 
@@ -130,23 +86,9 @@ export default function TreasurePage({ params }: { params: { id: string } }) {
     setJarreIlluminee(false);
     
     if (currentQuestion < mystere.questions.length - 1) {
-      const nextQuestion = currentQuestion + 1;
-      setCurrentQuestion(nextQuestion);
-      MysteryPersistence.updateQuestionProgress(params.id, nextQuestion, [...completedQuestions, currentQuestion]);
-    } else {
-      // Mystère complété - passage en mode mémoire
-      setMode(MYSTERY_MODES.MEMORY);
-      MysteryPersistence.resetProgress(params.id);
+      setCurrentQuestion(prev => prev + 1);
+      setCompletedQuestions(prev => [...prev, currentQuestion]);
     }
-  };
-
-  const handleUnlock = () => {
-    setMode(MYSTERY_MODES.RITUAL);
-    setErrors(0);
-    setCurrentQuestion(0);
-    setCompletedQuestions([]);
-    setLockedUntil(null);
-    MysteryPersistence.resetProgress(params.id);
   };
 
   if (loading) {
@@ -169,43 +111,6 @@ export default function TreasurePage({ params }: { params: { id: string } }) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-black">Mystère non trouvé</div>
-      </div>
-    );
-  }
-
-  // Mode bloqué
-  if (mode === MYSTERY_MODES.LOCKED && lockedUntil) {
-    return (
-      <LockedMysteryOverlay 
-        lockedUntil={lockedUntil} 
-        onUnlock={handleUnlock}
-      />
-    );
-  }
-
-  // Mode mémoire (mystère complété)
-  if (mode === MYSTERY_MODES.MEMORY) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center p-8">
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          className="text-center max-w-2xl"
-        >
-          <div className="text-8xl mb-8">🏆</div>
-          <h1 className="text-black text-4xl font-serif font-bold mb-4">
-            Trésor Libéré
-          </h1>
-          <p className="text-black/80 font-sans mb-8">
-            Le savoir de {mystere.title} vous appartient désormais.
-          </p>
-          <button
-            onClick={() => window.history.back()}
-            className="px-8 py-3 bg-yellow-600 text-white font-bold rounded-full hover:bg-yellow-700 transition-colors"
-          >
-            Retourner aux Trésors
-          </button>
-        </motion.div>
       </div>
     );
   }
@@ -264,20 +169,6 @@ export default function TreasurePage({ params }: { params: { id: string } }) {
           <p className="text-black/70 font-sans text-center">
             {mystere.theme?.name || 'Thème'}
           </p>
-
-          {/* Indicateur d'erreurs */}
-          <div className="flex justify-center mt-4">
-            <div className="flex gap-1">
-              {[...Array(6)].map((_, i) => (
-                <div
-                  key={i}
-                  className={`w-2 h-2 rounded-full transition-colors ${
-                    i < errors ? 'bg-red-600' : 'bg-gray-300'
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
         </div>
       </div>
 

@@ -4,6 +4,7 @@ import React, { useEffect, useCallback, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import TreasureCard from "./TreasureCard";
 import QuizCard from "./QuizCard";
+import { MysteryPersistence } from "@/lib/mystery-persistence";
 import type { Mystere } from "@/types/treasures";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -164,12 +165,26 @@ export default function TreasureSwiper({ mysteres, loading = false, onScrollEnd 
               icon: mystere.icon
             });
             
+            const isLocked = MysteryPersistence.isLocked(mystere.id);
+            
             return (
               <div key={mystere.id} className="embla__slide flex-[0_0_100%] min-w-0 h-full overflow-y-auto pt-2">
-                <TreasureCard 
-                  mystere={mystere}
-                  onClick={() => handleCardClick(mystere)}
-                />
+                <div className={`relative transition-all duration-300 ${
+                  isLocked ? 'opacity-60' : 'opacity-100'
+                }`}>
+                  {isLocked && (
+                    <div className="absolute inset-0 bg-black/20 rounded-2xl z-10 flex items-center justify-center">
+                      <div className="text-center">
+                        <div className="text-4xl mb-2">🔒</div>
+                        <p className="text-black font-sans text-sm">Mystère bloqué</p>
+                      </div>
+                    </div>
+                  )}
+                  <TreasureCard 
+                    mystere={mystere}
+                    onClick={() => !isLocked && handleCardClick(mystere)}
+                  />
+                </div>
               </div>
             );
           })}
