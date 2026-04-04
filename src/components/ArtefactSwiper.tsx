@@ -1,8 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
-import { motion, AnimatePresence, PanInfo } from "framer-motion";
-import MysteryCard from "./canari/MysteryCard";
+import { useState, useCallback } from "react";
 import type { Mystere } from "@/types/treasures";
 
 interface ArtefactSwiperProps {
@@ -17,74 +15,18 @@ export default function ArtefactSwiper({
   onScrollEnd 
 }: ArtefactSwiperProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [direction, setDirection] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const dragConstraints = useRef({ left: 0, right: 0 });
-
-  const handleDragEnd = (event: any, info: PanInfo) => {
-    const { offset, velocity } = info;
-    
-    if (Math.abs(offset.x) > 50 || Math.abs(velocity.x) > 500) {
-      if (offset.x > 0 && currentIndex > 0) {
-        // Swipe vers la droite - carte précédente
-        setDirection(-1);
-        setCurrentIndex(prev => prev - 1);
-      } else if (offset.x < 0 && currentIndex < mysteres.length - 1) {
-        // Swipe vers la gauche - carte suivante
-        setDirection(1);
-        setCurrentIndex(prev => prev + 1);
-      }
-    }
-    setIsDragging(false);
-  };
-
-  const handleDragStart = () => {
-    setIsDragging(true);
-  };
 
   const handleNext = useCallback(() => {
     if (currentIndex < mysteres.length - 1) {
-      setDirection(1);
       setCurrentIndex(prev => prev + 1);
     }
   }, [currentIndex, mysteres.length]);
 
   const handlePrev = useCallback(() => {
     if (currentIndex > 0) {
-      setDirection(-1);
       setCurrentIndex(prev => prev - 1);
     }
   }, [currentIndex]);
-
-  const handleComplete = useCallback(() => {
-    // Passer au mystère suivant
-    if (currentIndex < mysteres.length - 1) {
-      handleNext();
-    }
-  }, [currentIndex, handleNext, mysteres.length]);
-
-  const variants = {
-    enter: (direction: number) => ({
-      x: direction > 0 ? 1000 : -1000,
-      opacity: 0,
-      scale: 0.8,
-      rotateY: direction > 0 ? -45 : 45
-    }),
-    center: {
-      zIndex: 1,
-      x: 0,
-      opacity: 1,
-      scale: 1,
-      rotateY: 0
-    },
-    exit: (direction: number) => ({
-      zIndex: 0,
-      x: direction < 0 ? 1000 : -1000,
-      opacity: 0,
-      scale: 0.8,
-      rotateY: direction < 0 ? -45 : 45
-    })
-  };
 
   if (!mysteres || mysteres.length === 0) {
     return (
@@ -124,49 +66,69 @@ export default function ArtefactSwiper({
         ))}
       </div>
 
-      {/* Container de swipe */}
+      {/* Container principal */}
       <div className="relative h-screen pt-20 flex items-center justify-center">
-        <div className="relative w-full max-w-md h-[80vh] perspective-1000">
-          <AnimatePresence initial={false} custom={direction}>
-            <motion.div
-              key={currentIndex}
-              custom={direction}
-              variants={variants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{
-                x: { type: "spring", stiffness: 300, damping: 30 },
-                opacity: { duration: 0.2 },
-                scale: { duration: 0.2 },
-                rotateY: { duration: 0.6 }
-              }}
-              drag="x"
-              dragConstraints={dragConstraints}
-              dragElastic={0.2}
-              onDragStart={handleDragStart}
-              onDragEnd={handleDragEnd}
-              className="absolute inset-0 cursor-grab active:cursor-grabbing"
-              style={{ 
-                transformStyle: 'preserve-3d',
-                cursor: isDragging ? 'grabbing' : 'grab'
-              }}
-            >
-              {/* Carte Artefact */}
-              <div className="w-full h-full bg-gradient-to-br from-terre-sombre to-black rounded-2xl border border-or-royal/20 shadow-2xl overflow-hidden">
-                {currentMystere && (
-                  <MysteryCard 
-                    mystere={currentMystere} 
-                    onComplete={handleComplete}
-                  />
-                )}
+        <div className="relative w-full max-w-md h-[80vh]">
+          {/* Carte Artefact statique */}
+          <div className="w-full h-full bg-gradient-to-br from-terre-sombre to-black rounded-2xl border border-or-royal/20 shadow-2xl overflow-hidden">
+            {currentMystere && (
+              <div className="h-full flex flex-col">
+                {/* Header de la carte */}
+                <div className="p-4 border-b border-or-royal/20 flex justify-between bg-terre-sombre/90">
+                  <span className="text-or-royal font-bold uppercase tracking-wider">
+                    {currentMystere.title}
+                  </span>
+                  <div className="flex gap-1 items-center">
+                    {[...Array(6)].map((_, i) => (
+                      <div 
+                        key={i} 
+                        className={`w-2 h-2 rounded-full transition-all ${
+                          i < 6 ? 'bg-or-royal shadow-lg shadow-or-royal/50' : 'bg-white/10'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Contenu principal */}
+                <div className="flex-1 overflow-y-auto p-6">
+                  {/* Image/Icon de l'artefact */}
+                  <div className="w-full h-48 bg-gradient-to-br from-or-royal/20 to-terre-sombre rounded-xl flex items-center justify-center mb-6">
+                    <div className="text-6xl">{currentMystere.icon || '🏺'}</div>
+                  </div>
+
+                  {/* Informations */}
+                  <div className="text-center mb-8">
+                    <h2 className="text-ivoire text-2xl font-bold mb-2">{currentMystere.title}</h2>
+                    <p className="text-or-royal/80 text-sm mb-4">{currentMystere.subtitle}</p>
+                    <div className="text-ivoire/60 text-sm bg-terre-sombre/50 p-4 rounded-lg">
+                      <p className="italic">"{currentMystere.mise_en_abyme}"</p>
+                    </div>
+                  </div>
+
+                  {/* Thème */}
+                  <div className="text-center">
+                    <div className="inline-block bg-or-royal/10 border border-or-royal/30 px-4 py-2 rounded-full">
+                      <span className="text-or-royal text-sm font-medium">
+                        {currentMystere.theme?.name || 'Thème'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Mini Jarre Trouée (statique pour l'instant) */}
+                  <div className="mt-8 flex justify-center">
+                    <div className="w-24 h-32 bg-gradient-to-b from-or-royal/20 to-terre-sombre rounded-lg border border-or-royal/30 flex items-center justify-center">
+                      <span className="text-3xl">🏺</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </motion.div>
-          </AnimatePresence>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Contrôles de navigation */}
+      {/* Contrôles de navigation simplifiés */}
       <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 flex gap-4">
         <button
           onClick={handlePrev}
