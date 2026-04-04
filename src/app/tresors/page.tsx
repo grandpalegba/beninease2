@@ -288,7 +288,7 @@ export default function TreasuresPage() {
           </button>
           <button
             onClick={() => handleCardChange('next')}
-            disabled={state.currentIndex === state.mysteries.length - 1}
+            disabled={state.currentIndex === state.mysteres.length - 1}
             className="absolute right-0 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-white/80 shadow-lg disabled:opacity-30"
           >
             <ChevronRight className="w-6 h-6" />
@@ -310,7 +310,7 @@ export default function TreasuresPage() {
               ref={swipeRef}
               className="relative h-[600px] bg-white rounded-3xl shadow-2xl overflow-hidden"
             >
-              {currentMystery && (
+              {currentMystere && (
                 <>
                   {/* Overlay de cooldown */}
                   {(isInCooldown || state.isLocked) && (
@@ -338,23 +338,23 @@ export default function TreasuresPage() {
                     <div 
                       className="relative h-64 p-8 text-white"
                       style={{ 
-                        background: `linear-gradient(135deg, ${currentMystery.theme?.color || '#92400e'}, ${currentMystery.theme?.color || '#92400e'}dd)` 
+                        background: `linear-gradient(135deg, #92400e, #92400edd)` 
                       }}
                     >
                       <div className="absolute top-4 left-4 bg-white/20 backdrop-blur px-3 py-1 rounded-full text-sm font-bold">
-                        {currentMystery.theme?.name || 'Thème'}
+                        {currentMystere.theme?.name || 'Thème'}
                       </div>
                       <div className="flex flex-col items-center justify-center h-full text-center">
-                        <div className="text-6xl mb-4">{currentMystery.icon || '🎭'}</div>
-                        <h2 className="text-3xl font-bold mb-2">{currentMystery.title}</h2>
-                        <p className="text-lg opacity-90">{currentMystery.subtitle}</p>
+                        <div className="text-6xl mb-4">{currentMystere.icon || '🎭'}</div>
+                        <h2 className="text-3xl font-bold mb-2">{currentMystere.title}</h2>
+                        <p className="text-lg opacity-90">{currentMystere.subtitle}</p>
                       </div>
                       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
                         {Array.from({ length: 4 }).map((_, i) => (
                           <div
                             key={i}
                             className={`w-2 h-2 rounded-full transition-all ${
-                              i < (currentProgress?.questions_completed || 0) 
+                              i < (currentProgress?.current_step || 0) 
                                 ? 'bg-white' 
                                 : 'bg-white/30'
                             }`}
@@ -372,12 +372,12 @@ export default function TreasuresPage() {
                           <Sparkles className="w-6 h-6 text-amber-500 ml-2" />
                         </div>
                         <p className="text-gray-700 leading-relaxed text-lg">
-                          {currentMystery.mise_en_abyme}
+                          {currentMystere.mise_en_abyme}
                         </p>
                       </div>
 
                       {/* Questions */}
-                      {currentMystery.questions?.slice(0, currentQuestionIndex + 1).map((question, qIndex) => (
+                      {currentMystere.questions?.slice(0, currentQuestionIndex + 1).map((question, qIndex) => (
                         <motion.div
                           key={qIndex}
                           initial={{ opacity: 0, y: 20 }}
@@ -400,16 +400,16 @@ export default function TreasuresPage() {
                                 </div>
                                 <span className="text-sm text-gray-500">Étape {qIndex + 1} sur 4</span>
                               </div>
-                              <h3 className="text-xl font-bold text-gray-800 mb-6">{question.text}</h3>
+                              <h3 className="text-xl font-bold text-gray-800 mb-6">{question.question}</h3>
                               <div className="space-y-3">
-                                {question.options.map((option, oIndex) => (
+                                {TreasuresService.getQuestionOptions(question).map((option: string, oIndex: number) => (
                                   <button
                                     key={oIndex}
                                     onClick={() => handleAnswerSelect(oIndex)}
                                     disabled={selectedAnswer !== null}
                                     className={`w-full p-4 rounded-xl text-left transition-all ${
                                       selectedAnswer === oIndex
-                                        ? oIndex === question.correct_answer
+                                        ? oIndex === question.correct_choice
                                           ? 'bg-green-100 border-2 border-green-500'
                                           : 'bg-red-100 border-2 border-red-500'
                                         : 'bg-gray-50 hover:bg-gray-100 border-2 border-gray-200'
@@ -429,7 +429,7 @@ export default function TreasuresPage() {
                               animate={{ opacity: 1 }}
                               className="mt-6 p-6 bg-amber-50 rounded-xl border border-amber-200"
                             >
-                              <p className="text-gray-700 mb-4">{question.explanation}</p>
+                              <p className="text-gray-700 mb-4">{question.explication}</p>
                               {currentQuestionIndex < 3 && (
                                 <div className="text-center">
                                   <div className="w-1 h-8 bg-gradient-to-b from-amber-400 to-orange-400 rounded-full mx-auto mb-4"></div>

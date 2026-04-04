@@ -9,7 +9,7 @@ export interface Theme {
 export interface Question {
   id: string;
   mystere_id: string;
-  label: string;
+  question: string;
   choice_a: string;
   choice_b: string;
   choice_c: string;

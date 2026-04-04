@@ -15,7 +15,7 @@ export class TreasuresService {
           questions:questions(
             id,
             mystere_id,
-            label,
+            question,
             choice_a,
             choice_b,
             choice_c,
