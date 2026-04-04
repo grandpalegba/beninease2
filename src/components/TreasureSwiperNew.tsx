@@ -60,7 +60,9 @@ export default function TreasureSwiper({ mysteres, loading = false, onScrollEnd 
     if (!emblaApi) return;
     onSelect();
     emblaApi.on("select", onSelect);
-    return () => emblaApi.off("select", onSelect);
+    return () => {
+      emblaApi.off("select", onSelect);
+    };
   }, [emblaApi, onSelect]);
 
   const scrollPrev = useCallback(() => {
@@ -100,14 +102,6 @@ export default function TreasureSwiper({ mysteres, loading = false, onScrollEnd 
           mystere={selectedMystere} 
           onComplete={handleQuizComplete}
         />
-        <button
-          onClick={handleQuizClose}
-          className="absolute top-4 right-4 z-60 p-2 rounded-full bg-terre-sombre/80 text-ivoire/60 hover:bg-terre-sombre hover:text-ivoire"
-        >
-          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293 4.293a1 1 0 001.414 1.414L10 10.414l-4.293 4.293a1 1 0 01-1.414 0z" clipRule="evenodd" />
-          </svg>
-        </button>
       </div>
     );
   }
@@ -119,7 +113,7 @@ export default function TreasureSwiper({ mysteres, loading = false, onScrollEnd 
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <h1 className="text-or-royal text-2xl font-bold tracking-wider">Trésors</h1>
           <div className="text-ivoire/60">
-            {currentIndex + 1} / {mysteres.length} • {mysteres.length} Trésors à découvrir
+            {currentIndex + 1} / {mysteres.length}
           </div>
         </div>
       </div>
@@ -167,7 +161,6 @@ export default function TreasureSwiper({ mysteres, loading = false, onScrollEnd 
               title: mystere.title,
               subtitle: mystere.subtitle,
               theme: mystere.theme?.name,
-              difficulty: mystere.difficulty,
               icon: mystere.icon
             });
             
