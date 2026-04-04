@@ -6,7 +6,7 @@ import { ChevronLeft, ChevronRight, Heart, Clock, QrCode, Trophy, Lock, Sparkles
 import { supabase } from "@/utils/supabase/client";
 import { TreasuresService } from "@/lib/treasures-service";
 import { useSwipe } from "@/hooks/useSwipe";
-import type { Mystery, Question, UserProgress, TreasuresState } from "@/types/treasures";
+import type { Mystere, Question, UserTreasure, TreasuresState } from "@/types/treasures";
 
 // Configuration
 const TOTAL_LIVES = 6;
@@ -15,7 +15,7 @@ const MYSTERIES_PER_PAGE = 20;
 export default function TreasuresPage() {
   // État principal
   const [state, setState] = useState<TreasuresState>({
-    mysteries: [],
+    mysteres: [],
     currentIndex: 0,
     loading: true,
     error: null,
@@ -64,17 +64,17 @@ export default function TreasuresPage() {
       }
 
       // Charger les mystères et la progression en parallèle
-      const [mysteriesResponse, progressResponse] = await Promise.all([
-        TreasuresService.getMysteries(0, MYSTERIES_PER_PAGE),
+      const [mysteresResponse, progressResponse] = await Promise.all([
+        TreasuresService.getMysteres(0, MYSTERIES_PER_PAGE),
         TreasuresService.getUserProgress(user.id)
       ]);
 
-      if (mysteriesResponse.error) throw mysteriesResponse.error;
+      if (mysteresResponse.error) throw mysteresResponse.error;
       if (progressResponse.error) throw progressResponse.error;
 
       setState(prev => ({
         ...prev,
-        mysteries: mysteriesResponse.data || [],
+        mysteres: mysteresResponse.data || [],
         userProgress: progressResponse.data || {},
         loading: false
       }));
@@ -96,14 +96,14 @@ export default function TreasuresPage() {
 
   // Navigation horizontale
   const handleCardChange = useCallback((direction: 'prev' | 'next') => {
-    if (direction === 'next' && state.currentIndex < state.mysteries.length - 1) {
+    if (direction === 'next' && state.currentIndex < state.mysteres.length - 1) {
       setState(prev => ({ ...prev, currentIndex: prev.currentIndex + 1 }));
       resetVerticalProgress();
     } else if (direction === 'prev' && state.currentIndex > 0) {
       setState(prev => ({ ...prev, currentIndex: prev.currentIndex - 1 }));
       resetVerticalProgress();
     }
-  }, [state.currentIndex, state.mysteries.length]);
+  }, [state.currentIndex, state.mysteres.length]);
 
   // Réinitialiser la progression verticale
   const resetVerticalProgress = () => {
@@ -117,49 +117,27 @@ export default function TreasuresPage() {
   const handleAnswerSelect = async (answerIndex: number) => {
     setSelectedAnswer(answerIndex);
     
-    const currentMystery = state.mysteries[state.currentIndex];
-    const currentQuestion = currentMystery.questions?.[currentQuestionIndex];
+    const currentMystere = state.mysteres[state.currentIndex];
+    const currentQuestion = currentMystere.questions?.[currentQuestionIndex];
     
-    if (!currentQuestion || !currentMystery) return;
+    if (!currentQuestion || !currentMystere) return;
 
-    const isCorrect = answerIndex === currentQuestion.correct_answer;
+    const isCorrect = answerIndex === currentQuestion.correct_choice;
     const user = await getCurrentUser();
     
     if (!user) return;
 
-    const progress = state.userProgress[currentMystery.id];
-    const currentLivesLost = progress?.lives_lost || 0;
-    const newLivesLost = isCorrect ? currentLivesLost : currentLivesLost + 1;
+    // Mettre à jour la progression avec la nouvelle structure
+    await TreasuresService.updateProgress(user.id, currentMystere.id, isCorrect);
 
-    // Mettre à jour la progression
-    const questionsCompleted = isCorrect ? currentQuestionIndex + 1 : currentQuestionIndex;
-    const isCompleted = isCorrect && currentQuestionIndex === 3;
-
-    await TreasuresService.updateProgress(
-      user.id,
-      currentMystery.id,
-      questionsCompleted,
-      newLivesLost,
-      isCompleted
-    );
-
-    // Mettre à jour l'état local
-    setState(prev => ({
-      ...prev,
-      userProgress: {
-        ...prev.userProgress,
-        [currentMystery.id]: {
-          id: '',
-          user_id: user.id,
-          mystery_id: currentMystery.id,
-          questions_completed: questionsCompleted,
-          lives_lost: newLivesLost,
-          is_completed: isCompleted,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        }
-      }
-    }));
+    // Recharger la progression pour obtenir les valeurs à jour
+    const progressResponse = await TreasuresService.getUserProgress(user.id);
+    if (!progressResponse.error) {
+      setState(prev => ({
+        ...prev,
+        userProgress: progressResponse.data || {}
+      }));
+    }
 
     if (isCorrect) {
       // Bonne réponse - débloquer le scroll
@@ -175,16 +153,13 @@ export default function TreasuresPage() {
         }, 2000);
       }
     } else {
-      // Mauvaise réponse - perte d'une vie
-      if (newLivesLost >= TOTAL_LIVES) {
-        // Activer l'Épreuve du Silence
-        await TreasuresService.activateCooldown(user.id, currentMystery.id);
-        const cooldownData = await TreasuresService.activateCooldown(user.id, currentMystery.id);
-        
+      // Mauvaise réponse - vérifier si le cooldown est activé
+      const updatedProgress = progressResponse.data?.[currentMystere.id];
+      if (updatedProgress?.lives_remaining === 0) {
         setState(prev => ({
           ...prev,
           isLocked: true,
-          lockEndTime: cooldownData.data?.cooldown_until ? new Date(cooldownData.data.cooldown_until) : null
+          lockEndTime: updatedProgress.locked_until ? new Date(updatedProgress.locked_until) : null
         }));
       }
       
@@ -196,12 +171,12 @@ export default function TreasuresPage() {
 
   // Lever le cooldown (QR Code)
   const handleLiftCooldown = async () => {
-    const currentMystery = state.mysteries[state.currentIndex];
+    const currentMystere = state.mysteres[state.currentIndex];
     const user = await getCurrentUser();
     
-    if (!user || !currentMystery) return;
+    if (!user || !currentMystere) return;
 
-    await TreasuresService.liftCooldown(user.id, currentMystery.id);
+    await TreasuresService.liftCooldown(user.id, currentMystere.id);
     
     setState(prev => ({
       ...prev,
@@ -220,8 +195,8 @@ export default function TreasuresPage() {
   };
 
   // Calculer les états dérivés
-  const currentMystery = state.mysteries[state.currentIndex];
-  const currentProgress = currentMystery ? state.userProgress[currentMystery.id] : undefined;
+  const currentMystere = state.mysteres[state.currentIndex];
+  const currentProgress = currentMystere ? state.userProgress[currentMystere.id] : undefined;
   const remainingLives = TreasuresService.getRemainingLives(currentProgress);
   const timeRemaining = state.lockEndTime ? TreasuresService.getTimeRemaining(state.lockEndTime.toISOString()) : '';
   const isInCooldown = currentProgress ? TreasuresService.checkCooldown(currentProgress) : false;

@@ -1,49 +1,49 @@
 import { supabase } from '@/utils/supabase/client';
-import type { Mystery, Question, Theme, UserProgress } from '@/types/treasures';
+import type { Mystere, Question, Theme, UserTreasure } from '@/types/treasures';
 
 export class TreasuresService {
   // Récupérer les mystères avec pagination
-  static async getMysteries(page: number = 0, limit: number = 20) {
+  static async getMysteres(page: number = 0, limit: number = 20) {
     try {
       const offset = page * limit;
       
       const { data, error } = await supabase
-        .from('mysteries')
+        .from('mysteres')
         .select(`
           *,
-          theme:themes(id, name, icon, color),
+          theme:themes(id, name, order),
           questions:questions(
             id,
-            question_number,
-            text,
-            options,
-            correct_answer,
-            explanation
+            mystere_id,
+            label,
+            choice_a,
+            choice_b,
+            choice_c,
+            choice_d,
+            correct_choice,
+            explication
           )
         `)
-        .order('created_at', { ascending: false })
+        .order('mystere_number', { ascending: true })
         .range(offset, offset + limit - 1);
 
       if (error) throw error;
       
-      // Trier les questions par numéro pour chaque mystère
-      const mysteries = data?.map(mystery => ({
-        ...mystery,
-        questions: mystery.questions?.sort((a, b) => a.question_number - b.question_number)
-      })) || [];
+      // Les questions sont déjà triées par mystere_id dans la jointure
+      const mysteres = data || [];
 
-      return { data: mysteries, error: null };
+      return { data: mysteres, error: null };
     } catch (error) {
-      console.error('Error fetching mysteries:', error);
+      console.error('Error fetching mysteres:', error);
       return { data: null, error: error as Error };
     }
   }
 
-  // Récupérer la progression de l'utilisateur
+  // Récupérer la progression de l'utilisateur depuis user_treasures
   static async getUserProgress(userId: string) {
     try {
       const { data, error } = await supabase
-        .from('user_progress')
+        .from('user_treasures')
         .select('*')
         .eq('user_id', userId);
 
@@ -51,9 +51,9 @@ export class TreasuresService {
 
       // Transformer en objet clé-valeur pour un accès facile
       const progressMap = (data || []).reduce((acc, progress) => {
-        acc[progress.mystery_id] = progress;
+        acc[progress.treasure_id] = progress;
         return acc;
-      }, {} as Record<string, UserProgress>);
+      }, {} as Record<string, UserTreasure>);
 
       return { data: progressMap, error: null };
     } catch (error) {
@@ -62,24 +62,63 @@ export class TreasuresService {
     }
   }
 
-  // Mettre à jour la progression
+  // Initialiser ou mettre à jour la progression utilisateur
   static async updateProgress(
     userId: string, 
-    mysteryId: string, 
-    questionsCompleted: number, 
-    livesLost: number,
-    isCompleted: boolean = false
+    mystereId: string, 
+    isCorrect: boolean
   ) {
     try {
+      // D'abord vérifier si une entrée existe
+      const { data: existing } = await supabase
+        .from('user_treasures')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('treasure_id', mystereId)
+        .single();
+
+      let livesRemaining = 6; // Valeur par défaut
+      let attempts = 0;
+      let currentStep = 0;
+
+      if (existing) {
+        livesRemaining = existing.lives_remaining;
+        attempts = existing.attempts;
+        currentStep = existing.current_step;
+
+        if (!isCorrect) {
+          livesRemaining = Math.max(0, livesRemaining - 1);
+        } else {
+          currentStep = Math.min(4, currentStep + 1);
+        }
+        attempts++;
+      } else {
+        // Première tentative
+        if (!isCorrect) {
+          livesRemaining = 5;
+        } else {
+          currentStep = 1;
+        }
+        attempts = 1;
+      }
+
+      // Si plus de vies, activer le cooldown
+      let lockedUntil = existing?.locked_until || null;
+      if (livesRemaining === 0) {
+        const lockEnd = new Date();
+        lockEnd.setHours(lockEnd.getHours() + 48);
+        lockedUntil = lockEnd.toISOString();
+      }
+
       const { data, error } = await supabase
-        .from('user_progress')
+        .from('user_treasures')
         .upsert({
           user_id: userId,
-          mystery_id: mysteryId,
-          questions_completed: questionsCompleted,
-          lives_lost: livesLost,
-          is_completed: isCompleted,
-          updated_at: new Date().toISOString()
+          treasure_id: mystereId,
+          attempts,
+          locked_until: lockedUntil,
+          current_step: currentStep,
+          lives_remaining: livesRemaining
         })
         .select()
         .single();
@@ -92,43 +131,19 @@ export class TreasuresService {
     }
   }
 
-  // Activer l'Épreuve du Silence (cooldown de 48h)
-  static async activateCooldown(userId: string, mysteryId: string) {
-    try {
-      const cooldownUntil = new Date();
-      cooldownUntil.setHours(cooldownUntil.getHours() + 48);
-
-      const { data, error } = await supabase
-        .from('user_progress')
-        .upsert({
-          user_id: userId,
-          mystery_id: mysteryId,
-          cooldown_until: cooldownUntil.toISOString(),
-          updated_at: new Date().toISOString()
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-      return { data, error: null };
-    } catch (error) {
-      console.error('Error activating cooldown:', error);
-      return { data: null, error: error as Error };
-    }
-  }
-
   // Lever le cooldown (QR Code)
-  static async liftCooldown(userId: string, mysteryId: string) {
+  static async liftCooldown(userId: string, mystereId: string) {
     try {
       const { data, error } = await supabase
-        .from('user_progress')
+        .from('user_treasures')
         .update({
-          cooldown_until: null,
-          lives_lost: 0, // Réinitialiser les vies perdues
-          updated_at: new Date().toISOString()
+          locked_until: null,
+          lives_remaining: 6, // Réinitialiser les vies
+          attempts: 0, // Réinitialiser les tentatives
+          current_step: 0 // Réinitialiser la progression
         })
         .eq('user_id', userId)
-        .eq('mystery_id', mysteryId)
+        .eq('treasure_id', mystereId)
         .select()
         .single();
 
@@ -141,21 +156,21 @@ export class TreasuresService {
   }
 
   // Vérifier si un utilisateur est en cooldown
-  static checkCooldown(userProgress: UserProgress | undefined): boolean {
-    if (!userProgress?.cooldown_until) return false;
+  static checkCooldown(userProgress: UserTreasure | undefined): boolean {
+    if (!userProgress?.locked_until) return false;
     
-    const cooldownEnd = new Date(userProgress.cooldown_until);
+    const cooldownEnd = new Date(userProgress.locked_until);
     const now = new Date();
     
     return cooldownEnd > now;
   }
 
   // Calculer le temps restant
-  static getTimeRemaining(cooldownUntil: string | null): string {
-    if (!cooldownUntil) return '';
+  static getTimeRemaining(lockedUntil: string | null): string {
+    if (!lockedUntil) return '';
     
     const now = new Date().getTime();
-    const cooldownEnd = new Date(cooldownUntil).getTime();
+    const cooldownEnd = new Date(lockedUntil).getTime();
     const distance = cooldownEnd - now;
     
     if (distance < 0) return '';
@@ -167,8 +182,13 @@ export class TreasuresService {
   }
 
   // Calculer le nombre de vies restantes pour un mystère
-  static getRemainingLives(userProgress: UserProgress | undefined): number {
+  static getRemainingLives(userProgress: UserTreasure | undefined): number {
     if (!userProgress) return 6;
-    return Math.max(0, 6 - userProgress.lives_lost);
+    return userProgress.lives_remaining;
+  }
+
+  // Obtenir les options de question sous forme de tableau
+  static getQuestionOptions(question: Question): string[] {
+    return [question.choice_a, question.choice_b, question.choice_c, question.choice_d];
   }
 }

@@ -1,52 +1,50 @@
-// Types pour l'architecture Trésors
+// Types pour l'architecture Trésors - Structure réelle de la base
 
 export interface Theme {
   id: string;
   name: string;
-  icon: string;
-  color: string;
+  order: number;
 }
 
 export interface Question {
   id: string;
-  mystery_id: string;
-  question_number: number;
-  text: string;
-  options: string[];
-  correct_answer: number;
-  explanation: string;
+  mystere_id: string;
+  label: string;
+  choice_a: string;
+  choice_b: string;
+  choice_c: string;
+  choice_d: string;
+  correct_choice: number;
+  explication: string;
 }
 
-export interface Mystery {
+export interface Mystere {
   id: string;
   theme_id: string;
   title: string;
   subtitle: string;
-  icon: string;
   mise_en_abyme: string;
-  difficulty: 'easy' | 'medium' | 'hard';
+  icon: string;
+  mystere_number: number;
   theme?: Theme;
   questions?: Question[];
 }
 
-export interface UserProgress {
-  id: string;
+export interface UserTreasure {
   user_id: string;
-  mystery_id: string;
-  questions_completed: number;
-  lives_lost: number;
-  is_completed: boolean;
-  cooldown_until?: string;
-  created_at: string;
-  updated_at: string;
+  treasure_id: string;
+  attempts: number;
+  locked_until: string | null;
+  current_step: number;
+  lives_remaining: number;
 }
 
 export interface TreasuresState {
-  mysteries: Mystery[];
+  mysteres: Mystere[];
   currentIndex: number;
   loading: boolean;
   error: string | null;
-  userProgress: Record<string, UserProgress>;
+  userProgress: Record<string, UserTreasure>;
   currentLives: number;
   isLocked: boolean;
   lockEndTime: Date | null;
