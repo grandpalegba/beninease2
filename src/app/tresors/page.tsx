@@ -281,7 +281,7 @@ export default function TreasuresPage() {
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <h1 className="text-2xl font-bold text-amber-900">Trésors</h1>
           <div className="flex items-center gap-1">
-            {[...Array(TOTAL_LIVES)].map((_, i) => (
+            {Array.from({ length: TOTAL_LIVES }).map((_, i) => (
               <motion.div
                 key={i}
                 initial={{ scale: 1 }}
@@ -363,7 +363,7 @@ export default function TreasuresPage() {
                     <div 
                       className="relative h-64 p-8 text-white"
                       style={{ 
-                        background: `linear-gradient(135deg, ${currentMystery.theme?.color || '#92400e'}, ${currentMystery.theme?.color || '#92400e}dd)` 
+                        background: `linear-gradient(135deg, ${currentMystery.theme?.color || '#92400e'}, ${currentMystery.theme?.color || '#92400e'}dd)` 
                       }}
                     >
                       <div className="absolute top-4 left-4 bg-white/20 backdrop-blur px-3 py-1 rounded-full text-sm font-bold">
@@ -375,7 +375,7 @@ export default function TreasuresPage() {
                         <p className="text-lg opacity-90">{currentMystery.subtitle}</p>
                       </div>
                       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                        {[0, 1, 2, 3].map((i) => (
+                        {Array.from({ length: 4 }).map((_, i) => (
                           <div
                             key={i}
                             className={`w-2 h-2 rounded-full transition-all ${
@@ -466,8 +466,8 @@ export default function TreasuresPage() {
                                   <Trophy className="w-12 h-12 text-amber-500 mx-auto mb-4" />
                                   <h4 className="text-xl font-bold text-amber-900 mb-2">Trésor Conquis !</h4>
                                   <button className="px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-full hover:from-amber-600 hover:to-orange-600 transition-all">
-                                        Réclamer le Trésor
-                                      </button>
+                                    Réclamer le Trésor
+                                  </button>
                                 </div>
                               )}
                             </motion.div>
