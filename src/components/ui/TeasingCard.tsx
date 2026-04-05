@@ -34,7 +34,6 @@ export default function TeasingCard({
   return (
     <>
       <motion.div
-        layoutId={`card-${id}`}
         onClick={() => setIsExpanded(true)}
         whileHover={{ scale: 1.02, y: -5 }}
         whileTap={{ scale: 0.98 }}
@@ -46,10 +45,7 @@ export default function TeasingCard({
         {/* Unified Image Section - 70% height - Hidden if hideImage is true */}
         {!hideImage && (
           <div className="relative h-[65%] w-full overflow-hidden">
-             <motion.div 
-               layoutId={`image-${id}`}
-               className="w-full h-full"
-             >
+             <div className="w-full h-full">
                <Image 
                  src={image} 
                  alt={title} 
@@ -57,7 +53,7 @@ export default function TeasingCard({
                  className="object-cover"
                  priority
                />
-             </motion.div>
+             </div>
              {/* Soft Fade at bottom of image */}
              <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white to-transparent" />
           </div>

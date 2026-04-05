@@ -50,7 +50,7 @@ export default function CardDeck({ items, renderItem, className }: CardDeckProps
 
   return (
     <div className={cn("h-[100vh] w-full relative bg-[#F4F4F2] overflow-hidden flex items-center justify-center p-4 md:p-10", className)}>
-      <AnimatePresence initial={false} custom={direction}>
+      <AnimatePresence initial={false} custom={direction} mode="popLayout">
         <motion.div
           key={currentIndex}
           custom={direction}
@@ -59,9 +59,8 @@ export default function CardDeck({ items, renderItem, className }: CardDeckProps
           animate="center"
           exit="exit"
           transition={{
-            x: { type: "spring", stiffness: 300, damping: 30 },
-            opacity: { duration: 0.2 },
-            rotate: { duration: 0.3 }
+            x: { type: "spring", stiffness: 200, damping: 25 },
+            opacity: { duration: 0.2 }
           }}
           drag="x"
           dragConstraints={{ left: 0, right: 0 }}
