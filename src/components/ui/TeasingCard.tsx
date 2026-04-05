@@ -62,38 +62,38 @@ export default function TeasingCard({
           </div>
         )}
  
-        {/* Content Section - Strict alignment (v4.15) */}
+        {/* Content Section - Senior Designer Version (v4.16) */}
         <div className={cn(
-          "px-8 md:px-10 flex-1 flex flex-col items-center text-center bg-white relative z-20",
-          hideImage ? "py-24 space-y-12" : "pt-12 pb-8 space-y-6"
+          "px-8 md:px-12 flex-1 flex flex-col items-center text-center bg-white relative z-20",
+          hideImage ? "py-28 space-y-16" : "pt-14 pb-10 space-y-8"
         )}>
-           {/* 1. Category Badge */}
-           <span className="text-amber-600 text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] block h-4">
+           {/* 1. Category Badge - Enhanced Size & Spacing */}
+           <span className="text-amber-600 text-[12px] md:text-[14px] font-black uppercase tracking-[0.25em] block h-4">
              {subtitle}
            </span>
            
-           {/* 2. Prénom Nom - Fixed height container to keep Bio at same position */}
+           {/* 2. Prénom Nom - Dominant Anchor - Increased Container Height */}
            {!hideTitle && (
-             <div className="flex items-center justify-center min-h-[60px] md:min-h-[80px]">
-               <h3 className="text-3xl md:text-4xl font-display font-black text-[#1A1A1A] leading-[1.1]">
+             <div className="flex items-center justify-center min-h-[80px] md:min-h-[110px] w-full">
+               <h3 className="text-4xl md:text-5xl font-display font-black text-[#1A1A1A] leading-[1.1] tracking-tight">
                  {title}
                </h3>
              </div>
            )}
            
-           {/* 3. Sous-catégorie / Bio */}
-           <div className="flex-1 flex flex-col items-center justify-start space-y-6">
+           {/* 3. Sous-catégorie / Bio - Increased Size for Premium Feel */}
+           <div className="flex-1 flex flex-col items-center justify-start space-y-8 w-full">
              <p className={cn(
-               "text-gray-500 font-serif italic mx-auto",
-               hideImage ? "text-xl md:text-2xl max-w-md leading-[1.8] md:leading-[2]" : "text-base max-w-[280px] leading-relaxed"
+               "text-gray-600 font-serif italic mx-auto",
+               hideImage ? "text-2xl md:text-3xl max-w-lg leading-[1.8] md:leading-[2]" : "text-lg md:text-xl max-w-[320px] md:max-w-md leading-relaxed"
              )}>
                "{text}"
              </p>
  
-             {/* 4. Minimalist CTA - Pushed to bottom of flex-1 if possible, but keeping it fixed here */}
-             <div className="flex items-center gap-2 opacity-30 pt-2 pb-2">
+             {/* 4. Minimalist CTA - Refined Opacity */}
+             <div className="flex items-center gap-2 opacity-25 pt-4 pb-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                <span className="text-[11px] font-black text-gray-400 uppercase tracking-widest">
                   Cliquer pour explorer
                 </span>
              </div>
