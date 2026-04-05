@@ -49,7 +49,7 @@ export default function CardDeck({ items, renderItem, className }: CardDeckProps
   if (items.length === 0) return null;
 
   return (
-    <div className={cn("h-[100vh] w-full relative bg-[#F4F4F2] overflow-hidden flex items-center justify-center p-4 md:p-10", className)}>
+    <div className={cn("h-[calc(100vh-64px)] w-full relative bg-[#F4F4F2] overflow-hidden flex items-center justify-center p-4 md:p-10", className)}>
       <AnimatePresence initial={false} custom={direction} mode="popLayout">
         <motion.div
           key={currentIndex}
