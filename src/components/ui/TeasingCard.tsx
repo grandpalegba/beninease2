@@ -44,9 +44,9 @@ export default function TeasingCard({
         )}
         style={{ WebkitTapHighlightColor: "transparent" }}
       >
-        {/* Unified Image Section - 70% height - Hidden if hideImage is true */}
+        {/* Unified Image Section - 55-60% height */}
         {!hideImage && (
-          <div className="relative h-[65%] w-full overflow-hidden">
+          <div className="relative h-[55%] md:h-[60%] w-full overflow-hidden">
              <div className="w-full h-full">
                <Image 
                  src={image} 
@@ -57,42 +57,43 @@ export default function TeasingCard({
                  draggable={false}
                />
              </div>
-             {/* Soft Fade at bottom of image */}
-             <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white to-transparent" />
+             {/* Fade into content is now handled by overlap, but keeping a subtle shadow */}
+             <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/20 to-transparent" />
           </div>
         )}
-
-        {/* Unified Content Section - Centered */}
+ 
+        {/* Unified Content Section - Overlapping for Premium look */}
         <div className={cn(
-          "px-10 flex-1 flex flex-col items-center text-center justify-between",
-          hideImage ? "py-24 space-y-12" : "py-8"
+          "px-8 md:px-10 flex-1 flex flex-col items-center text-center justify-between bg-white rounded-t-[3rem] z-10",
+          !hideImage && "mt-[-40px] shadow-[0_-20px_40px_rgba(0,0,0,0.05)]",
+          hideImage ? "py-20 md:py-24 space-y-12" : "py-8 md:py-10"
         )}>
-           <div className="flex flex-col items-center space-y-4">
+           <div className="flex flex-col items-center space-y-3 md:space-y-4">
              {/* Unified Badge (Header) - Orange Gold */}
-             <span className="text-amber-600 text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em]">
+             <span className="text-amber-600 text-[9px] md:text-[11px] font-black uppercase tracking-[0.2em]">
                {subtitle}
              </span>
              
-             {/* Title - Bold Serif Look - Hidden if hideTitle is true */}
+             {/* Title - Bold Serif Look */}
              {!hideTitle && (
-               <h3 className="text-3xl md:text-4xl font-display font-black text-[#1A1A1A] leading-tight">
+               <h3 className="text-2xl md:text-4xl font-display font-black text-[#1A1A1A] leading-tight">
                  {title}
                </h3>
              )}
            </div>
            
-           {/* Bio/Poetry - Italic Serif - Spread out if no image */}
+           {/* Bio/Poetry - Italic Serif */}
            <p className={cn(
              "text-gray-500 font-serif italic mx-auto",
-             hideImage ? "text-xl md:text-2xl max-w-md leading-[2]" : "text-base max-w-[280px] leading-relaxed"
+             hideImage ? "text-lg md:text-2xl max-w-md leading-[1.8] md:leading-[2]" : "text-sm md:text-base max-w-[260px] md:max-w-[280px] leading-relaxed"
            )}>
              "{text}"
            </p>
-
+ 
            {/* Call to Action - Minimalist */}
-           <div className="flex items-center gap-2 opacity-40 pt-4">
-              <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+           <div className="flex items-center gap-2 opacity-30 pt-2 md:pt-4">
+              <div className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-amber-500" />
+              <span className="text-[8px] md:text-[10px] font-black text-gray-400 uppercase tracking-widest">
                 Cliquer pour explorer
               </span>
            </div>
