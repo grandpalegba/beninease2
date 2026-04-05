@@ -84,8 +84,8 @@ export default function TeasingCard({
            
            {/* Bio/Poetry - Italic Serif - Spread out if no image */}
            <p className={cn(
-             "text-gray-500 font-serif italic leading-relaxed mx-auto",
-             hideImage ? "text-xl md:text-2xl max-w-md" : "text-base max-w-[280px]"
+             "text-gray-500 font-serif italic mx-auto",
+             hideImage ? "text-xl md:text-2xl max-w-md leading-[2]" : "text-base max-w-[280px] leading-relaxed"
            )}>
              "{text}"
            </p>

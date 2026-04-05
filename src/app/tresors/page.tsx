@@ -85,11 +85,11 @@ export default function TreasuresPage() {
             <TeasingCard
               id={mystere.id}
               image=""
-              title=""
+              title={mystere.title}
               subtitle={mystere.theme?.name || "Mystère Ancestral"}
               text={mystere.mise_en_abyme || mystere.explanation || "Découvrez le secret enfoui..."}
               hideImage={true}
-              hideTitle={true}
+              hideTitle={false}
               className="mt-16"
               expandedContent={() => (
                 <div className="space-y-12">
