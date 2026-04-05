@@ -107,7 +107,9 @@ export class TreasuresService {
       if (isCorrect) {
         await supabase.rpc('increment_user_points', { amount: 10 });
         if (currentStep >= 4) {
+          // Bonus de victoire finale
           await supabase.rpc('increment_user_points', { amount: 10 });
+          await supabase.rpc('increment_user_power', { amount: 5 });
         }
       }
 
@@ -142,6 +144,7 @@ export class TreasuresService {
 
       if (powerWord) {
         await supabase.rpc('increment_user_points', { amount: 5 });
+        await supabase.rpc('increment_user_power', { amount: 1 }); // Petites graines de puissance pour le courage
       }
 
       return { data, error: null };
