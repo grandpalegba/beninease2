@@ -2,11 +2,15 @@
 
 import React, { useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence, useAnimation } from "framer-motion";
-import { Heart, Clock, ShieldAlert, Sparkles } from "lucide-react";
+import { Clock, ShieldAlert } from "lucide-react";
 import { cn } from "@/lib/utils";
-import SacredJar from "./SacredJar";
-import TreasureCard from "./TreasureCard";
 import { toast } from "sonner";
+
+// Sub-components v2.1
+import AwaleHeader from "./AwaleHeader";
+import RoyalJar from "./RoyalJar";
+import AnswerGrid from "./AnswerGrid";
+import TreasureCard from "./TreasureCard";
 
 interface Question {
   id: string;
@@ -60,6 +64,7 @@ export default function MysteryGame({
     const dropX = info.point.x;
     const dropY = info.point.y;
 
+    // Collision detection on Royal Jar
     const collision = 
       dropX >= jarRect.left && 
       dropX <= jarRect.right && 
@@ -73,15 +78,14 @@ export default function MysteryGame({
 
   const validateAnswer = async (index: number) => {
     if (index === currentQuestion.correct_answer) {
-      // SUCCESS logic
       setIsAnswered(true);
+      // Visual feedback on jar
       await jarControls.start({
-        scale: [1, 1.1, 1],
-        filter: ["brightness(1)", "brightness(1.5)", "brightness(1)"],
-        transition: { duration: 0.5 }
+        scale: [1, 1.05, 1],
+        transition: { duration: 0.3 }
       });
       
-      toast.success("Correct ! Un secret de plus scellé.");
+      toast.success("Secret scellé avec sagesse.");
       onCorrect(currentQuestion.id);
       
       setTimeout(() => {
@@ -89,56 +93,79 @@ export default function MysteryGame({
           setCurrentQuestionIndex(prev => prev + 1);
           setIsAnswered(false);
         } else {
-          // Final completion
           setTimeout(() => setShowTreasureCard(true), 2000);
         }
       }, 1200);
     } else {
-      // FAILURE logic
+      // Shake animation for error
       await jarControls.start({
         x: [0, -10, 10, -10, 10, 0],
         transition: { duration: 0.4 }
       });
       
-      toast.error("Faux ! La jarre tremble...");
+      toast.error("La jarre rejette cette vérité.");
       onWrong(currentQuestion.id);
     }
   };
 
-  // Rendering logic for Locked state
-  if (isLocked) {
+  // Rendering logic for Locked state (Masque)
+  if (isLocked || lives === 0) {
     return (
-       <div className="h-full flex flex-col items-center justify-center bg-gray-900/90 backdrop-blur-md rounded-3xl p-10 text-white border border-white/10 shadow-2xl">
+       <div className="h-full flex flex-col items-center justify-center bg-[#0D0D12] text-white p-10 text-center relative overflow-hidden rounded-3xl">
+          {/* Mask Visual (Placeholder for a more complex SVG) */}
           <motion.div 
-            initial={{ scale: 0 }} 
-            animate={{ scale: 1 }} 
-            className="w-24 h-24 bg-red-500/20 rounded-full flex items-center justify-center mb-6"
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            className="mb-10 relative"
           >
-            <ShieldAlert className="w-12 h-12 text-red-500" />
+             <div className="text-[120px] filter drop-shadow-[0_0_40px_rgba(255,0,0,0.3)]">🎭</div>
+             <motion.div 
+               animate={{ opacity: [0.1, 0.4, 0.1] }}
+               transition={{ duration: 4, repeat: Infinity }}
+               className="absolute inset-0 bg-red-600 blur-[60px] rounded-full"
+             />
           </motion.div>
-          <h2 className="text-3xl font-display font-bold mb-2 text-center">Accès Interdit</h2>
-          <p className="text-gray-400 mb-8 text-center max-w-sm">Le trésor est protégé par un silence mystique. Reposez-vous.</p>
+
+          <h2 className="text-4xl font-display font-black mb-4 uppercase tracking-[0.2em] text-red-600">Silence Royal</h2>
+          <p className="text-gray-400 mb-10 max-w-sm font-medium">
+            Le Masque est descendu. Le trésor s'est refermé. Vous n'avez plus de graines d'éveil.
+          </p>
           
-          <div className="flex items-center gap-3 px-6 py-3 bg-white/5 rounded-full mb-10 border border-white/10">
+          <div className="flex items-center gap-3 px-8 py-4 bg-white/5 rounded-full mb-12 border border-white/5">
             <Clock className="w-5 h-5 text-amber-500" />
-            <span className="font-mono text-xl">{lockTimeLeft || "48:00:00"}</span>
+            <span className="font-mono text-2xl font-black text-amber-500 tracking-widest">{lockTimeLeft || "48:00:00"}</span>
           </div>
 
-          <div className="w-full max-w-xs space-y-4">
+          <div className="w-full max-w-sm space-y-4">
             <input
               type="text"
               value={powerWord}
               onChange={(e) => setPowerWord(e.target.value)}
-              placeholder="Mot de pouvoir..."
-              className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none text-center font-bold text-white placeholder:text-gray-600 transition-all"
+              placeholder="Invoquez le Mot de Pouvoir..."
+              className="w-full px-8 py-5 bg-white/5 border border-white/10 rounded-2xl focus:ring-4 focus:ring-amber-500/20 focus:border-amber-500 outline-none text-center font-black text-xl text-white placeholder:text-gray-700 transition-all"
             />
             <button
               onClick={() => onUnlock(powerWord)}
-              className="w-full py-4 bg-amber-600 hover:bg-amber-500 text-white font-black rounded-2xl shadow-xl transition-all active:scale-95 uppercase tracking-widest"
+              className="w-full py-5 bg-gradient-to-r from-amber-700 to-amber-600 hover:from-amber-600 hover:to-amber-500 text-white font-black rounded-2xl shadow-2xl transition-all active:scale-95 uppercase tracking-[0.3em] text-sm"
             >
-              Délivrer
+              Lever le Secret
             </button>
           </div>
+          
+          {/* Ancestral particles */}
+          {[...Array(10)].map((_, i) => (
+             <motion.div
+               key={i}
+               animate={{
+                 y: [Math.random() * 800, -100],
+                 opacity: [0, 0.2, 0],
+                 scale: [1, 2, 1]
+               }}
+               transition={{ duration: 10 + Math.random() * 10, repeat: Infinity, delay: Math.random() * 5 }}
+               className="absolute w-1 h-1 bg-white rounded-full opacity-0"
+               style={{ left: `${Math.random() * 100}%` }}
+             />
+          ))}
        </div>
     );
   }
@@ -147,138 +174,107 @@ export default function MysteryGame({
   if (showTreasureCard && treasureData) {
     return (
       <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col items-center space-y-8"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="flex flex-col items-center space-y-8 h-full overflow-y-auto pb-20 custom-scrollbar"
       >
-        <SacredJar pluggedHoles={4} className="w-48 h-48 drop-shadow-[0_0_30px_rgba(217,119,6,0.3)]" />
-        <TreasureCard data={treasureData} className="w-full max-w-3xl" />
+        <div className="relative pt-10">
+           <RoyalJar currentStep={4} className="w-32 h-32 md:w-48 md:h-48" />
+           <motion.div 
+             animate={{ opacity: [0, 0.5, 0], scale: [1, 1.5, 1] }}
+             transition={{ duration: 3, repeat: Infinity }}
+             className="absolute inset-0 bg-amber-400 blur-3xl pointer-events-none rounded-full"
+           />
+        </div>
+        <TreasureCard data={treasureData} className="w-full max-w-4xl" />
       </motion.div>
     );
   }
 
   return (
-    <div className="h-[80vh] flex flex-col overflow-hidden relative touch-none">
-      {/* Top Zone: Awalé Header (20%) */}
-      <div className="h-[20%] flex flex-col items-center justify-center space-y-3">
-        <div className="flex gap-3">
-          {[...Array(6)].map((_, i) => (
-            <motion.div
-              key={i}
-              initial={false}
-              animate={{
-                scale: i < (lives || 0) ? 1 : 0.8,
-                opacity: i < (lives || 0) ? 1 : 0.2,
-                y: i < (lives || 0) ? 0 : 5
-              }}
-              className="relative"
-            >
-              <Heart className={cn("w-7 h-7", i < (lives || 0) ? "fill-red-500 text-red-500" : "text-gray-700")} />
-              {i < (lives || 0) && (
-                <motion.div
-                  animate={{ opacity: [0, 1, 0], scale: [0.8, 1.5, 0.8] }}
-                  transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
-                  className="absolute inset-0 bg-red-400 blur-xl rounded-full"
-                />
-              )}
-            </motion.div>
-          ))}
-        </div>
-        <div className="flex items-center gap-2">
-           <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-           <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">
-             Graines d'éveil : {(lives || 0)} / 6
-           </p>
-        </div>
-      </div>
+    <div className="h-[90vh] flex flex-col overflow-hidden relative touch-none bg-[#0a0a0f] text-amber-50 shadow-inner rounded-3xl border border-white/5">
+      {/* 1. Header Fixe: Awalé (20%) */}
+      <AwaleHeader lives={lives} className="z-30 h-[20%]" />
 
-      {/* Center Zone: Sacred Jar (50%) */}
+      {/* 2. Zone Centrale: Royal Jar (50%) */}
       <div className="h-[50%] flex flex-col items-center justify-center relative z-10" id="royal-jar-container">
-        <div className="relative">
+        
+        {/* Riddle Poem (Small context) */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="absolute top-4 px-10 text-center max-w-xs pointer-events-none"
+        >
+           <p className="text-[10px] font-serif italic text-amber-200/40 leading-relaxed line-clamp-3">
+             "Dans l'ocre du canari, le temps se fige et le secret murmure. 
+             Quatre souffles pour sceller le destin, quatre vérités pour la lumière."
+           </p>
+        </motion.div>
+
+        <div className="relative group pt-10" ref={jarRef}>
           <motion.div
-            ref={jarRef}
             animate={jarControls}
-            style={{
-              filter: isOverJar ? "brightness(1.2) drop-shadow(0 0 40px rgba(217,119,6,0.4))" : "none"
-            }}
-            className="relative cursor-default"
+            className="relative"
           >
-            <SacredJar 
-              id="royal-jar"
-              pluggedHoles={currentStep ?? currentQuestionIndex} 
-              className="w-64 h-64 md:w-80 md:h-80 transition-all duration-300" 
+            <RoyalJar 
+              currentStep={currentQuestionIndex} 
+              isDragging={isDragging}
+              className="w-72 h-72 md:w-96 md:h-96"
             />
           </motion.div>
 
+          {/* Glow during drag */}
           <AnimatePresence>
             {isDragging && (
               <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
                 className="absolute inset-0 flex items-center justify-center pointer-events-none"
               >
-                <div className="w-72 h-72 border-4 border-dashed border-amber-500/20 rounded-full animate-spin-slow" />
-                <Sparkles className="absolute w-8 h-8 text-amber-500/30 animate-pulse" />
+                <div className="w-80 h-80 border border-amber-500/10 rounded-full animate-ping" />
               </motion.div>
             )}
           </AnimatePresence>
         </div>
-      </div>
 
-      {/* Bottom Zone: Draggable Items (30%) */}
-      <div className="h-[30%] px-6 pb-10 flex flex-col justify-end">
-        <div className="text-center mb-6">
+        {/* Current Question Text overlay */}
+        <div className="absolute bottom-4 px-6 text-center w-full bg-gradient-to-t from-[#0a0a0f] to-transparent pt-10 pb-2">
            <AnimatePresence mode="wait">
              <motion.h3 
                key={currentQuestionIndex}
                initial={{ opacity: 0, y: 10 }}
                animate={{ opacity: 1, y: 0 }}
                exit={{ opacity: 0, y: -10 }}
-               className="text-2xl font-display font-bold text-gray-900 leading-tight"
+               className="text-xl md:text-2xl font-display font-black text-amber-50 leading-tight drop-shadow-lg"
              >
                {currentQuestion?.question}
              </motion.h3>
            </AnimatePresence>
         </div>
+      </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          {currentQuestion?.options.map((option, index) => (
-            <motion.div
-              key={`${currentQuestionIndex}-${index}`}
-              drag
-              dragSnapToOrigin
-              dragListener={!isAnswered}
-              onDragStart={() => setIsDragging(true)}
-              onDrag={(e, info) => {
-                if (!jarRef.current) return;
-                const rect = jarRef.current.getBoundingClientRect();
-                const over = info.point.x > rect.left && info.point.x < rect.right && info.point.y > rect.top && info.point.y < rect.bottom;
-                setIsOverJar(over);
-              }}
-              onDragEnd={(e, info) => handleDragEnd(e, info, index)}
-              whileHover={{ scale: 1.02 }}
-              whileDrag={{ 
-                scale: 1.1, 
-                zIndex: 100,
-                boxShadow: "0 20px 40px rgba(0,0,0,0.15)"
-              }}
-              className="cursor-grab active:cursor-grabbing"
-            >
-              <div className={cn(
-                "p-4 bg-white border-2 border-gray-100 rounded-2xl shadow-sm transition-colors flex items-center gap-3",
-                isOverJar && "border-amber-400"
-              )}>
-                <div className="w-8 h-8 flex-shrink-0 rounded-lg bg-amber-100 flex items-center justify-center text-amber-700 font-bold text-xs">
-                  {String.fromCharCode(65 + index)}
-                </div>
-                <span className="font-bold text-gray-800 text-sm line-clamp-2 leading-tight">
-                  {option}
-                </span>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+      {/* 3. Bottom Zone: Answer Ribbon Grid (30%) */}
+      <div className="h-[30%] px-6 pb-6 pt-2 z-20">
+        <AnswerGrid 
+          options={currentQuestion?.options || []}
+          currentQuestionIndex={currentQuestionIndex}
+          isAnswered={isAnswered}
+          onDragStart={() => setIsDragging(true)}
+          onDrag={(e, info) => {
+             if (!jarRef.current) return;
+             const rect = jarRef.current.getBoundingClientRect();
+             const over = info.point.x > rect.left && info.point.x < rect.right && info.point.y > rect.top && info.point.y < rect.bottom;
+             setIsOverJar(over);
+          }}
+          onDragEnd={handleDragEnd}
+        />
+      </div>
+
+      {/* Background Ambience */}
+      <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+         <div className="absolute top-1/4 left-1/4 w-[50vw] h-[50vw] bg-amber-900/10 blur-[120px] rounded-full" />
+         <div className="absolute bottom-1/4 right-1/4 w-[40vw] h-[40vw] bg-amber-600/5 blur-[120px] rounded-full" />
       </div>
     </div>
   );
