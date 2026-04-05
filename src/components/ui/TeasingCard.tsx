@@ -39,15 +39,8 @@ export default function TeasingCard({
           className
         )}
       >
-        {/* Unified Badge (Header) */}
-        <div className="absolute top-8 left-0 right-0 z-10 flex justify-center">
-           <span className="px-4 py-1.5 rounded-full bg-white/90 backdrop-blur-md text-[#3D2614] text-[10px] font-black uppercase tracking-[0.2em] shadow-lg border border-amber-900/10">
-             {subtitle}
-           </span>
-        </div>
-
-        {/* Unified Image Section */}
-        <div className="relative h-[60%] w-full overflow-hidden">
+        {/* Unified Image Section - 70% height */}
+        <div className="relative h-[65%] w-full overflow-hidden">
            <motion.div 
              layoutId={`image-${id}`}
              className="w-full h-full"
@@ -60,22 +53,35 @@ export default function TeasingCard({
                priority
              />
            </motion.div>
-           <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent" />
+           {/* Soft Fade at bottom of image */}
+           <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white to-transparent" />
         </div>
 
-        {/* Unified Content Section */}
-        <div className="p-10 flex-1 flex flex-col items-center text-center justify-center space-y-6">
-           <h3 className="text-3xl md:text-4xl font-display font-black text-gray-900 leading-tight tracking-tight">
-             {title}
-           </h3>
+        {/* Unified Content Section - Centered */}
+        <div className="px-10 py-8 flex-1 flex flex-col items-center text-center justify-between">
+           <div className="flex flex-col items-center space-y-2">
+             {/* Unified Badge (Header) - Orange Gold */}
+             <span className="text-amber-600 text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em]">
+               {subtitle}
+             </span>
+             
+             {/* Title - Bold Serif Look */}
+             <h3 className="text-3xl md:text-4xl font-display font-black text-[#1A1A1A] leading-tight">
+               {title}
+             </h3>
+           </div>
            
-           <p className="text-base text-gray-500 font-serif italic leading-relaxed max-w-[280px] line-clamp-3">
+           {/* Bio/Poetry - Italic Serif */}
+           <p className="text-base text-gray-500 font-serif italic leading-relaxed max-w-[280px]">
              "{text}"
            </p>
 
-           <div className="pt-2 flex items-center gap-2 opacity-30">
-              <div className="w-1.5 h-1.5 rounded-full bg-gray-400" />
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Explorer</span>
+           {/* Call to Action - Minimalist */}
+           <div className="flex items-center gap-2 opacity-40 pt-4">
+              <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                Cliquer pour explorer
+              </span>
            </div>
         </div>
       </motion.div>
