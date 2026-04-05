@@ -37,7 +37,7 @@ export interface UserTreasure {
   attempts: number;
   locked_until: string | null;
   current_step: number;
-  lives_remaining: number;
+  lives_left: number;
 }
 
 export interface TreasuresState {

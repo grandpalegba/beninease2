@@ -1,5 +1,5 @@
 import { supabase } from '@/utils/supabase/client';
-import type { Mystere, Question, Theme, UserTreasure } from '@/types/treasures';
+import type { Mystere, Question, UserTreasure } from '@/types/treasures';
 
 export class TreasuresService {
   // Récupérer les mystères avec pagination
@@ -30,17 +30,14 @@ export class TreasuresService {
 
       if (error) throw error;
       
-      // Les questions sont déjà triées par mystere_id dans la jointure
-      const mysteres = data || [];
-
-      return { data: mysteres, error: null };
+      return { data: data || [], error: null };
     } catch (error) {
       console.error('Error fetching mysteres:', error);
       return { data: null, error: error as Error };
     }
   }
 
-  // Récupérer la progression de l'utilisateur depuis user_treasures
+  // Récupérer la progression de l'utilisateur
   static async getUserProgress(userId: string) {
     try {
       const { data, error } = await supabase
@@ -50,11 +47,10 @@ export class TreasuresService {
 
       if (error) throw error;
 
-      // Transformer en objet clé-valeur pour un accès facile
-      const progressMap = (data || []).reduce((acc, progress) => {
+      const progressMap = (data || []).reduce((acc: Record<string, UserTreasure>, progress: UserTreasure) => {
         acc[progress.treasure_id] = progress;
         return acc;
-      }, {} as Record<string, UserTreasure>);
+      }, {});
 
       return { data: progressMap, error: null };
     } catch (error) {
@@ -63,55 +59,36 @@ export class TreasuresService {
     }
   }
 
-  // Initialiser ou mettre à jour la progression utilisateur
-  static async updateProgress(
-    userId: string, 
-    mystereId: string, 
-    isCorrect: boolean
-  ) {
+  // Mettre à jour la progression et attribuer des points
+  static async updateProgress(userId: string, mystereId: string, isCorrect: boolean) {
     try {
-      // D'abord vérifier si une entrée existe
       const { data: existing } = await supabase
         .from('user_treasures')
         .select('*')
         .eq('user_id', userId)
         .eq('treasure_id', mystereId)
-        .single();
+        .maybeSingle();
 
-      let livesRemaining = 6; // Valeur par défaut
-      let attempts = 0;
-      let currentStep = 0;
+      let livesLeft = existing ? (existing.lives_left ?? 6) : 6;
+      let currentStep = existing ? (existing.current_step || 0) : 0;
+      let attempts = existing ? (existing.attempts || 0) : 0;
 
-      if (existing) {
-        livesRemaining = existing.lives_remaining;
-        attempts = existing.attempts;
-        currentStep = existing.current_step;
-
-        if (!isCorrect) {
-          livesRemaining = Math.max(0, livesRemaining - 1);
-        } else {
-          currentStep = Math.min(4, currentStep + 1);
-        }
-        attempts++;
+      if (isCorrect) {
+        currentStep += 1;
       } else {
-        // Première tentative
-        if (!isCorrect) {
-          livesRemaining = 5;
-        } else {
-          currentStep = 1;
-        }
-        attempts = 1;
+        livesLeft = Math.max(0, livesLeft - 1);
       }
+      attempts += 1;
 
-      // Si plus de vies, activer le cooldown
+      // Gestion du verrouillage
       let lockedUntil = existing?.locked_until || null;
-      if (livesRemaining === 0) {
+      if (livesLeft === 0) {
         const lockEnd = new Date();
         lockEnd.setHours(lockEnd.getHours() + 48);
         lockedUntil = lockEnd.toISOString();
       }
 
-      const { data, error } = await supabase
+      const { data, error: upsertError } = await supabase
         .from('user_treasures')
         .upsert({
           user_id: userId,
@@ -119,12 +96,21 @@ export class TreasuresService {
           attempts,
           locked_until: lockedUntil,
           current_step: currentStep,
-          lives_remaining: livesRemaining
+          lives_left: livesLeft
         })
         .select()
         .single();
 
-      if (error) throw error;
+      if (upsertError) throw upsertError;
+
+      // Attribution des points via RPC
+      if (isCorrect) {
+        await supabase.rpc('increment_user_points', { amount: 10 });
+        if (currentStep >= 4) {
+          await supabase.rpc('increment_user_points', { amount: 10 });
+        }
+      }
+
       return { data, error: null };
     } catch (error) {
       console.error('Error updating progress:', error);
@@ -132,16 +118,20 @@ export class TreasuresService {
     }
   }
 
-  // Lever le cooldown (QR Code)
-  static async liftCooldown(userId: string, mystereId: string) {
+  // Libérer via Mot de Pouvoir
+  static async liftCooldown(userId: string, mystereId: string, powerWord?: string) {
     try {
+      if (powerWord && powerWord.toLowerCase().trim() !== 'libération') {
+        throw new Error("Mot de pouvoir incorrect");
+      }
+
       const { data, error } = await supabase
         .from('user_treasures')
         .update({
           locked_until: null,
-          lives_remaining: 6, // Réinitialiser les vies
-          attempts: 0, // Réinitialiser les tentatives
-          current_step: 0 // Réinitialiser la progression
+          lives_left: 6,
+          attempts: 0,
+          current_step: 0
         })
         .eq('user_id', userId)
         .eq('treasure_id', mystereId)
@@ -149,6 +139,11 @@ export class TreasuresService {
         .single();
 
       if (error) throw error;
+
+      if (powerWord) {
+        await supabase.rpc('increment_user_points', { amount: 5 });
+      }
+
       return { data, error: null };
     } catch (error) {
       console.error('Error lifting cooldown:', error);
@@ -156,66 +151,38 @@ export class TreasuresService {
     }
   }
 
-  // Vérifier si un utilisateur est en cooldown
   static checkCooldown(userProgress: UserTreasure | undefined): boolean {
     if (!userProgress?.locked_until) return false;
-    
-    const cooldownEnd = new Date(userProgress.locked_until);
-    const now = new Date();
-    
-    return cooldownEnd > now;
+    return new Date(userProgress.locked_until) > new Date();
   }
 
-  // Calculer le temps restant
   static getTimeRemaining(lockedUntil: string | null): string {
     if (!lockedUntil) return '';
-    
-    const now = new Date().getTime();
-    const cooldownEnd = new Date(lockedUntil).getTime();
-    const distance = cooldownEnd - now;
-    
+    const distance = new Date(lockedUntil).getTime() - new Date().getTime();
     if (distance < 0) return '';
-    
-    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const hours = Math.floor(distance / (1000 * 60 * 60));
     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    
     return `${hours}h ${minutes}min`;
   }
 
-  // Calculer le nombre de vies restantes pour un mystère
   static getRemainingLives(userProgress: UserTreasure | undefined): number {
-    if (!userProgress) return 6;
-    return userProgress.lives_remaining;
+    return userProgress ? (userProgress.lives_left ?? 6) : 6;
   }
 
-  // Vérifier si une réponse est correcte
-  static isCorrectAnswer(question: Question, answerIndex: number): boolean {
-    return answerIndex === 0 && question.correct_answer === 'A' || 
-           answerIndex === 1 && question.correct_answer === 'B' ||
-           answerIndex === 2 && question.correct_answer === 'C' ||
-           answerIndex === 3 && question.correct_answer === 'D';
-  }
-
-  // Obtenir les options de question sous forme de tableau
-  static getQuestionOptions(question: Question): string[] {
-    return [question.choice_a, question.choice_b, question.choice_c, question.choice_d];
-  }
-
-  // Obtenir les questions pour un mystère spécifique
-  static async getQuestionsForMystere(mystereId: string): Promise<{ data: Question[] | null; error: any }> {
+  // Récupérer les informations historiques du trésor
+  static async getTreasureInfo(mystereId: string) {
     try {
       const { data, error } = await supabase
-        .from('questions')
+        .from('tresors')
         .select('*')
         .eq('mystere_id', mystereId)
-        .order('question_number', { ascending: true });
+        .maybeSingle();
 
       if (error) throw error;
-
       return { data, error: null };
     } catch (error) {
-      console.error('Error fetching questions for mystere:', error);
-      return { data: null, error };
+      console.error('Error fetching treasure info:', error);
+      return { data: null, error: error as Error };
     }
   }
 }

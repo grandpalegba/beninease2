@@ -2,20 +2,19 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "@/app/globals.css";
 import Header from "@/components/Header";
-import MobileNavigation from "@/components/MobileNavigation";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
-  title: "BeninEase - Ambassadeurs du Bénin",
-  description: "Découvrez et soutenez les talents qui font rayonner l'excellence béninoise.",
+  title: "BeninEase - Les Trésors du Bénin",
+  description: "Découvrez les talents et les mystères du patrimoine béninois.",
   icons: {
     icon: '/favicon.png',
     shortcut: '/favicon.png',
     apple: '/favicon.png',
   },
   openGraph: {
-    title: "BeninEase - Ambassadeurs du Bénin",
-    description: "Découvrez et soutenez les talents qui font rayonner l'excellence béninoise.",
+    title: "BeninEase - Les Trésors du Bénin",
+    description: "Découvrez les talents et les mystères du patrimoine béninois.",
     url: "https://beninease.space",
     type: "website",
     locale: "fr_BJ",
@@ -25,14 +24,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="fr">
-      <body className="min-h-dvh antialiased">
+    <html lang="fr" className="scroll-smooth">
+      <body className="min-h-screen antialiased bg-[#F9F9F7]">
         <Header />
-        <MobileNavigation />
-        <div className="pt-20 md:pt-20">
+        <main className="pt-16">
           {children}
-        </div>
-        <Toaster />
+        </main>
+        <Toaster position="top-center" richColors />
       </body>
     </html>
   );
