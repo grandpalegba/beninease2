@@ -62,39 +62,41 @@ export default function TeasingCard({
           </div>
         )}
  
-        {/* Content Section - Compact at bottom for image dominance */}
+        {/* Content Section - Strict alignment (v4.15) */}
         <div className={cn(
-          "px-8 md:px-10 flex-1 flex flex-col items-center text-center justify-between bg-white relative z-20",
-          hideImage ? "py-24 space-y-12" : "py-10"
+          "px-8 md:px-10 flex-1 flex flex-col items-center text-center bg-white relative z-20",
+          hideImage ? "py-24 space-y-12" : "pt-12 pb-8 space-y-6"
         )}>
-           <div className="flex flex-col items-center space-y-4">
-             {/* Category - Orange Gold */}
-             <span className="text-amber-600 text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em]">
-               {subtitle}
-             </span>
-             
-             {/* Name - Bold Serif Look */}
-             {!hideTitle && (
-               <h3 className="text-3xl md:text-44xl font-display font-black text-[#1A1A1A] leading-tight">
+           {/* 1. Category Badge */}
+           <span className="text-amber-600 text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] block h-4">
+             {subtitle}
+           </span>
+           
+           {/* 2. Prénom Nom - Fixed height container to keep Bio at same position */}
+           {!hideTitle && (
+             <div className="flex items-center justify-center min-h-[60px] md:min-h-[80px]">
+               <h3 className="text-3xl md:text-4xl font-display font-black text-[#1A1A1A] leading-[1.1]">
                  {title}
                </h3>
-             )}
-           </div>
+             </div>
+           )}
            
-           {/* Bio/Slogan - Italic Serif */}
-           <p className={cn(
-             "text-gray-500 font-serif italic mx-auto",
-             hideImage ? "text-xl md:text-2xl max-w-md leading-[1.8] md:leading-[2]" : "text-base max-w-[280px] leading-relaxed"
-           )}>
-             "{text}"
-           </p>
+           {/* 3. Sous-catégorie / Bio */}
+           <div className="flex-1 flex flex-col items-center justify-start space-y-6">
+             <p className={cn(
+               "text-gray-500 font-serif italic mx-auto",
+               hideImage ? "text-xl md:text-2xl max-w-md leading-[1.8] md:leading-[2]" : "text-base max-w-[280px] leading-relaxed"
+             )}>
+               "{text}"
+             </p>
  
-           {/* Minimalist CTA */}
-           <div className="flex items-center gap-2 opacity-30 pt-4">
-              <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                Cliquer pour explorer
-              </span>
+             {/* 4. Minimalist CTA - Pushed to bottom of flex-1 if possible, but keeping it fixed here */}
+             <div className="flex items-center gap-2 opacity-30 pt-2 pb-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                  Cliquer pour explorer
+                </span>
+             </div>
            </div>
         </div>
       </motion.div>
