@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { useEffect, useState, useMemo } from "react";
+import { usePathname } from "next/navigation";
 import { supabase } from "@/utils/supabase/client";
 import type { User } from "@supabase/supabase-js";
 import { User as UserIcon, LogOut, LayoutDashboard, ChevronDown, Trophy, UserCheck, Settings } from "lucide-react";
 import Image from "next/image";
 import { calculateVoterStatus } from "@/lib/voter-logic";
+import { cn } from "@/lib/utils";
 
 import UserBadge from "./UserBadge";
 
@@ -30,7 +32,8 @@ type UserProfile = {
 };
 
 const Header = () => {
-  console.log('HEADER RENDER');
+  const pathname = usePathname();
+  const isBottomNav = pathname === "/talents" || pathname === "/tresors";
 
   const [scrolled, setScrolled] = useState(false);
   const [user, setUser] = useState<User | null>(null);
@@ -103,7 +106,12 @@ const Header = () => {
   const navLinkClasses = "text-sm font-bold text-[#1A1A1A] hover:text-[#006B3F] transition-colors";
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-white/90 backdrop-blur-md shadow-sm py-2" : "bg-white py-4"}`}>
+    <header className={cn(
+      "fixed left-0 right-0 z-50 transition-all duration-300",
+      isBottomNav 
+        ? "bottom-0 bg-white shadow-[0_-10px_40px_rgba(0,0,0,0.08)] py-3 md:py-4 rounded-t-[2.5rem] border-t border-gray-100" 
+        : `top-0 bg-white ${scrolled ? "bg-white/90 backdrop-blur-md shadow-sm py-2" : "py-4"}`
+    )}>
       <div className="container max-w-7xl mx-auto flex items-center justify-between px-6">
 
         <Link href="/" className="flex items-center gap-3">
@@ -136,13 +144,16 @@ const Header = () => {
                       </div>
                     )}
                     <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-white rounded-full flex items-center justify-center shadow-sm">
-                       <ChevronDown size={10} className="text-gray-400" />
+                       <ChevronDown size={10} className={cn("text-gray-400 transition-transform", showDropdown && "rotate-180")} />
                     </div>
                   </div>
                 </button>
 
                 {showDropdown && (
-                  <div className="absolute right-0 mt-3 bg-white shadow-2xl rounded-2xl p-4 border border-gray-100 min-w-[220px] z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className={cn(
+                    "absolute right-0 bg-white shadow-2xl rounded-2xl p-4 border border-gray-100 min-w-[220px] z-50 animate-in fade-in duration-200",
+                    isBottomNav ? "bottom-full mb-4 slide-in-from-bottom-2" : "top-full mt-3 slide-in-from-top-2"
+                  )}>
                     <div className="px-2 py-2 mb-3 border-b border-gray-50 pb-4">
                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">{profile?.voter_status || 'Votant'}</p>
                       <p className="text-base font-bold text-gray-900 truncate">{profile?.prenom || 'Explorateur'}</p>

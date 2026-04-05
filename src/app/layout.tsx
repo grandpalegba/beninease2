@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "@/app/globals.css";
 import Header from "@/components/Header";
+import BodyWrapper from "@/components/BodyWrapper";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
@@ -27,9 +28,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="fr" className="scroll-smooth">
       <body className="min-h-screen antialiased bg-[#F9F9F7]">
         <Header />
-        <main className="pt-16">
+        <BodyWrapper>
           {children}
-        </main>
+        </BodyWrapper>
         <Toaster position="top-center" richColors />
       </body>
     </html>
