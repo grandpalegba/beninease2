@@ -1,183 +1,82 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import TalentProfileClient from "./TalentProfileClient";
-
-/**
- * Normalise une chaîne : minuscules et suppression des accents.
- */
-function normalizeName(str: string): string {
-  return str
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
-}
+import TalentProfileShell from "@/components/talents/TalentProfileShell";
 
 export async function generateMetadata({ params }: { params: any }): Promise<Metadata> {
   const resolvedParams = await params;
   const slug = decodeURIComponent(resolvedParams.slug);
 
-  // Debug temporaire
-  console.log("metadata slug:", slug);
-
   const supabase = await createSupabaseServerClient();
-  const { data: talent, error } = await supabase
-    .from('talents')
-    .select('prenom, nom, avatar_url, categorie')
-    .eq('slug', slug)
+  const { data: talent } = await supabase
+    .from("talents")
+    .select("prenom, nom, avatar_url")
+    .eq("slug", slug)
     .single();
 
-  // Debug temporaire
-  console.log("metadata data:", talent);
-  console.log("metadata error:", error);
-
-  if (error || !talent) return { title: "Talent non trouvé | BeninEase" };
+  if (!talent) return { title: "Talent non trouvé | BeninEase" };
 
   const fullName = `${talent.prenom} ${talent.nom}`;
+  let ogImageUrl = talent.avatar_url || "https://beninease.space/default-talent.jpg";
   
-  // Utilisation directe de talent.avatar_url si elle existe, sinon fallback sur une image par défaut.
-  let ogImageUrl = talent.avatar_url || `https://beninease.space/default-talent.jpg`;
-  if (ogImageUrl && !ogImageUrl.startsWith('http') && !ogImageUrl.startsWith('/')) {
+  if (ogImageUrl && !ogImageUrl.startsWith("http") && !ogImageUrl.startsWith("/")) {
     ogImageUrl = `/${ogImageUrl}`;
   }
   
   return {
-    title: `${fullName} | Vote BeninEase`,
-    description: `Vote pour ${fullName} sur BeninEase`,
+    title: `${fullName} | BeninEase`,
+    description: `Découvrez le profil de ${fullName} sur BeninEase`,
     openGraph: {
-      title: `${fullName} | Vote`,
-      description: `Soutiens ${fullName}`,
-      url: `https://beninease.space/talents/${slug}`,
-      siteName: 'BeninEase',
-      locale: 'fr_BJ',
-      images: [
-        {
-          url: ogImageUrl,
-          width: 1200,
-          height: 630,
-          alt: fullName,
-        },
-      ],
-      type: 'profile',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: `${fullName} | Vote`,
-      description: `Soutiens ${fullName}`,
-      images: [ogImageUrl],
+      title: `${fullName} | BeninEase`,
+      description: `Soutenez ${fullName}`,
+      images: [{ url: ogImageUrl }],
     },
   };
 }
 
 export default async function TalentProfilePage({ params }: { params: { slug: string } }) {
-  // Debug des params
-  console.log("PARAMS:", params);
-  console.log("SLUG:", params.slug);
+  const resolvedParams = await params;
+  const slug = decodeURIComponent(resolvedParams.slug);
 
-  const slug = decodeURIComponent(params.slug);
+  if (!slug) return notFound();
 
-  // Vérification du slug
-  if (!slug) {
-    return <div>Slug manquant</div>;
-  }
-
-  // Connexion Supabase
   const supabase = await createSupabaseServerClient();
 
-  // Requête principale
   const { data: talent, error } = await supabase
-    .from('talents')
-    .select('id, slug, prenom, nom, avatar_url, votes, bio, categorie, univers, instagram_url, tiktok_url, whatsapp_number, city')
-    .eq('slug', slug)
-    .limit(1)
+    .from("talents")
+    .select("id, prenom, nom, city, avatar_url, bio, video_urls, votes, univers, categorie, instagram_url, tiktok_url, whatsapp_number")
+    .eq("slug", slug)
     .single();
 
-  // Debug complet pour vérifier les données du talent
-  console.log("SLUG:", slug);
-  console.log("DATA:", talent);
-  console.log("ERROR:", error);
-  console.log("UNIVERS:", talent?.univers);
-  console.log("CATEGORIE:", talent?.categorie);
-  console.log("🔍 SOURCE SERVEUR - ID trouvé en base :", talent.id);  // ← MOUCHARD: ID Supabase
-
-  // Gestion des erreurs
-  if (error) {
-    return <div>Erreur: {error.message}</div>;
+  if (error || !talent) {
+    console.error("Error fetching talent:", error);
+    return notFound();
   }
 
-  if (!talent) {
-    return <div>Talent non trouvé pour le slug: {slug}</div>;
-  }
+  const fullName = `${talent.prenom} ${talent.nom}`;
 
-  // Debug: Vérifier ce que contient l'objet talent avant envoi au client
-  console.log("TALENT OBJECT BEFORE CLIENT:", {
-    id: talent.id,
-    slug: talent.slug,
-    univers: talent.univers,
-    categorie: talent.categorie,
-    prenom: talent.prenom,
-    nom: talent.nom
-  });
-
-// PRIORITÉ AUX DONNÉES SUPABASE (toujours à jour)
-// const candidate = candidates.find(c => c.slug === slug) || null;
-const candidate = null; // Forcer l'utilisation des données Supabase (plus de fallback statique)
-
-  // Inject Supabase data into the candidate object if needed, 
-  // or pass them separately. Here we pass Supabase data as props.
-  
-  // On construit l'URL publique pour le composant client également
+  // Avatar URL resolving (simplified for now, matching the shell's expectation)
   let publicAvatarUrl = talent.avatar_url;
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://wtjhkqkqmexddroqwawk.supabase.co';
-  
-  if (talent.avatar_url) {
-    if (talent.avatar_url.startsWith('http') || talent.avatar_url.startsWith('/')) {
-      publicAvatarUrl = talent.avatar_url;
-    } else if (talent.avatar_url.startsWith('talents/')) {
-      // Cas des images locales dans public/talents/
-      publicAvatarUrl = `/${talent.avatar_url}`;
-    } else if (talent.avatar_url.endsWith('.jpg') || talent.avatar_url.endsWith('.png')) {
-      // Cas des images locales sans prefixe
-      publicAvatarUrl = `/talents/${talent.avatar_url}`;
-    } else {
-      // Cas des images dans Supabase Storage
-      const cleanPath = talent.avatar_url.startsWith('/') ? talent.avatar_url.slice(1) : talent.avatar_url;
-      const bucketName = 'talents'; 
-      const pathWithoutBucket = cleanPath.startsWith(`${bucketName}/`) 
-        ? cleanPath.replace(`${bucketName}/`, '') 
-        : cleanPath;
-
-      publicAvatarUrl = `${supabaseUrl}/storage/v1/object/public/${bucketName}/${pathWithoutBucket}`;
-    }
-  } else {
-    // Fallback local ou placeholder
-    publicAvatarUrl = `/talents/${slug}.jpg`;
+  if (publicAvatarUrl && !publicAvatarUrl.startsWith("http") && !publicAvatarUrl.startsWith("/")) {
+    publicAvatarUrl = `/${publicAvatarUrl}`;
   }
 
   return (
-    <div className="min-h-screen bg-[#F9F9F7]">
-      <TalentProfileClient 
-        candidate={candidate || {
-          id: talent.id,  // ← AJOUTÉ: ID Supabase dans l'objet fallback
-          slug: talent.slug,
-          prenom: talent.prenom,
-          nom: talent.nom,
-          portrait: talent.avatar_url,
-          city: null,
-          univers: talent.univers,
-          categorie: talent.categorie,
-          tabs: {}
-        }} 
-        initialVotesCount={talent.votes || 0}
-        profileId={talent.id}
-        avatarUrl={publicAvatarUrl}
-        profileData={{
-          instagram_url: talent.instagram_url,
-          tiktok_url: talent.tiktok_url,
-          whatsapp_number: talent.whatsapp_number,
-          city: talent.city
-        }} 
-      />
-    </div>
+    <TalentProfileShell
+      id={talent.id}
+      full_name={fullName}
+      city={talent.city || "Bénin"}
+      avatar_url={publicAvatarUrl || ""}
+      bio_longue={talent.bio || ""}
+      video_urls={talent.video_urls || []}
+      votes={talent.votes || 0}
+      univers={talent.univers}
+      categorie={talent.categorie}
+      social_links={{
+        instagram: talent.instagram_url,
+        tiktok: talent.tiktok_url,
+        whatsapp: talent.whatsapp_number,
+      }}
+    />
   );
 }

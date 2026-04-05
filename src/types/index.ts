@@ -42,6 +42,7 @@ export interface Talent {
   video_2_id: string | null;
   video_3_id: string | null;
   video_4_id: string | null;
+  video_urls: string[] | null;
 }
 
 export interface Votant {
