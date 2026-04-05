@@ -62,10 +62,10 @@ export default function TeasingCard({
           </div>
         )}
  
-        {/* Content Section - Editorial Refinement (v4.17) */}
+        {/* Content Section - High-End Layout (v4.20) */}
         <div className={cn(
-          "px-8 md:px-12 flex-1 flex flex-col items-center text-center bg-white relative z-20",
-          hideImage ? "py-28 space-y-16" : "pt-12 pb-8 space-y-3 md:space-y-4"
+          "px-8 md:px-12 flex-1 flex flex-col items-center justify-start text-center bg-white relative z-20",
+          hideImage ? "py-28 space-y-16" : "pt-6 pb-24 md:pt-10 md:pb-32 space-y-3 md:space-y-4"
         )}>
            {/* 1. Category Badge */}
            <span className="text-amber-600 text-[12px] md:text-[14px] font-black uppercase tracking-[0.25em] block h-4">
