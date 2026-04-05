@@ -8,7 +8,7 @@ import { Loader2, AlertCircle, Sparkles, MapPin } from "lucide-react";
 import HorizontalSwiper from "@/components/swipers/HorizontalSwiper";
 import ExpandableCard from "@/components/ui/ExpandableCard";
 import JarreSvg from "@/components/treasures/JarreSvg";
-import QcmComponent from "@/components/treasures/QcmComponent";
+import MysteryGame from "@/components/treasures/MysteryGame";
 import { useMysteryGame } from "@/hooks/useMysteryGame";
 import { toast } from "sonner";
 
@@ -104,7 +104,7 @@ export default function TreasuresPage() {
               }
               expandedContent={
                       <div className="pt-6 border-t border-gray-100">
-                        <QcmComponent
+                        <MysteryGame
                           questions={(mystere.questions || []).map(q => ({
                             id: q.id,
                             question: q.question,
