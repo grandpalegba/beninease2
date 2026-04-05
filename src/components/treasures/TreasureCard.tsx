@@ -8,8 +8,8 @@ import { cn } from "@/lib/utils";
 interface TreasureData {
   titre: string;
   nature: string;
-  histoire: string;
-  localisation: string;
+  history: string;
+  location: string;
 }
 
 interface TreasureCardProps {
@@ -67,7 +67,7 @@ export default function TreasureCard({ data, className }: TreasureCardProps) {
            <div className="space-y-2">
               <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Histoire & Héritage</p>
               <p className="text-sm text-gray-600 leading-relaxed font-serif italic">
-                {data.histoire}
+                {data.history}
               </p>
            </div>
         </div>
@@ -79,7 +79,7 @@ export default function TreasureCard({ data, className }: TreasureCardProps) {
            </div>
            <div className="space-y-1">
               <p className="text-[10px] font-bold text-amber-600/60 uppercase tracking-widest">Localisation Actuelle</p>
-              <p className="text-base font-bold text-amber-900 leading-snug">{data.localisation}</p>
+              <p className="text-base font-bold text-amber-900 leading-snug">{data.location}</p>
            </div>
         </div>
       </div>
