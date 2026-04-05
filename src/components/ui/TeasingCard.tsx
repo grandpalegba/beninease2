@@ -90,13 +90,6 @@ export default function TeasingCard({
                "{text}"
              </p>
  
-             {/* 4. Minimalist CTA - Refined Opacity */}
-             <div className="flex items-center gap-2 opacity-25 pt-4 pb-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                <span className="text-[11px] font-black text-gray-400 uppercase tracking-widest">
-                  Cliquer pour explorer
-                </span>
-             </div>
            </div>
         </div>
       </motion.div>

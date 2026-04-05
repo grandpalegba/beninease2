@@ -5,7 +5,7 @@ import { useEffect, useState, useMemo } from "react";
 import { usePathname } from "next/navigation";
 import { supabase } from "@/utils/supabase/client";
 import type { User } from "@supabase/supabase-js";
-import { User as UserIcon, LogOut, LayoutDashboard, ChevronDown, Trophy, UserCheck, Settings } from "lucide-react";
+import { User as UserIcon, LogOut, LayoutDashboard, ChevronDown, Trophy, UserCheck, Settings, Menu, X } from "lucide-react";
 import Image from "next/image";
 import { calculateVoterStatus } from "@/lib/voter-logic";
 import { cn } from "@/lib/utils";
@@ -40,6 +40,7 @@ const Header = () => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isTalent, setIsTalent] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // 👉 fermer dropdown
   useEffect(() => {
@@ -119,10 +120,20 @@ const Header = () => {
           <span className="text-xl font-bold text-[#006B3F] font-display">BeninEase</span>
         </Link>
 
-        <div className="flex items-center gap-6">
-
-          <Link href="/talents" className={navLinkClasses}>Talents</Link>
-          <Link href="/tresors" className={navLinkClasses}>Trésors</Link>
+        <div className="flex items-center gap-4 md:gap-8">
+          {/* Desktop Nav */}
+          <div className="hidden md:flex items-center gap-6">
+            <Link href="/talents" className={cn(navLinkClasses, pathname === "/talents" && "text-[#008751]")}>Talents</Link>
+            <Link href="/tresors" className={cn(navLinkClasses, pathname === "/tresors" && "text-[#008751]")}>Trésors</Link>
+          </div>
+          
+          {/* Mobile Hamburger Toggle */}
+          <button 
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="md:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-full transition-all"
+          >
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
 
           {user ? (
             <div className="flex items-center gap-4">
@@ -195,6 +206,44 @@ const Header = () => {
 
         </div>
       </div>
+
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
+        <div className={cn(
+          "fixed inset-0 z-40 bg-white/95 backdrop-blur-xl md:hidden animate-in fade-in duration-300",
+          isBottomNav ? "bottom-20 mb-4" : "top-20"
+        )}>
+          <div className="p-8 flex flex-col gap-6">
+            <p className="text-[10px] font-black text-[#008751] uppercase tracking-[0.3em] mb-4">Explorer</p>
+            <Link 
+              href="/talents" 
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="text-3xl font-display font-black text-gray-900 flex items-center justify-between"
+            >
+              Talents <ChevronDown size={20} className="-rotate-90 text-gray-300" />
+            </Link>
+            <Link 
+              href="/tresors" 
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="text-3xl font-display font-black text-gray-900 flex items-center justify-between"
+            >
+              Trésors <ChevronDown size={20} className="-rotate-90 text-gray-300" />
+            </Link>
+            
+            <div className="mt-8 pt-8 border-t border-gray-100">
+              {!user && (
+                <Link 
+                  href="/login" 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="w-full flex items-center justify-center py-4 bg-[#008751] text-white rounded-2xl font-bold text-lg shadow-xl shadow-[#008751]/20"
+                >
+                  Se connecter
+                </Link>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 };
