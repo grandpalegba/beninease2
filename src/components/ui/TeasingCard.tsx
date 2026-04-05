@@ -62,30 +62,30 @@ export default function TeasingCard({
           </div>
         )}
  
-        {/* Content Section - Senior Designer Version (v4.16) */}
+        {/* Content Section - Editorial Refinement (v4.17) */}
         <div className={cn(
           "px-8 md:px-12 flex-1 flex flex-col items-center text-center bg-white relative z-20",
-          hideImage ? "py-28 space-y-16" : "pt-14 pb-10 space-y-8"
+          hideImage ? "py-28 space-y-16" : "pt-12 pb-8 space-y-3 md:space-y-4"
         )}>
-           {/* 1. Category Badge - Enhanced Size & Spacing */}
+           {/* 1. Category Badge */}
            <span className="text-amber-600 text-[12px] md:text-[14px] font-black uppercase tracking-[0.25em] block h-4">
              {subtitle}
            </span>
            
-           {/* 2. Prénom Nom - Dominant Anchor - Increased Container Height */}
+           {/* 2. Prénom Nom - Wide Tracking (v4.17) */}
            {!hideTitle && (
              <div className="flex items-center justify-center min-h-[80px] md:min-h-[110px] w-full">
-               <h3 className="text-4xl md:text-5xl font-display font-black text-[#1A1A1A] leading-[1.1] tracking-tight">
+               <h3 className="text-4xl md:text-5xl font-display font-black text-[#1A1A1A] leading-[1.1] tracking-[0.05em] uppercase">
                  {title}
                </h3>
              </div>
            )}
            
-           {/* 3. Sous-catégorie / Bio - Increased Size for Premium Feel */}
-           <div className="flex-1 flex flex-col items-center justify-start space-y-8 w-full">
+           {/* 3. Bio / Sous-catégorie - Wider Layout (v4.17) */}
+           <div className="flex-1 flex flex-col items-center justify-start space-y-4 w-full">
              <p className={cn(
                "text-gray-600 font-serif italic mx-auto",
-               hideImage ? "text-2xl md:text-3xl max-w-lg leading-[1.8] md:leading-[2]" : "text-lg md:text-xl max-w-[320px] md:max-w-md leading-relaxed"
+               hideImage ? "text-2xl md:text-3xl max-w-lg leading-[1.8] md:leading-[2]" : "text-lg md:text-xl max-w-[450px] leading-relaxed"
              )}>
                "{text}"
              </p>
