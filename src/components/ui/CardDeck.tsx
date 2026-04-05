@@ -16,10 +16,10 @@ export default function CardDeck({ items, renderItem, className }: CardDeckProps
 
   const slideVariants = {
     enter: (direction: number) => ({
-      x: direction > 0 ? 1000 : -1000,
+      x: direction > 0 ? 500 : -500,
       opacity: 0,
       scale: 0.9,
-      rotate: direction > 0 ? 10 : -10
+      rotate: direction > 0 ? 15 : -15
     }),
     center: {
       zIndex: 1,
@@ -30,14 +30,14 @@ export default function CardDeck({ items, renderItem, className }: CardDeckProps
     },
     exit: (direction: number) => ({
       zIndex: 0,
-      x: direction < 0 ? 1000 : -1000,
+      x: direction < 0 ? 500 : -500,
       opacity: 0,
       scale: 0.9,
-      rotate: direction < 0 ? 10 : -10
+      rotate: direction < 0 ? 15 : -15
     })
   };
 
-  const swipeConfidenceThreshold = 10000;
+  const swipeConfidenceThreshold = 1000; // Increased sensitivity
   const swipePower = (offset: number, velocity: number) => {
     return Math.abs(offset) * velocity;
   };
@@ -71,7 +71,7 @@ export default function CardDeck({ items, renderItem, className }: CardDeckProps
           }}
           drag="x"
           dragConstraints={{ left: 0, right: 0 }}
-          dragElastic={1}
+          dragElastic={0.5}
           onDragEnd={(e, { offset, velocity }) => {
             const swipe = swipePower(offset.x, velocity.x);
             if (swipe < -swipeConfidenceThreshold) {
@@ -85,19 +85,6 @@ export default function CardDeck({ items, renderItem, className }: CardDeckProps
           {renderItem(items[currentIndex], currentIndex)}
         </motion.div>
       </AnimatePresence>
-
-      {/* Pagination Indicators */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-        {items.slice(0, 10).map((_, i) => ( // Show first 10 dots only to avoid clutter
-          <div 
-            key={i} 
-            className={cn(
-              "w-2 h-2 rounded-full transition-all duration-300",
-              i === currentIndex % 10 ? "bg-amber-600 w-8" : "bg-amber-900/20"
-            )}
-          />
-        ))}
-      </div>
     </div>
   );
 }

@@ -35,12 +35,19 @@ export default function TeasingCard({
         whileHover={{ scale: 1.02, y: -5 }}
         whileTap={{ scale: 0.98 }}
         className={cn(
-          "w-full h-full bg-white rounded-[2.5rem] shadow-2xl shadow-black/5 overflow-hidden flex flex-col border border-white relative cursor-pointer",
+          "w-full h-full bg-white rounded-[3rem] shadow-2xl shadow-black/10 overflow-hidden flex flex-col border border-white/50 relative cursor-pointer",
           className
         )}
       >
-        {/* Teasing Image */}
-        <div className="relative h-[65%] w-full">
+        {/* Unified Badge (Header) */}
+        <div className="absolute top-8 left-0 right-0 z-10 flex justify-center">
+           <span className="px-4 py-1.5 rounded-full bg-white/90 backdrop-blur-md text-[#3D2614] text-[10px] font-black uppercase tracking-[0.2em] shadow-lg border border-amber-900/10">
+             {subtitle}
+           </span>
+        </div>
+
+        {/* Unified Image Section */}
+        <div className="relative h-[60%] w-full overflow-hidden">
            <motion.div 
              layoutId={`image-${id}`}
              className="w-full h-full"
@@ -56,24 +63,19 @@ export default function TeasingCard({
            <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent" />
         </div>
 
-        {/* Teasing Content */}
-        <div className="p-8 flex-1 flex flex-col items-center text-center space-y-4">
-           <div className="space-y-1">
-             <span className="text-[10px] font-black text-amber-600 uppercase tracking-[0.3em]">
-               {subtitle}
-             </span>
-             <h3 className="text-3xl font-display font-black text-gray-900 leading-tight">
-               {title}
-             </h3>
-           </div>
+        {/* Unified Content Section */}
+        <div className="p-10 flex-1 flex flex-col items-center text-center justify-center space-y-6">
+           <h3 className="text-3xl md:text-4xl font-display font-black text-gray-900 leading-tight tracking-tight">
+             {title}
+           </h3>
            
-           <p className="text-sm text-gray-400 font-serif italic leading-relaxed max-w-[250px] line-clamp-3">
+           <p className="text-base text-gray-500 font-serif italic leading-relaxed max-w-[280px] line-clamp-3">
              "{text}"
            </p>
 
-           <div className="pt-4 flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-              <span className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">Cliquer pour explorer</span>
+           <div className="pt-2 flex items-center gap-2 opacity-30">
+              <div className="w-1.5 h-1.5 rounded-full bg-gray-400" />
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Explorer</span>
            </div>
         </div>
       </motion.div>
