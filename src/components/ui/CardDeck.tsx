@@ -74,6 +74,13 @@ export default function CardDeck({ items, renderItem, className }: CardDeckProps
             }
           }}
           className="w-full max-w-lg h-[80vh] flex items-center justify-center cursor-grab active:cursor-grabbing z-10"
+          style={{ 
+            willChange: "transform, opacity",
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
+            transformStyle: "preserve-3d",
+            WebkitTransformStyle: "preserve-3d"
+          }}
         >
           {renderItem(items[currentIndex], currentIndex)}
         </motion.div>

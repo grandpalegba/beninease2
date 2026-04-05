@@ -38,9 +38,11 @@ export default function TeasingCard({
         whileHover={{ scale: 1.02, y: -5 }}
         whileTap={{ scale: 0.98 }}
         className={cn(
-          "w-full h-full bg-white rounded-[3rem] shadow-2xl shadow-black/10 overflow-hidden flex flex-col border border-white/50 relative cursor-pointer",
+          "w-full h-full bg-white rounded-[3rem] shadow-2xl shadow-black/10 overflow-hidden flex flex-col border border-white/50 relative cursor-pointer outline-none select-none",
+          "touch-none", // Prevent scroll interference during drag
           className
         )}
+        style={{ WebkitTapHighlightColor: "transparent" }}
       >
         {/* Unified Image Section - 70% height - Hidden if hideImage is true */}
         {!hideImage && (
