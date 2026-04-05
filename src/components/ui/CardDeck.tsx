@@ -73,7 +73,7 @@ export default function CardDeck({ items, renderItem, className }: CardDeckProps
               paginate(-1);
             }
           }}
-          className="w-full max-w-lg h-full max-h-[72vh] md:max-h-[80vh] flex items-center justify-center cursor-grab active:cursor-grabbing z-10"
+          className="w-full max-w-lg h-full max-h-[82vh] flex items-center justify-center cursor-grab active:cursor-grabbing z-10"
           style={{ 
             willChange: "transform, opacity",
             backfaceVisibility: "hidden",
