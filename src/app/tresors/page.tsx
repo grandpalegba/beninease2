@@ -4,17 +4,15 @@ import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/utils/supabase/client";
 import { TreasuresService } from "@/lib/treasures-service";
 import type { Mystere, UserTreasure } from "@/types/treasures";
-import { Loader2, AlertCircle, Sparkles, MapPin } from "lucide-react";
-import HorizontalSwiper from "@/components/swipers/HorizontalSwiper";
-import ExpandableCard from "@/components/ui/ExpandableCard";
-import JarreSvg from "@/components/treasures/JarreSvg";
 import CardDeck from "@/components/ui/CardDeck";
 import TeasingCard from "@/components/ui/TeasingCard";
 import AwaleHeader from "@/components/treasures/AwaleHeader";
 import RoyalJar from "@/components/treasures/RoyalJar";
 import AnswerGrid from "@/components/treasures/AnswerGrid";
 import TreasureCard from "@/components/treasures/TreasureCard";
-import { Trophy, Clock, RotateCcw } from "lucide-react";
+import { useMysteryGame } from "@/hooks/useMysteryGame";
+import { Loader2, AlertCircle, Clock, Trophy, RotateCcw } from "lucide-react";
+import Image from "next/image";
 
 export default function TreasuresPage() {
   const [mysteres, setMysteres] = useState<Mystere[]>([]);
