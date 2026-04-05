@@ -14,6 +14,8 @@ interface TeasingCardProps {
   text: string;
   expandedContent: (onClose: () => void) => React.ReactNode;
   className?: string;
+  hideImage?: boolean;
+  hideTitle?: boolean;
 }
 
 export default function TeasingCard({
@@ -23,7 +25,9 @@ export default function TeasingCard({
   subtitle,
   text,
   expandedContent,
-  className
+  className,
+  hideImage = false,
+  hideTitle = false
 }: TeasingCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -39,40 +43,50 @@ export default function TeasingCard({
           className
         )}
       >
-        {/* Unified Image Section - 70% height */}
-        <div className="relative h-[65%] w-full overflow-hidden">
-           <motion.div 
-             layoutId={`image-${id}`}
-             className="w-full h-full"
-           >
-             <Image 
-               src={image} 
-               alt={title} 
-               fill 
-               className="object-cover"
-               priority
-             />
-           </motion.div>
-           {/* Soft Fade at bottom of image */}
-           <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white to-transparent" />
-        </div>
+        {/* Unified Image Section - 70% height - Hidden if hideImage is true */}
+        {!hideImage && (
+          <div className="relative h-[65%] w-full overflow-hidden">
+             <motion.div 
+               layoutId={`image-${id}`}
+               className="w-full h-full"
+             >
+               <Image 
+                 src={image} 
+                 alt={title} 
+                 fill 
+                 className="object-cover"
+                 priority
+               />
+             </motion.div>
+             {/* Soft Fade at bottom of image */}
+             <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white to-transparent" />
+          </div>
+        )}
 
         {/* Unified Content Section - Centered */}
-        <div className="px-10 py-8 flex-1 flex flex-col items-center text-center justify-between">
-           <div className="flex flex-col items-center space-y-2">
+        <div className={cn(
+          "px-10 flex-1 flex flex-col items-center text-center justify-between",
+          hideImage ? "py-24 space-y-12" : "py-8"
+        )}>
+           <div className="flex flex-col items-center space-y-4">
              {/* Unified Badge (Header) - Orange Gold */}
              <span className="text-amber-600 text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em]">
                {subtitle}
              </span>
              
-             {/* Title - Bold Serif Look */}
-             <h3 className="text-3xl md:text-4xl font-display font-black text-[#1A1A1A] leading-tight">
-               {title}
-             </h3>
+             {/* Title - Bold Serif Look - Hidden if hideTitle is true */}
+             {!hideTitle && (
+               <h3 className="text-3xl md:text-4xl font-display font-black text-[#1A1A1A] leading-tight">
+                 {title}
+               </h3>
+             )}
            </div>
            
-           {/* Bio/Poetry - Italic Serif */}
-           <p className="text-base text-gray-500 font-serif italic leading-relaxed max-w-[280px]">
+           {/* Bio/Poetry - Italic Serif - Spread out if no image */}
+           <p className={cn(
+             "text-gray-500 font-serif italic leading-relaxed mx-auto",
+             hideImage ? "text-xl md:text-2xl max-w-md" : "text-base max-w-[280px]"
+           )}>
              "{text}"
            </p>
 

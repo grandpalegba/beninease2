@@ -84,10 +84,13 @@ export default function TreasuresPage() {
           return (
             <TeasingCard
               id={mystere.id}
-              image="/images/treasures/image_0.png"
-              title={mystere.title}
+              image=""
+              title=""
               subtitle={mystere.theme?.name || "Mystère Ancestral"}
               text={mystere.mise_en_abyme || mystere.explanation || "Découvrez le secret enfoui..."}
+              hideImage={true}
+              hideTitle={true}
+              className="mt-16"
               expandedContent={() => (
                 <div className="space-y-12">
                    {/* Header: Awale is actually inside the TeasingCard's sticky top fixed area but we need lives */}
