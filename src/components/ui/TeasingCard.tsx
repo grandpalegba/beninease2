@@ -75,7 +75,7 @@ export default function TeasingCard({
            {/* 2. Prénom Nom - Wide Tracking (v4.17) */}
            {!hideTitle && (
              <div className="flex items-center justify-center min-h-[80px] md:min-h-[110px] w-full">
-               <h3 className="text-4xl md:text-5xl font-display font-black text-[#1A1A1A] leading-[1.35] tracking-[0.05em] uppercase">
+               <h3 className="text-4xl md:text-5xl font-display font-black text-[#1A1A1A] leading-[1.25] tracking-[0.05em] uppercase">
                  {title}
                </h3>
              </div>
