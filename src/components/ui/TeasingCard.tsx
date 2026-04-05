@@ -52,8 +52,9 @@ export default function TeasingCard({
                  src={image} 
                  alt={title} 
                  fill 
-                 className="object-cover"
+                 className="object-cover pointer-events-none"
                  priority
+                 draggable={false}
                />
              </div>
              {/* Soft Fade at bottom of image */}
