@@ -25,29 +25,19 @@ interface RoyalJarProps {
   isDragging?: boolean;
 }
 
+import Image from "next/image";
+
 export default function RoyalJar({ currentStep, className, isDragging }: RoyalJarProps) {
   return (
     <div className={cn("relative p-8", className)}>
-      {/* Background Jar Image - Placeholder for the real Canary image if needed */}
-      <div className="relative w-72 h-72 md:w-96 md:h-96 mx-auto">
-        {/* Placeholder Jar SVG Shape for texture */}
-        <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-[0_0_50px_rgba(217,119,6,0.1)]">
-           <path 
-             d="M30,20 C30,10 70,10 70,20 C70,30 85,40 85,60 C85,90 15,90 15,60 C15,40 30,30 30,20 Z" 
-             className="fill-[#3D2614] stroke-amber-900/30 stroke-2"
-           />
-           {/* Texture overlay */}
-           <defs>
-             <radialGradient id="jarTexture" cx="50%" cy="50%" r="50%">
-               <stop offset="0%" stopColor="#4D311A" />
-               <stop offset="100%" stopColor="#2A1B0E" />
-             </radialGradient>
-           </defs>
-           <path 
-             d="M30,20 C30,10 70,10 70,20 C70,30 85,40 85,60 C85,90 15,90 15,60 C15,40 30,30 30,20 Z" 
-             fill="url(#jarTexture)"
-           />
-        </svg>
+      {/* Detailed Jar Image v4.1 */}
+      <div className="relative w-80 h-80 md:w-[28rem] md:h-[28rem] mx-auto">
+        <Image 
+          src="/images/treasures/image_14.png" 
+          alt="Canari Sacré" 
+          fill 
+          className="object-contain drop-shadow-[0_0_30px_rgba(61,38,20,0.3)]"
+        />
 
         {/* Global Glow during dragging */}
         <AnimatePresence>
