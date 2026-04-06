@@ -11,18 +11,17 @@ interface InlineYouTubePlayerProps {
 }
 
 /**
- * InlineYouTubePlayer - Expérience Immersive "Double Sécurité Alpha".
- * - ZÉRO Flash Gris YouTube (Thumbnail persistant tant que la vidéo n'est pas PRÊTE).
- * - Double Sécurité : onLoad + Délai de 200ms de confort visuel.
- * - Auto-Preview silencieuse au scroll (60%) et au hover (Desktop).
- * - Performance : Iframe montée seulement en cas d'action.
- * - Reset automatique des états au scroll-out.
+ * InlineYouTubePlayer - Expérience Immersive "Instant-Play" (Ultra Haute Performance).
+ * - Préchargement Invisible (shouldPreload) à 10% de visibilité.
+ * - Silent Preview (isPreviewing) à 60% de visibilité.
+ * - Alpha-Sync : requestAnimationFrame + 50ms pour une transition instantanée sans flash gris.
+ * - Optimisation GPU : transform: translateZ(0) et will-change: transform, opacity.
  */
 export default function InlineYouTubePlayer({ url, title }: InlineYouTubePlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isPreviewing, setIsPreviewing] = useState(false);
+  const [shouldPreload, setShouldPreload] = useState(false);
   const [isIframeReady, setIsIframeReady] = useState(false);
-  const [isBuffering, setIsBuffering] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // 1. Extraction ROBUSTE du YouTube VIDEO_ID
@@ -37,25 +36,33 @@ export default function InlineYouTubePlayer({ url, title }: InlineYouTubePlayerP
   // 2. Réinitialisation des états (Anti-Bug / Anti-Flash)
   const resetStates = () => {
     setIsIframeReady(false);
-    setIsBuffering(true);
     setIsPreviewing(false);
+    setShouldPreload(false);
   };
 
-  // 3. IntersectionObserver (Auto-Preview au Scroll)
+  // 3. IntersectionObserver (Double Seuil : 0.1 et 0.6)
   useEffect(() => {
     if (!containerRef.current || isPlaying) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
+        // Seuil 10% -> Préchargement invisible
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.1) {
+          setShouldPreload(true);
+        } else if (entry.intersectionRatio < 0.1) {
+          setShouldPreload(false);
+          setIsIframeReady(false);
+        }
+
+        // Seuil 60% -> Activation de la preview visible
         if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
           setIsPreviewing(true);
         } else {
-          // Reset complet quand on sort du champ
-          resetStates();
+          setIsPreviewing(false);
         }
       },
       { 
-        threshold: [0, 0.6, 1],
+        threshold: [0, 0.1, 0.6, 1],
         rootMargin: "0px 0px -10% 0px"
       }
     );
@@ -74,58 +81,61 @@ export default function InlineYouTubePlayer({ url, title }: InlineYouTubePlayerP
   const thumbnailMax = `https://img.youtube.com/vi/${id}/maxresdefault.jpg`;
   const thumbnailFallback = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
 
-  // Construction des URLs avec paramètres critiques
   const baseParams = "autoplay=1&mute=1&controls=0&loop=1&playsinline=1&modestbranding=1&rel=0&iv_load_policy=3&enablejsapi=1";
   const previewUrl = `https://www.youtube.com/embed/${id}?${baseParams}&playlist=${id}`;
-  const fullUrl = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&playsinline=1&showinfo=0&modestbranding=1&autohide=1`;
+  const fullUrl = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&playsinline=1&showinfo=0&autohide=1`;
 
-  // 5. Handlers
-  const handleStartFullPlay = () => {
-    setIsPlaying(true);
-    setIsIframeReady(false); // Forcer re-vérification du chargement pour le mode plein son
-    setIsBuffering(true);
-    setIsPreviewing(false);
+  // 5. Handlers (Alpha-Sync)
+  const handleIframeLoad = () => {
+    // Synchronisation matérielle via rAF + Micro-sécurité 50ms
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        setIsIframeReady(true);
+      }, 50);
+    });
   };
 
-  const handleIframeLoad = () => {
-    // SÉCURITÉ CRITIQUE : Délai de confort de 200ms après le signal technique onLoad
-    setTimeout(() => {
-      setIsIframeReady(true);
-      setIsBuffering(false);
-    }, 200);
+  const startFullPlay = () => {
+    setIsPlaying(true);
+    setIsPreviewing(false);
+    setIsIframeReady(false); // Re-sync pour le mode Full Play (nouveau src)
   };
 
   const handleMouseEnter = () => {
     if (!isPlaying && window.innerWidth > 768) {
       setIsPreviewing(true);
+      setShouldPreload(true);
     }
   };
 
   const handleMouseLeave = () => {
-    if (!isPlaying && window.innerWidth > 768) {
-      setIsPreviewing(false);
+    if (!isPlaying && window.innerWidth > 768 && containerRef.current) {
+      // On garde because observer handles scroll, mais hover force si besoin
     }
   };
+
+  // Visibilité combinée pour la transition invisible
+  const isVideoVisible = isIframeReady && (isPreviewing || isPlaying);
 
   return (
     <div 
       ref={containerRef}
-      className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-2xl bg-black group"
+      className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-2xl bg-black group transform translate-z-0 will-change-transform"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {/* 🎬 COUCHE 1 : IFRAME (Z-INDEX 1) */}
-      {(isPlaying || isPreviewing) && (
+      {/* 🎬 IFRAME (Z-INDEX 1) - Toujours en fond si shouldPreload */}
+      {(shouldPreload || isPlaying) && (
         <div 
           className={cn(
-            "absolute inset-0 z-10 transition-opacity duration-500 will-change-opacity",
-            isIframeReady ? "opacity-100" : "opacity-0"
+            "absolute inset-0 z-10 transition-opacity duration-200 ease-out will-change-opacity",
+            isVideoVisible ? "opacity-100" : "opacity-0"
           )}
         >
           <iframe
             src={isPlaying ? fullUrl : previewUrl}
             title={title}
-            className="w-full h-full border-0 scale-105" // Over-scan anti-bordure YouTube
+            className="w-full h-full border-0 scale-105" // Over-scan
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowFullScreen={isPlaying}
             onLoad={handleIframeLoad}
@@ -133,27 +143,26 @@ export default function InlineYouTubePlayer({ url, title }: InlineYouTubePlayerP
         </div>
       )}
 
-      {/* 🖼️ COUCHE 2 : THUMBNAIL DE COUVERTURE (Z-INDEX 2) */}
+      {/* 🖼️ THUMBNAIL COUVERTURE (Z-INDEX 2) */}
       <div 
         className={cn(
-          "absolute inset-0 z-20 cursor-pointer transition-opacity duration-500 will-change-opacity",
-          isIframeReady ? "opacity-0 pointer-events-none" : "opacity-100"
+          "absolute inset-0 z-20 cursor-pointer transition-opacity duration-200 ease-out will-change-opacity transform translate-z-0",
+          isVideoVisible ? "opacity-0 pointer-events-none" : "opacity-100"
         )}
-        onClick={handleStartFullPlay}
+        onClick={startFullPlay}
       >
-        {/* Image Vignette avec Fallback */}
         <img
           src={thumbnailMax}
           alt={title}
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.05]"
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
           onError={(e) => { e.currentTarget.src = thumbnailFallback; }}
           loading="lazy"
         />
 
-        {/* Overlay Dégradé Premium */}
+        {/* Dynamic Overlay */}
         <div className="absolute inset-0 z-30 transition-all duration-500 bg-gradient-to-t from-black/70 via-black/20 to-transparent group-hover:from-black/50" />
 
-        {/* Bouton Play (Visible tant qu'on n'est pas en lecture complète) */}
+        {/* Play Button - Visible tant qu'on n'est pas en Full Play */}
         {!isPlaying && (
           <div className="absolute inset-0 z-40 flex items-center justify-center">
             <motion.div 
@@ -167,9 +176,9 @@ export default function InlineYouTubePlayer({ url, title }: InlineYouTubePlayerP
         )}
       </div>
 
-      {/* 🌀 COUCHE 3 : SPINNER PREMIUM (Z-INDEX 50) */}
+      {/* 🌀 SPINNER PREMIUM (Seulement en Full Play Loading) */}
       <AnimatePresence>
-        {(isPlaying || isPreviewing) && isBuffering && (
+        {isPlaying && !isIframeReady && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.7 }}
