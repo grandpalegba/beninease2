@@ -42,6 +42,8 @@ export interface Talent {
   video_3_id: string | null;
   video_4_id: string | null;
   video_urls: string[] | null;
+  photo_urls: string[] | null;
+  weighted_votes_total: number | null;
 }
 
 export interface Votant {

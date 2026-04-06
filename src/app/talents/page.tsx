@@ -7,6 +7,7 @@ import { Loader2, AlertCircle, Play, Image as ImageIcon, Heart } from "lucide-re
 import CardDeck from "@/components/ui/CardDeck";
 import TeasingCard from "@/components/ui/TeasingCard";
 import Image from "next/image";
+import Link from "next/link";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -138,20 +139,32 @@ export default function TalentsPage() {
                     </p>
                     
                     {/* Voting Action */}
-                    <div className="pt-8 flex flex-col md:flex-row items-center gap-8">
+                    <div className="pt-8 flex flex-wrap items-center justify-center md:justify-start gap-4 md:gap-8">
                       <button 
                         onClick={() => handleVote(talent)}
-                        className="group flex flex-col items-center justify-center px-12 py-6 bg-[#008751] text-white rounded-[2rem] font-black shadow-2xl hover:shadow-emerald-500/20 hover:scale-105 active:scale-95 transition-all w-full md:w-auto"
+                        className="group flex flex-col items-center justify-center px-10 py-5 bg-[#008751] text-white rounded-3xl font-black shadow-xl hover:shadow-emerald-500/20 hover:scale-105 active:scale-95 transition-all w-full md:w-auto"
                       >
                         <div className="flex items-center gap-3">
-                          <Heart className="w-6 h-6 fill-white group-hover:scale-125 transition-transform" />
-                          <span className="uppercase tracking-[0.2em] text-sm">Soutenir</span>
+                          <Heart className="w-5 h-5 fill-white group-hover:scale-125 transition-transform" />
+                          <span className="uppercase tracking-[0.2em] text-sm font-black">Soutenir</span>
                         </div>
-                        <span className="text-[9px] opacity-60 mt-1 uppercase tracking-widest">Puissance : +{voterWeight}</span>
+                        <span className="text-[9px] opacity-60 mt-1 uppercase tracking-widest font-bold">Puissance : +{voterWeight}</span>
                       </button>
-                      <div className="text-center md:text-left">
-                        <p className="text-5xl font-display font-black text-[#008751]">{talent.weighted_votes_total || 0}</p>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Soutiens Actuels</p>
+
+                      <Link 
+                        href={`/talents/${talent.slug}`}
+                        className="flex flex-col items-center justify-center px-10 py-5 bg-white text-[#1A1A1A] border-2 border-gray-100 rounded-3xl font-black shadow-sm hover:border-[#008751] hover:text-[#008751] hover:scale-105 active:scale-95 transition-all w-full md:w-auto"
+                      >
+                        <div className="flex items-center gap-3">
+                          <ImageIcon className="w-5 h-5" />
+                          <span className="uppercase tracking-[0.2em] text-sm font-black">Profil Complet</span>
+                        </div>
+                        <span className="text-[9px] opacity-60 mt-1 uppercase tracking-widest font-bold">Voir le design V3</span>
+                      </Link>
+
+                      <div className="text-center md:text-left flex-shrink-0">
+                        <p className="text-5xl font-display font-black text-[#008751] leading-none mb-1">{talent.weighted_votes_total || 0}</p>
+                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Soutiens Actuels</p>
                       </div>
                     </div>
                   </div>
