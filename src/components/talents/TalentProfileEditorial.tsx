@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Share2, ArrowRight } from "lucide-react";
+import { Share2, MessageCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import EditorialSection from "./EditorialSection";
 import VideoModal from "../ui/VideoModal";
@@ -17,11 +17,11 @@ interface TalentProfileEditorialProps {
 }
 
 /**
- * TalentProfileEditorial - L'Expérience "Digital Atelier".
- * - Mise en page éditoriale centrée (max-width 820px)
- * - Narration verticale fluide
- * - Typographie Manrope dominante
- * - Esthétique minimaliste de luxe
+ * TalentProfileEditorial - L'Expérience "Digital Atelier" Raffinée.
+ * - Typographie synchronisée avec le listing.
+ * - Storytelling vertical pur (sans overlays média).
+ * - CTA "Me contacter" avec scroll fluide.
+ * - Formulaire de contact minimaliste pour conversion.
  */
 export default function TalentProfileEditorial({
   talent,
@@ -31,6 +31,7 @@ export default function TalentProfileEditorial({
   isVoting = false,
 }: TalentProfileEditorialProps) {
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
+  const contactFormRef = useRef<HTMLDivElement>(null);
 
   // Définition de la structure narrative (Ordre Strict)
   const sections = [
@@ -62,6 +63,11 @@ export default function TalentProfileEditorial({
 
   const handlePlayVideo = (url: string) => setActiveVideo(url);
 
+  // Scroll vers le formulaire de contact
+  const scrollToContact = () => {
+    contactFormRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   return (
     <div 
       className="w-full bg-white font-manrope selection:bg-[#FCD116]/30 overflow-x-hidden"
@@ -78,7 +84,6 @@ export default function TalentProfileEditorial({
         >
           {/* Portrait Image (1:1) */}
           <div className="relative w-[240px] h-[240px] md:w-[280px] md:h-[280px] mb-12 group">
-            <div className="absolute inset-0 bg-gray-100 rounded-[32px] animate-pulse -z-10" />
             <Image
               src={talent.avatar_url || "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&q=80&w=800"}
               alt={`${talent.prenom} ${talent.nom}`}
@@ -91,51 +96,55 @@ export default function TalentProfileEditorial({
           </div>
 
           {/* Profession (Gold Accent) */}
-          <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.3em] text-[#C8A96A] mb-4">
+          <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.3em] text-[#C8A96A] mb-8">
             {talent.categorie}
           </span>
 
-          {/* Name */}
-          <h1 className="text-4xl md:text-6xl font-black uppercase tracking-[0.05em] text-[#1A1A1A] mb-4 leading-tight">
-            {talent.prenom} <br className="md:hidden" /> {talent.nom}
+          {/* Name (STRICT MATCH with Listing) */}
+          <h1 className="text-2xl md:text-4xl font-extrabold font-manrope text-[#1A1A1A] uppercase tracking-[0.15em] leading-tight mb-10 max-w-2xl mx-auto">
+            {talent.prenom} {talent.nom}
           </h1>
 
-          {/* Tagline */}
-          <p className="text-lg md:text-xl italic text-gray-400 opacity-80 max-w-xl mx-auto mb-14 px-4 font-light leading-relaxed">
-            {talent.slogan || `« Ambassadeur du savoir-faire béninois »`}
-          </p>
+          {/* Bio (Replacing fixed tagline / 2-4 lines) */}
+          {talent.bio && (
+            <p className="text-base md:text-lg italic text-gray-500 opacity-80 max-w-xl mx-auto mb-14 px-4 font-light leading-relaxed line-clamp-4">
+              {talent.bio}
+            </p>
+          )}
 
-          {/* CTAs */}
-          <div className="flex flex-col md:flex-row items-center gap-6 w-full max-w-md mx-auto">
+          {/* CTAs HIERARCHY */}
+          <div className="flex flex-col md:flex-row items-center gap-4 w-full max-w-xl mx-auto">
+            {/* Primary : Voter */}
             <motion.button
               whileTap={{ scale: 0.98 }}
               onClick={onVote}
               disabled={isVoting}
               className={cn(
-                "w-full md:flex-1 py-5 px-8 bg-[#0E7C66] text-white rounded-full font-bold uppercase tracking-widest text-[11px] shadow-lg shadow-emerald-900/10 transition-all hover:bg-[#0C6A57]",
+                "w-full md:flex-1 py-5 px-8 bg-[#0E7C66] text-white rounded-full font-bold uppercase tracking-widest text-[11px] shadow-lg shadow-emerald-900/10 transition-all hover:bg-[#0C6A57] hover:shadow-emerald-900/20",
                 isVoting && "opacity-60 cursor-not-allowed"
               )}
             >
               {isVoting ? "Soutien..." : "Voter pour moi"}
             </motion.button>
             
-            <div className="flex items-center gap-3 w-full md:w-auto">
-              <motion.button
-                whileTap={{ scale: 0.98 }}
-                onClick={onShare}
-                className="flex-1 md:flex-none p-5 rounded-full border border-gray-100 text-gray-500 hover:bg-gray-50 transition-all flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest"
-              >
-                <Share2 className="w-4 h-4" />
-                <span className="md:hidden">Partager</span>
-              </motion.button>
+            {/* Secondary : Contact */}
+            <motion.button
+              whileTap={{ scale: 0.98 }}
+              onClick={scrollToContact}
+              className="w-full md:flex-1 py-5 px-8 rounded-full border-2 border-gray-100 text-[#1A1A1A] font-bold uppercase tracking-widest text-[11px] hover:border-gray-200 hover:bg-gray-50 transition-all"
+            >
+              Me contacter
+            </motion.button>
 
-              <motion.button
-                whileTap={{ scale: 0.98 }}
-                className="flex-[2] md:flex-none py-5 px-8 rounded-full border border-gray-100 text-gray-500 hover:bg-gray-50 transition-all text-[10px] font-bold uppercase tracking-widest"
-              >
-                Me contacter
-              </motion.button>
-            </div>
+            {/* Tertiary : Partager */}
+            <motion.button
+              whileTap={{ scale: 0.98 }}
+              onClick={onShare}
+              className="w-full md:w-auto p-5 rounded-full border border-gray-100 text-gray-400 font-bold uppercase tracking-widest text-[10px] hover:bg-gray-50 hover:text-gray-600 transition-all flex items-center justify-center gap-2"
+            >
+              <Share2 className="w-4 h-4" />
+              <span className="md:hidden">Partager le profil</span>
+            </motion.button>
           </div>
           
           <div className="mt-8 text-[9px] font-bold uppercase tracking-[0.2em] text-gray-300">
@@ -157,13 +166,45 @@ export default function TalentProfileEditorial({
           ))}
         </div>
 
-        {/* Footer subtle navigation or message */}
-        <div className="mt-40 text-center flex flex-col items-center gap-10">
-           <div className="w-1 md:w-[1px] h-20 bg-gradient-to-b from-[#C8A96A] to-transparent opacity-30" />
-           <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-gray-300">
-             BeninEase Atelier
-           </p>
-        </div>
+        {/* 📩 CONTACT FORM SECTION (Conversion Block) */}
+        <motion.section 
+          ref={contactFormRef}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="mt-40 md:mt-60 w-full pt-16 border-t border-gray-50"
+        >
+          <div className="text-center mb-16">
+            <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400 mb-6">
+              Contact
+            </h4>
+            <div className="w-12 h-[1px] bg-[#C8A96A] mx-auto opacity-50" />
+          </div>
+
+          <form className="max-w-lg mx-auto flex flex-col gap-6" onSubmit={(e) => e.preventDefault()}>
+            <input 
+              type="text" 
+              placeholder="Votre nom" 
+              className="w-full py-5 px-0 bg-transparent border-b border-gray-100 focus:border-[#C8A96A] outline-none transition-all placeholder:text-gray-300 text-gray-600" 
+            />
+            <input 
+              type="email" 
+              placeholder="Votre email" 
+              className="w-full py-5 px-0 bg-transparent border-b border-gray-100 focus:border-[#C8A96A] outline-none transition-all placeholder:text-gray-300 text-gray-600" 
+            />
+            <textarea 
+              placeholder="Votre message" 
+              rows={4}
+              className="w-full py-5 px-0 bg-transparent border-b border-gray-100 focus:border-[#C8A96A] outline-none transition-all placeholder:text-gray-300 text-gray-600 resize-none" 
+            />
+            <motion.button
+              whileTap={{ scale: 0.98 }}
+              className="w-full mt-6 py-5 bg-[#0E7C66] text-white rounded-full font-bold uppercase tracking-widest text-[11px] shadow-lg shadow-emerald-900/10 hover:bg-[#0C6A57] transition-all"
+            >
+              Envoyer le message
+            </motion.button>
+          </form>
+        </motion.section>
       </main>
 
       {/* Video Cinematic Modal */}

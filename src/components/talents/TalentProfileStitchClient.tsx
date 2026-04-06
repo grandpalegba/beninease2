@@ -17,8 +17,8 @@ interface TalentProfileStitchClientProps {
 /**
  * TalentProfileStitchClient - Orchestrateur du Profil Éditorial.
  * - Gère le vote (RPC) et le partage.
- * - Implémente la navigation discrète (flèches) à la place du swipe dominant.
- * - Assure une immersion totale dans le storytelling vertical.
+ * - Restauration du Swipe horizontal subtil (drag="x").
+ * - Maintien des flèches de navigation pour l'accessibilité desktop.
  */
 export default function TalentProfileStitchClient({
   talent,
@@ -82,9 +82,9 @@ export default function TalentProfileStitchClient({
   };
 
   return (
-    <div className="relative w-full">
-      {/* 🧭 NAVIGATION DISCRÈTE (Digital Atelier Feel) */}
-      <nav className="fixed inset-y-0 left-0 right-0 z-[60] flex items-center justify-between px-4 pointer-events-none">
+    <div className="relative w-full overflow-hidden">
+      {/* 🧭 NAVIGATION DISCRÈTE (Desktop Arrows) */}
+      <nav className="fixed inset-y-0 left-0 right-0 z-[60] flex items-center justify-between px-4 pointer-events-none hidden md:flex">
         {prevSlug && (
           <motion.button
             initial={{ opacity: 0, x: -10 }}
@@ -92,7 +92,7 @@ export default function TalentProfileStitchClient({
             whileHover={{ opacity: 1, x: 5 }}
             onClick={() => router.push(`/talents/${prevSlug}`)}
             className="p-4 rounded-full bg-white/50 backdrop-blur-sm shadow-sm pointer-events-auto transition-all"
-            aria-label="Profil Précédent"
+            aria-label="Précédent"
           >
             <ChevronLeft className="w-6 h-6 text-gray-400" />
           </motion.button>
@@ -104,22 +104,34 @@ export default function TalentProfileStitchClient({
             whileHover={{ opacity: 1, x: -5 }}
             onClick={() => router.push(`/talents/${nextSlug}`)}
             className="p-4 rounded-full bg-white/50 backdrop-blur-sm shadow-sm pointer-events-auto transition-all"
-            aria-label="Profil Suivant"
+            aria-label="Suivant"
           >
             <ChevronRight className="w-6 h-6 text-gray-400" />
           </motion.button>
         )}
       </nav>
 
-      {/* Animation d'entrée pour le profil global */}
+      {/* ↔️ SWIPE NAVIGATION (Mobile + Gesture) */}
       <AnimatePresence mode="wait">
         <motion.div
           key={talent.id}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.8, ease: "easeInOut" }}
-          className="w-full"
+          transition={{ duration: 0.6, ease: "easeInOut" }}
+          drag="x"
+          dragDirectionLock
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.05} // Swipe très subtil pour ne pas gêner le scroll vertical
+          onDragEnd={(e, info) => {
+            const threshold = 80; // Seuil de déclenchement
+            if (info.offset.x < -threshold && nextSlug) {
+              router.push(`/talents/${nextSlug}`);
+            } else if (info.offset.x > threshold && prevSlug) {
+              router.push(`/talents/${prevSlug}`);
+            }
+          }}
+          className="w-full cursor-grab active:cursor-grabbing"
         >
           <TalentProfileEditorial
             talent={talent}

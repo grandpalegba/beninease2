@@ -14,10 +14,10 @@ interface EditorialSectionProps {
 }
 
 /**
- * EditorialSection - Le bloc narratif "Stitch Digital Atelier".
- * - Rythme vertical aéré
- * - Rendu conditionnel des médias
- * - Séparateur signature aux couleurs du Bénin
+ * EditorialSection - Le bloc narratif "Stitch Digital Atelier" (Raffiné).
+ * - Ordre Strict : Titre -> Image -> Séparateur -> Vidéo.
+ * - Aucune superposition de texte sur les médias.
+ * - Séparateur signature fin aux couleurs du Bénin.
  */
 export default function EditorialSection({
   title,
@@ -39,23 +39,41 @@ export default function EditorialSection({
         delay: index * 0.1, 
         ease: [0.21, 0.47, 0.32, 0.98] 
       }}
-      className="w-full flex flex-col items-center gap-10 md:gap-14"
+      className="w-full flex flex-col items-center"
     >
-      {/* 1. Titre de Section (Digital Atelier Style) */}
-      <h3 className="text-[10px] md:text-xs font-bold uppercase tracking-[0.4em] text-gray-400">
+      {/* 1. Titre de Section (Discret, Haut de gamme) */}
+      <h3 className="text-[10px] md:text-[11px] font-bold uppercase tracking-[0.5em] text-gray-300 mb-10 md:mb-14">
         {title}
       </h3>
 
-      {/* 2. Bloc Vidéo (Si présent) */}
+      {/* 2. Bloc Image (Si présent) */}
+      {imageUrl && (
+        <div className="relative w-full aspect-[16/10] md:aspect-[16/9] rounded-2xl overflow-hidden shadow-xl group transition-transform duration-700 hover:scale-[1.01] mb-10 md:mb-14">
+          <Image
+            src={imageUrl}
+            alt={title}
+            fill
+            className="object-cover transition-transform duration-1000 group-hover:scale-[1.03]"
+            sizes="(max-width: 820px) 100vw, 820px"
+            draggable={false}
+          />
+          {/* AUCUN TEXTE OVERLAY ICI */}
+        </div>
+      )}
+
+      {/* 3. Séparateur Signature (Ligne fine Bénin) */}
+      <div className="w-20 md:w-24 h-[1.5px] bg-gradient-to-r from-[#008751] via-[#FCD116] to-[#E8112D] opacity-60 mb-10 md:mb-14" />
+
+      {/* 4. Bloc Vidéo (Si présent) */}
       {videoUrl && (
         <div 
           className="relative w-full aspect-video rounded-2xl overflow-hidden cursor-pointer group shadow-2xl transition-transform duration-700 hover:scale-[1.01]"
           onClick={() => onPlayVideo(videoUrl)}
         >
-          {/* Overlay cinématique (Vignette) */}
-          <div className="absolute inset-0 z-10 bg-black/40 group-hover:bg-black/30 transition-colors duration-500" />
+          {/* Overlay sombre discret (Vignette) */}
+          <div className="absolute inset-0 z-10 bg-black/30 group-hover:bg-black/20 transition-colors duration-500" />
           
-          {/* Play Button Glassmorphism */}
+          {/* Play Button Glassmorphism (Pas de texte overlay) */}
           <div className="absolute inset-0 z-20 flex items-center justify-center">
             <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center transform transition-all duration-500 group-hover:scale-110 group-hover:bg-white/20">
               <Play className="w-6 h-6 md:w-8 md:h-8 text-white fill-white ml-1" />
@@ -68,22 +86,7 @@ export default function EditorialSection({
             fill
             className="object-cover"
             sizes="(max-width: 820px) 100vw, 820px"
-          />
-        </div>
-      )}
-
-      {/* 3. Séparateur Signature (Couleurs Bénin) */}
-      <div className="w-16 md:w-24 h-[1.5px] bg-gradient-to-r from-[#008751] via-[#FCD116] to-[#E8112D] opacity-70" />
-
-      {/* 4. Bloc Image (Si présent) */}
-      {imageUrl && (
-        <div className="relative w-full aspect-[16/10] md:aspect-[16/9] rounded-2xl overflow-hidden shadow-xl group transition-transform duration-700 hover:scale-[1.01]">
-          <Image
-            src={imageUrl}
-            alt={title}
-            fill
-            className="object-cover transition-transform duration-1000 group-hover:scale-[1.03]"
-            sizes="(max-width: 820px) 100vw, 820px"
+            draggable={false}
           />
         </div>
       )}
