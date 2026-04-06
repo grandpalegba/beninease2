@@ -5,7 +5,7 @@ import { supabase } from "@/utils/supabase/client";
 import type { Talent } from "@/types";
 import { Loader2, AlertCircle } from "lucide-react";
 import CardDeck from "@/components/ui/CardDeck";
-import TeasingCard from "@/components/ui/TeasingCard";
+import StitchTalentCard from "@/components/talents/StitchTalentCard";
 import Link from "next/link";
 import { toast } from "sonner";
 
@@ -125,18 +125,14 @@ export default function TalentsPage() {
             className="block cursor-pointer"
             prefetch
           >
-            <TeasingCard
-              id={talent.id}
+            <StitchTalentCard
               image={
                 talent.avatar_url ||
                 "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&q=80&w=800"
               }
               title={`${talent.prenom} ${talent.nom}`}
-              subtitle={talent.categorie}
-              text={
-                talent.bio ||
-                "Détenteur d'un savoir-faire ancestral..."
-              }
+              categorie={talent.categorie}
+              bio={talent.bio || "Détenteur d'un savoir-faire ancestral..."}
             />
           </Link>
         )}

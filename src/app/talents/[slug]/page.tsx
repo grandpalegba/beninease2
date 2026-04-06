@@ -1,25 +1,21 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import TalentProfileShell from "@/components/talents/TalentProfileShell";
+import TalentProfileStitchClient from "@/components/talents/TalentProfileStitchClient";
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const slug = params.slug;
-
   const supabase = await createSupabaseServerClient();
 
   const { data: talent } = await supabase
     .from("talents")
-    .select("prenom, nom, avatar_url")
+    .select("prenom, nom, avatar_url, bio, slogan")
     .eq("slug", slug)
-    .maybeSingle(); // ✅ FIX
+    .maybeSingle();
 
-  if (!talent) {
-    return { title: "Talent non trouvé | BeninEase" };
-  }
+  if (!talent) return { title: "Talent non trouvé | BeninEase" };
 
   const fullName = `${talent.prenom} ${talent.nom}`;
-
   let ogImageUrl = talent.avatar_url || "https://beninease.space/default-talent.jpg";
 
   if (ogImageUrl && !ogImageUrl.startsWith("http") && !ogImageUrl.startsWith("/")) {
@@ -28,65 +24,56 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
   return {
     title: `${fullName} | BeninEase`,
-    description: `Découvrez le profil de ${fullName} sur BeninEase`,
+    description: talent.bio || `Découvrez le profil de ${fullName} sur BeninEase`,
     openGraph: {
       title: `${fullName} | BeninEase`,
-      description: `Soutenez ${fullName}`,
+      description: talent.slogan || `Soutenez ${fullName}`,
       images: [{ url: ogImageUrl }],
     },
   };
 }
 
 export default async function TalentProfilePage({ params }: { params: { slug: string } }) {
-  const slug = params.slug; // ✅ FIX (plus de await inutile)
-
+  const slug = params.slug;
   if (!slug) return notFound();
 
   const supabase = await createSupabaseServerClient();
 
+  // 1. Fetch current talent data
   const { data: talent, error } = await supabase
     .from("talents")
-    .select(`
-      id, prenom, nom, city, avatar_url, bio, slogan, 
-      video_urls, photo_urls, votes, univers, categorie, 
-      instagram_url, tiktok_url, whatsapp_number
-    `)
+    .select("*")
     .eq("slug", slug)
-    .maybeSingle(); // ✅ FIX PRINCIPAL
+    .maybeSingle();
 
-  console.log("SLUG:", slug);
-  console.log("TALENT:", talent);
+  if (error || !talent) return notFound();
 
-  if (error || !talent) {
-    console.error("Error fetching talent:", error);
-    return notFound();
-  }
+  // 2. Fetch all talent slugs in deck order (weighted_votes_total desc) for swipe logic
+  const { data: allTalents } = await supabase
+    .from("talents")
+    .select("slug")
+    .order("weighted_votes_total", { ascending: false });
 
-  const fullName = `${talent.prenom} ${talent.nom}`;
+  let nextSlug = null;
+  let prevSlug = null;
 
-  let publicAvatarUrl = talent.avatar_url;
-  if (publicAvatarUrl && !publicAvatarUrl.startsWith("http") && !publicAvatarUrl.startsWith("/")) {
-    publicAvatarUrl = `/${publicAvatarUrl}`;
+  if (allTalents && allTalents.length > 1) {
+    const currentIndex = allTalents.findIndex((t: any) => t.slug === slug);
+    if (currentIndex !== -1) {
+      // Logic for circular swipe or simple bounds?
+      // User request: swipe horizontal. Circular is usually more premium.
+      nextSlug = allTalents[(currentIndex + 1) % allTalents.length].slug;
+      prevSlug = allTalents[(currentIndex - 1 + allTalents.length) % allTalents.length].slug;
+    }
   }
 
   return (
-    <TalentProfileShell
-      id={talent.id}
-      full_name={fullName}
-      city={talent.city || "Bénin"}
-      avatar_url={publicAvatarUrl || ""}
-      bio_longue={talent.bio || ""}
-      slogan={talent.slogan || undefined}
-      video_urls={talent.video_urls || []}
-      photo_urls={talent.photo_urls || []}
-      votes={talent.votes || 0}
-      univers={talent.univers}
-      categorie={talent.categorie}
-      social_links={{
-        instagram: talent.instagram_url,
-        tiktok: talent.tiktok_url,
-        whatsapp: talent.whatsapp_number,
-      }}
-    />
+    <div className="bg-white min-h-screen pt-20">
+      <TalentProfileStitchClient 
+        talent={talent} 
+        nextSlug={nextSlug} 
+        prevSlug={prevSlug} 
+      />
+    </div>
   );
 }
