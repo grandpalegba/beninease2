@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import {
-  Play, Heart, CheckCircle2, Loader2, MapPin, Instagram,
-  MessageCircle, ChevronRight, Share2
+  Play, Heart, CheckCircle2, Loader2, MapPin,
+  Instagram, MessageCircle, Share2, ExternalLink
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { confetti } from "tsparticles-confetti";
@@ -34,164 +34,188 @@ interface TalentProfileShellProps {
   };
 }
 
-// ─── Constants ───────────────────────────────────────────────────────────────
+// ─── Design Tokens ───────────────────────────────────────────────────────────
 
-const VIDEO_LABELS = ["Présentation", "Mon Parcours", "Mon Service", "Pourquoi Moi"];
-const PHOTO_LABELS = ["Éclat", "Identité", "Mouvement", "Signature"];
-
-// Correspondance des formats photo/vidéo par position
-const PHOTO_ASPECTS = ["aspect-[4/5]", "aspect-square", "aspect-video", "aspect-[4/5]"] as const;
-const VIDEO_ASPECTS = ["aspect-video", "aspect-video", "aspect-video", "aspect-video"] as const;
+const G = "#008751";   // vert Bénin
+const Y = "#FCD116";   // jaune Bénin
+const R = "#E8112D";   // rouge Bénin
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function getEmbedUrl(url: string | undefined): string {
+function getEmbedUrl(url: string): string {
   if (!url) return "";
-  let videoId = "";
-  if (url.includes("v=")) videoId = url.split("v=")[1].split("&")[0];
-  else if (url.includes("youtu.be/")) videoId = url.split("youtu.be/")[1].split("?")[0];
-  else if (url.includes("embed/")) videoId = url.split("embed/")[1].split("?")[0];
-  return videoId ? `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1` : url;
+  let id = "";
+  if (url.includes("v=")) id = url.split("v=")[1].split("&")[0];
+  else if (url.includes("youtu.be/")) id = url.split("youtu.be/")[1].split("?")[0];
+  else if (url.includes("embed/")) id = url.split("embed/")[1].split("?")[0];
+  return id ? `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1` : url;
 }
 
-function getYoutubeThumbnail(url: string | undefined): string {
+function getThumb(url: string): string {
   if (!url) return "";
-  let videoId = "";
-  if (url.includes("v=")) videoId = url.split("v=")[1].split("&")[0];
-  else if (url.includes("youtu.be/")) videoId = url.split("youtu.be/")[1].split("?")[0];
-  else if (url.includes("embed/")) videoId = url.split("embed/")[1].split("?")[0];
-  return videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : "";
+  let id = "";
+  if (url.includes("v=")) id = url.split("v=")[1].split("&")[0];
+  else if (url.includes("youtu.be/")) id = url.split("youtu.be/")[1].split("?")[0];
+  else if (url.includes("embed/")) id = url.split("embed/")[1].split("?")[0];
+  return id ? `https://img.youtube.com/vi/${id}/maxresdefault.jpg` : "";
 }
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
+// ─── Primitives ───────────────────────────────────────────────────────────────
 
 /** Ligne tricolore du drapeau béninois */
-function BeninFlagLine({ className }: { className?: string }) {
+function FlagLine({ className }: { className?: string }) {
   return (
-    <div className={cn("flex h-[3px] w-full overflow-hidden rounded-full", className)}>
-      <div className="flex-1 bg-[#008751]" />
-      <div className="flex-1 bg-[#FCD116]" />
-      <div className="flex-1 bg-[#E8112D]" />
+    <div className={cn("w-full flex h-[3px] rounded-full overflow-hidden", className)}>
+      <div className="flex-1" style={{ background: G }} />
+      <div className="flex-1" style={{ background: Y }} />
+      <div className="flex-1" style={{ background: R }} />
     </div>
   );
 }
 
-/** Carte vidéo YouTube avec bouton play */
+/** Titre de section — style Manrope uppercase */
+function SectionTitle({ label }: { label: string }) {
+  return (
+    <div className="flex items-center gap-5 mb-8">
+      <FlagLine className="flex-shrink-0 w-8" />
+      <h2
+        className="text-[11px] font-extrabold uppercase tracking-[0.3em] text-[#1A1A1A] whitespace-nowrap"
+        style={{ fontFamily: "'Manrope', sans-serif" }}
+      >
+        {label}
+      </h2>
+      <FlagLine className="flex-1" />
+    </div>
+  );
+}
+
+// ─── VideoCard ────────────────────────────────────────────────────────────────
+
 function VideoCard({
   url,
   label,
-  className,
-  aspectClass = "aspect-video",
-  avatarFallback,
+  fallback,
 }: {
-  url?: string;
+  url: string;
   label: string;
-  className?: string;
-  aspectClass?: string;
-  avatarFallback: string;
+  fallback: string;
 }) {
   const [playing, setPlaying] = useState(false);
-  const embedUrl = getEmbedUrl(url);
-  const thumbnail = getYoutubeThumbnail(url);
-  const hasVideo = !!url;
+  const hasUrl = !!url;
+  const thumb = getThumb(url);
+  const embed = getEmbedUrl(url);
 
   return (
-    <div className={cn("group flex flex-col gap-3", className)}>
-      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#008751]">{label}</p>
-      <div className={cn("relative overflow-hidden bg-[#0F0F0F] rounded-2xl border border-black/5", aspectClass)}>
-        {playing && hasVideo ? (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="flex flex-col gap-3"
+    >
+      <p
+        className="text-[10px] font-extrabold uppercase tracking-[0.25em] text-[#008751]"
+        style={{ fontFamily: "'Manrope', sans-serif" }}
+      >
+        {label}
+      </p>
+      <div className="relative aspect-video rounded-xl overflow-hidden bg-[#0D0D0D] border border-black/5 group">
+        {playing && hasUrl ? (
           <iframe
-            src={`${embedUrl}&autoplay=1`}
+            src={`${embed}&autoplay=1`}
             className="w-full h-full"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
           />
         ) : (
           <>
-            {/* Thumbnail */}
-            <div className="absolute inset-0">
-              <Image
-                src={thumbnail || avatarFallback || "/placeholder-portrait.jpg"}
-                alt={label}
-                fill
-                className="object-cover opacity-70 transition-transform duration-700 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-            </div>
+            <Image
+              src={thumb || fallback || "/placeholder-portrait.jpg"}
+              alt={label}
+              fill
+              className="object-cover opacity-75 transition-transform duration-700 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
 
-            {/* Play button */}
             <button
-              onClick={() => hasVideo && setPlaying(true)}
-              className={cn(
-                "absolute inset-0 flex items-center justify-center transition-all duration-300",
-                hasVideo ? "cursor-pointer" : "cursor-default"
-              )}
+              onClick={() => hasUrl && setPlaying(true)}
+              disabled={!hasUrl}
+              className="absolute inset-0 flex items-center justify-center group/play"
             >
               <motion.div
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
                 className={cn(
-                  "w-14 h-14 rounded-full flex items-center justify-center backdrop-blur-md border border-white/20",
-                  hasVideo ? "bg-white/90 shadow-xl" : "bg-white/20"
+                  "w-16 h-16 rounded-full flex items-center justify-center border border-white/20 backdrop-blur-sm transition-all",
+                  hasUrl
+                    ? "bg-white shadow-xl group-hover/play:bg-[#008751]"
+                    : "bg-white/20"
                 )}
               >
-                <Play className={cn("w-5 h-5 fill-current ml-0.5", hasVideo ? "text-[#1A1A1A]" : "text-white/50")} />
+                <Play
+                  className={cn(
+                    "w-6 h-6 ml-1 transition-colors",
+                    hasUrl
+                      ? "text-[#1A1A1A] fill-[#1A1A1A] group-hover/play:text-white group-hover/play:fill-white"
+                      : "text-white/40 fill-white/40"
+                  )}
+                />
               </motion.div>
             </button>
 
-            {/* Label bottom */}
-            <div className="absolute bottom-4 left-4">
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/80">
-                {hasVideo ? "YouTube" : "À venir"}
+            <div className="absolute bottom-4 left-4 flex items-center gap-1.5">
+              <div
+                className="w-1.5 h-1.5 rounded-full"
+                style={{ background: hasUrl ? G : "#999" }}
+              />
+              <span
+                className="text-[9px] font-bold uppercase tracking-[0.2em] text-white/70"
+                style={{ fontFamily: "'Manrope', sans-serif" }}
+              >
+                {hasUrl ? "YouTube" : "À venir"}
               </span>
             </div>
           </>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
-/** Carte photo style "Light Essence Photography" */
-function PhotoCard({
-  url,
-  label,
-  className,
-  aspectClass = "aspect-square",
-}: {
-  url?: string;
-  label: string;
-  className?: string;
-  aspectClass?: string;
-}) {
+// ─── PhotoCard ────────────────────────────────────────────────────────────────
+
+function PhotoCard({ url, label }: { url: string; label: string }) {
   return (
-    <div className={cn("group flex flex-col gap-3", className)}>
-      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">{label}</p>
-      <div className={cn("relative overflow-hidden bg-gray-50 rounded-2xl border border-black/5", aspectClass)}>
-        {url ? (
-          <Image
-            src={url}
-            alt={label}
-            fill
-            className="object-cover transition-transform duration-700 group-hover:scale-105"
-          />
-        ) : (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
-            {/* Placeholder elegante */}
-            <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-              <div className="w-3 h-3 rounded-full bg-gray-300" />
-            </div>
-            <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-gray-300">Photo</span>
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="flex flex-col gap-3"
+    >
+      <p
+        className="text-[10px] font-extrabold uppercase tracking-[0.25em] text-gray-400"
+        style={{ fontFamily: "'Manrope', sans-serif" }}
+      >
+        {label}
+      </p>
+      <div className="relative aspect-[4/3] rounded-xl overflow-hidden border border-black/5 bg-gray-50 group">
+        <Image
+          src={url}
+          alt={label}
+          fill
+          className="object-cover transition-transform duration-700 group-hover:scale-103"
+        />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-all duration-500" />
+        <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all">
+          <div className="w-8 h-8 rounded-lg bg-white/80 backdrop-blur-sm flex items-center justify-center shadow">
+            <ExternalLink className="w-3.5 h-3.5 text-[#1A1A1A]" />
           </div>
-        )}
-        {/* Subtle hover overlay */}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-all duration-500 rounded-2xl" />
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
-// ─── Main Component ───────────────────────────────────────────────────────────
+// ─── Main ─────────────────────────────────────────────────────────────────────
 
 export default function TalentProfileShell({
   id,
@@ -213,271 +237,261 @@ export default function TalentProfileShell({
   const [votesCount, setVotesCount] = useState(initialVotes);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      checkHasVoted(id).then(setHasVoted);
-    }
+    if (isAuthenticated) checkHasVoted(id).then(setHasVoted);
   }, [id, isAuthenticated, checkHasVoted]);
 
   const handleVote = async () => {
-    if (!isAuthenticated) {
-      toast.error("Veuillez vous connecter pour voter");
-      return;
-    }
+    if (!isAuthenticated) { toast.error("Connectez-vous pour voter"); return; }
     if (hasVoted || isVoting) return;
-
     setIsVoting(true);
     try {
       const { error } = await supabase.from("votes").insert([{
         user_id: session?.user.id,
         talent_id: id,
       }]);
-
       if (error) {
-        if (error.code === "23505") {
-          setHasVoted(true);
-          toast.info("Vous avez déjà soutenu ce talent !");
-        } else {
-          throw error;
-        }
+        if (error.code === "23505") { setHasVoted(true); toast.info("Vous avez déjà soutenu ce talent !"); }
+        else throw error;
       } else {
         setHasVoted(true);
-        setVotesCount((prev: number) => prev + 1);
-        toast.success("Soutien enregistré ! Merci.");
+        setVotesCount((p: number) => p + 1);
+        toast.success("Merci pour votre soutien !");
         const canvas = document.createElement("canvas");
-        confetti(canvas, { particleCount: 150, spread: 70, origin: { y: 0.6 } });
+        confetti(canvas, { particleCount: 120, spread: 70, origin: { y: 0.6 } });
       }
-    } catch (err) {
-      console.error("Vote error:", err);
-      toast.error("Une erreur est survenue lors du vote.");
-    } finally {
-      setIsVoting(false);
-    }
+    } catch { toast.error("Erreur lors du vote."); }
+    finally { setIsVoting(false); }
   };
 
-  // Padder les arrays à 4 éléments
-  const videos = [...video_urls, "", "", "", ""].slice(0, 4);
-  const photos = [...photo_urls, "", "", "", ""].slice(0, 4);
+  const hasVideos = video_urls.length > 0;
+  const hasPhotos = photo_urls.length > 0;
+  const videoLabels = ["Présentation", "Mon Parcours", "Mon Service", "Pourquoi Moi"];
+  const photoLabels = ["Portrait", "En Action", "Atmosphère", "Signature"];
 
   return (
-    <div className="min-h-screen bg-[#F9F9F7] text-[#1A1A1A] font-sans antialiased">
+    <div
+      className="min-h-screen bg-white text-[#1A1A1A] pb-24"
+      style={{ fontFamily: "'Manrope', sans-serif" }}
+    >
 
-      {/* ── HERO / ID CARD ─────────────────────────────────────────────────── */}
-      <header className="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
-        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
-          <span className="text-[10px] font-black uppercase tracking-[0.25em] text-[#008751]">BeninEase</span>
+      {/* ══ NAVBAR ════════════════════════════════════════════════════════ */}
+      <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
+        <div className="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
+          <span
+            className="text-[11px] font-extrabold uppercase tracking-[0.3em]"
+            style={{ color: G }}
+          >
+            BeninEase
+          </span>
+
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.97 }}
             onClick={handleVote}
             disabled={isVoting || hasVoted}
             className={cn(
-              "flex items-center gap-2 px-5 py-2.5 rounded-full text-[11px] font-black uppercase tracking-[0.15em] transition-all",
+              "flex items-center gap-2 px-5 py-2.5 rounded-xl text-[11px] font-extrabold uppercase tracking-[0.15em] transition-all",
               hasVoted
-                ? "bg-[#008751]/10 text-[#008751] border border-[#008751]/20"
-                : "bg-[#008751] text-white shadow-lg shadow-[#008751]/25 hover:bg-[#006B3F]"
+                ? "bg-[#008751]/8 text-[#008751] border border-[#008751]/20"
+                : "text-white shadow-lg shadow-[#008751]/20 hover:shadow-[#008751]/30 hover:scale-105"
             )}
+            style={!hasVoted ? { background: G } : {}}
           >
-            {isVoting ? (
-              <Loader2 className="w-3.5 h-3.5 animate-spin" />
-            ) : hasVoted ? (
-              <CheckCircle2 className="w-3.5 h-3.5" />
-            ) : (
-              <Heart className="w-3.5 h-3.5" />
-            )}
+            {isVoting
+              ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              : hasVoted
+                ? <CheckCircle2 className="w-3.5 h-3.5" />
+                : <Heart className="w-3.5 h-3.5" />}
             {hasVoted ? "Soutenu" : "Soutenir"}
           </motion.button>
         </div>
-      </header>
+      </nav>
 
-      <main className="max-w-5xl mx-auto px-6 py-12 space-y-12">
+      <main className="max-w-4xl mx-auto px-6">
 
-        {/* ── PROFILE CARD ───────────────────────────────────────────────── */}
-        <section className="bg-white rounded-3xl border border-gray-100 overflow-hidden">
-          <div className="p-8 md:p-10">
-            <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
-
-              {/* Avatar */}
-              <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-2xl overflow-hidden border-4 border-white shadow-xl flex-shrink-0 group">
-                <Image
-                  src={avatar_url || "/placeholder-portrait.jpg"}
-                  alt={full_name}
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                  priority
-                />
-              </div>
-
-              {/* Identité */}
-              <div className="flex-1 text-center md:text-left space-y-4">
-                <div>
-                  <h1 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight">{full_name}</h1>
-                  {slogan && (
-                    <p className="mt-1 text-base text-gray-400 italic font-light">« {slogan} »</p>
-                  )}
-                </div>
-
-                {/* Badges */}
-                <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
-                  <span className="px-4 py-1.5 bg-[#008751]/8 text-[#008751] rounded-full text-[10px] font-black uppercase tracking-[0.15em] border border-[#008751]/15">
-                    {univers}
-                  </span>
-                  <span className="px-4 py-1.5 bg-gray-50 text-gray-500 rounded-full text-[10px] font-black uppercase tracking-[0.15em] border border-gray-100">
-                    {categorie}
-                  </span>
-                </div>
-
-                {/* Meta */}
-                <div className="flex flex-wrap items-center justify-center md:justify-start gap-5">
-                  <div className="flex items-center gap-1.5 text-gray-400 text-[11px] font-bold uppercase tracking-wider">
-                    <MapPin className="w-3.5 h-3.5 text-[#1A1A1A]" />
-                    {city}, Bénin
-                  </div>
-                  <div className="flex items-center gap-1.5 text-gray-400 text-[11px] font-bold uppercase tracking-wider">
-                    <Heart className="w-3.5 h-3.5 text-[#E8112D]" />
-                    <span className="text-[#1A1A1A] font-black">{votesCount}</span>&nbsp;soutiens
-                  </div>
-                </div>
-
-                {/* Réseaux sociaux */}
-                <div className="flex items-center justify-center md:justify-start gap-3 pt-1">
-                  {social_links.instagram && (
-                    <a
-                      href={social_links.instagram}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-500 hover:text-[#E1306C] hover:border-[#E1306C]/20 transition-all"
-                    >
-                      <Instagram className="w-4 h-4" />
-                    </a>
-                  )}
-                  {social_links.tiktok && (
-                    <a
-                      href={social_links.tiktok}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-500 hover:text-[#1A1A1A] hover:border-gray-400 transition-all"
-                    >
-                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.53a8.26 8.26 0 004.84 1.55V6.64a4.85 4.85 0 01-1.07.05z"/>
-                      </svg>
-                    </a>
-                  )}
-                  {social_links.whatsapp && (
-                    <a
-                      href={`https://wa.me/${social_links.whatsapp}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-500 hover:text-[#25D366] hover:border-[#25D366]/20 transition-all"
-                    >
-                      <MessageCircle className="w-4 h-4" />
-                    </a>
-                  )}
-                  <button className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 hover:text-[#1A1A1A] transition-all">
-                    <Share2 className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
+        {/* ══ HERO — ID CARD ════════════════════════════════════════════════ */}
+        <motion.section
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="pt-14 pb-12 text-center"
+        >
+          {/* Avatar */}
+          <div className="relative w-28 h-28 mx-auto mb-6 rounded-2xl overflow-hidden border-[5px] border-white shadow-2xl group">
+            <Image
+              src={avatar_url || "/placeholder-portrait.jpg"}
+              alt={full_name}
+              fill
+              className="object-cover transition-transform duration-700 group-hover:scale-110"
+              priority
+            />
           </div>
 
-          {/* Benin Flag Line */}
-          <BeninFlagLine />
+          {/* Nom */}
+          <h1
+            className="text-4xl md:text-5xl font-extrabold tracking-tight leading-tight"
+            style={{ fontFamily: "'Manrope', sans-serif", color: "#1A1A1A" }}
+          >
+            {full_name}
+          </h1>
+
+          {/* Slogan */}
+          {slogan && (
+            <p className="mt-3 text-base text-gray-400 font-light italic tracking-wide">
+              « {slogan} »
+            </p>
+          )}
+
+          {/* Badges */}
+          <div className="flex flex-wrap items-center justify-center gap-2 mt-5">
+            <span
+              className="px-4 py-1.5 rounded-xl text-[10px] font-extrabold uppercase tracking-[0.15em] border"
+              style={{ background: `${G}10`, color: G, borderColor: `${G}25` }}
+            >
+              {univers}
+            </span>
+            <span className="px-4 py-1.5 rounded-xl bg-gray-50 text-gray-500 text-[10px] font-extrabold uppercase tracking-[0.15em] border border-gray-100">
+              {categorie}
+            </span>
+          </div>
+
+          {/* Meta : ville + votes */}
+          <div className="flex items-center justify-center gap-6 mt-5 text-[11px] font-bold uppercase tracking-wider text-gray-400">
+            <span className="flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5" style={{ color: "#1A1A1A" }} />
+              {city}, Bénin
+            </span>
+            <span className="w-px h-4 bg-gray-200" />
+            <span className="flex items-center gap-1.5">
+              <Heart className="w-3.5 h-3.5" style={{ color: R }} />
+              <strong className="text-[#1A1A1A]">{votesCount}</strong>&nbsp;soutiens
+            </span>
+          </div>
+
+          {/* Réseaux sociaux */}
+          <div className="flex items-center justify-center gap-3 mt-6">
+            {social_links.instagram && (
+              <a
+                href={social_links.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 hover:text-[#E1306C] hover:border-[#E1306C]/20 transition-all"
+              >
+                <Instagram className="w-4 h-4" />
+              </a>
+            )}
+            {social_links.tiktok && (
+              <a
+                href={social_links.tiktok}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 hover:text-[#1A1A1A] hover:border-gray-300 transition-all"
+              >
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.53a8.26 8.26 0 004.84 1.55V6.64a4.85 4.85 0 01-1.07.05z" />
+                </svg>
+              </a>
+            )}
+            {social_links.whatsapp && (
+              <a
+                href={`https://wa.me/${social_links.whatsapp}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 hover:text-[#25D366] hover:border-[#25D366]/20 transition-all"
+              >
+                <MessageCircle className="w-4 h-4" />
+              </a>
+            )}
+            <button className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-300 hover:text-gray-500 hover:border-gray-200 transition-all">
+              <Share2 className="w-4 h-4" />
+            </button>
+          </div>
 
           {/* Biographie */}
           {bio_longue && (
-            <div className="px-8 md:px-10 py-6">
-              <p className="text-gray-500 leading-7 text-base font-light max-w-2xl">
+            <div className="mt-8 max-w-xl mx-auto">
+              <p className="text-gray-500 leading-8 font-light text-[15px]">
                 {bio_longue}
               </p>
             </div>
           )}
-        </section>
-
-        {/* ── SÉPARATEUR SECTION CONTENU ─────────────────────────────────── */}
-        <div className="flex items-center gap-4">
-          <BeninFlagLine className="flex-1" />
-          <span className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-400 whitespace-nowrap">Portfolio</span>
-          <BeninFlagLine className="flex-1" />
-        </div>
-
-        {/* ── BENTO BOX GRID — ENTRELACEMENT VIDÉO / PHOTO ────────────── */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="flex flex-col gap-8"
-        >
-          {videos.map((videoUrl, i) => {
-            const photo = photo_urls?.[i]; // undefined si tableau vide ou index manquant
-            const hasPhoto = !!photo;
-            const isFirst = i === 0;
-            const isLast = i === videos.length - 1;
-
-            return (
-              <div key={i} className="flex flex-col gap-6">
-                {/* Vidéo : pleine largeur pour la 1ère et la dernière */}
-                <VideoCard
-                  url={videoUrl}
-                  label={VIDEO_LABELS[i] ?? `Vidéo ${i + 1}`}
-                  aspectClass={isFirst || isLast ? "aspect-video" : "aspect-video"}
-                  avatarFallback={avatar_url}
-                />
-
-                {/* Photo associée — seulement si elle existe */}
-                {hasPhoto && (
-                  <PhotoCard
-                    url={photo}
-                    label={PHOTO_LABELS[i] ?? `Photo ${i + 1}`}
-                    aspectClass={PHOTO_ASPECTS[i] ?? "aspect-square"}
-                  />
-                )}
-
-                {/* Séparateur entre les blocs (sauf après le dernier) */}
-                {!isLast && (
-                  <BeninFlagLine className="opacity-30" />
-                )}
-              </div>
-            );
-          })}
         </motion.section>
 
-        {/* ── CALL TO ACTION VOTE ─────────────────────────────────────────── */}
-        <motion.div
+        {/* ══ SECTION : IMMERSION VIDÉO ══════════════════════════════════ */}
+        {hasVideos && (
+          <section className="py-10">
+            <SectionTitle label="Immersion Vidéo" />
+            <div className="grid grid-cols-1 gap-8">
+              {video_urls.map((url, i) => (
+                <VideoCard
+                  key={i}
+                  url={url}
+                  label={videoLabels[i] ?? `Vidéo ${i + 1}`}
+                  fallback={avatar_url}
+                />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* ══ SECTION : GALERIE PHOTO ════════════════════════════════════ */}
+        {hasPhotos && (
+          <section className="py-10">
+            <SectionTitle label="Galerie Photo" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {photo_urls.map((url, i) => (
+                <PhotoCard
+                  key={i}
+                  url={url}
+                  label={photoLabels[i] ?? `Photo ${i + 1}`}
+                />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* ══ CTA VOTE ══════════════════════════════════════════════════ */}
+        <motion.section
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="bg-white rounded-3xl border border-gray-100 p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6"
+          transition={{ delay: 0.4 }}
+          className="py-12"
         >
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.25em] text-[#008751] mb-1">Soutenir ce talent</p>
-            <p className="text-2xl font-bold">
-              <span className="text-[#008751]">{votesCount}</span> personnes ont déjà voté
+          <div className="rounded-2xl border border-gray-100 p-8 md:p-10 text-center space-y-5 bg-[#FAFAFA]">
+            <FlagLine className="w-12 mx-auto" />
+            <p
+              className="text-[10px] font-extrabold uppercase tracking-[0.3em]"
+              style={{ color: G }}
+            >
+              Soutenir ce talent
             </p>
-            <p className="text-gray-400 text-sm mt-1">Votre soutien compte. Un vote par compte.</p>
+            <p className="text-3xl font-extrabold text-[#1A1A1A]">
+              {votesCount}
+              <span className="text-lg font-normal text-gray-400 ml-2">soutiens</span>
+            </p>
+            <motion.button
+              whileHover={{ scale: 1.03, y: -2 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={handleVote}
+              disabled={isVoting || hasVoted}
+              className={cn(
+                "inline-flex items-center gap-3 px-8 py-4 rounded-xl text-[12px] font-extrabold uppercase tracking-[0.2em] transition-all",
+                hasVoted
+                  ? "bg-[#008751]/8 text-[#008751] border border-[#008751]/20"
+                  : "text-white shadow-xl shadow-[#008751]/20"
+              )}
+              style={!hasVoted ? { background: G } : {}}
+            >
+              {isVoting
+                ? <Loader2 className="w-4 h-4 animate-spin" />
+                : hasVoted
+                  ? <CheckCircle2 className="w-4 h-4" />
+                  : <Heart className="w-4 h-4" />}
+              {hasVoted ? "Merci pour votre soutien !" : "Voter maintenant"}
+            </motion.button>
+            <p className="text-[11px] text-gray-300 font-medium">Un vote par compte · Gratuit</p>
           </div>
-          <motion.button
-            whileHover={{ scale: 1.03, y: -2 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={handleVote}
-            disabled={isVoting || hasVoted}
-            className={cn(
-              "flex items-center gap-3 px-8 py-4 rounded-2xl text-sm font-black uppercase tracking-[0.15em] transition-all",
-              hasVoted
-                ? "bg-[#008751]/10 text-[#008751] border border-[#008751]/20"
-                : "bg-[#008751] text-white shadow-xl shadow-[#008751]/25 hover:bg-[#006B3F]"
-            )}
-          >
-            {isVoting ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : hasVoted ? (
-              <CheckCircle2 className="w-4 h-4" />
-            ) : (
-              <Heart className="w-4 h-4" />
-            )}
-            {hasVoted ? "Merci pour votre soutien !" : "Voter maintenant"}
-            {!hasVoted && !isVoting && <ChevronRight className="w-4 h-4" />}
-          </motion.button>
-        </motion.div>
+        </motion.section>
 
       </main>
     </div>
