@@ -14,12 +14,11 @@ interface InlineYouTubePlayerProps {
 let activeGlobalId: string | null = null;
 
 /**
- * InlineYouTubePlayer - Version "Stabilité Production Alpha" (Haute Fidélité).
- * - Singleton Lock : Empêche la surcharge réseau/sonore via un verrouillage d'instance.
- * - Cleanup Strict : Supprime physiquement l'iframe du DOM hors viewport.
- * - Alpha-Sync Sécurisé : requestAnimationFrame + Timeout nettoyé au démontage.
- * - GPU Acceleration : Hardware forcing sur toutes les couches media.
- * - UX Tactile : Feedback physique (scale 0.98) avec ressort et suppression du highlight iOS.
+ * InlineYouTubePlayer - Version "Zéro Latence" (API-Sync).
+ * - Préchargement AGRESSIF à 1% de visibilité (shouldPreload).
+ * - Instance UNIQUE d'iframe : Aucun changement de src au clic (Zéro Flash).
+ * - Commandes via IFrame Player API (postMessage) pour unmute et play instantly.
+ * - UX Perceptive : Feedback instantané scale 0.98 -> 1 au clic.
  */
 export default function InlineYouTubePlayer({ url, title }: InlineYouTubePlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -28,6 +27,7 @@ export default function InlineYouTubePlayer({ url, title }: InlineYouTubePlayerP
   const [isIframeReady, setIsIframeReady] = useState(false);
   
   const containerRef = useRef<HTMLDivElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const hasLockRef = useRef<boolean>(false);
   const timeoutRef = useRef<any>(null);
   const lastRatioRef = useRef<number>(0);
@@ -41,11 +41,12 @@ export default function InlineYouTubePlayer({ url, title }: InlineYouTubePlayerP
 
   const id = extractYouTubeId(url);
 
-  // 2. Libération du Verrou et Reset (ANTI FUITES)
+  // 2. Libération du Verrou et Reset
   const releaseLockAndReset = () => {
     setIsIframeReady(false);
     setIsPreviewing(false);
     setShouldPreload(false);
+    setIsPlaying(false);
     
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     
@@ -55,45 +56,55 @@ export default function InlineYouTubePlayer({ url, title }: InlineYouTubePlayerP
     }
   };
 
-  // 3. IntersectionObserver (Seuils 0.1 / 0.6 + Unmount Strict)
+  // 3. Commandes API YouTube (postMessage)
+  const sendCommand = (func: string, args: any = "") => {
+    const iframe = iframeRef.current;
+    if (iframe && iframe.contentWindow) {
+      iframe.contentWindow.postMessage(JSON.stringify({
+        event: "command",
+        func: func,
+        args: args
+      }), "*");
+    }
+  };
+
+  // 4. IntersectionObserver (Seuil 0.01 / 0.6)
   useEffect(() => {
     if (!containerRef.current || isPlaying || !id) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         const ratio = entry.intersectionRatio;
-        
-        // PROTECTION SCROLL RAPIDE : On ignore les updates redondantes
         if (lastRatioRef.current === ratio) return;
         lastRatioRef.current = ratio;
 
-        // UNMOUNT STRICT : On libère tout dès que l'élément est hors-champ
         if (ratio === 0) {
           releaseLockAndReset();
           return;
         }
 
-        // SEUIL 10% -> Tentative d'acquisition du Lock Global pour Preload
-        if (ratio >= 0.1) {
+        // AGGRESSIVE PRELOAD : 1% visible -> Déclencher le chargement immédiat
+        if (ratio >= 0.01) {
           if (!activeGlobalId) {
             activeGlobalId = id;
             hasLockRef.current = true;
             setShouldPreload(true);
           } else if (activeGlobalId !== id) {
-            // Un autre talent a le lock, on reste en attente (Vignette)
             setShouldPreload(false);
           }
         }
 
-        // SEUIL 60% -> Activation Preview Visuelle si on a le lock
+        // PREVIEW SILENCIEUSE : 60% visible
         if (ratio >= 0.6 && hasLockRef.current) {
           setIsPreviewing(true);
+          // On s'assure d'être en lecture si preview
+          sendCommand("playVideo");
         } else {
           setIsPreviewing(false);
         }
       },
       { 
-        threshold: [0, 0.1, 0.6, 1],
+        threshold: [0, 0.01, 0.6, 1],
         rootMargin: "0px" 
       }
     );
@@ -108,18 +119,14 @@ export default function InlineYouTubePlayer({ url, title }: InlineYouTubePlayerP
 
   if (!url || !id) return null;
 
-  // 4. Configuration Sources Alpha
-  const thumbnailMax = `https://img.youtube.com/vi/${id}/maxresdefault.jpg`;
-  const thumbnailFallback = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+  // 5. Configuration Source UNIQUE (Zéro reload)
+  // playsinline=1 est vital pour mobile, enablejsapi=1 permet postMessage
+  const baseParams = "autoplay=1&mute=1&controls=1&loop=1&playsinline=1&modestbranding=1&rel=0&enablejsapi=1";
+  const embedUrl = `https://www.youtube.com/embed/${id}?${baseParams}&playlist=${id}`;
 
-  const baseParams = "autoplay=1&mute=1&controls=0&loop=1&playsinline=1&modestbranding=1&rel=0&enablejsapi=1";
-  const previewUrl = `https://www.youtube.com/embed/${id}?${baseParams}&playlist=${id}`;
-  const fullUrl = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&playsinline=1&showinfo=0`;
-
-  // 5. Alpha-Sync Sécurisé (rAF + Timeout Cleanup)
+  // 6. Handlers (Zéro Latence)
   const handleIframeLoad = () => {
     if (isIframeReady) return;
-
     requestAnimationFrame(() => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
       timeoutRef.current = setTimeout(() => {
@@ -131,63 +138,71 @@ export default function InlineYouTubePlayer({ url, title }: InlineYouTubePlayerP
   const handleStartFullPlay = () => {
     setIsPlaying(true);
     setIsPreviewing(false);
-    setIsIframeReady(false);
     
-    // On s'assure d'avoir le lock global pour la lecture sonore
+    // ACTION INSTANTANÉE SANS RELOAD
+    sendCommand("unMute");
+    sendCommand("playVideo");
+
+    // S'assurer d'avoir le lock global
     activeGlobalId = id;
     hasLockRef.current = true;
   };
 
+  // Visibilité combinée pour la transition invisible
   const isVideoVisible = isIframeReady && (isPreviewing || isPlaying);
 
   return (
     <motion.div 
       ref={containerRef}
+      initial={false}
+      animate={{ scale: isPlaying ? 1 : 1 }}
       whileTap={{ scale: 0.98 }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
       className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-2xl bg-black group transform translate-z-0 will-change-transform select-none"
       style={{ WebkitTapHighlightColor: "transparent" }}
     >
-      {/* 🎬 IFRAME (Z-INDEX 1) - Désinstallation physique hors-champ */}
+      {/* 🎬 IFRAME UNIQUE (Z-INDEX 1) - Toujours "chaude" si shouldPreload */}
       {shouldPreload && (
         <div 
           className={cn(
             "absolute inset-0 z-10 transition-opacity duration-200 ease-out will-change-opacity transform translate-z-0",
             isVideoVisible ? "opacity-100" : "opacity-0"
           )}
-          style={{ pointerEvents: isIframeReady ? "auto" : "none" }}
+          style={{ pointerEvents: isPlaying ? "auto" : "none" }} // Empêche interaction YouTube avant le clic Full
         >
           <iframe
-            src={isPlaying ? fullUrl : previewUrl}
+            ref={iframeRef}
+            src={embedUrl}
             title={title}
             className="w-full h-full border-0 scale-105 transform translate-z-0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowFullScreen={isPlaying}
             onLoad={handleIframeLoad}
           />
         </div>
       )}
 
-      {/* 🖼️ THUMBNAIL (Z-INDEX 2) */}
+      {/* 🖼️ THUMBNAIL COUVERTURE (Z-INDEX 2) */}
       <div 
         className={cn(
-          "absolute inset-0 z-20 cursor-pointer transition-opacity duration-200 ease-out will-change-opacity transform translate-z-0",
+          "absolute inset-0 z-20 cursor-pointer transition-all duration-300 ease-out will-change-opacity transform translate-z-0",
           isVideoVisible ? "opacity-0 pointer-events-none" : "opacity-100"
         )}
         onClick={handleStartFullPlay}
       >
         <img
-          src={thumbnailMax}
+          src={`https://img.youtube.com/vi/${id}/maxresdefault.jpg`}
           alt={title}
           className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02] transform translate-z-0"
-          onError={(e) => { e.currentTarget.src = thumbnailFallback; }}
+          onError={(e) => { 
+            e.currentTarget.src = `https://img.youtube.com/vi/${id}/hqdefault.jpg`; 
+          }}
           loading="lazy"
         />
 
-        {/* Global Layer Overlay */}
+        {/* Dynamic Overlay Darkening */}
         <div className="absolute inset-0 z-30 transition-all duration-500 bg-gradient-to-t from-black/70 via-black/20 to-transparent group-hover:from-black/50 transform translate-z-0" />
 
-        {/* Bouton Play Central (Glassmorphism) */}
+        {/* Play Button - Masqué instantanément au clic */}
         {!isPlaying && (
           <div className="absolute inset-0 z-40 flex items-center justify-center pointer-events-none">
             <motion.div 
@@ -201,9 +216,9 @@ export default function InlineYouTubePlayer({ url, title }: InlineYouTubePlayerP
         )}
       </div>
 
-      {/* 🌀 LOADER (VISIBLE UNIQUEMENT AU CLIC PENDANT LE BUFFER) */}
+      {/* 🌀 LOADER (VISIBLE UNIQUEMENT PENDANT LA TRANSITION ALPHA-SYNC) */}
       <AnimatePresence>
-        {isPlaying && !isIframeReady && (
+        {(isPlaying || isPreviewing) && !isIframeReady && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.7 }}
