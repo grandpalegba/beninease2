@@ -9,9 +9,8 @@ interface StitchTalentCardProps {
 }
 
 /**
- * StitchTalentCard - Design "Stitch" de la carte talent (Correction Swipe).
- * Respecte STRICTEMENT le HTML fourni par l'utilisateur.
- * Contient le correctif pour la fluidité du swipe (touch-none).
+ * StitchTalentCard - Design "Stitch" optimisé pour Mobile.
+ * Améliorations : Textes remontés, Bio ajoutée, Proportions ajustées, Border-radius léger.
  */
 export default function StitchTalentCard({ talent }: StitchTalentCardProps) {
   const router = useRouter();
@@ -21,15 +20,16 @@ export default function StitchTalentCard({ talent }: StitchTalentCardProps) {
   const image = talent.avatar_url || "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&q=80&w=800";
   const categorie = talent.categorie;
   const slogan = talent.slogan || "Détenteur d'un savoir-faire unique";
+  const bio = talent.bio;
 
   return (
     <div
       onClick={() => router.push(`/talents/${talent.slug}`)}
-      className="w-full h-full touch-none select-none cursor-pointer group flex flex-col"
+      className="w-full h-full max-h-[90vh] mx-auto touch-none select-none cursor-pointer group flex flex-col overflow-hidden"
     >
-      {/* 🎯 PARTIE 1 — CARTE TALENT (HTML STITCH EXACT) */}
+      {/* 🎯 PARTIE 1 — IMAGE (Aspect mobile optimisé + Corner radius) */}
       <section className="w-full relative flex-shrink-0">
-        <div className="w-full aspect-[4/5] overflow-hidden relative">
+        <div className="w-full aspect-[3/4] md:aspect-[4/5] overflow-hidden relative rounded-2xl">
           <Image
             src={image}
             alt={name}
@@ -38,22 +38,32 @@ export default function StitchTalentCard({ talent }: StitchTalentCardProps) {
             priority
             sizes="(max-width: 768px) 100vw, 400px"
           />
-          {/* Gradient STITCH EXACT */}
+          {/* Gradient STITCH EXACT (Fog) */}
           <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-white via-white via-white/60 to-transparent"></div>
         </div>
       </section>
 
-      {/* 🎯 PARTIE 2 — CONTENU (HTML STITCH EXACT) */}
-      <section className="px-6 py-12 text-center max-w-2xl mx-auto relative z-10 flex-1 bg-white w-full">
+      {/* 🎯 PARTIE 2 — CONTENU (Textes remontés + Bio) */}
+      <section className="px-6 py-8 text-center max-w-2xl mx-auto relative z-10 flex-1 bg-white w-full">
+        {/* Catégorie */}
         <div className="text-amber-600 font-bold uppercase tracking-[0.25em] text-xs md:text-sm mb-4">
           {categorie}
         </div>
 
-        <h1 className="text-3xl md:text-5xl font-extrabold font-manrope text-[#1A1A1A] uppercase mb-4 tracking-[0.15em] leading-tight">
+        {/* Nom (Taille réduite) */}
+        <h1 className="text-2xl md:text-4xl font-extrabold font-manrope text-[#1A1A1A] uppercase mb-4 tracking-[0.15em] leading-tight">
           {name}
         </h1>
 
-        <p className="text-gray-600 italic text-base md:text-lg tracking-wide mb-12">
+        {/* Bio (Nouveau) */}
+        {bio && (
+          <p className="text-gray-600 italic text-sm md:text-base tracking-wide mb-6 px-4">
+            {bio}
+          </p>
+        )}
+
+        {/* Slogan */}
+        <p className="text-gray-400 italic text-sm md:text-base tracking-wide opacity-80">
           "{slogan}"
         </p>
       </section>
