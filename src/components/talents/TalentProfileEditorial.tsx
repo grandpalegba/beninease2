@@ -188,8 +188,8 @@ export default function TalentProfileEditorial({
           className="mt-40 md:mt-60 w-full pt-16 border-t border-gray-50 pb-20"
         >
           <div className="text-center mb-16">
-            <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400 mb-6">
-              Contact
+            <h4 className="text-[12px] md:text-[13px] font-extrabold uppercase tracking-[0.4em] text-gray-800 mb-6">
+              Me contacter
             </h4>
             <div className="w-12 h-[1px] bg-[#C8A96A] mx-auto opacity-50" />
           </div>

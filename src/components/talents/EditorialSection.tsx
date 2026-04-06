@@ -41,8 +41,8 @@ export default function EditorialSection({
       }}
       className="w-full flex flex-col items-center"
     >
-      {/* 1. Titre de Section (Discret, Haut de gamme) */}
-      <h3 className="text-[10px] md:text-[11px] font-bold uppercase tracking-[0.5em] text-gray-300 mb-6">
+      {/* 1. Titre de Section (Renforcé pour visibilité) */}
+      <h3 className="text-[12px] md:text-[13px] font-extrabold uppercase tracking-[0.4em] text-gray-800 mb-6">
         {title}
       </h3>
 
