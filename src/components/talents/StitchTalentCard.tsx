@@ -45,8 +45,8 @@ export default function StitchTalentCard({ talent }: StitchTalentCardProps) {
         </div>
       </section>
 
-      {/* 🎯 PARTIE 2 — CONTENU (Textes "levés" sur la brume / -mt-28) */}
-      <section className="px-6 py-8 text-center max-w-2xl mx-auto relative z-10 flex-1 w-full -mt-28 pointer-events-none">
+      {/* 🎯 PARTIE 2 — CONTENU (Placé sur la partie blanche, sous le brouillard) */}
+      <section className="px-6 py-8 text-center max-w-2xl mx-auto relative z-10 flex-1 w-full bg-white -mt-12">
         
         {/* Catégorie */}
         <div className="text-amber-600 font-bold uppercase tracking-[0.25em] text-xs md:text-sm mb-4">
