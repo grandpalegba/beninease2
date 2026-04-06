@@ -119,22 +119,10 @@ export default function TalentsPage() {
       <CardDeck
         items={talents}
         renderItem={(talent) => (
-          <Link
-            key={talent.id}
-            href={`/talents/${talent.slug}`}
-            className="block cursor-pointer"
-            prefetch
-          >
-            <StitchTalentCard
-              image={
-                talent.avatar_url ||
-                "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&q=80&w=800"
-              }
-              title={`${talent.prenom} ${talent.nom}`}
-              categorie={talent.categorie}
-              bio={talent.bio || "Détenteur d'un savoir-faire ancestral..."}
-            />
-          </Link>
+          <StitchTalentCard 
+            key={talent.id} 
+            talent={talent} 
+          />
         )}
       />
     </div>
