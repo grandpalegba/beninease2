@@ -4,8 +4,9 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase } from "@/utils/supabase/client";
-import TalentProfileStitch from "./TalentProfileStitch";
+import TalentProfileEditorial from "./TalentProfileEditorial";
 
 interface TalentProfileStitchClientProps {
   talent: any;
@@ -14,8 +15,10 @@ interface TalentProfileStitchClientProps {
 }
 
 /**
- * TalentProfileStitchClient - Logique client pour le profil Stitch.
- * Gère le swipe horizontal, le prefetch, le vote et le partage.
+ * TalentProfileStitchClient - Orchestrateur du Profil Éditorial.
+ * - Gère le vote (RPC) et le partage.
+ * - Implémente la navigation discrète (flèches) à la place du swipe dominant.
+ * - Assure une immersion totale dans le storytelling vertical.
  */
 export default function TalentProfileStitchClient({
   talent,
@@ -32,30 +35,23 @@ export default function TalentProfileStitchClient({
     if (prevSlug) router.prefetch(`/talents/${prevSlug}`);
   }, [nextSlug, prevSlug, router]);
 
-  // 2. Gestion du Vote (RPC)
+  // 2. Gestion du Vote
   const handleVote = async () => {
     try {
       setIsVoting(true);
-      
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         toast.error("Connectez-vous pour voter");
         return;
       }
-
-      const { data, error } = await supabase.rpc("cast_weighted_vote", {
+      const { error } = await supabase.rpc("cast_weighted_vote", {
         target_talent_id: talent.id,
       });
-
       if (error) {
-        if (error.message.includes("déjà voté")) {
-          toast.info("Vous avez déjà soutenu ce talent !");
-        } else {
-          throw error;
-        }
+        if (error.message.includes("déjà voté")) toast.info("Vous avez déjà soutenu ce talent !");
+        else throw error;
       } else {
         toast.success("Merci pour votre soutien !");
-        // Mise à jour locale du compteur (approximation si l'impact est inconnu ici)
         setVotesCount((prev: number) => prev + 1);
       }
     } catch (err: any) {
@@ -74,58 +70,66 @@ export default function TalentProfileStitchClient({
       text: `Découvrez le talent de ${talent.prenom} ${talent.nom} sur BeninEase !`,
       url: shareUrl,
     };
-
     try {
-      if (navigator.share) {
-        await navigator.share(shareData);
-      } else {
+      if (navigator.share) await navigator.share(shareData);
+      else {
         await navigator.clipboard.writeText(shareUrl);
-        toast.success("Lien copié dans le presse-papier !");
+        toast.success("Lien copié !");
       }
     } catch (err) {
       console.error("Share error:", err);
     }
   };
 
-  // 4. Animation de sortie/entrée pour le swipe
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={talent.id}
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: -20 }}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
-        drag="x"
-        dragConstraints={{ left: 0, right: 0 }}
-        dragElastic={0.2}
-        onDragEnd={(e, info) => {
-          // Seuil de 100px pour déclencher la navigation
-          if (info.offset.x < -100 && nextSlug) {
-            router.push(`/talents/${nextSlug}`);
-          } else if (info.offset.x > 100 && prevSlug) {
-            router.push(`/talents/${prevSlug}`);
-          }
-        }}
-        className="w-full cursor-grab active:cursor-grabbing"
-      >
-        <TalentProfileStitch
-          id={talent.id}
-          prenom={talent.prenom}
-          nom={talent.nom}
-          avatar_url={talent.avatar_url}
-          bio={talent.bio}
-          slogan={talent.slogan}
-          categorie={talent.categorie}
-          univers={talent.univers}
-          video_urls={talent.video_urls}
-          photo_urls={talent.photo_urls}
-          votes={votesCount}
-          onVote={handleVote}
-          onShare={handleShare}
-          isVoting={isVoting}
-        />
-      </motion.div>
-    </AnimatePresence>
+    <div className="relative w-full">
+      {/* 🧭 NAVIGATION DISCRÈTE (Digital Atelier Feel) */}
+      <nav className="fixed inset-y-0 left-0 right-0 z-[60] flex items-center justify-between px-4 pointer-events-none">
+        {prevSlug && (
+          <motion.button
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 0.3, x: 0 }}
+            whileHover={{ opacity: 1, x: 5 }}
+            onClick={() => router.push(`/talents/${prevSlug}`)}
+            className="p-4 rounded-full bg-white/50 backdrop-blur-sm shadow-sm pointer-events-auto transition-all"
+            aria-label="Profil Précédent"
+          >
+            <ChevronLeft className="w-6 h-6 text-gray-400" />
+          </motion.button>
+        )}
+        {nextSlug && (
+          <motion.button
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 0.3, x: 0 }}
+            whileHover={{ opacity: 1, x: -5 }}
+            onClick={() => router.push(`/talents/${nextSlug}`)}
+            className="p-4 rounded-full bg-white/50 backdrop-blur-sm shadow-sm pointer-events-auto transition-all"
+            aria-label="Profil Suivant"
+          >
+            <ChevronRight className="w-6 h-6 text-gray-400" />
+          </motion.button>
+        )}
+      </nav>
+
+      {/* Animation d'entrée pour le profil global */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={talent.id}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.8, ease: "easeInOut" }}
+          className="w-full"
+        >
+          <TalentProfileEditorial
+            talent={talent}
+            votes={votesCount}
+            onVote={handleVote}
+            onShare={handleShare}
+            isVoting={isVoting}
+          />
+        </motion.div>
+      </AnimatePresence>
+    </div>
   );
 }
