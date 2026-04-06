@@ -53,6 +53,9 @@ export default async function TalentProfilePage({ params }: { params: { slug: st
     return notFound();
   }
 
+  // Marqueur de diagnostic — V3 White Minimalist Design
+  console.log("V3 DESIGN ACTIVE — slug:", slug, "| talent:", talent.prenom, talent.nom);
+
   const fullName = `${talent.prenom} ${talent.nom}`;
 
   // Avatar URL resolving (simplified for now, matching the shell's expectation)
