@@ -25,7 +25,9 @@ export interface Mystere {
   title: string;
   subtitle: string;
   mise_en_abyme: string;
-  icon: string;
+  icon?: string; // Optionnel si on utilise cover_image_url
+  cover_image_url: string | null;
+  difficulty: number;
   mystere_number: number;
   theme?: Theme;
   questions?: Question[];

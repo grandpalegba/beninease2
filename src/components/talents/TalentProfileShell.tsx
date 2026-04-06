@@ -2,7 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { Search, Filter, Play, Mail, Heart, Share2, MapPin, Globe, CheckCircle2, Loader2 } from "lucide-react";
+import {
+  Play, Heart, CheckCircle2, Loader2, MapPin, Instagram,
+  MessageCircle, ChevronRight, Share2
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { confetti } from "tsparticles-confetti";
 import { toast } from "sonner";
@@ -10,13 +13,17 @@ import { supabase } from "@/utils/supabase/client";
 import { useVoter } from "@/lib/auth/use-voter";
 import { cn } from "@/lib/utils";
 
+// ─── Types ───────────────────────────────────────────────────────────────────
+
 interface TalentProfileShellProps {
   id: string;
   full_name: string;
   city: string;
   avatar_url: string;
   bio_longue: string;
+  slogan?: string;
   video_urls: string[];
+  photo_urls?: string[];
   votes: number;
   univers: string;
   categorie: string;
@@ -27,17 +34,164 @@ interface TalentProfileShellProps {
   };
 }
 
-const TABS = [
-  { id: "videos", label: "VIDÉOS", icon: Play },
-  { id: "contact", label: "CONTACT & INFOS", icon: Mail },
-];
+// ─── Constants ───────────────────────────────────────────────────────────────
 
-const VIDEO_THEMES = [
-  { id: 0, label: "QUI JE SUIS" },
-  { id: 1, label: "MON HISTOIRE" },
-  { id: 2, label: "MON SERVICE" },
-  { id: 3, label: "POURQUOI MOI" },
-];
+const VIDEO_LABELS = ["Présentation", "Mon Parcours", "Mon Service", "Pourquoi Moi"];
+const PHOTO_LABELS = ["Éclat", "Identité", "Mouvement", "Signature"];
+
+// Correspondance des formats photo/vidéo par position
+const PHOTO_ASPECTS = ["aspect-[4/5]", "aspect-square", "aspect-video", "aspect-[4/5]"] as const;
+const VIDEO_ASPECTS = ["aspect-video", "aspect-video", "aspect-video", "aspect-video"] as const;
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+function getEmbedUrl(url: string | undefined): string {
+  if (!url) return "";
+  let videoId = "";
+  if (url.includes("v=")) videoId = url.split("v=")[1].split("&")[0];
+  else if (url.includes("youtu.be/")) videoId = url.split("youtu.be/")[1].split("?")[0];
+  else if (url.includes("embed/")) videoId = url.split("embed/")[1].split("?")[0];
+  return videoId ? `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1` : url;
+}
+
+function getYoutubeThumbnail(url: string | undefined): string {
+  if (!url) return "";
+  let videoId = "";
+  if (url.includes("v=")) videoId = url.split("v=")[1].split("&")[0];
+  else if (url.includes("youtu.be/")) videoId = url.split("youtu.be/")[1].split("?")[0];
+  else if (url.includes("embed/")) videoId = url.split("embed/")[1].split("?")[0];
+  return videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : "";
+}
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+/** Ligne tricolore du drapeau béninois */
+function BeninFlagLine({ className }: { className?: string }) {
+  return (
+    <div className={cn("flex h-[3px] w-full overflow-hidden rounded-full", className)}>
+      <div className="flex-1 bg-[#008751]" />
+      <div className="flex-1 bg-[#FCD116]" />
+      <div className="flex-1 bg-[#E8112D]" />
+    </div>
+  );
+}
+
+/** Carte vidéo YouTube avec bouton play */
+function VideoCard({
+  url,
+  label,
+  className,
+  aspectClass = "aspect-video",
+  avatarFallback,
+}: {
+  url?: string;
+  label: string;
+  className?: string;
+  aspectClass?: string;
+  avatarFallback: string;
+}) {
+  const [playing, setPlaying] = useState(false);
+  const embedUrl = getEmbedUrl(url);
+  const thumbnail = getYoutubeThumbnail(url);
+  const hasVideo = !!url;
+
+  return (
+    <div className={cn("group flex flex-col gap-3", className)}>
+      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#008751]">{label}</p>
+      <div className={cn("relative overflow-hidden bg-[#0F0F0F] rounded-2xl border border-black/5", aspectClass)}>
+        {playing && hasVideo ? (
+          <iframe
+            src={`${embedUrl}&autoplay=1`}
+            className="w-full h-full"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        ) : (
+          <>
+            {/* Thumbnail */}
+            <div className="absolute inset-0">
+              <Image
+                src={thumbnail || avatarFallback || "/placeholder-portrait.jpg"}
+                alt={label}
+                fill
+                className="object-cover opacity-70 transition-transform duration-700 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+            </div>
+
+            {/* Play button */}
+            <button
+              onClick={() => hasVideo && setPlaying(true)}
+              className={cn(
+                "absolute inset-0 flex items-center justify-center transition-all duration-300",
+                hasVideo ? "cursor-pointer" : "cursor-default"
+              )}
+            >
+              <motion.div
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                className={cn(
+                  "w-14 h-14 rounded-full flex items-center justify-center backdrop-blur-md border border-white/20",
+                  hasVideo ? "bg-white/90 shadow-xl" : "bg-white/20"
+                )}
+              >
+                <Play className={cn("w-5 h-5 fill-current ml-0.5", hasVideo ? "text-[#1A1A1A]" : "text-white/50")} />
+              </motion.div>
+            </button>
+
+            {/* Label bottom */}
+            <div className="absolute bottom-4 left-4">
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/80">
+                {hasVideo ? "YouTube" : "À venir"}
+              </span>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/** Carte photo style "Light Essence Photography" */
+function PhotoCard({
+  url,
+  label,
+  className,
+  aspectClass = "aspect-square",
+}: {
+  url?: string;
+  label: string;
+  className?: string;
+  aspectClass?: string;
+}) {
+  return (
+    <div className={cn("group flex flex-col gap-3", className)}>
+      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">{label}</p>
+      <div className={cn("relative overflow-hidden bg-gray-50 rounded-2xl border border-black/5", aspectClass)}>
+        {url ? (
+          <Image
+            src={url}
+            alt={label}
+            fill
+            className="object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+        ) : (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+            {/* Placeholder elegante */}
+            <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+              <div className="w-3 h-3 rounded-full bg-gray-300" />
+            </div>
+            <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-gray-300">Photo</span>
+          </div>
+        )}
+        {/* Subtle hover overlay */}
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-all duration-500 rounded-2xl" />
+      </div>
+    </div>
+  );
+}
+
+// ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function TalentProfileShell({
   id,
@@ -45,20 +199,19 @@ export default function TalentProfileShell({
   city,
   avatar_url,
   bio_longue,
+  slogan,
   video_urls = [],
+  photo_urls = [],
   votes: initialVotes,
   univers,
   categorie,
   social_links,
 }: TalentProfileShellProps) {
   const { session, isAuthenticated, checkHasVoted } = useVoter();
-  const [activeTab, setActiveTab] = useState("videos");
-  const [activeVideoIndex, setActiveVideoIndex] = useState(0);
   const [hasVoted, setHasVoted] = useState(false);
   const [isVoting, setIsVoting] = useState(false);
   const [votesCount, setVotesCount] = useState(initialVotes);
 
-  // Sync with actual vote status
   useEffect(() => {
     if (isAuthenticated) {
       checkHasVoted(id).then(setHasVoted);
@@ -70,19 +223,14 @@ export default function TalentProfileShell({
       toast.error("Veuillez vous connecter pour voter");
       return;
     }
-
     if (hasVoted || isVoting) return;
 
     setIsVoting(true);
     try {
-      const { error } = await supabase.from("votes").insert([
-        {
-          voter_id: session?.user.id,
-          talent_id: id,
-          univers,
-          categorie,
-        },
-      ]);
+      const { error } = await supabase.from("votes").insert([{
+        user_id: session?.user.id,
+        talent_id: id,
+      }]);
 
       if (error) {
         if (error.code === "23505") {
@@ -93,10 +241,8 @@ export default function TalentProfileShell({
         }
       } else {
         setHasVoted(true);
-        setVotesCount((prev) => prev + 1);
+        setVotesCount((prev: number) => prev + 1);
         toast.success("Soutien enregistré ! Merci.");
-        
-        // Success effect
         const canvas = document.createElement("canvas");
         confetti(canvas, { particleCount: 150, spread: 70, origin: { y: 0.6 } });
       }
@@ -108,233 +254,232 @@ export default function TalentProfileShell({
     }
   };
 
-  const displayVideos = [...video_urls, "", "", "", ""].slice(0, 4);
+  // Padder les arrays à 4 éléments
+  const videos = [...video_urls, "", "", "", ""].slice(0, 4);
+  const photos = [...photo_urls, "", "", "", ""].slice(0, 4);
 
   return (
-    <div className="min-h-screen bg-[#F9F9F7] text-[#1A1A1A] font-sans antialiased pb-20">
-      {/* 1. Global Search Bar (Minimalist) */}
-      <div className="w-full bg-white border-b border-gray-100 px-6 py-4 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto flex gap-4">
-          <div className="relative flex-1 group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-[#008751] transition-colors" />
-            <input 
-              type="text" 
-              placeholder="Rechercher un talent..." 
-              className="w-full h-11 pl-11 pr-4 bg-white border border-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#008751]/10 focus:border-[#008751] transition-all placeholder:text-gray-300"
-            />
-          </div>
-          <button className="w-11 h-11 bg-[#008751] rounded-xl flex items-center justify-center text-white shadow-lg shadow-[#008751]/20 hover:bg-[#006B3F] transition-all">
-            <Filter className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
+    <div className="min-h-screen bg-[#F9F9F7] text-[#1A1A1A] font-sans antialiased">
 
-      <main className="max-w-5xl mx-auto px-6 mt-12">
-        {/* 2. Main Profile Card */}
-        <div className="bg-white rounded-[40px] border border-gray-100 shadow-[0_10px_60px_-15px_rgba(0,0,0,0.03)] overflow-hidden">
-          <div className="p-8 md:p-12 pb-6">
-            <div className="flex flex-col md:flex-row gap-10 items-center md:items-start">
-              
-              {/* Avatar Circle */}
-              <div className="relative w-36 h-36 md:w-44 md:h-44 rounded-[40px] overflow-hidden border-[6px] border-white shadow-xl flex-shrink-0 group">
-                <Image 
-                  src={avatar_url || "/placeholder-portrait.jpg"} 
-                  alt={full_name} 
-                  fill 
+      {/* ── HERO / ID CARD ─────────────────────────────────────────────────── */}
+      <header className="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
+        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
+          <span className="text-[10px] font-black uppercase tracking-[0.25em] text-[#008751]">BeninEase</span>
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={handleVote}
+            disabled={isVoting || hasVoted}
+            className={cn(
+              "flex items-center gap-2 px-5 py-2.5 rounded-full text-[11px] font-black uppercase tracking-[0.15em] transition-all",
+              hasVoted
+                ? "bg-[#008751]/10 text-[#008751] border border-[#008751]/20"
+                : "bg-[#008751] text-white shadow-lg shadow-[#008751]/25 hover:bg-[#006B3F]"
+            )}
+          >
+            {isVoting ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            ) : hasVoted ? (
+              <CheckCircle2 className="w-3.5 h-3.5" />
+            ) : (
+              <Heart className="w-3.5 h-3.5" />
+            )}
+            {hasVoted ? "Soutenu" : "Soutenir"}
+          </motion.button>
+        </div>
+      </header>
+
+      <main className="max-w-5xl mx-auto px-6 py-12 space-y-12">
+
+        {/* ── PROFILE CARD ───────────────────────────────────────────────── */}
+        <section className="bg-white rounded-3xl border border-gray-100 overflow-hidden">
+          <div className="p-8 md:p-10">
+            <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
+
+              {/* Avatar */}
+              <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-2xl overflow-hidden border-4 border-white shadow-xl flex-shrink-0 group">
+                <Image
+                  src={avatar_url || "/placeholder-portrait.jpg"}
+                  alt={full_name}
+                  fill
                   className="object-cover transition-transform duration-700 group-hover:scale-110"
-                  priority 
+                  priority
                 />
               </div>
 
-              {/* Identity & Voting Info */}
-              <div className="flex-1 space-y-8 text-center md:text-left">
-                <div className="space-y-1">
-                  <h1 className="text-4xl md:text-6xl font-display font-medium tracking-tight text-[#1A1A1A]">
-                    {full_name}
-                  </h1>
+              {/* Identité */}
+              <div className="flex-1 text-center md:text-left space-y-4">
+                <div>
+                  <h1 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight">{full_name}</h1>
+                  {slogan && (
+                    <p className="mt-1 text-base text-gray-400 italic font-light">« {slogan} »</p>
+                  )}
                 </div>
 
-                {/* Vote Card (White Centered) */}
-                <motion.button 
-                  whileHover={{ y: -2 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={handleVote}
-                  disabled={isVoting || hasVoted}
-                  className="inline-block bg-white border border-gray-100 rounded-[28px] p-6 shadow-[0_8px_30px_rgba(0,0,0,0.04)] min-w-[240px] transition-all hover:shadow-[0_15px_40px_rgba(0,0,0,0.06)] group relative"
-                >
-                  <span className="block text-[10px] font-black uppercase tracking-[0.25em] text-[#008751] mb-2">Nombre de votes</span>
-                  <div className="flex items-center justify-center gap-3">
-                    <span className="text-4xl font-bold text-[#1A1A1A]">{votesCount}</span>
-                    {isVoting ? (
-                      <Loader2 className="w-5 h-5 animate-spin text-gray-300" />
-                    ) : hasVoted ? (
-                      <CheckCircle2 className="w-6 h-6 text-[#008751] fill-[#008751]/10" />
-                    ) : (
-                      <Heart className="w-6 h-6 text-gray-200 group-hover:text-red-500 transition-colors" />
-                    )}
-                  </div>
-                </motion.button>
-
-                {/* Badges & Location Info */}
-                <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-4 gap-y-3">
-                  <span className="px-5 py-2 bg-[#008751]/5 text-[#008751] rounded-full text-[10px] font-black uppercase tracking-[0.15em] border border-[#008751]/10">
+                {/* Badges */}
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
+                  <span className="px-4 py-1.5 bg-[#008751]/8 text-[#008751] rounded-full text-[10px] font-black uppercase tracking-[0.15em] border border-[#008751]/15">
                     {univers}
                   </span>
-                  <span className="text-gray-300 hidden md:inline">•</span>
-                  <span className="text-[10px] font-black uppercase tracking-[0.15em] text-gray-400">
+                  <span className="px-4 py-1.5 bg-gray-50 text-gray-500 rounded-full text-[10px] font-black uppercase tracking-[0.15em] border border-gray-100">
                     {categorie}
                   </span>
                 </div>
 
-                <div className="flex flex-wrap items-center justify-center md:justify-start gap-6 pt-2">
-                  <div className="flex items-center gap-2 text-gray-400 text-xs font-bold uppercase tracking-widest">
-                    <MapPin className="w-4 h-4 text-black" /> {city}, BÉNIN
+                {/* Meta */}
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-5">
+                  <div className="flex items-center gap-1.5 text-gray-400 text-[11px] font-bold uppercase tracking-wider">
+                    <MapPin className="w-3.5 h-3.5 text-[#1A1A1A]" />
+                    {city}, Bénin
                   </div>
-                  <div className="flex items-center gap-2 text-gray-400 text-xs font-bold uppercase tracking-widest">
-                    <Globe className="w-4 h-4 text-black" /> {categorie}
+                  <div className="flex items-center gap-1.5 text-gray-400 text-[11px] font-bold uppercase tracking-wider">
+                    <Heart className="w-3.5 h-3.5 text-[#E8112D]" />
+                    <span className="text-[#1A1A1A] font-black">{votesCount}</span>&nbsp;soutiens
                   </div>
+                </div>
+
+                {/* Réseaux sociaux */}
+                <div className="flex items-center justify-center md:justify-start gap-3 pt-1">
+                  {social_links.instagram && (
+                    <a
+                      href={social_links.instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-500 hover:text-[#E1306C] hover:border-[#E1306C]/20 transition-all"
+                    >
+                      <Instagram className="w-4 h-4" />
+                    </a>
+                  )}
+                  {social_links.tiktok && (
+                    <a
+                      href={social_links.tiktok}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-500 hover:text-[#1A1A1A] hover:border-gray-400 transition-all"
+                    >
+                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.53a8.26 8.26 0 004.84 1.55V6.64a4.85 4.85 0 01-1.07.05z"/>
+                      </svg>
+                    </a>
+                  )}
+                  {social_links.whatsapp && (
+                    <a
+                      href={`https://wa.me/${social_links.whatsapp}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-500 hover:text-[#25D366] hover:border-[#25D366]/20 transition-all"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                    </a>
+                  )}
+                  <button className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 hover:text-[#1A1A1A] transition-all">
+                    <Share2 className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* 3. Navigation Tabs */}
-          <div className="px-8 md:px-12 border-t border-gray-50 flex gap-10">
-            {TABS.map(({ id, label, icon: Icon }) => (
-              <button
-                key={id}
-                onClick={() => setActiveTab(id)}
-                className={cn(
-                  "py-8 flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.25em] transition-all relative group",
-                  activeTab === id ? "text-[#1A1A1A]" : "text-gray-300 hover:text-gray-500"
-                )}
-              >
-                <Icon className={cn("w-4 h-4 transition-transform group-hover:scale-110", activeTab === id ? "text-[#008751]" : "")} />
-                {label}
-                {activeTab === id && (
-                  <motion.div 
-                    layoutId="tab-underline"
-                    className="absolute bottom-0 left-0 right-0 h-1 bg-[#008751] rounded-t-full" 
-                  />
-                )}
-              </button>
-            ))}
-          </div>
+          {/* Benin Flag Line */}
+          <BeninFlagLine />
+
+          {/* Biographie */}
+          {bio_longue && (
+            <div className="px-8 md:px-10 py-6">
+              <p className="text-gray-500 leading-7 text-base font-light max-w-2xl">
+                {bio_longue}
+              </p>
+            </div>
+          )}
+        </section>
+
+        {/* ── SÉPARATEUR SECTION CONTENU ─────────────────────────────────── */}
+        <div className="flex items-center gap-4">
+          <BeninFlagLine className="flex-1" />
+          <span className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-400 whitespace-nowrap">Portfolio</span>
+          <BeninFlagLine className="flex-1" />
         </div>
 
-        {/* 4. Tab Content 영역 */}
-        <AnimatePresence mode="wait">
-          {activeTab === "videos" ? (
-            <motion.div 
-              key="videos"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="mt-12 space-y-12"
-            >
-              {/* Main Player Display */}
-              <div className="aspect-video bg-black rounded-[40px] overflow-hidden shadow-2xl border-[10px] border-white ring-1 ring-gray-100">
-                <iframe
-                 src={getEmbedUrl(displayVideos[activeVideoIndex])}
-                 className="w-full h-full"
-                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                 allowFullScreen
-               />
-              </div>
+        {/* ── BENTO BOX GRID — ENTRELACEMENT VIDÉO / PHOTO ────────────── */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="flex flex-col gap-8"
+        >
+          {videos.map((videoUrl, i) => {
+            const photo = photo_urls?.[i]; // undefined si tableau vide ou index manquant
+            const hasPhoto = !!photo;
+            const isFirst = i === 0;
+            const isLast = i === videos.length - 1;
 
-              {/* Selector Thumbnails */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-                {VIDEO_THEMES.map((theme, i) => (
-                  <button
-                    key={theme.id}
-                    onClick={() => setActiveVideoIndex(i)}
-                    className={cn(
-                      "relative group aspect-[16/10] rounded-[24px] overflow-hidden transition-all duration-500 active:scale-95",
-                      activeVideoIndex === i 
-                        ? "ring-4 ring-[#008751] scale-[1.02] shadow-xl" 
-                        : "ring-1 ring-gray-200 grayscale-[0.3] hover:grayscale-0"
-                    )}
-                  >
-                    {/* Background visual based on category/theme (placeholder) */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-gray-900/80 to-gray-900/40" />
-                    <Image 
-                      src={avatar_url || "/placeholder-portrait.jpg"} 
-                      alt="" 
-                      fill 
-                      className="object-cover mix-blend-overlay transition-transform duration-700 group-hover:scale-110" 
-                    />
-                    
-                    <div className="absolute inset-0 flex items-center justify-center p-4">
-                      <span className="text-[10px] md:text-[11px] font-black text-white uppercase tracking-[0.2em] text-center filter drop-shadow-md">
-                        {theme.label}
-                      </span>
-                    </div>
-                    {/* Play Indicator overlay */}
-                    <div className={cn(
-                      "absolute top-3 right-3 w-6 h-6 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center transition-all opacity-0 group-hover:opacity-100",
-                      activeVideoIndex === i && "bg-[#008751] opacity-100"
-                    )}>
-                      <Play className="w-2.5 h-2.5 text-white fill-current" />
-                    </div>
-                  </button>
-                ))}
+            return (
+              <div key={i} className="flex flex-col gap-6">
+                {/* Vidéo : pleine largeur pour la 1ère et la dernière */}
+                <VideoCard
+                  url={videoUrl}
+                  label={VIDEO_LABELS[i] ?? `Vidéo ${i + 1}`}
+                  aspectClass={isFirst || isLast ? "aspect-video" : "aspect-video"}
+                  avatarFallback={avatar_url}
+                />
+
+                {/* Photo associée — seulement si elle existe */}
+                {hasPhoto && (
+                  <PhotoCard
+                    url={photo}
+                    label={PHOTO_LABELS[i] ?? `Photo ${i + 1}`}
+                    aspectClass={PHOTO_ASPECTS[i] ?? "aspect-square"}
+                  />
+                )}
+
+                {/* Séparateur entre les blocs (sauf après le dernier) */}
+                {!isLast && (
+                  <BeninFlagLine className="opacity-30" />
+                )}
               </div>
-            </motion.div>
-          ) : (
-            <motion.div 
-              key="contact"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="mt-12 bg-white rounded-[40px] p-12 border border-gray-100 shadow-sm space-y-12"
-            >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                <div className="space-y-6">
-                  <h2 className="text-3xl font-display font-medium tracking-tight">Biographie</h2>
-                  <p className="text-gray-500 leading-relaxed text-lg font-light italic">
-                    « {bio_longue} »
-                  </p>
-                </div>
-                
-                <div className="space-y-8">
-                   <h2 className="text-3xl font-display font-medium tracking-tight">Réseaux Sociaux</h2>
-                   <div className="flex gap-4">
-                    {social_links.instagram && (
-                      <SocialIcon href={social_links.instagram} icon={Instagram} />
-                    )}
-                    {social_links.whatsapp && (
-                      <SocialIcon href={`https://wa.me/${social_links.whatsapp}`} icon={Mail} /> // Should be WhatsApp icon but keeping consistent
-                    )}
-                   </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            );
+          })}
+        </motion.section>
+
+        {/* ── CALL TO ACTION VOTE ─────────────────────────────────────────── */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="bg-white rounded-3xl border border-gray-100 p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6"
+        >
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[0.25em] text-[#008751] mb-1">Soutenir ce talent</p>
+            <p className="text-2xl font-bold">
+              <span className="text-[#008751]">{votesCount}</span> personnes ont déjà voté
+            </p>
+            <p className="text-gray-400 text-sm mt-1">Votre soutien compte. Un vote par compte.</p>
+          </div>
+          <motion.button
+            whileHover={{ scale: 1.03, y: -2 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={handleVote}
+            disabled={isVoting || hasVoted}
+            className={cn(
+              "flex items-center gap-3 px-8 py-4 rounded-2xl text-sm font-black uppercase tracking-[0.15em] transition-all",
+              hasVoted
+                ? "bg-[#008751]/10 text-[#008751] border border-[#008751]/20"
+                : "bg-[#008751] text-white shadow-xl shadow-[#008751]/25 hover:bg-[#006B3F]"
+            )}
+          >
+            {isVoting ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : hasVoted ? (
+              <CheckCircle2 className="w-4 h-4" />
+            ) : (
+              <Heart className="w-4 h-4" />
+            )}
+            {hasVoted ? "Merci pour votre soutien !" : "Voter maintenant"}
+            {!hasVoted && !isVoting && <ChevronRight className="w-4 h-4" />}
+          </motion.button>
+        </motion.div>
 
       </main>
     </div>
   );
-}
-
-function SocialIcon({ href, icon: Icon }: { href: string, icon: any }) {
-  return (
-    <a 
-      href={href} 
-      target="_blank" 
-      rel="noopener noreferrer" 
-      className="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-gray-600 hover:text-[#008751] hover:border-[#008751]/20 transition-all shadow-sm hover:shadow-lg"
-    >
-      <Icon className="w-6 h-6" />
-    </a>
-  );
-}
-
-function getEmbedUrl(url: string | undefined): string {
-  if (!url) return "";
-  let videoId = "";
-  if (url.includes("v=")) videoId = url.split("v=")[1].split("&")[0];
-  else if (url.includes("youtu.be/")) videoId = url.split("youtu.be/")[1].split("?")[0];
-  else if (url.includes("embed/")) videoId = url.split("embed/")[1].split("?")[0];
-  return videoId ? `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1` : url;
 }

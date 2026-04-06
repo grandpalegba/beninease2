@@ -34,9 +34,8 @@ export interface Talent {
   whatsapp_number: string | null;
   instagram_url: string | null;
   tiktok_url: string | null;
-  description: string | null;
-  title: string | null;
-  bio: string | null;
+  slogan: string | null;
+  bio: string | null; // Utilisé pour bio_longue
   updated_at: string | null;
   video_1_id: string | null;
   video_2_id: string | null;

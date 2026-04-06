@@ -44,7 +44,7 @@ export default async function TalentProfilePage({ params }: { params: { slug: st
 
   const { data: talent, error } = await supabase
     .from("talents")
-    .select("id, prenom, nom, city, avatar_url, bio, video_urls, votes, univers, categorie, instagram_url, tiktok_url, whatsapp_number")
+    .select("id, prenom, nom, city, avatar_url, bio, slogan, video_urls, photo_urls, votes, univers, categorie, instagram_url, tiktok_url, whatsapp_number")
     .eq("slug", slug)
     .single();
 
@@ -68,7 +68,9 @@ export default async function TalentProfilePage({ params }: { params: { slug: st
       city={talent.city || "Bénin"}
       avatar_url={publicAvatarUrl || ""}
       bio_longue={talent.bio || ""}
+      slogan={talent.slogan || undefined}
       video_urls={talent.video_urls || []}
+      photo_urls={talent.photo_urls || []}
       votes={talent.votes || 0}
       univers={talent.univers}
       categorie={talent.categorie}

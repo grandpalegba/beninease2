@@ -10,7 +10,13 @@ export class TreasuresService {
       const { data, error } = await supabase
         .from('mysteres')
         .select(`
-          *,
+          id,
+          title,
+          subtitle,
+          mise_en_abyme,
+          difficulty,
+          cover_image_url,
+          mystere_number,
           theme:themes(id, name, order),
           questions:questions(
             id,
