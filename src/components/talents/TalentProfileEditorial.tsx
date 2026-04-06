@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useState, useRef } from "react";
-import Image from "next/image";
+import React, { useRef } from "react";
+import { Share2 } from "lucide-react";
 import { motion } from "framer-motion";
-import { Share2, MessageCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import EditorialSection from "./EditorialSection";
-import VideoModal from "../ui/VideoModal";
+import PremiumImage from "../ui/PremiumImage";
 
 interface TalentProfileEditorialProps {
   talent: any;
@@ -17,10 +16,10 @@ interface TalentProfileEditorialProps {
 }
 
 /**
- * TalentProfileEditorial - Expérience "Digital Atelier" Raffinée.
- * - Image de profil agrandie (320px/380px) avec radius réduit (20px).
- * - Social Proof (Compteur de Soutiens) vert, large, sous les CTAs.
- * - Rythme vertical aéré et padding de sécurité pour navigation basse.
+ * TalentProfileEditorial - L'Expérience "Digital Atelier" Immersive.
+ * - Utilisation de PremiumImage pour le héros et les sections.
+ * - Navigation narrative fluide sans modals.
+ * - Optimisation de la hiérarchie visuelle et de la conversion.
  */
 export default function TalentProfileEditorial({
   talent,
@@ -29,10 +28,9 @@ export default function TalentProfileEditorial({
   onShare,
   isVoting = false,
 }: TalentProfileEditorialProps) {
-  const [activeVideo, setActiveVideo] = useState<string | null>(null);
   const contactFormRef = useRef<HTMLDivElement>(null);
 
-  // Définition de la structure narrative (Ordre Strict)
+  // Définition de la structure narrative
   const sections = [
     {
       id: "qui-je-suis",
@@ -60,8 +58,6 @@ export default function TalentProfileEditorial({
     },
   ];
 
-  const handlePlayVideo = (url: string) => setActiveVideo(url);
-
   // Scroll vers le formulaire de contact
   const scrollToContact = () => {
     contactFormRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -81,18 +77,12 @@ export default function TalentProfileEditorial({
           transition={{ duration: 1, ease: [0.21, 0.47, 0.32, 0.98] }}
           className="flex flex-col items-center text-center mb-32 md:mb-40"
         >
-          {/* Portrait Image (1:1 Optimized) */}
-          <div className="relative w-[320px] h-[320px] md:w-[380px] md:h-[380px] mb-16 mx-auto group">
-            <Image
+          {/* Portrait Image Premium (1:1) */}
+          <div className="relative w-[320px] h-[320px] md:w-[380px] md:h-[380px] mb-16 mx-auto">
+            <PremiumImage 
               src={talent.avatar_url || "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&q=80&w=800"}
               alt={`${talent.prenom} ${talent.nom}`}
-              fill
-              className="object-cover rounded-[20px] shadow-2xl transition-transform duration-700 group-hover:scale-[1.02] pointer-events-none"
-              priority
-              loading="eager"
-              decoding="async"
-              draggable={false}
-              sizes="(max-width: 768px) 320px, 380px"
+              aspectRatio="square"
             />
           </div>
 
@@ -173,7 +163,6 @@ export default function TalentProfileEditorial({
               title={section.title}
               videoUrl={section.videoUrl}
               imageUrl={section.imageUrl}
-              onPlayVideo={handlePlayVideo}
               index={index}
             />
           ))}
@@ -219,13 +208,6 @@ export default function TalentProfileEditorial({
           </form>
         </motion.section>
       </main>
-
-      {/* Video Cinematic Modal */}
-      <VideoModal
-        url={activeVideo}
-        isOpen={!!activeVideo}
-        onClose={() => setActiveVideo(null)}
-      />
     </div>
   );
 }
