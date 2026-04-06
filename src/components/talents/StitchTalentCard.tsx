@@ -60,15 +60,10 @@ export default function StitchTalentCard({ talent }: StitchTalentCardProps) {
 
         {/* Bio */}
         {bio && (
-          <p className="text-gray-600 italic text-sm md:text-base tracking-wide mb-6 px-4">
+          <p className="text-gray-600 italic text-sm md:text-base tracking-wide px-4">
             {bio}
           </p>
         )}
-
-        {/* Slogan */}
-        <p className="text-gray-400 italic text-sm md:text-base tracking-wide opacity-80">
-          "{slogan}"
-        </p>
       </section>
     </div>
   );

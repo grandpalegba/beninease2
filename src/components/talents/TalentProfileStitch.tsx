@@ -23,8 +23,8 @@ interface TalentProfileStitchProps {
 }
 
 /**
- * TalentProfileStitch - Présentation pure du profil (UI uniquement).
- * Design STRICTEMENT identique au HTML "Stitch".
+ * TalentProfileStitch - Présentation raffinée du profil "Stitch".
+ * Effet "Fog", textes levés et protections anti-extraction.
  */
 export default function TalentProfileStitch({
   prenom,
@@ -45,30 +45,38 @@ export default function TalentProfileStitch({
   const hasPhotos = photo_urls.length > 0;
 
   return (
-    <section className="mb-24 text-center max-w-4xl mx-auto px-6">
-      {/* ═ HERO SECTION (HTML STITCH) ════════════════════════════════════════ */}
+    <section 
+      className="mb-24 text-center max-w-4xl mx-auto px-6 select-none"
+      onContextMenu={(e) => e.preventDefault()}
+    >
+      {/* ═ HERO SECTION (Stitch Look + Projections) ═══════════════════════════ */}
       <div className="flex justify-center mb-12">
         <div className="w-80 h-80 md:w-96 md:h-96 overflow-hidden rounded-3xl relative shadow-xl">
           <Image
             src={avatar_url || "/placeholder-portrait.jpg"}
             alt={`${prenom} ${nom}`}
             fill
-            className="object-cover"
+            className="object-cover pointer-events-none"
             priority
+            draggable={false}
             sizes="(max-width: 768px) 320px, 384px"
           />
+          {/* Gradient STITCH EXACT (Fog) */}
+          <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-white via-white via-white/40 to-transparent pointer-events-none"></div>
         </div>
       </div>
 
-      <h1 className="text-5xl md:text-6xl font-black uppercase tracking-[0.1em] text-[#1A1A1A]">
-        {prenom} {nom}
-      </h1>
+      <div className="-mt-20 relative z-10">
+        <h1 className="text-5xl md:text-6xl font-black uppercase tracking-[0.1em] text-[#1A1A1A]">
+          {prenom} {nom}
+        </h1>
 
-      <p className="italic text-gray-500 mt-2 text-lg">
-        {slogan ? `« ${slogan} »` : "Détenteur d'un savoir-faire unique"}
-      </p>
+        <p className="italic text-gray-500 mt-2 text-lg">
+          {slogan ? `« ${slogan} »` : "Détenteur d'un savoir-faire unique"}
+        </p>
+      </div>
 
-      <p className="mt-8 text-gray-600 max-w-xl mx-auto leading-relaxed text-lg">
+      <p className="mt-12 text-gray-600 max-w-xl mx-auto leading-relaxed text-lg">
         {bio}
       </p>
 
@@ -94,7 +102,7 @@ export default function TalentProfileStitch({
         </div>
       </div>
 
-      {/* Share Button (Lucide Icon for high-end look) */}
+      {/* Share Button */}
       <button 
         onClick={onShare}
         className="mt-6 p-4 rounded-full bg-gray-50 border border-gray-100 text-gray-400 hover:text-gray-600 transition-all shadow-sm"
@@ -115,7 +123,7 @@ export default function TalentProfileStitch({
                   src={url.includes('youtube.com') || url.includes('youtu.be') 
                     ? `https://www.youtube.com/embed/${url.split('v=')[1] || url.split('/').pop()}?rel=0`
                     : url}
-                  className="w-full h-full"
+                  className="w-full h-full pointer-events-auto"
                   allowFullScreen
                 />
               </div>
@@ -132,12 +140,13 @@ export default function TalentProfileStitch({
           </h4>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {photo_urls.map((url, i) => (
-              <div key={i} className="aspect-square relative rounded-3xl overflow-hidden shadow-lg hover:scale-105 transition-transform">
+              <div key={i} className="aspect-square relative rounded-3xl overflow-hidden shadow-lg hover:scale-105 transition-transform group">
                 <Image
                   src={url}
                   alt={`Photo ${i + 1}`}
                   fill
-                  className="object-cover"
+                  className="object-cover pointer-events-none"
+                  draggable={false}
                 />
               </div>
             ))}
