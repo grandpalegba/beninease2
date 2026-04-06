@@ -17,11 +17,10 @@ interface TalentProfileEditorialProps {
 }
 
 /**
- * TalentProfileEditorial - L'Expérience "Digital Atelier" Raffinée.
- * - Typographie synchronisée avec le listing.
- * - Storytelling vertical pur (sans overlays média).
- * - CTA "Me contacter" avec scroll fluide.
- * - Formulaire de contact minimaliste pour conversion.
+ * TalentProfileEditorial - Expérience "Digital Atelier" Raffinée.
+ * - Image de profil agrandie (320px/380px) avec radius réduit (20px).
+ * - Social Proof (Compteur de Soutiens) vert, large, sous les CTAs.
+ * - Rythme vertical aéré et padding de sécurité pour navigation basse.
  */
 export default function TalentProfileEditorial({
   talent,
@@ -73,7 +72,7 @@ export default function TalentProfileEditorial({
       className="w-full bg-white font-manrope selection:bg-[#FCD116]/30 overflow-x-hidden"
       onContextMenu={(e) => e.preventDefault()}
     >
-      <main className="max-w-[820px] mx-auto px-6 pt-12 md:pt-24 pb-40">
+      <main className="max-w-[820px] mx-auto px-6 pt-12 md:pt-24 pb-60">
         
         {/* 🎬 HERO SECTION (Digital Atelier) */}
         <motion.section 
@@ -82,16 +81,18 @@ export default function TalentProfileEditorial({
           transition={{ duration: 1, ease: [0.21, 0.47, 0.32, 0.98] }}
           className="flex flex-col items-center text-center mb-32 md:mb-40"
         >
-          {/* Portrait Image (1:1) */}
-          <div className="relative w-[240px] h-[240px] md:w-[280px] md:h-[280px] mb-12 group">
+          {/* Portrait Image (1:1 Optimized) */}
+          <div className="relative w-[320px] h-[320px] md:w-[380px] md:h-[380px] mb-16 mx-auto group">
             <Image
               src={talent.avatar_url || "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&q=80&w=800"}
               alt={`${talent.prenom} ${talent.nom}`}
               fill
-              className="object-cover rounded-[32px] shadow-2xl transition-transform duration-700 group-hover:scale-[1.02] pointer-events-none"
+              className="object-cover rounded-[20px] shadow-2xl transition-transform duration-700 group-hover:scale-[1.02] pointer-events-none"
               priority
+              loading="eager"
+              decoding="async"
               draggable={false}
-              sizes="(max-width: 768px) 240px, 280px"
+              sizes="(max-width: 768px) 320px, 380px"
             />
           </div>
 
@@ -101,7 +102,7 @@ export default function TalentProfileEditorial({
           </span>
 
           {/* Name (STRICT MATCH with Listing) */}
-          <h1 className="text-2xl md:text-4xl font-extrabold font-manrope text-[#1A1A1A] uppercase tracking-[0.15em] leading-tight mb-10 max-w-2xl mx-auto">
+          <h1 className="text-2xl md:text-4xl font-extrabold font-manrope text-[#1A1A1A] uppercase tracking-[0.15em] leading-tight mb-12 max-w-2xl mx-auto">
             {talent.prenom} {talent.nom}
           </h1>
 
@@ -147,9 +148,21 @@ export default function TalentProfileEditorial({
             </motion.button>
           </div>
           
-          <div className="mt-8 text-[9px] font-bold uppercase tracking-[0.2em] text-gray-300">
-            {votes} Soutiens Reçus
-          </div>
+          {/* 💚 SOCIAL PROOF (Soutiens) - Rendered only if votes > 0 */}
+          {votes > 0 && (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="mt-10 px-6 py-2 bg-emerald-50 rounded-full border border-emerald-100"
+            >
+               <span className="text-xl md:text-2xl font-bold text-[#0E7C66]">
+                 {votes}
+               </span>
+               <span className="ml-2 text-[10px] font-bold uppercase tracking-widest text-[#0E7C66] opacity-70">
+                 Soutiens Reçus
+               </span>
+            </motion.div>
+          )}
         </motion.section>
 
         {/* 📖 STORYTELLING SECTIONS */}
@@ -172,7 +185,7 @@ export default function TalentProfileEditorial({
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="mt-40 md:mt-60 w-full pt-16 border-t border-gray-50"
+          className="mt-40 md:mt-60 w-full pt-16 border-t border-gray-50 pb-20"
         >
           <div className="text-center mb-16">
             <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400 mb-6">
