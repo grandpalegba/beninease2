@@ -42,9 +42,12 @@ export default function EditorialSection({
       className="w-full flex flex-col items-center"
     >
       {/* 1. Titre de Section (Discret, Haut de gamme) */}
-      <h3 className="text-[10px] md:text-[11px] font-bold uppercase tracking-[0.5em] text-gray-300 mb-10 md:mb-14">
+      <h3 className="text-[10px] md:text-[11px] font-bold uppercase tracking-[0.5em] text-gray-300 mb-6">
         {title}
       </h3>
+
+      {/* 2. Séparateur Signature (Ligne fine Bénin) - Placé juste après le titre */}
+      <div className="w-20 md:w-24 h-[1.5px] bg-gradient-to-r from-[#008751] via-[#FCD116] to-[#E8112D] opacity-60 mb-10 md:mb-14" />
 
       {/* 2. Bloc Image (Si présent) */}
       {imageUrl && (
@@ -61,8 +64,6 @@ export default function EditorialSection({
         </div>
       )}
 
-      {/* 3. Séparateur Signature (Ligne fine Bénin) */}
-      <div className="w-20 md:w-24 h-[1.5px] bg-gradient-to-r from-[#008751] via-[#FCD116] to-[#E8112D] opacity-60 mb-10 md:mb-14" />
 
       {/* 4. Bloc Vidéo (Si présent) */}
       {videoUrl && (

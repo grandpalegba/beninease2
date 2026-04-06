@@ -214,7 +214,7 @@ const Header = () => {
           isBottomNav ? "bottom-20 mb-4" : "top-20"
         )}>
           <div className="p-8 flex flex-col gap-6">
-            <p className="text-[10px] font-black text-[#008751] uppercase tracking-[0.3em] mb-4">Explorer</p>
+
             <Link 
               href="/talents" 
               onClick={() => setIsMobileMenuOpen(false)}
