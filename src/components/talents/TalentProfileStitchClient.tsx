@@ -29,13 +29,46 @@ export default function TalentProfileStitchClient({
   const [isVoting, setIsVoting] = useState(false);
   const [votesCount, setVotesCount] = useState(talent.weighted_votes_total || 0);
 
+  // 🔄 Realtime State — données locales du talent (mises à jour par Supabase Realtime)
+  const [talentData, setTalentData] = useState(talent);
+
   // 1. Prefetch des profils adjacents
   useEffect(() => {
     if (nextSlug) router.prefetch(`/talents/${nextSlug}`);
     if (prevSlug) router.prefetch(`/talents/${prevSlug}`);
   }, [nextSlug, prevSlug, router]);
 
-  // 2. Gestion du Vote
+  // 2. Supabase Realtime — Refresh instantané des médias
+  useEffect(() => {
+    const fetchLatest = async () => {
+      const { data, error } = await supabase
+        .from("talents")
+        .select("*")
+        .eq("slug", talentData.slug)
+        .maybeSingle();
+      if (!error && data) {
+        setTalentData(data);
+        setVotesCount(data.weighted_votes_total || 0);
+      }
+    };
+
+    // Fetch initial (contourne le cache SSR si la page était déjà dans le cache)
+    fetchLatest();
+
+    // Subscription Realtime
+    const channel = supabase
+      .channel(`talent-realtime-${talentData.slug}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "talents", filter: `slug=eq.${talentData.slug}` },
+        () => { fetchLatest(); }
+      )
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [talentData.slug]);
+
+  // 3. Gestion du Vote
   const handleVote = async () => {
     try {
       setIsVoting(true);
@@ -45,7 +78,7 @@ export default function TalentProfileStitchClient({
         return;
       }
       const { error } = await supabase.rpc("cast_weighted_vote", {
-        target_talent_id: talent.id,
+        target_talent_id: talentData.id,
       });
       if (error) {
         if (error.message.includes("déjà voté")) toast.info("Vous avez déjà soutenu ce talent !");
@@ -61,6 +94,7 @@ export default function TalentProfileStitchClient({
       setIsVoting(false);
     }
   };
+
 
   // 3. Gestion du Partage
   const handleShare = async () => {
@@ -134,7 +168,7 @@ export default function TalentProfileStitchClient({
           className="w-full cursor-grab active:cursor-grabbing"
         >
           <TalentProfileEditorial
-            talent={talent}
+            talent={talentData}
             votes={votesCount}
             onVote={handleVote}
             onShare={handleShare}

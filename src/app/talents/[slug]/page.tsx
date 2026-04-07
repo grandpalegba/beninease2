@@ -3,6 +3,10 @@ import { notFound } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import TalentProfileStitchClient from "@/components/talents/TalentProfileStitchClient";
 
+// Désactive le cache statique Next.js — chaque requête déclenche un fetch Supabase frais
+export const revalidate = 0;
+
+
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const slug = params.slug;
   const supabase = await createSupabaseServerClient();
