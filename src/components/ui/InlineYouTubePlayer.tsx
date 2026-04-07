@@ -41,6 +41,14 @@ export default function InlineYouTubePlayer({ url, title }: InlineYouTubePlayerP
 
   const id = extractYouTubeId(url);
 
+  // Validation : un vrai ID YouTube fait exactement 11 caractères alphanumériques
+  const isValidYouTubeId = (videoId: string | null): boolean => {
+    if (!videoId) return false;
+    return /^[a-zA-Z0-9_-]{11}$/.test(videoId);
+  };
+
+  const validId = isValidYouTubeId(id) ? id : null;
+
   // 2. Libération du Verrou et Reset
   const releaseLockAndReset = () => {
     setIsIframeReady(false);
@@ -117,12 +125,15 @@ export default function InlineYouTubePlayer({ url, title }: InlineYouTubePlayerP
     };
   }, [isPlaying, id]);
 
-  if (!url || !id) return null;
+  if (!url || !validId) return null;
 
   // 5. Configuration Source UNIQUE (Zéro reload)
   // playsinline=1 est vital pour mobile, enablejsapi=1 permet postMessage
   const baseParams = "autoplay=1&mute=1&controls=1&loop=1&playsinline=1&modestbranding=1&rel=0&enablejsapi=1";
-  const embedUrl = `https://www.youtube.com/embed/${id}?${baseParams}&playlist=${id}`;
+  const embedUrl = `https://www.youtube.com/embed/${validId}?${baseParams}&playlist=${validId}`;
+
+  // Fallback thumbnail en cascade : maxresdefault → hqdefault → Unsplash
+  const THUMBNAIL_FALLBACK = "https://images.unsplash.com/photo-1523438885200-e635ba2c371e?auto=format&fit=crop&w=1200&q=80";
 
   // 6. Handlers (Zéro Latence)
   const handleIframeLoad = () => {
@@ -168,7 +179,7 @@ export default function InlineYouTubePlayer({ url, title }: InlineYouTubePlayerP
             "absolute inset-0 z-10 transition-opacity duration-200 ease-out will-change-opacity transform translate-z-0",
             isVideoVisible ? "opacity-100" : "opacity-0"
           )}
-          style={{ pointerEvents: isPlaying ? "auto" : "none" }} // Empêche interaction YouTube avant le clic Full
+          style={{ pointerEvents: isPlaying ? "auto" : "none" }}
         >
           <iframe
             ref={iframeRef}
@@ -190,11 +201,16 @@ export default function InlineYouTubePlayer({ url, title }: InlineYouTubePlayerP
         onClick={handleStartFullPlay}
       >
         <img
-          src={`https://img.youtube.com/vi/${id}/maxresdefault.jpg`}
+          src={`https://img.youtube.com/vi/${validId}/maxresdefault.jpg`}
           alt={title}
           className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02] transform translate-z-0"
-          onError={(e) => { 
-            e.currentTarget.src = `https://img.youtube.com/vi/${id}/hqdefault.jpg`; 
+          onError={(e) => {
+            const el = e.currentTarget;
+            if (el.src.includes("maxresdefault")) {
+              el.src = `https://img.youtube.com/vi/${validId}/hqdefault.jpg`;
+            } else if (el.src.includes("hqdefault")) {
+              el.src = THUMBNAIL_FALLBACK;
+            }
           }}
           loading="lazy"
         />
