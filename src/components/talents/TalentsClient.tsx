@@ -5,7 +5,7 @@ import { supabase } from "@/lib/supabase/client"; // Assurez-vous du bon chemin
 import SwipeContainer from "./SwipeContainer";
 import { Loader2 } from "lucide-react"; // Importez de lucide-react si utilisé, sinon un svg simple
 
-export default function RefletsClient() {
+export default function TalentsClient() {
   const [duels, setDuels] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
@@ -43,8 +43,8 @@ export default function RefletsClient() {
             .select(`
               id,
               category,
-              left:ambassadeur_left(*),
-              right:ambassadeur_right(*)
+              talent_left:talents!talent_left(*),
+              talent_right:talents!talent_right(*)
             `);
           if (fallbackData) {
             setDuels(fallbackData);
@@ -81,7 +81,7 @@ export default function RefletsClient() {
 
   return (
     <div className="bg-black w-full h-screen overflow-hidden text-white font-inter selection:bg-[#006b3f] selection:text-white">
-      <SwipeContainer duels={duels} userId={userId} />
+      <SwipeContainer initialDuels={duels} userId={userId} categoryId="all" />
     </div>
   );
 }

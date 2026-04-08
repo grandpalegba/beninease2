@@ -64,7 +64,19 @@ export interface Vote {
   created_at: string;
 }
 
-export type EntityType = 'ambassadeur' | 'jury' | 'treasure';
+export interface Talent {
+  id: string;
+  prenom_talent: string | null;
+  nom_talent: string | null;
+  avatar_url: string | null;
+  video_url: string | null;
+  signature: string | null;
+  votes_count: number;
+  categorie: string | null;
+  created_at: string;
+}
+
+export type EntityType = 'ambassadeur' | 'jury' | 'treasure' | 'talent';
 
 export interface Treasure {
   id: string;

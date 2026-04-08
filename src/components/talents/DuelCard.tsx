@@ -23,9 +23,9 @@ export default function DuelCard({
   const [hasVoted, setHasVoted] = useState(false);
   const [points, setPoints] = useState(1250); // À récupérer via le profil utilisateur normalement
 
-  // Extraction des ambassadeurs
-  const leftAmbassadeur = duel?.ambassadeur_left;
-  const rightAmbassadeur = duel?.ambassadeur_right;
+  // Extraction des talents
+  const leftTalent = duel?.talent_left;
+  const rightTalent = duel?.talent_right;
 
   // Fonction de validation (déclenchée par le clic sur le curseur rouge)
   const handleValidate = async () => {
@@ -92,9 +92,12 @@ export default function DuelCard({
         {/* CANDIDAT GAUCHE (VERT) */}
         <div className="w-full lg:w-[42%] h-[35vh] lg:h-[70vh]">
           <CandidateCard
-            name={leftAmbassadeur?.full_name || "Ambassadeur Vert"}
-            image={leftAmbassadeur?.profile_image}
-            video={leftAmbassadeur?.video_urls?.[0]}
+            name={leftTalent?.full_name || "Talent Vert"}
+            prenom_talent={leftTalent?.prenom_talent}
+            nom_talent={leftTalent?.nom_talent}
+            signature={leftTalent?.signature}
+            image={leftTalent?.profile_image}
+            video={leftTalent?.video_url}
             color="green"
             isActive={isActive}
             intensity={Math.max(0, 50 - sliderValue)} // Brille si slider à gauche
@@ -135,9 +138,12 @@ export default function DuelCard({
         {/* CANDIDAT DROITE (JAUNE) */}
         <div className="w-full lg:w-[42%] h-[35vh] lg:h-[70vh]">
           <CandidateCard
-            name={rightAmbassadeur?.full_name || "Ambassadeur Jaune"}
-            image={rightAmbassadeur?.profile_image}
-            video={rightAmbassadeur?.video_urls?.[0]}
+            name={rightTalent?.full_name || "Talent Jaune"}
+            prenom_talent={rightTalent?.prenom_talent}
+            nom_talent={rightTalent?.nom_talent}
+            signature={rightTalent?.signature}
+            image={rightTalent?.profile_image}
+            video={rightTalent?.video_url}
             color="red" // Ici "red" sert d'ID visuel pour le point, mais on gère le jaune via le slider
             isActive={isActive}
             intensity={Math.max(0, sliderValue - 50)} // Brille si slider à droite

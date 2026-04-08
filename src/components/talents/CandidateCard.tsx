@@ -6,12 +6,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface CandidateCardProps {
-  name: string;
-  image: string | null;
-  video: string | null;
+  name: string; // Pour compatibilité, on peut l'utiliser comme fallback
+  prenom_talent?: string | null;
+  nom_talent?: string | null;
+  signature?: string | null;
+  image?: string | null;
+  video?: string | null;
   color: "green" | "red";
   isActive: boolean;
-  intensity?: number; // Valeur de 0 à 50 (distance depuis le centre du slider)
+  intensity?: number;
   className?: string;
 }
 
@@ -21,10 +24,27 @@ const extractYouTubeId = (rawUrl: string | null) => {
   return match ? match[1] : rawUrl.split("/").pop() || null;
 };
 
-export default function CandidateCard({ name, image, video, color, isActive, intensity = 0, className }: CandidateCardProps) {
+export default function CandidateCard({ 
+  name, 
+  prenom_talent, 
+  nom_talent, 
+  signature,
+  image, 
+  video, 
+  color, 
+  isActive, 
+  intensity = 0, 
+  className 
+}: CandidateCardProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [isMuted, setIsMuted] = useState(true);
+  
   const videoId = extractYouTubeId(video);
+  
+  // Génération de l'URL de l'image du bucket Supabase
+  const bucketImageUrl = nom_talent 
+    ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/talents-images/${nom_talent.toLowerCase()}.jpg`
+    : image; // Fallback sur l'URL directe si nom_talent absent
 
   const sendCommand = (func: string, args: any = "") => {
     iframeRef.current?.contentWindow?.postMessage(JSON.stringify({ event: "command", func, args }), "*");
@@ -65,7 +85,7 @@ export default function CandidateCard({ name, image, video, color, isActive, int
       {/* Media Layer */}
       <div className="absolute inset-0 z-0">
         {videoId ? (
-          <div className="w-full h-full scale-[1.05]"> {/* Overflow léger pour masquer les bords de l'iframe */}
+          <div className="w-full h-full scale-[1.05]">
             <iframe
               ref={iframeRef}
               src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&loop=1&playsinline=1&modestbranding=1&rel=0&enablejsapi=1&playlist=${videoId}`}
@@ -74,7 +94,15 @@ export default function CandidateCard({ name, image, video, color, isActive, int
             />
           </div>
         ) : (
-          <img src={image || ""} alt={name} className="w-full h-full object-cover opacity-60" />
+          <img 
+            src={bucketImageUrl || image || ""} 
+            alt={name} 
+            className="w-full h-full object-cover opacity-80" 
+            onError={(e) => {
+              // Petit fix si .jpg échoue, on peut tenter une autre extension ou rester vide
+              (e.target as HTMLImageElement).style.display = 'none';
+            }}
+          />
         )}
       </div>
 
@@ -106,9 +134,14 @@ export default function CandidateCard({ name, image, video, color, isActive, int
               <div className={cn("w-2 h-2 rounded-full", color === "green" ? "bg-[#006b3f]" : "bg-[#bd0020]")}
                 style={{ boxShadow: `0 0 15px ${shadowColor}` }} />
               <p className="text-white font-manrope font-extrabold text-xl uppercase tracking-tighter italic">
-                {name}
+                {prenom_talent || name} {nom_talent || ""}
               </p>
             </div>
+            {signature && (
+              <p className="text-white/40 font-manrope text-[10px] tracking-widest uppercase italic pl-4">
+                {signature}
+              </p>
+            )}
           </div>
 
           {/* Controls */}

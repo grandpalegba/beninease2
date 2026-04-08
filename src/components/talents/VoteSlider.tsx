@@ -7,11 +7,22 @@ import { cn } from "@/lib/utils";
 interface VoteSliderProps {
   value: number;
   onChange: (value: number) => void;
-  onValidate: () => void; // Nouvelle fonction de validation
+  onValidate?: () => void;
+  onVoteSubmit?: (value: number) => void; // Support pour le duel Talent
   disabled?: boolean;
+  leftName?: string;
+  rightName?: string;
 }
 
-export default function VoteSlider({ value, onChange, onValidate, disabled = false }: VoteSliderProps) {
+export default function VoteSlider({ 
+  value, 
+  onChange, 
+  onValidate, 
+  onVoteSubmit,
+  disabled = false,
+  leftName,
+  rightName
+}: VoteSliderProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -31,20 +42,24 @@ export default function VoteSlider({ value, onChange, onValidate, disabled = fal
       {/* Affichage des Scores Dynamiques */}
       <div className="flex justify-between items-center px-4 font-manrope">
         <motion.div
-          animate={{ scale: value < 50 ? 1.1 : 0.9, opacity: value < 50 ? 1 : 0.4 }}
-          className="flex flex-col"
-        >
-          <span className="text-[10px] text-white/40 uppercase tracking-[0.2em]">Candidat Vert</span>
-          <span className="text-3xl font-black text-[#006b3f]">{leftScore}%</span>
-        </motion.div>
+           animate={{ scale: value < 50 ? 1.1 : 0.9, opacity: value < 50 ? 1 : 0.4 }}
+           className="flex flex-col"
+         >
+           <span className="text-[10px] text-white/40 uppercase tracking-[0.2em]">
+             {leftName?.split(' ')[0] || "Candidat Vert"}
+           </span>
+           <span className="text-3xl font-black text-[#006b3f]">{leftScore}%</span>
+         </motion.div>
 
         <motion.div
-          animate={{ scale: value > 50 ? 1.1 : 0.9, opacity: value > 50 ? 1 : 0.4 }}
-          className="flex flex-col items-end"
-        >
-          <span className="text-[10px] text-white/40 uppercase tracking-[0.2em]">Candidat Jaune</span>
-          <span className="text-3xl font-black text-[#ffd31a]">{rightScore}%</span>
-        </motion.div>
+           animate={{ scale: value > 50 ? 1.1 : 0.9, opacity: value > 50 ? 1 : 0.4 }}
+           className="flex flex-col items-end"
+         >
+           <span className="text-[10px] text-white/40 uppercase tracking-[0.2em]">
+             {rightName?.split(' ')[0] || "Candidat Jaune"}
+           </span>
+           <span className="text-3xl font-black text-[#ffd31a]">{rightScore}%</span>
+         </motion.div>
       </div>
 
       <div
@@ -101,7 +116,10 @@ export default function VoteSlider({ value, onChange, onValidate, disabled = fal
             whileTap={{ scale: 0.9 }}
             onClick={(e) => {
               e.stopPropagation();
-              if (!isDragging && !disabled) onValidate();
+              if (!isDragging && !disabled) {
+                if (onVoteSubmit) onVoteSubmit(value);
+                if (onValidate) onValidate();
+              }
             }}
             className={cn(
               "w-16 h-16 rounded-full bg-[#bd0020] border-[4px] border-white shadow-[0_0_30px_rgba(189,0,32,0.6)] flex items-center justify-center pointer-events-auto transition-transform",

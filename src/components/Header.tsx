@@ -124,6 +124,7 @@ const Header = () => {
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-6">
             <Link href="/ambassadeurs" className={cn(navLinkClasses, pathname === "/ambassadeurs" && "text-[#008751]")}>Ambassadeurs</Link>
+            <Link href="/talents" className={cn(navLinkClasses, pathname === "/talents" && "text-[#008751]")}>Talents</Link>
             <Link href="/tresors" className={cn(navLinkClasses, pathname === "/tresors" && "text-[#008751]")}>Trésors</Link>
           </div>
           
@@ -221,6 +222,13 @@ const Header = () => {
               className="text-3xl font-display font-black text-gray-900 flex items-center justify-between"
             >
               Ambassadeurs <ChevronDown size={20} className="-rotate-90 text-gray-300" />
+            </Link>
+            <Link 
+              href="/talents" 
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="text-3xl font-display font-black text-gray-900 flex items-center justify-between"
+            >
+              Talents <ChevronDown size={20} className="-rotate-90 text-gray-300" />
             </Link>
             <Link 
               href="/tresors" 

@@ -34,7 +34,7 @@ export default function SwipeContainer({ initialDuels, userId, categoryId }: Swi
       if (data && data.length > 0) {
         // On filtre pour éviter les doublons si la requête random renvoie un duel déjà en liste
         setDuels(prev => {
-          const newDuels = data.filter(d => !prev.some(p => p.id === d.id));
+          const newDuels = (data as any[]).filter((d: any) => !prev.some(p => p.id === d.id));
           return [...prev, ...newDuels];
         });
       } else {
@@ -124,7 +124,7 @@ export default function SwipeContainer({ initialDuels, userId, categoryId }: Swi
       {hasReachedEnd && duels.length === 0 && (
         <div className="h-screen flex flex-col items-center justify-center p-8 text-center bg-black">
           <p className="text-white font-manrope font-bold uppercase tracking-widest opacity-50">
-            Tous les reflets de cette catégorie ont été explorés
+            Tous les talents de cette catégorie ont été explorés
           </p>
         </div>
       )}
