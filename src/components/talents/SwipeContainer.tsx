@@ -26,7 +26,7 @@ export default function SwipeContainer({ initialDuels, userId, categoryId }: Swi
       // Appel à la fonction RPC qui exclut les duels déjà votés
       const { data, error } = await supabase.rpc('get_available_duels', {
         p_user_id: userId,
-        p_category_id: categoryId
+        p_categorie_duels: categoryId
       });
 
       if (error) throw error;

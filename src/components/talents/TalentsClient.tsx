@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import { supabase } from "@/lib/supabase/client"; // Assurez-vous du bon chemin
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase/client";
 import SwipeContainer from "./SwipeContainer";
-import { Loader2 } from "lucide-react"; // Importez de lucide-react si utilisé, sinon un svg simple
+import { Duel } from "@/types";
 
 export default function TalentsClient() {
-  const [duels, setDuels] = useState<any[]>([]);
+  const [duels, setDuels] = useState<Duel[]>([]);
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
 
@@ -42,17 +42,18 @@ export default function TalentsClient() {
             .from("duels")
             .select(`
               id,
-              category,
+              categorie_duels,
+              mission_categorie,
               talent_left:talents!talent_left(*),
               talent_right:talents!talent_right(*)
             `);
           if (fallbackData) {
-            setDuels(fallbackData);
+            setDuels(fallbackData as unknown as Duel[]);
           } else {
             console.error("Erreur from duels:", fallbackError);
           }
         } else if (data) {
-          setDuels(data);
+          setDuels(data as Duel[]);
         }
       } catch (err) {
         console.error("Error fetching duels:", err);

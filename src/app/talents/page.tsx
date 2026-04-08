@@ -19,7 +19,7 @@ export default function TalentsDuelPage() {
         .from('duels')
         .select(`
           id, 
-          category, 
+          categorie_duels, 
           mission_categorie,
           talent_left:talents!talent_left(*), 
           talent_right:talents!talent_right(*)
@@ -78,7 +78,7 @@ export default function TalentsDuelPage() {
         {/* Header de Contextualisation */}
         <div className="text-center mb-12 max-w-4xl mx-auto space-y-3">
           <h1 className="text-white text-2xl md:text-4xl font-black uppercase tracking-tighter">
-            {duel.category || "Catégorie Talent"}
+            {duel.categorie_duels || "Catégorie Talent"}
           </h1>
           <p className="text-white/50 text-xs md:text-sm font-medium tracking-wide max-w-2xl mx-auto leading-relaxed">
             Selon vous, lequel de ces deux Talents a réussi la mission de présenter dans une vidéo d'une minute 

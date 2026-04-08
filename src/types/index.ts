@@ -72,7 +72,16 @@ export interface Talent {
   video_url: string | null;
   signature: string | null;
   votes_count: number;
-  categorie: string | null;
+  talent_categorie_id: string | null;
+  created_at: string;
+}
+
+export interface Duel {
+  id: string;
+  categorie_duels: string | null;
+  mission_categorie: string | null;
+  talent_left: Talent;
+  talent_right: Talent;
   created_at: string;
 }
 

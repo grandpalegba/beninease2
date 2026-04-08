@@ -7,13 +7,15 @@ import VoteSlider from "./VoteSlider";
 import { supabase } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
+import { Duel } from "@/types";
+
 export default function DuelCard({
   duel,
   userId,
   isActive,
   onNext
 }: {
-  duel: any;
+  duel: Duel;
   userId: string | null;
   isActive: boolean;
   onNext: () => void;
@@ -85,7 +87,7 @@ export default function DuelCard({
             animate={{ opacity: 1, y: 0 }}
             className="bg-white/10 backdrop-blur-2xl border border-white/20 px-6 py-2 rounded-full text-[10px] tracking-[0.4em] text-white font-black uppercase"
           >
-            {duel?.category_id?.replace(/_/g, " ") || "Duel d'Excellence"}
+            {duel?.categorie_duels || "Duel d'Excellence"}
           </motion.span>
         </div>
 
