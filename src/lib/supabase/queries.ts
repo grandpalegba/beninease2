@@ -6,20 +6,20 @@ export const getUserVotes = async (supabase: SupabaseClient, voterId: string) =>
     .from('votes')
     .select(`
       *,
-      talents:talents(*)
+      ambassadeurs:ambassadeurs(*)
     `)
     .eq('voter_id', voterId) // Changed from votant_id to voter_id
     .order('created_at', { ascending: false });
 };
 
-export async function updateVideoId(talentId: string, slotIndex: 1 | 2 | 3 | 4, videoId: string | null) {
+export async function updateVideoId(ambassadeurId: string, slotIndex: 1 | 2 | 3 | 4, videoId: string | null) {
   const supabase = createSupabaseBrowserClient();
   const column = `video_${slotIndex}_id`;
   
   const { data, error } = await supabase
-    .from("talents")
+    .from("ambassadeurs")
     .update({ [column]: videoId })
-    .eq("id", talentId)
+    .eq("id", ambassadeurId)
     .select()
     .single();
 
@@ -45,10 +45,10 @@ export async function reportContent(contentId: string, reason: string, reporterI
   return data;
 }
 
-export async function getTalentByRole(role: string) {
+export async function getAmbassadeurByRole(role: string) {
   const supabase = createSupabaseBrowserClient();
   const { data, error } = await supabase
-    .from("talents")
+    .from("ambassadeurs")
     .select("*")
     .eq("role", role)
     .eq("is_validated", true);

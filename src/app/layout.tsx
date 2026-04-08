@@ -7,15 +7,16 @@ import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "BeninEase - Les Trésors du Bénin",
-  description: "Découvrez les talents et les mystères du patrimoine béninois.",
+  description: "Découvrez les ambassadeurs et les mystères du patrimoine béninois.",
+  keywords: ["Bénin", "Ambassadeurs", "Culture", "Patrimoine", "Excellence"],
   icons: {
     icon: '/favicon.png',
     shortcut: '/favicon.png',
     apple: '/favicon.png',
   },
   openGraph: {
-    title: "BeninEase - Les Trésors du Bénin",
-    description: "Découvrez les talents et les mystères du patrimoine béninois.",
+    title: "BeninEase - L'Excellence Béninoise",
+    description: "Découvrez les ambassadeurs et les mystères du patrimoine béninois.",
     url: "https://beninease.space",
     type: "website",
     locale: "fr_BJ",

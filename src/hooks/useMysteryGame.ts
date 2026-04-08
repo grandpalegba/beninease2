@@ -27,7 +27,7 @@ export function useMysteryGame(userId: string | null, onSuccess?: (mystereId: st
       // ✅ Call cast_weighted_vote on final completion as requested
       if (nextStep >= 4) {
          await supabase.rpc('cast_weighted_vote', {
-            target_talent_id: mystereId
+            target_ambassadeur_id: mystereId
          });
       }
       

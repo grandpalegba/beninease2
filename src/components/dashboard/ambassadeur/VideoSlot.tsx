@@ -13,6 +13,7 @@ interface VideoSlotProps {
     key: string;
   };
   videoId: string | null;
+  isLocked: boolean;
   isPreviousStepCompleted: boolean;
   onUpdate: (key: string, videoId: string | null) => Promise<void>;
   onDelete: (key: string) => Promise<void>;

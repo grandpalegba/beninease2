@@ -62,7 +62,7 @@ const SelectionSection = () => {
               🏆 Résultat
             </h3>
             <p className="text-muted-foreground font-body text-sm md:text-base leading-relaxed">
-              Les 4 talents les mieux classés par catégorie deviennent Ambassadeurs et représentent le Bénin pendant 1 an. Sur BeninEase, tous bénéficient d'un espace de visibilité, de promotion et de vente de leurs services.
+              Les 4 ambassadeurs les mieux classés par catégorie représentent le Bénin pendant 1 an. Sur BeninEase, tous bénéficient d'un espace de visibilité, de promotion et de vente de leurs services.
             </p>
           </div>
         </div>

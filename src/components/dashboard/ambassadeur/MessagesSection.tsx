@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '@/utils/supabase/client';
-import type { Talent } from '@/types';
+import type { Ambassadeur } from '@/types';
 import { cn } from '@/lib/utils';
 import { Loader2, Mail, MessageSquare, Send, CheckCircle2 } from 'lucide-react';
 
@@ -17,7 +17,7 @@ interface Message {
 }
 
 interface MessagesSectionProps {
-  profile: Talent;
+  profile: Ambassadeur;
 }
 
 export default function MessagesSection({ profile }: MessagesSectionProps) {

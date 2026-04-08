@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useEffect, useMemo } from 'react';
-import type { Talent } from '@/types';
+import type { Ambassadeur } from '@/types';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/utils/supabase/client';
 import { Award, User, Heart, TrendingUp } from 'lucide-react';
 
-interface TalentHeaderProps {
-  profile: Talent;
+interface AmbassadeurHeaderProps {
+  profile: Ambassadeur;
 }
 
 type ImpactStats = {
@@ -15,7 +15,7 @@ type ImpactStats = {
   rank: number;
 };
 
-export default function TalentHeader({ profile }: TalentHeaderProps) {
+export default function AmbassadeurHeader({ profile }: AmbassadeurHeaderProps) {
   const isAmbassadeur = profile.role === 'ambassadeur' || profile.role === 'admin';
   const [stats, setStats] = useState<ImpactStats | null>(null);
 
@@ -23,18 +23,18 @@ export default function TalentHeader({ profile }: TalentHeaderProps) {
     const fetchImpactStats = async () => {
       if (!profile.categorie) return;
 
-      const { data: talentData, error: talentError } = await supabase
-        .from('talents')
+      const { data: ambassadeurData, error: ambassadeurError } = await supabase
+        .from('ambassadeurs')
         .select('votes')
         .eq('id', profile.id)
         .single();
 
-      if (talentError || !talentData) return;
+      if (ambassadeurError || !ambassadeurData) return;
 
-      const { data: rankData, error: rankError } = await supabase.rpc('get_rank_in_category', { p_talent_id: profile.id });
+      const { data: rankData, error: rankError } = await supabase.rpc('get_rank_in_category', { p_ambassadeur_id: profile.id });
 
       setStats({
-        votes: talentData.votes || 0,
+        votes: ambassadeurData.votes || 0,
         rank: rankError ? 0 : rankData,
       });
     };
@@ -43,10 +43,10 @@ export default function TalentHeader({ profile }: TalentHeaderProps) {
     
     // Realtime subscription
     const channel = supabase
-      .channel(`talent-votes-${profile.id}`)
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'talents', filter: `id=eq.${profile.id}` }, 
+      .channel(`ambassadeur-votes-${profile.id}`)
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'ambassadeurs', filter: `id=eq.${profile.id}` }, 
         (payload) => {
-          const newVotes = (payload.new as Talent).votes;
+          const newVotes = (payload.new as Ambassadeur).votes;
           setStats(prev => prev ? { ...prev, votes: newVotes } : { votes: newVotes, rank: prev?.rank || 0 });
           // On pourrait aussi rafraichir le rang ici, mais c'est plus coûteux
         }
@@ -69,7 +69,7 @@ export default function TalentHeader({ profile }: TalentHeaderProps) {
           {isAmbassadeur ? <Award className="w-3.5 h-3.5" /> : <User className="w-3.5 h-3.5" />}
           {isAmbassadeur ? 'Ambassadeur' : 'Candidat'}
         </div>
-        <h1 className="font-display text-4xl md:text-5xl font-bold text-black tracking-tight">Mon Espace Talent</h1>
+        <h1 className="font-display text-4xl md:text-5xl font-bold text-black tracking-tight">Mon Espace Ambassadeur</h1>
         <p className="text-gray-500 font-sans text-lg">
           Gérez vos contenus et suivez votre impact sur BeninEase.
         </p>

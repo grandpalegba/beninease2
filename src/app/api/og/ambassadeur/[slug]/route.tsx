@@ -10,9 +10,9 @@ export async function GET(
   try {
     const { slug } = params;
 
-    // Fetch talent data
+    // Fetch ambassadeur data
     const { data: profile, error } = await supabase
-      .from('talents')
+      .from('ambassadeurs')
       .select('prenom, nom, avatar_url, categorie')
       .eq('slug', slug)
       .single();
@@ -34,7 +34,7 @@ export async function GET(
             }}
           >
             <h1 style={{ fontSize: 60, fontWeight: 'bold' }}>Beninease</h1>
-            <p style={{ fontSize: 30 }}>Talent non trouvé</p>
+            <p style={{ fontSize: 30 }}>Ambassadeur non trouvé</p>
           </div>
         ),
         { width: 1200, height: 630 }
@@ -145,7 +145,7 @@ export async function GET(
                 marginBottom: '40px',
               }}
             >
-              {profile.category}
+              {profile.categorie}
             </div>
             
             <div

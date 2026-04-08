@@ -1,17 +1,18 @@
 "use client";
 
 import { useState, useMemo } from 'react';
-import type { Talent } from '@/types';
+import type { Ambassadeur } from '@/types';
 import { cn } from '@/lib/utils';
-import VideosSection from './dashboard/talent/VideosSection';
-import MessagesSection from './dashboard/talent/MessagesSection';
-import TalentHeader from './dashboard/talent/TalentHeader';
+import VideosSection from './dashboard/ambassadeur/VideosSection';
+import MessagesSection from './dashboard/ambassadeur/MessagesSection';
+import AmbassadeurHeader from './dashboard/ambassadeur/AmbassadeurHeader';
+import StatsSection from './dashboard/ambassadeur/StatsSection';
 
-interface CandidateDashboardProps {
-  profile: Talent;
+interface AmbassadeurDashboardProps {
+  profile: Ambassadeur;
 }
 
-export default function CandidateDashboard({ profile }: CandidateDashboardProps) {
+export default function AmbassadeurDashboard({ profile }: AmbassadeurDashboardProps) {
   const [activeTab, setActiveTab] = useState<'videos' | 'messages'>('videos');
 
   // Pour l'instant, on garde les messages simples
@@ -19,7 +20,7 @@ export default function CandidateDashboard({ profile }: CandidateDashboardProps)
 
   return (
     <div className="max-w-6xl mx-auto p-4 sm:p-6 md:p-8 space-y-12">
-      <TalentHeader profile={profile} />
+      <AmbassadeurHeader profile={profile} />
 
       <StatsSection profile={profile} />
 

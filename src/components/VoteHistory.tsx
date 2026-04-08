@@ -11,7 +11,7 @@ interface VoteHistoryProps {
   votantId: string;
 }
 
-type TalentMini = {
+type AmbassadeurMini = {
   id: string;
   slug: string;
   prenom: string | null;
@@ -22,7 +22,7 @@ type TalentMini = {
 type VoteRow = {
   id: string;
   created_at: string;
-  talents: TalentMini | null;
+  ambassadeurs: AmbassadeurMini | null;
 };
 
 export function VoteHistory({ votantId }: VoteHistoryProps) {
@@ -50,9 +50,9 @@ export function VoteHistory({ votantId }: VoteHistoryProps) {
     return (
       <div className="p-8 text-center bg-white rounded-3xl border border-dashed border-gray-200">
         <Heart className="w-8 h-8 text-gray-300 mx-auto mb-3" />
-        <p className="text-gray-500 text-sm">Vous n&apos;avez pas encore soutenu de talent.</p>
-        <Link href="/talents" className="text-[#008751] font-bold text-sm mt-4 inline-block hover:underline">
-          Découvrir les talents
+        <p className="text-gray-500 text-sm">Vous n&apos;avez pas encore soutenu d'ambassadeur.</p>
+        <Link href="/ambassadeurs" className="text-[#008751] font-bold text-sm mt-4 inline-block hover:underline">
+          Découvrir les ambassadeurs
         </Link>
       </div>
     );
@@ -61,18 +61,18 @@ export function VoteHistory({ votantId }: VoteHistoryProps) {
   return (
     <div className="space-y-4">
       {votes.map((vote) => {
-        const talent = vote.talents;
-        if (!talent) return null;
-        const fullName = `${talent.prenom || ''} ${talent.nom || ''}`.trim() || "Talent";
+        const ambassadeur = vote.ambassadeurs;
+        if (!ambassadeur) return null;
+        const fullName = `${ambassadeur.prenom || ''} ${ambassadeur.nom || ''}`.trim() || "Ambassadeur";
         return (
           <Link
             key={vote.id}
-            href={`/talents/${talent.slug}`}
+            href={`/ambassadeurs/${ambassadeur.slug}`}
             className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-[#F2EDE4] hover:shadow-md transition-all group"
           >
             <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
               <Image
-                src={talent.avatar_url || "/placeholder-portrait.jpg"}
+                src={ambassadeur.avatar_url || "/placeholder-portrait.jpg"}
                 alt={fullName}
                 fill
                 className="object-cover"

@@ -34,12 +34,15 @@ export function useVoter() {
 
       if (error) throw error;
 
+      if (!user) throw new Error("No user returned");
+
       // CORRECT Structure: session.user.id (auth.users.id)
       const newSession: VoterSession = {
         user: {
           id: user.id,
           email: user.email || email,
         },
+        email: user.email || email,
         role: 'votant',
       };
 
@@ -64,7 +67,7 @@ export function useVoter() {
     setSession(null);
   }, []);
 
-  const checkHasVoted = useCallback(async (talentId: string) => {
+  const checkHasVoted = useCallback(async (ambassadeurId: string) => {
     if (!session?.email) return false;
     
     try {
@@ -72,7 +75,7 @@ export function useVoter() {
         .from("votes")
         .select("id")
         .eq("voter_id", session.user.id) // CORRECT: session.user.id (auth.users.id)
-        .eq("talent_id", talentId)
+        .eq("ambassadeur_id", ambassadeurId)
         .maybeSingle();
 
       if (error) throw error;

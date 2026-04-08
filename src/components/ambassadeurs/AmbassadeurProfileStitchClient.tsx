@@ -6,48 +6,48 @@ import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase } from "@/utils/supabase/client";
-import TalentProfileEditorial from "./TalentProfileEditorial";
+import AmbassadeurProfileEditorial from "./AmbassadeurProfileEditorial";
 
-interface TalentProfileStitchClientProps {
-  talent: any;
+interface AmbassadeurProfileStitchClientProps {
+  ambassadeur: any;
   nextSlug: string | null;
   prevSlug: string | null;
 }
 
 /**
- * TalentProfileStitchClient - Orchestrateur du Profil Éditorial.
+ * AmbassadeurProfileStitchClient - Orchestrateur du Profil Éditorial.
  * - Gère le vote (RPC) et le partage.
  * - Restauration du Swipe horizontal subtil (drag="x").
  * - Maintien des flèches de navigation pour l'accessibilité desktop.
  */
-export default function TalentProfileStitchClient({
-  talent,
+export default function AmbassadeurProfileStitchClient({
+  ambassadeur,
   nextSlug,
   prevSlug,
-}: TalentProfileStitchClientProps) {
+}: AmbassadeurProfileStitchClientProps) {
   const router = useRouter();
   const [isVoting, setIsVoting] = useState(false);
-  const [votesCount, setVotesCount] = useState(talent.weighted_votes_total || 0);
+  const [votesCount, setVotesCount] = useState(ambassadeur.weighted_votes_total || 0);
 
-  // 🔄 Realtime State — données locales du talent (mises à jour par Supabase Realtime)
-  const [talentData, setTalentData] = useState(talent);
+  // 🔄 Realtime State — données locales de l'ambassadeur (mises à jour par Supabase Realtime)
+  const [ambassadeurData, setAmbassadeurData] = useState(ambassadeur);
 
   // 1. Prefetch des profils adjacents
   useEffect(() => {
-    if (nextSlug) router.prefetch(`/talents/${nextSlug}`);
-    if (prevSlug) router.prefetch(`/talents/${prevSlug}`);
+    if (nextSlug) router.prefetch(`/ambassadeurs/${nextSlug}`);
+    if (prevSlug) router.prefetch(`/ambassadeurs/${prevSlug}`);
   }, [nextSlug, prevSlug, router]);
 
   // 2. Supabase Realtime — Refresh instantané des médias
   useEffect(() => {
     const fetchLatest = async () => {
       const { data, error } = await supabase
-        .from("talents")
+        .from("ambassadeurs")
         .select("*")
-        .eq("slug", talentData.slug)
+        .eq("slug", ambassadeurData.slug)
         .maybeSingle();
       if (!error && data) {
-        setTalentData(data);
+        setAmbassadeurData(data);
         setVotesCount(data.weighted_votes_total || 0);
       }
     };
@@ -57,16 +57,16 @@ export default function TalentProfileStitchClient({
 
     // Subscription Realtime
     const channel = supabase
-      .channel(`talent-realtime-${talentData.slug}`)
+      .channel(`ambassadeur-realtime-${ambassadeurData.slug}`)
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "talents", filter: `slug=eq.${talentData.slug}` },
+        { event: "*", schema: "public", table: "ambassadeurs", filter: `slug=eq.${ambassadeurData.slug}` },
         () => { fetchLatest(); }
       )
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
-  }, [talentData.slug]);
+  }, [ambassadeurData.slug]);
 
   // 3. Gestion du Vote
   const handleVote = async () => {
@@ -78,10 +78,10 @@ export default function TalentProfileStitchClient({
         return;
       }
       const { error } = await supabase.rpc("cast_weighted_vote", {
-        target_talent_id: talentData.id,
+        target_ambassadeur_id: ambassadeurData.id,
       });
       if (error) {
-        if (error.message.includes("déjà voté")) toast.info("Vous avez déjà soutenu ce talent !");
+        if (error.message.includes("déjà voté")) toast.info("Vous avez déjà soutenu cet ambassadeur !");
         else throw error;
       } else {
         toast.success("Merci pour votre soutien !");
@@ -100,8 +100,8 @@ export default function TalentProfileStitchClient({
   const handleShare = async () => {
     const shareUrl = typeof window !== "undefined" ? window.location.href : "";
     const shareData = {
-      title: `${talent.prenom} ${talent.nom} | BeninEase`,
-      text: `Découvrez le talent de ${talent.prenom} ${talent.nom} sur BeninEase !`,
+      title: `${ambassadeur.prenom} ${ambassadeur.nom} | BeninEase`,
+      text: `Découvrez l'ambassadeur ${ambassadeur.prenom} ${ambassadeur.nom} sur BeninEase !`,
       url: shareUrl,
     };
     try {
@@ -124,7 +124,7 @@ export default function TalentProfileStitchClient({
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 0.3, x: 0 }}
             whileHover={{ opacity: 1, x: 5 }}
-            onClick={() => router.push(`/talents/${prevSlug}`)}
+            onClick={() => router.push(`/ambassadeurs/${prevSlug}`)}
             className="p-4 rounded-full bg-white/50 backdrop-blur-sm shadow-sm pointer-events-auto transition-all"
             aria-label="Précédent"
           >
@@ -136,7 +136,7 @@ export default function TalentProfileStitchClient({
             initial={{ opacity: 0, x: 10 }}
             animate={{ opacity: 0.3, x: 0 }}
             whileHover={{ opacity: 1, x: -5 }}
-            onClick={() => router.push(`/talents/${nextSlug}`)}
+            onClick={() => router.push(`/ambassadeurs/${nextSlug}`)}
             className="p-4 rounded-full bg-white/50 backdrop-blur-sm shadow-sm pointer-events-auto transition-all"
             aria-label="Suivant"
           >
@@ -148,7 +148,7 @@ export default function TalentProfileStitchClient({
       {/* ↔️ SWIPE NAVIGATION (Mobile + Gesture) */}
       <AnimatePresence mode="wait">
         <motion.div
-          key={talent.id}
+          key={ambassadeur.id}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -160,15 +160,15 @@ export default function TalentProfileStitchClient({
           onDragEnd={(e, info) => {
             const threshold = 80; // Seuil de déclenchement
             if (info.offset.x < -threshold && nextSlug) {
-              router.push(`/talents/${nextSlug}`);
+              router.push(`/ambassadeurs/${nextSlug}`);
             } else if (info.offset.x > threshold && prevSlug) {
-              router.push(`/talents/${prevSlug}`);
+              router.push(`/ambassadeurs/${prevSlug}`);
             }
           }}
           className="w-full cursor-grab active:cursor-grabbing"
         >
-          <TalentProfileEditorial
-            talent={talentData}
+          <AmbassadeurProfileEditorial
+            ambassadeur={ambassadeurData}
             votes={votesCount}
             onVote={handleVote}
             onShare={handleShare}

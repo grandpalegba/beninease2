@@ -33,12 +33,12 @@ type UserProfile = {
 
 const Header = () => {
   const pathname = usePathname();
-  const isBottomNav = pathname === "/talents" || pathname === "/tresors" || pathname?.startsWith("/talents/");
+  const isBottomNav = pathname === "/ambassadeurs" || pathname === "/tresors" || pathname?.startsWith("/ambassadeurs/");
 
   const [scrolled, setScrolled] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [isTalent, setIsTalent] = useState(false);
+  const [isAmbassadeur, setIsAmbassadeur] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -61,25 +61,25 @@ const Header = () => {
     const loadUserData = async (currentUser: User | null) => {
       if (!currentUser) {
         setProfile(null);
-        setIsTalent(false);
+        setIsAmbassadeur(false);
         return;
       }
 
       try {
-        const [profileRes, talentRes] = await Promise.all([
+        const [profileRes, ambassadeurRes] = await Promise.all([
           supabase.from("profiles").select("*").eq("id", currentUser.id).maybeSingle(),
-          supabase.from("talents").select("id").eq("auth_user_id", currentUser.id).maybeSingle()
+          supabase.from("ambassadeurs").select("id").eq("auth_user_id", currentUser.id).maybeSingle()
         ]);
 
         if (profileRes.data) setProfile(profileRes.data);
 
-        const isTalentFromTable = !!talentRes.data;
-        const isTalentFromRole =
+        const isAmbassadeurFromTable = !!ambassadeurRes.data;
+        const isAmbassadeurFromRole =
           profileRes.data?.role === 'candidate' ||
           profileRes.data?.role === 'candidat' ||
           profileRes.data?.role === 'ambassadeur';
 
-        setIsTalent(isTalentFromTable || isTalentFromRole);
+        setIsAmbassadeur(isAmbassadeurFromTable || isAmbassadeurFromRole);
       } catch (err) {
         console.error("Erreur load user:", err);
       }
@@ -123,7 +123,7 @@ const Header = () => {
         <div className="flex items-center gap-4 md:gap-8">
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-6">
-            <Link href="/talents" className={cn(navLinkClasses, pathname === "/talents" && "text-[#008751]")}>Talents</Link>
+            <Link href="/ambassadeurs" className={cn(navLinkClasses, pathname === "/ambassadeurs" && "text-[#008751]")}>Ambassadeurs</Link>
             <Link href="/tresors" className={cn(navLinkClasses, pathname === "/tresors" && "text-[#008751]")}>Trésors</Link>
           </div>
           
@@ -216,11 +216,11 @@ const Header = () => {
           <div className="p-8 flex flex-col gap-6">
 
             <Link 
-              href="/talents" 
+              href="/ambassadeurs" 
               onClick={() => setIsMobileMenuOpen(false)}
               className="text-3xl font-display font-black text-gray-900 flex items-center justify-between"
             >
-              Talents <ChevronDown size={20} className="-rotate-90 text-gray-300" />
+              Ambassadeurs <ChevronDown size={20} className="-rotate-90 text-gray-300" />
             </Link>
             <Link 
               href="/tresors" 

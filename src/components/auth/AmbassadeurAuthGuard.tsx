@@ -4,12 +4,12 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/utils/supabase/client';
 import { Loader2 } from 'lucide-react';
 
-interface TalentAuthGuardProps {
+interface AmbassadeurAuthGuardProps {
   children: React.ReactNode;
   fallback?: React.ReactNode;
 }
 
-export default function TalentAuthGuard({ children, fallback }: TalentAuthGuardProps) {
+export default function AmbassadeurAuthGuard({ children, fallback }: AmbassadeurAuthGuardProps) {
   const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
   
@@ -20,28 +20,28 @@ export default function TalentAuthGuard({ children, fallback }: TalentAuthGuardP
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
         if (sessionError || !session) {
-          window.location.href = '/talent/login';
+          window.location.href = '/ambassadeurs/login';
           return;
         }
 
-        // Step 2: Verify talent exists
-        const { data: talent, error: talentError } = await supabase
-          .from('talents')
+        // Step 2: Verify ambassadeur exists
+        const { data: ambassadeur, error: ambassadeurError } = await supabase
+          .from('ambassadeurs')
           .select('id')
           .eq('auth_user_id', session.user.id)
           .single();
 
-        if (talentError || !talent) {
+        if (ambassadeurError || !ambassadeur) {
           // Sign out invalid user
           await supabase.auth.signOut();
-          window.location.href = '/talent/login';
+          window.location.href = '/ambassadeurs/login';
           return;
         }
 
         setAuthenticated(true);
       } catch (error) {
         console.error('Auth guard error:', error);
-        window.location.href = '/talent/login';
+        window.location.href = '/ambassadeurs/login';
       } finally {
         setLoading(false);
       }

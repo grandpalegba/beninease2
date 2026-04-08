@@ -2,14 +2,14 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '@/utils/supabase/client';
-import type { Talent } from '@/types';
+import type { Ambassadeur } from '@/types';
 import { Award, TrendingUp, Zap } from 'lucide-react';
 
 interface StatsSectionProps {
-  profile: Talent;
+  profile: Ambassadeur;
 }
 
-type TalentStats = {
+type AmbassadeurStats = {
   votes: number;
   rank: number;
   categorie: string | null;
@@ -17,42 +17,42 @@ type TalentStats = {
 };
 
 export default function StatsSection({ profile }: StatsSectionProps) {
-  const [stats, setStats] = useState<TalentStats | null>(null);
+  const [stats, setStats] = useState<AmbassadeurStats | null>(null);
 
   useEffect(() => {
-    const fetchTalentStats = async () => {
+    const fetchAmbassadeurStats = async () => {
       if (!profile.categorie) return;
 
-      // 1. Get current talent's votes
-      const { data: talentData } = await supabase
-        .from('talents')
+      // 1. Get current ambassadeur's votes
+      const { data: ambassadeurData } = await supabase
+        .from('ambassadeurs')
         .select('votes')
         .eq('id', profile.id)
         .single();
 
-      if (!talentData) return;
+      if (!ambassadeurData) return;
 
-      // 2. Get rank and all talents in the category
-      const { data: categoryTalents, error: rankError } = await supabase
-        .from('talents')
+      // 2. Get rank and all ambassadeurs in the category
+      const { data: categoryAmbassadeurs, error: rankError } = await supabase
+        .from('ambassadeurs')
         .select('id, votes')
         .eq('categorie', profile.categorie)
         .order('votes', { ascending: false });
 
-      if (rankError || !categoryTalents) return;
+      if (rankError || !categoryAmbassadeurs) return;
 
-      const rank = categoryTalents.findIndex((t) => t.id === profile.id) + 1;
-      const topRankVotes = categoryTalents.length > 0 ? categoryTalents[0].votes : 0;
+      const rank = categoryAmbassadeurs.findIndex((t) => t.id === profile.id) + 1;
+      const topRankVotes = categoryAmbassadeurs.length > 0 ? categoryAmbassadeurs[0].votes : 0;
 
       setStats({
-        votes: talentData.votes || 0,
+        votes: ambassadeurData.votes || 0,
         rank: rank > 0 ? rank : 1,
         categorie: profile.categorie,
         topRankVotes,
       });
     };
 
-    fetchTalentStats();
+    fetchAmbassadeurStats();
   }, [profile.id, profile.categorie, supabase]);
 
   const progressToTop1 = stats && stats.topRankVotes > 0 ? (stats.votes / stats.topRankVotes) * 100 : 0;
@@ -82,7 +82,7 @@ export default function StatsSection({ profile }: StatsSectionProps) {
                         style={{ width: `${progressToTop1}%` }}
                     ></div>
                 </div>
-                <p className="text-xs text-gray-400 mt-3">Vous avez atteint {progressToTop1.toFixed(0)}% des votes du talent le mieux classé.</p>
+                <p className="text-xs text-gray-400 mt-3">Vous avez atteint {progressToTop1.toFixed(0)}% des votes de l'ambassadeur le mieux classé.</p>
             </div>
 
             {/* Vote evolution (simulation for now) */}

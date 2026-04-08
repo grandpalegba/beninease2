@@ -3,24 +3,24 @@
 import { useState } from 'react';
 import { supabase } from '@/utils/supabase/client';
 import { VIDEO_STEPS } from '@/lib/constants/video-steps';
-import type { Talent } from '@/types';
+import type { Ambassadeur } from '@/types';
 import VideoSlot from './VideoSlot';
 import { cn } from '@/lib/utils';
 
 interface VideosSectionProps {
-  profile: Talent;
+  profile: Ambassadeur;
 }
 
-export default function VideosSection({ profile: initialProfile }: VideosSectionProps) {
-  const [profile, setProfile] = useState(initialProfile);
+export default function VideosSection({ profile: initialAmbassadeur }: VideosSectionProps) {
+  const [ambassadeur, setAmbassadeur] = useState(initialAmbassadeur);
   
-  const isAmbassadeur = profile.role === 'ambassadeur' || profile.role === 'admin';
+  const isAmbassadeur = ambassadeur.role === 'ambassadeur' || ambassadeur.role === 'admin';
 
   const handleUpdateVideo = async (key: string, videoId: string | null) => {
     const { data, error } = await supabase
-      .from('talents')
+      .from('ambassadeurs')
       .update({ [key]: videoId })
-      .eq('id', profile.id)
+      .eq('id', ambassadeur.id)
       .select()
       .single();
 
@@ -28,7 +28,7 @@ export default function VideosSection({ profile: initialProfile }: VideosSection
       console.error("Erreur lors de la mise à jour:", error);
       alert("Une erreur est survenue.");
     } else if (data) {
-      setProfile(data as Talent);
+      setAmbassadeur(data as Ambassadeur);
     }
   };
 
@@ -37,7 +37,7 @@ export default function VideosSection({ profile: initialProfile }: VideosSection
   };
 
   const totalSteps = VIDEO_STEPS.length;
-  const completedSteps = VIDEO_STEPS.filter(step => !!profile[step.key as keyof Talent]).length;
+  const completedSteps = VIDEO_STEPS.filter(step => !!ambassadeur[step.key as keyof Ambassadeur]).length;
 
   return (
     <div className="space-y-12">
@@ -63,8 +63,8 @@ export default function VideosSection({ profile: initialProfile }: VideosSection
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {VIDEO_STEPS.map((step) => {
-          const videoId = profile[step.key as keyof Talent] as string | null;
-          const isPreviousStepCompleted = step.id === 1 || !!profile[VIDEO_STEPS[step.id - 2].key as keyof Talent];
+          const videoId = ambassadeur[step.key as keyof Ambassadeur] as string | null;
+          const isPreviousStepCompleted = step.id === 1 || !!ambassadeur[VIDEO_STEPS[step.id - 2].key as keyof Ambassadeur];
           const isLocked = step.id > 1 && !isAmbassadeur && !isPreviousStepCompleted;
 
           return (
@@ -73,6 +73,7 @@ export default function VideosSection({ profile: initialProfile }: VideosSection
               step={step}
               videoId={videoId}
               isLocked={isLocked}
+              isPreviousStepCompleted={isPreviousStepCompleted}
               onUpdate={handleUpdateVideo}
               onDelete={handleDeleteVideo}
             />

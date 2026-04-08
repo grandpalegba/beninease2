@@ -12,13 +12,13 @@ export interface VoterSession {
 export interface Video {
   id: string;
   url: string;
-  talent_id: string;
+  ambassadeur_id: string;
   title: string | null;
   description: string | null;
   created_at: string;
 }
 
-export interface Talent {
+export interface Ambassadeur {
   id: string;
   slug: string;
   prenom: string | null;
@@ -58,13 +58,13 @@ export interface Votant {
 export interface Vote {
   id: string;
   voter_id: string;
-  talent_id: string;
+  ambassadeur_id: string;
   univers: string;
   categorie: string;
   created_at: string;
 }
 
-export type EntityType = 'talent' | 'jury' | 'treasure';
+export type EntityType = 'ambassadeur' | 'jury' | 'treasure';
 
 export interface Treasure {
   id: string;

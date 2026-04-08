@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation'
  * Server-side talent authentication guard
  * Use in Server Components to verify talent authentication
  */
-export async function verifyTalentAuth() {
+export async function verifyAmbassadeurAuth() {
   const supabase = await createSupabaseServerClient()
   
   // Step 1: Check Supabase session
@@ -16,24 +16,24 @@ export async function verifyTalentAuth() {
   } = await supabase.auth.getSession()
 
   if (sessionError || !session) {
-    redirect('/talent/login')
+    redirect('/ambassadeur/login')
   }
 
   // Step 2: Verify talent exists
-  const { data: talent, error: talentError } = await supabase
-    .from('talents')
+  const { data: ambassadeur, error: ambassadeurError } = await supabase
+    .from('ambassadeurs')
     .select('id, prenom, nom, email')
     .eq('auth_user_id', session.user.id)
     .single()
 
-  if (talentError || !talent) {
+  if (ambassadeurError || !ambassadeur) {
     // Sign out invalid user
     await supabase.auth.signOut()
-    redirect('/talent/login')
+    redirect('/ambassadeur/login')
   }
 
   return {
-    talent,
+    ambassadeur,
     session,
     supabase
   }
@@ -43,7 +43,7 @@ export async function verifyTalentAuth() {
  * Get current talent data
  * Returns talent info if authenticated, null otherwise
  */
-export async function getCurrentTalent() {
+export async function getCurrentAmbassadeur() {
   try {
     const supabase = await createSupabaseServerClient()
     
@@ -55,15 +55,15 @@ export async function getCurrentTalent() {
       return null
     }
 
-    const { data: talent } = await supabase
-      .from('talents')
+    const { data: ambassadeur } = await supabase
+      .from('ambassadeurs')
       .select('*')
       .eq('auth_user_id', session.user.id)
       .single()
 
-    return talent
+    return ambassadeur
   } catch (error) {
-    console.error('Error getting current talent:', error)
+    console.error('Error getting current ambassadeur:', error)
     return null
   }
 }
@@ -72,7 +72,7 @@ export async function getCurrentTalent() {
  * Check if user has talent role
  * Returns boolean for conditional rendering
  */
-export async function isTalentUser() {
-  const talent = await getCurrentTalent()
-  return talent !== null
+export async function isAmbassadeurUser() {
+  const ambassadeur = await getCurrentAmbassadeur()
+  return ambassadeur !== null
 }

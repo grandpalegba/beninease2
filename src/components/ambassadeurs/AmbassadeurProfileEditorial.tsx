@@ -7,8 +7,8 @@ import { cn } from "@/lib/utils";
 import EditorialSection from "./EditorialSection";
 import PremiumImage from "../ui/PremiumImage";
 
-interface TalentProfileEditorialProps {
-  talent: any;
+interface AmbassadeurProfileEditorialProps {
+  ambassadeur: any;
   votes: number;
   onVote: () => void;
   onShare: () => void;
@@ -16,18 +16,18 @@ interface TalentProfileEditorialProps {
 }
 
 /**
- * TalentProfileEditorial - L'Expérience "Digital Atelier" Immersive.
+ * AmbassadeurProfileEditorial - L'Expérience "Digital Atelier" Immersive.
  * - Utilisation de PremiumImage pour le héros et les sections.
  * - Navigation narrative fluide sans modals.
  * - Optimisation de la hiérarchie visuelle et de la conversion.
  */
-export default function TalentProfileEditorial({
-  talent,
+export default function AmbassadeurProfileEditorial({
+  ambassadeur,
   votes,
   onVote,
   onShare,
   isVoting = false,
-}: TalentProfileEditorialProps) {
+}: AmbassadeurProfileEditorialProps) {
   const contactFormRef = useRef<HTMLDivElement>(null);
 
   // Définition de la structure narrative
@@ -35,26 +35,26 @@ export default function TalentProfileEditorial({
     {
       id: "qui-je-suis",
       title: "Qui je suis",
-      videoUrl: talent.video_qui_je_suis,
-      imageUrl: talent.photo_qui_je_suis,
+      videoUrl: ambassadeur.video_qui_je_suis,
+      imageUrl: ambassadeur.photo_qui_je_suis,
     },
     {
       id: "mon-histoire",
       title: "Mon histoire",
-      videoUrl: talent.video_histoire,
-      imageUrl: talent.photo_histoire,
+      videoUrl: ambassadeur.video_histoire,
+      imageUrl: ambassadeur.photo_histoire,
     },
     {
       id: "mes-services",
       title: "Mes services",
-      videoUrl: talent.video_services,
-      imageUrl: talent.photo_services,
+      videoUrl: ambassadeur.video_services,
+      imageUrl: ambassadeur.photo_services,
     },
     {
       id: "pourquoi-moi",
       title: "Pourquoi moi",
-      videoUrl: talent.video_pourquoi,
-      imageUrl: talent.photo_pourquoi,
+      videoUrl: ambassadeur.video_pourquoi,
+      imageUrl: ambassadeur.photo_pourquoi,
     },
   ];
 
@@ -80,26 +80,26 @@ export default function TalentProfileEditorial({
           {/* Portrait Image Premium (1:1) */}
           <div className="relative w-[320px] h-[320px] md:w-[380px] md:h-[380px] mb-16 mx-auto">
             <PremiumImage 
-              src={talent.avatar_url || "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&q=80&w=800"}
-              alt={`${talent.prenom} ${talent.nom}`}
+              src={ambassadeur.avatar_url || "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&q=80&w=800"}
+              alt={`${ambassadeur.prenom} ${ambassadeur.nom}`}
               aspectRatio="square"
             />
           </div>
 
           {/* Profession (Gold Accent) */}
           <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.3em] text-[#C8A96A] mb-8">
-            {talent.categorie}
+            {ambassadeur.categorie}
           </span>
 
           {/* Name (STRICT MATCH with Listing) */}
           <h1 className="text-2xl md:text-4xl font-extrabold font-manrope text-[#1A1A1A] uppercase tracking-[0.15em] leading-tight mb-12 max-w-2xl mx-auto">
-            {talent.prenom} {talent.nom}
+            {ambassadeur.prenom} {ambassadeur.nom}
           </h1>
 
           {/* Bio (Replacing fixed tagline / 2-4 lines) */}
-          {talent.bio && (
+          {ambassadeur.bio && (
             <p className="text-base md:text-lg italic text-gray-500 opacity-80 max-w-xl mx-auto mb-14 px-4 font-light leading-relaxed line-clamp-4">
-              {talent.bio}
+              {ambassadeur.bio}
             </p>
           )}
 

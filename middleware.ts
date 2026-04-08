@@ -7,7 +7,7 @@ export async function middleware(request: NextRequest) {
   // --- ACCÈS PUBLIC ---
   // On autorise immédiatement l'accès aux pages publiques
   if (
-    pathname.startsWith("/talents") || 
+    pathname.startsWith("/ambassadeurs") || 
     pathname.startsWith("/classement") || 
     pathname.startsWith("/api/og") ||
     pathname.startsWith("/login") ||

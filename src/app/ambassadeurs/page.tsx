@@ -2,32 +2,32 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/utils/supabase/client";
-import type { Talent } from "@/types";
+import type { Ambassadeur } from "@/types";
 import { Loader2, AlertCircle } from "lucide-react";
 import CardDeck from "@/components/ui/CardDeck";
-import StitchTalentCard from "@/components/talents/StitchTalentCard";
+import StitchAmbassadeurCard from "@/components/ambassadeurs/StitchAmbassadeurCard";
 import Link from "next/link";
 import { toast } from "sonner";
 
-export default function TalentsPage() {
-  const [talents, setTalents] = useState<Talent[]>([]);
+export default function AmbassadeursPage() {
+  const [ambassadeurs, setAmbassadeurs] = useState<Ambassadeur[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [voterWeight, setVoterWeight] = useState<number>(1);
   const [userId, setUserId] = useState<string | null>(null);
 
-  const loadTalents = useCallback(async () => {
+  const loadAmbassadeurs = useCallback(async () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from("talents")
+        .from("ambassadeurs")
         .select("*")
         .order("weighted_votes_total", { ascending: false });
 
       if (error) throw error;
-      setTalents(data || []);
+      setAmbassadeurs(data || []);
     } catch (err) {
-      console.error("Error loading talents:", err);
+      console.error("Error loading ambassadeurs:", err);
       setError(true);
     } finally {
       setLoading(false);
@@ -35,7 +35,7 @@ export default function TalentsPage() {
   }, []);
 
   useEffect(() => {
-    loadTalents();
+    loadAmbassadeurs();
 
     supabase.auth.getUser().then(({ data }) => {
       if (data.user) {
@@ -51,9 +51,9 @@ export default function TalentsPage() {
           });
       }
     });
-  }, [loadTalents]);
+  }, [loadAmbassadeurs]);
 
-  const handleVote = async (talent: Talent) => {
+  const handleVote = async (ambassadeur: Ambassadeur) => {
     if (!userId) {
       toast.error("Veuillez vous connecter pour voter");
       return;
@@ -61,22 +61,22 @@ export default function TalentsPage() {
 
     try {
       const { error } = await supabase.rpc("cast_weighted_vote", {
-        target_talent_id: talent.id,
+        target_ambassadeur_id: ambassadeur.id,
       });
 
       if (error) throw error;
 
       toast.success(`Vote enregistré ! Impact : +${voterWeight}`);
 
-      setTalents((prev) =>
-        prev.map((t) =>
-          t.id === talent.id
+      setAmbassadeurs((prev) =>
+        prev.map((a) =>
+          a.id === ambassadeur.id
             ? {
-              ...t,
+              ...a,
               weighted_votes_total:
-                (t.weighted_votes_total || 0) + voterWeight,
+                (a.weighted_votes_total || 0) + voterWeight,
             }
-            : t
+            : a
         )
       );
     } catch (err) {
@@ -90,7 +90,7 @@ export default function TalentsPage() {
       <div className="h-screen w-full flex flex-col items-center justify-center bg-[#F4F4F2]">
         <Loader2 className="w-10 h-10 animate-spin text-[#008751] mb-4" />
         <p className="text-gray-500 uppercase tracking-widest text-xs">
-          Chargement des Talents...
+          Chargement des Ambassadeurs...
         </p>
       </div>
     );
@@ -102,10 +102,10 @@ export default function TalentsPage() {
           <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
           <h2 className="text-xl font-bold mb-2">Oups !</h2>
           <p className="text-gray-600 mb-6">
-            Impossible de charger les talents.
+            Impossible de charger les ambassadeurs.
           </p>
           <button
-            onClick={loadTalents}
+            onClick={loadAmbassadeurs}
             className="text-[#008751] font-bold hover:underline"
           >
             Réessayer
@@ -117,11 +117,11 @@ export default function TalentsPage() {
   return (
     <div className="h-screen w-full bg-[#F4F4F2] overflow-hidden">
       <CardDeck
-        items={talents}
-        renderItem={(talent) => (
-          <StitchTalentCard 
-            key={talent.id} 
-            talent={talent} 
+        items={ambassadeurs}
+        renderItem={(ambassadeur) => (
+          <StitchAmbassadeurCard 
+            key={ambassadeur.id} 
+            ambassadeur={ambassadeur} 
           />
         )}
       />

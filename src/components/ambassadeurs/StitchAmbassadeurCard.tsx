@@ -4,27 +4,27 @@ import React from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-interface StitchTalentCardProps {
-  talent: any;
+interface StitchAmbassadeurCardProps {
+  ambassadeur: any;
 }
 
 /**
- * StitchTalentCard - Design "Stitch" optimisé pour Mobile & Protection Desktop.
+ * StitchAmbassadeurCard - Design "Stitch" optimisé pour Mobile & Protection Desktop.
  * Améliorations : Textes "levés" sur le dégradé (fog) et protection anti-extraction.
  */
-export default function StitchTalentCard({ talent }: StitchTalentCardProps) {
+export default function StitchAmbassadeurCard({ ambassadeur }: StitchAmbassadeurCardProps) {
   const router = useRouter();
 
   // Mapping des données Supabase
-  const name = `${talent.prenom} ${talent.nom}`;
-  const image = talent.avatar_url || "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&q=80&w=800";
-  const categorie = talent.categorie;
-  const slogan = talent.slogan || "Détenteur d'un savoir-faire unique";
-  const bio = talent.bio;
+  const name = `${ambassadeur.prenom} ${ambassadeur.nom}`;
+  const image = ambassadeur.avatar_url || "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&q=80&w=800";
+  const categorie = ambassadeur.categorie;
+  const slogan = ambassadeur.slogan || "Détenteur d'un savoir-faire unique";
+  const bio = ambassadeur.bio;
 
   return (
     <div
-      onClick={() => router.push(`/talents/${talent.slug}`)}
+      onClick={() => router.push(`/ambassadeurs/${ambassadeur.slug}`)}
       onContextMenu={(e) => e.preventDefault()}
       className="w-full h-full max-h-[90vh] mx-auto touch-none select-none cursor-pointer group flex flex-col overflow-hidden bg-white rounded-2xl"
     >

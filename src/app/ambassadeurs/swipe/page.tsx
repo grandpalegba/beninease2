@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-export default async function TalentSwipePage({
+export default async function AmbassadeurSwipePage({
   searchParams,
 }: {
   searchParams: { slug?: string };
@@ -9,8 +9,8 @@ export default async function TalentSwipePage({
   const slug = resolvedParams.slug;
   
   if (slug) {
-    redirect(`/talents`); // In the new architecture, swipe is on the main page
+    redirect(`/ambassadeurs`); // In the new architecture, swipe is on the main page
   }
   
-  redirect("/talents");
+  redirect("/ambassadeurs");
 }

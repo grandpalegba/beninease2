@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-interface TalentProfileShellProps {
+interface AmbassadeurProfileShellProps {
   id: string;
   full_name: string;
   city: string;
@@ -200,7 +200,7 @@ function PhotoCard({ url, label }: { url: string; label: string }) {
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
-export default function TalentProfileShell({
+export default function AmbassadeurProfileShell({
   id,
   full_name,
   city,
@@ -213,7 +213,7 @@ export default function TalentProfileShell({
   univers,
   categorie,
   social_links,
-}: TalentProfileShellProps) {
+}: AmbassadeurProfileShellProps) {
   const { session, isAuthenticated, checkHasVoted } = useVoter();
   const [hasVoted, setHasVoted] = useState(false);
   const [isVoting, setIsVoting] = useState(false);
@@ -230,10 +230,10 @@ export default function TalentProfileShell({
     try {
       const { error } = await supabase.from("votes").insert([{
         user_id: session?.user.id,
-        talent_id: id,
+        ambassadeur_id: id,
       }]);
       if (error) {
-        if (error.code === "23505") { setHasVoted(true); toast.info("Vous avez déjà soutenu ce talent !"); }
+        if (error.code === "23505") { setHasVoted(true); toast.info("Vous avez déjà soutenu cet ambassadeur !"); }
         else throw error;
       } else {
         setHasVoted(true);
@@ -422,7 +422,7 @@ export default function TalentProfileShell({
           <div className="rounded-2xl border border-gray-100 p-8 md:p-10 text-center space-y-5 bg-[#FAFAFA]">
             <FlagLine className="w-12 mx-auto" />
             <p className="text-[10px] font-extrabold uppercase tracking-[0.3em] text-[#008751]">
-              Soutenir ce talent
+              Soutenir cet ambassadeur
             </p>
             <p className="text-3xl font-extrabold text-[#1A1A1A]">
               {votesCount}
