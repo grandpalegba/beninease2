@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -8,16 +8,16 @@ interface VoteSliderProps {
   value: number;
   onChange: (value: number) => void;
   onValidate?: () => void;
-  onVoteSubmit?: (value: number) => void; // Support pour le duel Talent
+  onVoteSubmit?: (value: number) => void;
   disabled?: boolean;
   leftName?: string;
   rightName?: string;
 }
 
-export default function VoteSlider({ 
-  value, 
-  onChange, 
-  onValidate, 
+export default function VoteSlider({
+  value,
+  onChange,
+  onValidate,
   onVoteSubmit,
   disabled = false,
   leftName,
@@ -26,7 +26,7 @@ export default function VoteSlider({
   const trackRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
 
-  // Scores calculés selon les couleurs du Bénin
+  // Calcul des scores
   const leftScore = 100 - value;
   const rightScore = value;
 
@@ -34,38 +34,50 @@ export default function VoteSlider({
     if (!trackRef.current || disabled) return;
     const rect = trackRef.current.getBoundingClientRect();
     const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
-    onChange(Math.round((x / rect.width) * 100));
+    const newValue = Math.round((x / rect.width) * 100);
+    onChange(newValue);
   };
 
   return (
-    <div className="w-full select-none space-y-6">
-      {/* Affichage des Scores Dynamiques */}
-      <div className="flex justify-between items-center px-4 font-manrope">
+    <div className="w-full select-none space-y-8 py-4">
+      {/* AFFICHAGE DES SCORES (STYLE ARENA) */}
+      <div className="flex justify-between items-end px-2 font-manrope">
         <motion.div
-           animate={{ scale: value < 50 ? 1.1 : 0.9, opacity: value < 50 ? 1 : 0.4 }}
-           className="flex flex-col"
-         >
-           <span className="text-[10px] text-white/40 uppercase tracking-[0.2em]">
-             {leftName?.split(' ')[0] || "Candidat Vert"}
-           </span>
-           <span className="text-3xl font-black text-[#006b3f]">{leftScore}%</span>
-         </motion.div>
+          animate={{
+            scale: value < 50 ? 1.05 : 0.95,
+            opacity: value < 50 ? 1 : 0.5
+          }}
+          className="flex flex-col"
+        >
+          <span className="text-[11px] text-gray-400 font-bold uppercase tracking-[0.2em] mb-1">
+            {leftName?.split(' ')[0] || "Candidat"}
+          </span>
+          <span className="text-5xl font-black text-[#006b3f] leading-none">
+            {leftScore}%
+          </span>
+        </motion.div>
 
         <motion.div
-           animate={{ scale: value > 50 ? 1.1 : 0.9, opacity: value > 50 ? 1 : 0.4 }}
-           className="flex flex-col items-end"
-         >
-           <span className="text-[10px] text-white/40 uppercase tracking-[0.2em]">
-             {rightName?.split(' ')[0] || "Candidat Jaune"}
-           </span>
-           <span className="text-3xl font-black text-[#ffd31a]">{rightScore}%</span>
-         </motion.div>
+          animate={{
+            scale: value > 50 ? 1.05 : 0.95,
+            opacity: value > 50 ? 1 : 0.5
+          }}
+          className="flex flex-col items-end"
+        >
+          <span className="text-[11px] text-gray-400 font-bold uppercase tracking-[0.2em] mb-1">
+            {rightName?.split(' ')[0] || "Candidat"}
+          </span>
+          <span className="text-5xl font-black text-[#fcd116] leading-none">
+            {rightScore}%
+          </span>
+        </motion.div>
       </div>
 
+      {/* ZONE DU SLIDER */}
       <div
         ref={trackRef}
         className={cn(
-          "relative h-16 flex items-center touch-none",
+          "relative h-20 flex items-center touch-none",
           disabled ? "cursor-not-allowed" : "cursor-pointer"
         )}
         onPointerDown={(e) => {
@@ -80,9 +92,15 @@ export default function VoteSlider({
           e.currentTarget.releasePointerCapture(e.pointerId);
         }}
       >
-        {/* Rail de base (Arrière-plan neutre) */}
-        <div className="absolute w-full h-3 bg-white/10 rounded-full overflow-hidden">
-          {/* FILL VERT (Gauche) */}
+        {/* RAIL NATIONAL (VERT - JAUNE - ROUGE) */}
+        <div className="absolute w-full h-4 bg-gray-100 rounded-full overflow-hidden shadow-inner">
+          {/* Fond dégradé national */}
+          <div
+            className="absolute inset-0 w-full h-full opacity-30"
+            style={{ background: 'linear-gradient(90deg, #006b3f 0%, #fcd116 50%, #e8112d 100%)' }}
+          />
+
+          {/* Remplissage dynamique Vert (Gauche) */}
           <motion.div
             className="absolute inset-y-0 left-0"
             style={{ backgroundColor: "#006b3f" }}
@@ -90,28 +108,27 @@ export default function VoteSlider({
             transition={{ type: "spring", bounce: 0, duration: 0.2 }}
           />
 
-          {/* FILL JAUNE (Droite) */}
+          {/* Remplissage dynamique Jaune (Droite) */}
           <motion.div
             className="absolute inset-y-0 right-0"
-            style={{ backgroundColor: "#ffd31a" }}
+            style={{ backgroundColor: "#fcd116" }}
             animate={{ width: `${value}%` }}
             transition={{ type: "spring", bounce: 0, duration: 0.2 }}
           />
         </div>
 
-        {/* Ligne de séparation centrale */}
-        <div className="absolute left-1/2 -translate-x-1/2 w-0.5 h-6 bg-white/20 z-10" />
+        {/* MARQUEUR CENTRAL (50%) */}
+        <div className="absolute left-1/2 -translate-x-1/2 w-1 h-8 bg-black/5 z-10 rounded-full" />
 
-        {/* LE SCEAU ROUGE (Le bouton de validation) */}
+        {/* LE SCEAU ROUGE (Bouton de validation flottant) */}
         <motion.div
           animate={{
-            x: `calc(${value}% - 32px)`,
-            scale: isDragging ? 1.1 : 1,
+            left: `${value}%`,
+            scale: isDragging ? 1.15 : 1,
           }}
           transition={{ type: "spring", damping: 25, stiffness: 400 }}
-          className="absolute z-20 pointer-events-none" // pointer-events-none car le track gère le drag
+          className="absolute z-20 -translate-x-1/2 pointer-events-none"
         >
-          {/* Le bouton réel sur lequel on appuie pour valider */}
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={(e) => {
@@ -122,32 +139,34 @@ export default function VoteSlider({
               }
             }}
             className={cn(
-              "w-16 h-16 rounded-full bg-[#bd0020] border-[4px] border-white shadow-[0_0_30px_rgba(189,0,32,0.6)] flex items-center justify-center pointer-events-auto transition-transform",
-              !isDragging && !disabled && "animate-pulse" // Pulsation quand immobile pour inviter au clic
+              "w-14 h-14 rounded-full bg-[#e8112d] border-[4px] border-white shadow-xl flex items-center justify-center pointer-events-auto transition-all",
+              !isDragging && !disabled && "animate-pulse"
             )}
+            style={{ boxShadow: '0 10px 25px rgba(232, 17, 45, 0.4)' }}
           >
-            {/* Icône de validation discrète au centre */}
-            <div className="w-2 h-2 bg-white rounded-full shadow-inner" />
+            {/* Centre du sceau */}
+            <div className="w-2.5 h-2.5 bg-white rounded-full" />
           </motion.button>
 
-          {/* Tooltip d'aide (disparaît après le premier mouvement) */}
+          {/* TOOLTIP INTERACTIF */}
           <AnimatePresence>
-            {!isDragging && value === 50 && !disabled && (
+            {!isDragging && !disabled && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: -45 }}
+                animate={{ opacity: 1, y: -50 }}
                 exit={{ opacity: 0 }}
-                className="absolute left-1/2 -translate-x-1/2 bg-white text-[#bd0020] text-[8px] font-black px-2 py-1 rounded-md whitespace-nowrap"
+                className="absolute left-1/2 -translate-x-1/2 bg-black text-white text-[9px] font-black px-3 py-1.5 rounded-full whitespace-nowrap tracking-tighter"
               >
-                APPUYEZ POUR SCELLER
+                SCELLER MON VOTE
               </motion.div>
             )}
           </AnimatePresence>
         </motion.div>
       </div>
 
-      <p className="text-center text-[10px] text-white/20 uppercase tracking-[0.4em]">
-        Faites glisser, puis appuyez sur le sceau
+      {/* LÉGENDE */}
+      <p className="text-center text-[10px] text-gray-400 font-bold uppercase tracking-[0.3em]">
+        Faites glisser pour ajuster • Appuyez pour voter
       </p>
     </div>
   );
