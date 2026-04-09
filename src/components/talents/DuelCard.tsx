@@ -1,66 +1,40 @@
 "use client";
 
 import React, { useState } from "react";
-import { supabase } from "@/lib/supabase/client";
 import CandidateCard from "./CandidateCard";
 import VoteSlider from "./VoteSlider";
 
-export default function DuelCard({ duel, userId, isActive, onNext }: any) {
+export default function DuelCard({ duel, onNext }: any) {
   const [voteValue, setVoteValue] = useState(50);
-  const [loading, setLoading] = useState(false);
-
-  const handleVoteSubmit = async (val: number) => {
-    if (!userId || loading) return;
-    setLoading(true);
-
-    try {
-      const { error } = await supabase.from("votes_duels").insert({
-        duel_id: duel.id,
-        user_id: userId,
-        vote_value: val,
-        voted_at: new Date().toISOString()
-      });
-
-      if (error) throw error;
-      onNext(); // Passage au slide suivant après insertion
-    } catch (e) {
-      console.error("Erreur vote:", e);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
-    <div className="h-full w-full bg-white flex flex-col font-manrope">
-      {/* 2rem Respiratory Space */}
-      <div className="h-8 bg-white" />
+    <div className="min-h-screen w-full bg-white flex flex-col items-center px-6 py-12">
+      {/* HEADER SPACE */}
+      <div className="h-12" />
 
-      {/* CARDS SECTION (Top) */}
-      <div className="flex-grow flex flex-col px-5 gap-8">
+      {/* DUAL DISPLAY */}
+      <div className="w-full max-w-5xl flex flex-col md:flex-row gap-12 mb-16">
         <CandidateCard
           talent={duel?.talent_left}
           score={100 - voteValue}
           color="#006b3f"
-          isActive={isActive}
         />
         <CandidateCard
           talent={duel?.talent_right}
           score={voteValue}
-          color="#bd0020"
-          isActive={isActive}
+          color="#ffd31a"
         />
       </div>
 
-      {/* Divider Rule : 2rem Space */}
-      <div className="h-12 bg-white" />
+      {/* 2rem de respiration avant le slider */}
+      <div className="h-8" />
 
-      {/* VOTE SECTION (Bottom) */}
-      <div className="bg-white px-8 pb-12">
+      {/* VOTE INTERFACE */}
+      <div className="w-full max-w-md">
         <VoteSlider
           value={voteValue}
           onChange={setVoteValue}
-          onVoteSubmit={handleVoteSubmit}
-          disabled={loading}
+          onVoteSubmit={onNext}
         />
       </div>
     </div>

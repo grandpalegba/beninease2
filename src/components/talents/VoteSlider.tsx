@@ -2,16 +2,8 @@
 
 import React, { useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
 
-interface VoteSliderProps {
-  value: number;
-  onChange: (value: number) => void;
-  onVoteSubmit: (value: number) => void;
-  disabled?: boolean;
-}
-
-export default function VoteSlider({ value, onChange, onVoteSubmit, disabled }: VoteSliderProps) {
+export default function VoteSlider({ value, onChange, onVoteSubmit, disabled }: any) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -23,57 +15,55 @@ export default function VoteSlider({ value, onChange, onVoteSubmit, disabled }: 
   };
 
   return (
-    <div className="w-full flex flex-col items-center font-manrope">
-      {/* 1. MASSIVE SCORE */}
-      <div className="mb-10 text-center">
-        <span className="text-7xl font-extrabold text-[#1a1c1c] tracking-tighter tabular-nums">
-          {value}%
-        </span>
+    <div className="w-full flex flex-col items-center bg-white font-manrope">
+      {/* 1. MIROIR DES SCORES : Massive Scale */}
+      <div className="flex justify-between w-full mb-12 px-4 items-baseline">
+        <div className="flex flex-col">
+          <span className="text-[11px] font-black text-[#1a1c1c]/30 uppercase tracking-[0.3em] mb-2">Gauche</span>
+          <span className="text-7xl font-black text-[#1a1c1c] tracking-tighter italic leading-none">{100 - value}%</span>
+        </div>
+        <div className="flex flex-col items-end">
+          <span className="text-[11px] font-black text-[#1a1c1c]/30 uppercase tracking-[0.3em] mb-2">Droite</span>
+          <span className="text-7xl font-black text-[#1a1c1c] tracking-tighter italic leading-none">{value}%</span>
+        </div>
       </div>
 
-      {/* 2. NATIONAL TRACK */}
+      {/* 2. LE RAIL (Vert & Jaune) */}
       <div
         ref={trackRef}
-        className="relative w-full h-8 bg-[#eeeeee] rounded-full cursor-pointer touch-none mb-14"
+        className="relative w-full h-8 bg-[#eeeeee] rounded-full cursor-pointer touch-none mb-16 shadow-inner border border-gray-100"
         onPointerDown={(e) => { if (!disabled) { setIsDragging(true); handleUpdate(e.clientX); e.currentTarget.setPointerCapture(e.pointerId); } }}
         onPointerMove={(e) => isDragging && handleUpdate(e.clientX)}
         onPointerUp={() => setIsDragging(false)}
       >
         <div className="absolute inset-0 flex rounded-full overflow-hidden">
-          <div className="h-full bg-[#006b3f]" style={{ width: "33.33%" }} />
-          <div className="h-full bg-[#fcd116]" style={{ width: "33.33%" }} />
-          <div className="h-full bg-[#bd0020]" style={{ width: "33.33%" }} />
+          <div className="w-1/2 h-full bg-[#006b3f]" />
+          <div className="w-1/2 h-full bg-[#ffd31a]" />
         </div>
 
-        {/* CURSOR (Sceau Béninois) */}
+        {/* CURSEUR ROUGE */}
         <motion.div
           animate={{ left: `${value}%` }}
           transition={{ type: "spring", damping: 30, stiffness: 400 }}
           className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 z-20"
         >
-          <div className="w-10 h-10 bg-[#1a1c1c] rounded-full border-4 border-white shadow-2xl flex items-center justify-center">
-            <div className="w-1.5 h-1.5 bg-white rounded-full" />
-          </div>
+          <div className="w-10 h-10 bg-[#bd0020] rounded-full border-[4px] border-white shadow-xl" />
         </motion.div>
       </div>
 
-      {/* 3. CTA */}
-      <div className="w-full flex flex-col items-center gap-6">
+      {/* 3. CTA : Bouton Noir "Ink" */}
+      <div className="w-full flex flex-col items-center gap-8">
         <div className="text-center">
-          <p className="text-[10px] font-black text-[#1a1c1c]/30 uppercase tracking-[0.4em]">Gain potentiel</p>
-          <p className="text-xl font-black text-[#006b3f]">+ 150 PTS</p>
+          <p className="text-[11px] font-black text-[#1a1c1c]/40 uppercase tracking-[0.4em]">Gain potentiel</p>
+          <p className="text-2xl font-black text-[#006b3f]">+ 150 PTS</p>
         </div>
-        <motion.button
-          whileTap={{ scale: 0.96 }}
+        <button
           onClick={() => onVoteSubmit(value)}
           disabled={disabled}
-          className={cn(
-            "w-full bg-[#1a1c1c] text-white py-6 rounded-2xl font-black uppercase tracking-[0.3em] text-[11px] shadow-2xl transition-all",
-            disabled && "opacity-50 grayscale"
-          )}
+          className="w-full bg-[#1a1c1c] text-white py-6 rounded-2xl font-black uppercase tracking-[0.3em] text-[11px] shadow-2xl transition-all active:scale-95"
         >
-          {disabled ? "Validation en cours..." : "Valider mon choix"}
-        </motion.button>
+          {disabled ? "ENREGISTREMENT..." : "VALIDER MON CHOIX"}
+        </button>
       </div>
     </div>
   );
