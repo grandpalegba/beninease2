@@ -78,29 +78,29 @@ const Duel = () => {
 
   return (
     <div
-      className="min-h-screen w-full bg-white flex flex-col items-center justify-center py-8 md:py-12 gap-8 md:gap-12 text-[#1a1c1c] select-none overflow-x-hidden"
+      className="h-[calc(100dvh-80px)] md:h-[calc(100dvh-95px)] w-full bg-white flex flex-col items-center py-3 md:py-6 text-[#1a1c1c] select-none overflow-hidden"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Category pill */}
-      <div className="shrink-0 flex items-center justify-center mt-auto md:mt-0">
+      {/* Category pill - Fixed height anchor */}
+      <div className="shrink-0 h-[40px] md:h-[60px] flex items-center justify-center w-full">
         <span className="bg-[#1a1c1c] text-white px-4 py-1.5 md:px-6 md:py-2 rounded-full font-display text-[10px] md:text-sm font-bold tracking-[0.2em] uppercase shadow-sm">
           {pair.category}
         </span>
       </div>
 
-      {/* Swipeable duel area */}
+      {/* Swipeable duel area - Fluid centered space */}
       <div
-        className={`flex items-center justify-center w-full max-w-[90vw] md:max-w-3xl lg:max-w-4xl px-2 md:px-4 transition-all duration-250 ease-out shrink-0 ${swipeClass}`}
+        className={`flex items-center justify-center w-full max-w-[90vw] md:max-w-3xl lg:max-w-4xl px-2 md:px-4 transition-all duration-250 ease-out flex-1 min-h-0 ${swipeClass}`}
       >
-        <div className="w-full grid grid-cols-2 gap-3 md:gap-8 max-h-full">
+        <div className="w-full h-full grid grid-cols-2 gap-3 md:gap-8 min-h-0 py-2">
           <CandidateCard talent={pair.talent1} percent={leftPercent} dotColor="#006b3f" />
           <CandidateCard talent={pair.talent2} percent={rightPercent} dotColor="#ffd31a" />
         </div>
       </div>
 
-      {/* Controls Container: Track + CTA */}
-      <div className="w-full flex flex-col items-center gap-4 md:gap-8 shrink-0 mb-auto md:mb-0 mt-2 md:mt-4">
+      {/* Controls Container: Track + CTA - Fixed height bottom anchor */}
+      <div className="w-full shrink-0 flex flex-col items-center justify-end gap-5 md:gap-8 h-[100px] md:h-[130px] mb-2 z-20">
         {/* Voting track */}
         <div className="w-full max-w-sm md:max-w-2xl px-6 relative flex flex-col items-center shrink-0">
           <div className="relative w-full h-5 md:h-8 rounded-full overflow-visible">
@@ -124,15 +124,6 @@ const Duel = () => {
               className="duel-slider absolute inset-0 w-full h-full appearance-none bg-transparent cursor-pointer z-10 disabled:cursor-default"
             />
           </div>
-          
-          {/* Reset button */}
-          <button 
-            onClick={() => !isValidated && setSliderValue(50)}
-            disabled={isValidated || sliderValue === 50}
-            className={`mt-3 md:mt-5 text-[10px] md:text-xs font-sans tracking-[0.2em] uppercase transition-opacity ${isValidated || sliderValue === 50 ? 'opacity-0 pointer-events-none' : 'opacity-60 hover:opacity-100 text-gray-500'}`}
-          >
-            ⟲ 50/50
-          </button>
         </div>
 
         {/* CTA Validation */}
@@ -201,11 +192,11 @@ const CandidateCard = ({
   percent: number;
   dotColor: string;
 }) => (
-  <div className="flex flex-col w-full bg-[#1a1c1c] rounded-xl md:rounded-2xl overflow-hidden text-left shadow-lg max-h-full">
-    <div className="relative group cursor-pointer w-full aspect-square md:aspect-[5/6] shrink-0">
+  <div className="flex flex-col w-full h-full bg-[#1a1c1c] rounded-xl md:rounded-2xl overflow-hidden text-left shadow-lg">
+    <div className="relative group cursor-pointer w-full flex-1 shrink min-h-[100px] bg-[#0a0a0a]">
       <img
-        alt={talent.name}
-        className="w-full h-full object-cover transition-all duration-700 opacity-90 group-hover:opacity-100 pointer-events-none"
+        alt={talent.name.split(" ")[0]}
+        className="w-full h-full object-cover transition-opacity duration-300 opacity-90 group-hover:opacity-100 pointer-events-none"
         src={talent.image}
         draggable={false}
       />
@@ -216,7 +207,7 @@ const CandidateCard = ({
       </div>
     </div>
     
-    <div className="p-3 md:p-6 flex flex-col min-h-0 bg-[#1a1c1c] z-10 w-full overflow-hidden shrink">
+    <div className="p-3 md:p-6 flex flex-col shrink-0 bg-[#1a1c1c] z-10 w-full overflow-hidden">
       {/* Ligne d'entête: Point, Nom, et Pourcentage */}
       <div className="flex items-center justify-between mb-1 md:mb-2 max-w-full">
         <div className="flex items-center gap-2 overflow-hidden">
@@ -225,7 +216,7 @@ const CandidateCard = ({
             style={{ backgroundColor: dotColor, boxShadow: `0 0 8px ${dotColor}` }} 
           />
           <h2 className="font-display font-bold text-sm md:text-xl tracking-[0.1em] md:tracking-[0.2em] text-white truncate whitespace-nowrap">
-            {talent.name}
+            {talent.name.split(" ")[0]}
           </h2>
         </div>
         <div 
@@ -236,11 +227,11 @@ const CandidateCard = ({
         </div>
       </div>
       
-      <p className="text-gray-300 text-[11px] md:text-sm leading-relaxed md:leading-[1.8] w-full mt-1.5 md:mt-2">
+      <p className="text-gray-300 text-[11px] md:text-sm leading-relaxed md:leading-[1.8] w-full mt-1.5 md:mt-2 text-justify">
         {talent.bio}
       </p>
       
-      <p className="font-sans text-[10px] md:text-xs italic text-orange-200 mt-2 md:mt-4 leading-relaxed pb-1">
+      <p className="font-sans text-[10px] md:text-xs italic text-orange-200 mt-3 md:mt-4 leading-relaxed pb-1 text-justify">
         « {talent.quote} »
       </p>
     </div>
