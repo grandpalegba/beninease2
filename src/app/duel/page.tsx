@@ -61,7 +61,7 @@ const Duel = () => {
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX === null) return;
+    if (touchStartX === null || !isValidated) return;
     const diff = e.changedTouches[0].clientX - touchStartX;
     if (Math.abs(diff) > 60) {
       goTo(diff < 0 ? 1 : -1);
@@ -83,17 +83,17 @@ const Duel = () => {
       onTouchEnd={handleTouchEnd}
     >
       {/* Category pill */}
-      <div className="mt-8 mb-10 md:mb-16">
-        <span className="bg-[#1a1c1c] text-white px-8 py-3 md:px-12 md:py-4 rounded-full font-display text-sm md:text-lg font-bold tracking-[0.2em] uppercase">
+      <div className="mt-8 mb-6 md:mb-10">
+        <span className="bg-[#1a1c1c] text-white px-6 py-2 md:px-8 md:py-3 rounded-full font-display text-xs md:text-sm font-bold tracking-[0.2em] uppercase">
           {pair.category}
         </span>
       </div>
 
       {/* Swipeable duel area */}
       <div
-        className={`flex items-center w-full max-w-5xl px-4 mb-8 md:mb-12 transition-all duration-250 ease-out ${swipeClass}`}
+        className={`flex items-center w-full max-w-4xl px-4 mb-6 md:mb-10 transition-all duration-250 ease-out ${swipeClass}`}
       >
-        <div className="flex-1 grid grid-cols-2 gap-4 md:gap-10">
+        <div className="flex-1 grid grid-cols-2 gap-4 md:gap-6">
           <CandidateCard talent={pair.talent1} percent={leftPercent} dotColor="#006b3f" />
           <CandidateCard talent={pair.talent2} percent={rightPercent} dotColor="#ffd31a" />
         </div>
@@ -124,34 +124,27 @@ const Duel = () => {
         </div>
       </div>
 
-      {/* Points */}
+      {/* CTA Validation */}
       <div className="flex flex-col items-center gap-4 mb-10">
-        <h3 className="font-display text-4xl md:text-6xl font-extrabold tracking-tight">
-          <span className="tracking-widest">{totalPoints}</span> PTS
-        </h3>
         <button
           onClick={handleValidate}
           disabled={isValidated}
-          className="bg-[#1a1c1c] text-white px-12 py-4 md:px-20 md:py-5 rounded-full font-display text-base md:text-xl font-bold tracking-widest uppercase hover:bg-zinc-700 transition-colors active:scale-95 duration-200 disabled:opacity-50"
+          className="bg-[#1a1c1c] text-white px-10 py-3 md:px-16 md:py-4 rounded-full font-display text-sm md:text-base font-bold tracking-widest uppercase hover:bg-zinc-700 transition-colors active:scale-95 duration-200 disabled:opacity-50"
         >
           {isValidated ? "DÉJÀ ÉVALUÉ ✓" : "JE VALIDE"}
         </button>
       </div>
 
-      {/* Duel counter + swipe hint */}
-      <p className="text-sm text-gray-400 mb-4 font-sans">
-        Duel {currentIndex + 1} / {pairs.length}
-      </p>
-      <p className="text-xs text-gray-300 mb-8 font-sans">← Swipez ou cliquez pour naviguer →</p>
+      {/* Duel counter + swipe hint removed per request */}
 
       {/* Tap zones for desktop navigation */}
       <div
-        className="fixed left-0 top-0 h-full w-16 cursor-pointer z-20"
-        onClick={() => goTo(-1)}
+        className={`fixed left-0 top-0 h-full w-16 z-20 ${isValidated ? 'cursor-pointer' : 'cursor-not-allowed hidden'}`}
+        onClick={() => isValidated && goTo(-1)}
       />
       <div
-        className="fixed right-0 top-0 h-full w-16 cursor-pointer z-20"
-        onClick={() => goTo(1)}
+        className={`fixed right-0 top-0 h-full w-16 z-20 ${isValidated ? 'cursor-pointer' : 'cursor-not-allowed hidden'}`}
+        onClick={() => isValidated && goTo(1)}
       />
 
       {/* Custom slider styles */}
@@ -196,28 +189,41 @@ const CandidateCard = ({
   percent: number;
   dotColor: string;
 }) => (
-  <div className="flex flex-col items-center text-center">
-    <div className="relative group cursor-pointer w-full aspect-[3/4] mb-4 md:mb-6">
-      <div className="w-full h-full rounded-2xl overflow-hidden relative">
-        <img
-          alt={talent.name}
-          className="w-full h-full object-cover transition-all duration-700"
-          src={talent.image}
-        />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="bg-white/20 backdrop-blur-md rounded-full p-3 md:p-5 group-hover:scale-110 transition-transform duration-300">
-            <Play className="w-6 h-6 md:w-10 md:h-10 text-white fill-white" />
-          </div>
+  <div className="flex flex-col w-full bg-[#1a1c1c] rounded-2xl overflow-hidden text-left shadow-lg">
+    <div className="relative group cursor-pointer w-full aspect-[4/5] md:aspect-[5/6]">
+      <img
+        alt={talent.name}
+        className="w-full h-full object-cover transition-all duration-700 opacity-90 group-hover:opacity-100"
+        src={talent.image}
+      />
+      <div className="absolute bottom-3 right-3 md:bottom-4 md:right-4 flex items-center justify-center">
+        <div className="bg-black/50 backdrop-blur-md rounded-full p-2.5 group-hover:scale-110 transition-transform duration-300">
+          <Play className="w-4 h-4 md:w-5 md:h-5 text-white fill-white" />
         </div>
       </div>
     </div>
-    <div className="flex items-center gap-2 mb-1">
-      <span className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full" style={{ backgroundColor: dotColor }} />
-      <h2 className="font-display font-bold text-lg md:text-2xl tracking-wider uppercase">
-        {talent.name.split(" ")[0]}
-      </h2>
+    
+    <div className="p-4 md:p-6 flex flex-col flex-1 h-full">
+      <div className="flex items-center justify-between mb-2">
+        <h2 className="font-display font-bold text-lg md:text-xl tracking-wider text-[#ffd31a] truncate pr-2">
+          {talent.name}
+        </h2>
+        <div 
+          className="font-display text-lg md:text-xl font-extrabold"
+          style={{ color: dotColor }}
+        >
+          {Math.round(percent)}%
+        </div>
+      </div>
+      
+      <p className="text-gray-300 text-xs md:text-sm line-clamp-3 leading-relaxed mb-3">
+        {talent.bio}
+      </p>
+      
+      <p className="font-sans text-xs italic text-[#ffd31a]/80 mt-auto">
+        « {talent.quote} »
+      </p>
     </div>
-    <div className="font-display text-2xl md:text-4xl font-extrabold">{Math.round(percent)}%</div>
   </div>
 );
 
