@@ -1,50 +1,39 @@
 "use client";
 
 import React, { useState } from "react";
-import { supabase } from "@/lib/supabase/client";
 import CandidateCard from "./CandidateCard";
 import VoteSlider from "./VoteSlider";
+import { supabase } from "@/lib/supabase/client";
 
-interface DuelCardProps {
-  duel: any;
-  userId: string | null;
-  isActive: boolean;
-  onNext: () => void;
-}
-
-export default function DuelCard({ duel, userId, isActive, onNext }: DuelCardProps) {
+export default function DuelCard({ duel, userId, isActive, onNext }: any) {
   const [voteValue, setVoteValue] = useState(50);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleVoteSubmit = async (finalValue: number) => {
-    if (!userId || isSubmitting) return;
+  const handleVoteSubmit = async (val: number) => {
+    if (!userId || loading) return;
+    setLoading(true);
 
-    setIsSubmitting(true);
     try {
-      const { error } = await supabase
-        .from("votes_duels")
-        .insert({
-          duel_id: duel.id,
-          user_id: userId,
-          vote_value: finalValue,
-          voted_at: new Date().toISOString()
-        });
-
-      if (error) throw error;
-
-      // Succès : Passage au duel suivant
-      onNext();
-    } catch (err) {
-      console.error("Erreur lors de l'enregistrement du vote:", err);
-      // Optionnel : Notification d'erreur ici
+      const { error } = await supabase.from("votes_duels").insert({
+        duel_id: duel.id,
+        user_id: userId,
+        vote_value: val,
+      });
+      if (!error) onNext();
+    } catch (e) {
+      console.error(e);
     } finally {
-      setIsSubmitting(false);
+      setLoading(false);
     }
   };
 
   return (
-    <div className="h-full w-full bg-white flex flex-col overflow-hidden">
-      <div className="flex-grow flex flex-col p-2 gap-2 overflow-hidden">
+    <div className="h-full w-full bg-white flex flex-col font-manrope">
+      {/* Espace de respiration supérieur */}
+      <div className="h-4 bg-white" />
+
+      {/* ZONE CANDIDATS : Flex-grow pour occuper l'espace dynamique */}
+      <div className="flex-grow flex flex-col px-4 gap-8">
         <CandidateCard
           talent={duel.talent_left}
           score={100 - voteValue}
@@ -59,14 +48,16 @@ export default function DuelCard({ duel, userId, isActive, onNext }: DuelCardPro
         />
       </div>
 
-      <div className="bg-white px-6 pb-10 pt-4 flex flex-col gap-6">
+      {/* ESPACE BLANC (Divider Rule: 2rem) */}
+      <div className="h-12 bg-white" />
+
+      {/* ZONE DE VOTE : Bas de l'écran */}
+      <div className="bg-white px-8 pb-12">
         <VoteSlider
           value={voteValue}
           onChange={setVoteValue}
           onVoteSubmit={handleVoteSubmit}
-          leftName={duel.talent_left?.prenom_talent}
-          rightName={duel.talent_right?.prenom_talent}
-          disabled={isSubmitting}
+          disabled={loading}
         />
       </div>
     </div>
