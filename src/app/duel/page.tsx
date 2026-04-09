@@ -28,14 +28,11 @@ const Duel = () => {
 
   const goTo = useCallback(
     (dir: -1 | 1) => {
-      // Phase 1: animate current content out
       setSwipeDir(dir === 1 ? "left" : "right");
-      // Phase 2: while still invisible, swap content + reset slider
       setTimeout(() => {
         setCurrentIndex((prev) => (prev + dir + pairs.length) % pairs.length);
         setSliderValue(50);
       }, 220);
-      // Phase 3: fade new content in
       setTimeout(() => {
         setSwipeDir(null);
       }, 280);
@@ -54,9 +51,7 @@ const Duel = () => {
     if (isValidated) return;
     setValidatedSet((prev) => new Set(prev).add(currentIndex));
     setTotalPoints((p) => p + Math.abs(sliderValue - 50) * 10);
-    setTimeout(() => {
-      goTo(1);
-    }, 600);
+    setTimeout(() => { goTo(1); }, 600);
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -68,7 +63,6 @@ const Duel = () => {
     if (touchStartX === null || touchStartY === null) return;
     const diffX = e.changedTouches[0].clientX - touchStartX;
     const diffY = e.changedTouches[0].clientY - touchStartY;
-    // Only swipe if movement is clearly horizontal (not a slider drag)
     if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
       goTo(diffX < 0 ? 1 : -1);
     }
@@ -85,37 +79,40 @@ const Duel = () => {
 
   return (
     <div
-      className="h-[calc(100dvh-80px)] md:h-[calc(100dvh-95px)] w-full bg-white flex flex-col items-center gap-3 md:gap-5 py-3 md:py-6 text-[#1a1c1c] select-none overflow-hidden"
+      className="h-[100dvh] w-full bg-white grid text-[#1a1c1c] select-none overflow-hidden"
+      style={{ gridTemplateRows: "48px 1fr 110px", gap: "12px", padding: "12px 0" }}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Category pill - Fixed height anchor */}
-      <div className="shrink-0 h-[40px] md:h-[60px] flex items-center justify-center w-full">
+      {/* ROW 1 — Category pill (fixed 48px) */}
+      <div className="flex items-center justify-center w-full">
         <span className="bg-[#1a1c1c] text-white px-4 py-1.5 md:px-6 md:py-2 rounded-full font-display text-[10px] md:text-sm font-bold tracking-[0.2em] uppercase shadow-sm">
           {pair.category}
         </span>
       </div>
 
-      {/* Swipeable duel area - Fluid centered space */}
-      <div
-        className={`flex items-start justify-center w-full max-w-[90vw] md:max-w-3xl lg:max-w-4xl px-2 md:px-4 transition-all duration-250 ease-out flex-1 min-h-0 ${swipeClass}`}
-      >
-        <div className="w-full grid grid-cols-2 gap-3 md:gap-8">
-          <CandidateCard talent={pair.talent1} percent={leftPercent} dotColor="#006b3f" />
-          <CandidateCard talent={pair.talent2} percent={rightPercent} dotColor="#ffd31a" />
+      {/* ROW 2 — Cards (1fr = all remaining space) */}
+      <div className="relative w-full overflow-hidden min-h-0">
+        <div
+          className={`absolute inset-0 transition-all duration-250 ease-out ${swipeClass} flex items-stretch px-2 md:px-8 max-w-4xl mx-auto`}
+        >
+          <div className="w-full grid grid-cols-2 gap-3 md:gap-8 h-full">
+            <CandidateCard talent={pair.talent1} percent={leftPercent} dotColor="#006b3f" />
+            <CandidateCard talent={pair.talent2} percent={rightPercent} dotColor="#ffd31a" />
+          </div>
         </div>
       </div>
 
-      {/* Controls Container: Track + CTA - Fixed height bottom anchor */}
-      <div 
-        className="w-full shrink-0 flex flex-col items-center justify-end gap-5 md:gap-8 h-[90px] md:h-[120px] z-20"
+      {/* ROW 3 — Controls (fixed 110px) */}
+      <div
+        className="w-full flex flex-col items-center justify-around px-4 z-20"
         onTouchStart={(e) => e.stopPropagation()}
         onTouchEnd={(e) => e.stopPropagation()}
         onTouchMove={(e) => e.stopPropagation()}
       >
         {/* Voting track */}
-        <div className="w-full max-w-sm md:max-w-2xl px-6 relative flex flex-col items-center shrink-0">
-          <div className="relative w-full h-5 md:h-8 rounded-full overflow-visible">
+        <div className="w-full max-w-sm md:max-w-2xl px-2 relative">
+          <div className="relative w-full h-5 md:h-7 rounded-full overflow-visible">
             <div className="absolute inset-0 flex rounded-full overflow-hidden shadow-inner">
               <div
                 className="h-full transition-all duration-200"
@@ -139,26 +136,22 @@ const Duel = () => {
         </div>
 
         {/* CTA Validation */}
-        <div className="shrink-0 flex flex-col items-center">
-          <button
-            onClick={handleValidate}
-            disabled={isValidated}
-            className="bg-[#1a1c1c] text-white px-8 py-2.5 md:px-10 md:py-4 rounded-full font-display text-xs md:text-base font-bold tracking-widest uppercase hover:bg-zinc-700 transition-colors active:scale-95 duration-200 disabled:opacity-50 shadow-lg"
-          >
-            {isValidated ? "DÉJÀ ÉVALUÉ ✓" : "JE VALIDE"}
-          </button>
-        </div>
+        <button
+          onClick={handleValidate}
+          disabled={isValidated}
+          className="bg-[#1a1c1c] text-white px-8 py-2.5 md:px-10 md:py-3 rounded-full font-display text-xs md:text-base font-bold tracking-widest uppercase hover:bg-zinc-700 transition-colors active:scale-95 duration-200 disabled:opacity-50 shadow-lg"
+        >
+          {isValidated ? "DÉJÀ ÉVALUÉ ✓" : "JE VALIDE"}
+        </button>
       </div>
-
-      {/* Duel counter + swipe hint removed per request */}
 
       {/* Tap zones for desktop navigation */}
       <div
-        className="fixed left-0 top-0 h-full w-12 md:w-16 z-20 cursor-pointer hidden md:block"
+        className="fixed left-0 top-0 h-full w-12 md:w-16 z-10 cursor-pointer hidden md:block"
         onClick={() => goTo(-1)}
       />
       <div
-        className="fixed right-0 top-0 h-full w-12 md:w-16 z-20 cursor-pointer hidden md:block"
+        className="fixed right-0 top-0 h-full w-12 md:w-16 z-10 cursor-pointer hidden md:block"
         onClick={() => goTo(1)}
       />
 
@@ -205,45 +198,47 @@ const CandidateCard = ({
   dotColor: string;
 }) => (
   <div className="flex flex-col w-full h-full bg-[#1a1c1c] rounded-xl md:rounded-2xl overflow-hidden text-left shadow-lg">
-    <div className="relative group cursor-pointer w-full aspect-square shrink-0 bg-[#0a0a0a]">
+    {/* Image — takes 52% of card height */}
+    <div className="relative group cursor-pointer w-full bg-[#0a0a0a]" style={{ height: "52%" }}>
       <img
         alt={talent.name.split(" ")[0]}
         className="w-full h-full object-cover transition-opacity duration-300 opacity-90 group-hover:opacity-100 pointer-events-none"
         src={talent.image}
         draggable={false}
       />
-      <div className="absolute bottom-2 right-2 md:bottom-4 md:right-4 flex items-center justify-center">
-        <div className="bg-black/50 backdrop-blur-md rounded-full p-2 group-hover:scale-110 transition-transform duration-300">
-          <Play className="w-3 h-3 md:w-5 md:h-5 text-white fill-white" />
+      <div className="absolute bottom-2 right-2 md:bottom-3 md:right-3 flex items-center justify-center">
+        <div className="bg-black/50 backdrop-blur-md rounded-full p-1.5 md:p-2 group-hover:scale-110 transition-transform duration-300">
+          <Play className="w-2.5 h-2.5 md:w-4 md:h-4 text-white fill-white" />
         </div>
       </div>
     </div>
-    
-    <div className="p-3 md:p-6 flex flex-col flex-1 bg-[#1a1c1c] z-10 w-full overflow-hidden">
-      {/* Ligne d'entête: Point, Nom, et Pourcentage */}
-      <div className="flex items-center justify-between mb-1 md:mb-2 max-w-full">
-        <div className="flex items-center gap-2 overflow-hidden">
-          <div 
-            className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full shadow-sm shrink-0" 
-            style={{ backgroundColor: dotColor, boxShadow: `0 0 8px ${dotColor}` }} 
+
+    {/* Text — takes 48%, scrollable if text overflows */}
+    <div className="p-2.5 md:p-5 flex flex-col bg-[#1a1c1c] z-10 w-full overflow-y-auto" style={{ height: "48%" }}>
+      {/* Name row */}
+      <div className="flex items-center justify-between mb-1 md:mb-2 shrink-0">
+        <div className="flex items-center gap-1.5 overflow-hidden">
+          <div
+            className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full shrink-0"
+            style={{ backgroundColor: dotColor, boxShadow: `0 0 8px ${dotColor}` }}
           />
           <h2 className="font-display font-bold text-sm md:text-xl tracking-[0.1em] md:tracking-[0.2em] text-white truncate whitespace-nowrap">
             {talent.name.split(" ")[0]}
           </h2>
         </div>
-        <div 
+        <div
           className="font-display text-sm md:text-xl font-extrabold shrink-0 pl-1"
           style={{ color: dotColor }}
         >
           {Math.round(percent)}%
         </div>
       </div>
-      
-      <p className="text-gray-300 text-[11px] md:text-sm leading-relaxed md:leading-[1.8] w-full mt-1.5 md:mt-2 text-justify">
+
+      <p className="text-gray-300 text-[10px] md:text-sm leading-relaxed md:leading-[1.7] text-justify">
         {talent.bio}
       </p>
-      
-      <p className="font-sans text-[10px] md:text-xs italic text-orange-200 mt-3 md:mt-4 leading-relaxed pb-1 text-justify">
+
+      <p className="font-sans text-[9px] md:text-xs italic text-orange-200 mt-2 leading-relaxed text-justify">
         « {talent.quote} »
       </p>
     </div>
