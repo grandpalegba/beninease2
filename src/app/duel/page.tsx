@@ -106,12 +106,12 @@ const Duel = () => {
         gridTemplateRows: "44px minmax(0, 1fr) 120px",
         gap: "10px",
         padding: "10px 0",
+        cursor: isDragging ? "grabbing" : "grab",
       }}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
-      style={{ cursor: isDragging ? "grabbing" : "grab" }}
     >
       {/* ROW 1 — Category pill (fixed 48px) */}
       <div className="flex items-center justify-center w-full">
