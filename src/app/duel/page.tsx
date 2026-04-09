@@ -24,6 +24,7 @@ const Duel = () => {
   const [validatedSet, setValidatedSet] = useState<Set<number>>(new Set());
   const [swipeDir, setSwipeDir] = useState<"left" | "right" | null>(null);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [touchStartY, setTouchStartY] = useState<number | null>(null);
 
   const goTo = useCallback(
     (dir: -1 | 1) => {
@@ -60,15 +61,19 @@ const Duel = () => {
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStartX(e.touches[0].clientX);
+    setTouchStartY(e.touches[0].clientY);
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX === null) return;
-    const diff = e.changedTouches[0].clientX - touchStartX;
-    if (Math.abs(diff) > 50) {
-      goTo(diff < 0 ? 1 : -1);
+    if (touchStartX === null || touchStartY === null) return;
+    const diffX = e.changedTouches[0].clientX - touchStartX;
+    const diffY = e.changedTouches[0].clientY - touchStartY;
+    // Only swipe if movement is clearly horizontal (not a slider drag)
+    if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
+      goTo(diffX < 0 ? 1 : -1);
     }
     setTouchStartX(null);
+    setTouchStartY(null);
   };
 
   const swipeClass =
@@ -102,7 +107,12 @@ const Duel = () => {
       </div>
 
       {/* Controls Container: Track + CTA - Fixed height bottom anchor */}
-      <div className="w-full shrink-0 flex flex-col items-center justify-end gap-5 md:gap-8 h-[90px] md:h-[120px] z-20">
+      <div 
+        className="w-full shrink-0 flex flex-col items-center justify-end gap-5 md:gap-8 h-[90px] md:h-[120px] z-20"
+        onTouchStart={(e) => e.stopPropagation()}
+        onTouchEnd={(e) => e.stopPropagation()}
+        onTouchMove={(e) => e.stopPropagation()}
+      >
         {/* Voting track */}
         <div className="w-full max-w-sm md:max-w-2xl px-6 relative flex flex-col items-center shrink-0">
           <div className="relative w-full h-5 md:h-8 rounded-full overflow-visible">
