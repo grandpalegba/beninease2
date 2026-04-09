@@ -27,11 +27,17 @@ const Duel = () => {
 
   const goTo = useCallback(
     (dir: -1 | 1) => {
+      // Phase 1: animate current content out
       setSwipeDir(dir === 1 ? "left" : "right");
+      // Phase 2: while still invisible, swap content + reset slider
       setTimeout(() => {
         setCurrentIndex((prev) => (prev + dir + pairs.length) % pairs.length);
+        setSliderValue(50);
+      }, 220);
+      // Phase 3: fade new content in
+      setTimeout(() => {
         setSwipeDir(null);
-      }, 250);
+      }, 280);
     },
     [pairs.length],
   );
@@ -49,10 +55,6 @@ const Duel = () => {
     setTotalPoints((p) => p + Math.abs(sliderValue - 50) * 10);
     setTimeout(() => {
       goTo(1);
-      // Reset slider for next duel if not validated
-      setTimeout(() => {
-        setSliderValue(50);
-      }, 260);
     }, 600);
   };
 
@@ -91,9 +93,9 @@ const Duel = () => {
 
       {/* Swipeable duel area - Fluid centered space */}
       <div
-        className={`flex items-center justify-center w-full max-w-[90vw] md:max-w-3xl lg:max-w-4xl px-2 md:px-4 transition-all duration-250 ease-out flex-1 min-h-0 ${swipeClass}`}
+        className={`flex items-start justify-center w-full max-w-[90vw] md:max-w-3xl lg:max-w-4xl px-2 md:px-4 transition-all duration-250 ease-out flex-1 min-h-0 ${swipeClass}`}
       >
-        <div className="w-full h-full grid grid-cols-2 gap-3 md:gap-8 min-h-0 py-2">
+        <div className="w-full grid grid-cols-2 gap-3 md:gap-8 items-start py-2">
           <CandidateCard talent={pair.talent1} percent={leftPercent} dotColor="#006b3f" />
           <CandidateCard talent={pair.talent2} percent={rightPercent} dotColor="#ffd31a" />
         </div>
@@ -192,8 +194,8 @@ const CandidateCard = ({
   percent: number;
   dotColor: string;
 }) => (
-  <div className="flex flex-col w-full h-full bg-[#1a1c1c] rounded-xl md:rounded-2xl overflow-hidden text-left shadow-lg">
-    <div className="relative group cursor-pointer w-full flex-1 shrink min-h-[100px] bg-[#0a0a0a]">
+  <div className="flex flex-col w-full bg-[#1a1c1c] rounded-xl md:rounded-2xl overflow-hidden text-left shadow-lg">
+    <div className="relative group cursor-pointer w-full aspect-square shrink-0 bg-[#0a0a0a]">
       <img
         alt={talent.name.split(" ")[0]}
         className="w-full h-full object-cover transition-opacity duration-300 opacity-90 group-hover:opacity-100 pointer-events-none"
