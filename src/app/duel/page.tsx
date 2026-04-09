@@ -78,12 +78,12 @@ const Duel = () => {
 
   return (
     <div
-      className="min-h-screen bg-white flex flex-col items-center text-[#1a1c1c] select-none overflow-hidden"
+      className="min-h-screen w-full bg-white flex flex-col items-center justify-center py-8 md:py-12 gap-8 md:gap-12 text-[#1a1c1c] select-none overflow-x-hidden"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
       {/* Category pill */}
-      <div className="mt-2 mb-3 md:mt-8 md:mb-6">
+      <div className="shrink-0 flex items-center justify-center mt-auto md:mt-0">
         <span className="bg-[#1a1c1c] text-white px-4 py-1.5 md:px-6 md:py-2 rounded-full font-display text-[10px] md:text-sm font-bold tracking-[0.2em] uppercase shadow-sm">
           {pair.category}
         </span>
@@ -91,48 +91,60 @@ const Duel = () => {
 
       {/* Swipeable duel area */}
       <div
-        className={`flex items-stretch w-full max-w-4xl px-2 md:px-4 mb-3 md:mb-8 transition-all duration-250 ease-out flex-1 ${swipeClass}`}
+        className={`flex items-center justify-center w-full max-w-[90vw] md:max-w-3xl lg:max-w-4xl px-2 md:px-4 transition-all duration-250 ease-out shrink-0 ${swipeClass}`}
       >
-        <div className="flex-1 grid grid-cols-2 gap-2 md:gap-6 h-full">
+        <div className="w-full grid grid-cols-2 gap-3 md:gap-8 max-h-full">
           <CandidateCard talent={pair.talent1} percent={leftPercent} dotColor="#006b3f" />
           <CandidateCard talent={pair.talent2} percent={rightPercent} dotColor="#ffd31a" />
         </div>
       </div>
 
-      {/* Voting track */}
-      <div className="w-full max-w-sm md:max-w-2xl px-6 mb-3 md:mb-6">
-        <div className="relative w-full h-5 md:h-8 rounded-full overflow-visible">
-          <div className="absolute inset-0 flex rounded-full overflow-hidden shadow-inner">
-            <div
-              className="h-full transition-all duration-200"
-              style={{ width: `${leftPercent}%`, backgroundColor: "#006b3f" }}
-            />
-            <div
-              className="h-full transition-all duration-200"
-              style={{ width: `${rightPercent}%`, backgroundColor: "#ffd31a" }}
+      {/* Controls Container: Track + CTA */}
+      <div className="w-full flex flex-col items-center gap-4 md:gap-8 shrink-0 mb-auto md:mb-0 mt-2 md:mt-4">
+        {/* Voting track */}
+        <div className="w-full max-w-sm md:max-w-2xl px-6 relative flex flex-col items-center shrink-0">
+          <div className="relative w-full h-5 md:h-8 rounded-full overflow-visible">
+            <div className="absolute inset-0 flex rounded-full overflow-hidden shadow-inner">
+              <div
+                className="h-full transition-all duration-200"
+                style={{ width: `${leftPercent}%`, backgroundColor: "#006b3f" }}
+              />
+              <div
+                className="h-full transition-all duration-200"
+                style={{ width: `${rightPercent}%`, backgroundColor: "#ffd31a" }}
+              />
+            </div>
+            <input
+              type="range"
+              min={0}
+              max={100}
+              value={sliderValue}
+              onChange={(e) => !isValidated && setSliderValue(Number(e.target.value))}
+              disabled={isValidated}
+              className="duel-slider absolute inset-0 w-full h-full appearance-none bg-transparent cursor-pointer z-10 disabled:cursor-default"
             />
           </div>
-          <input
-            type="range"
-            min={0}
-            max={100}
-            value={sliderValue}
-            onChange={(e) => !isValidated && setSliderValue(Number(e.target.value))}
-            disabled={isValidated}
-            className="duel-slider absolute inset-0 w-full h-full appearance-none bg-transparent cursor-pointer z-10 disabled:cursor-default"
-          />
+          
+          {/* Reset button */}
+          <button 
+            onClick={() => !isValidated && setSliderValue(50)}
+            disabled={isValidated || sliderValue === 50}
+            className={`mt-3 md:mt-5 text-[10px] md:text-xs font-sans tracking-[0.2em] uppercase transition-opacity ${isValidated || sliderValue === 50 ? 'opacity-0 pointer-events-none' : 'opacity-60 hover:opacity-100 text-gray-500'}`}
+          >
+            ⟲ 50/50
+          </button>
         </div>
-      </div>
 
-      {/* CTA Validation */}
-      <div className="flex flex-col items-center gap-4 mb-4 md:mb-10 pb-4 md:pb-0">
-        <button
-          onClick={handleValidate}
-          disabled={isValidated}
-          className="bg-[#1a1c1c] text-white px-8 py-2.5 md:px-12 md:py-4 rounded-full font-display text-xs md:text-base font-bold tracking-widest uppercase hover:bg-zinc-700 transition-colors active:scale-95 duration-200 disabled:opacity-50 shadow-lg"
-        >
-          {isValidated ? "DÉJÀ ÉVALUÉ ✓" : "JE VALIDE"}
-        </button>
+        {/* CTA Validation */}
+        <div className="shrink-0 flex flex-col items-center">
+          <button
+            onClick={handleValidate}
+            disabled={isValidated}
+            className="bg-[#1a1c1c] text-white px-8 py-2.5 md:px-10 md:py-4 rounded-full font-display text-xs md:text-base font-bold tracking-widest uppercase hover:bg-zinc-700 transition-colors active:scale-95 duration-200 disabled:opacity-50 shadow-lg"
+          >
+            {isValidated ? "DÉJÀ ÉVALUÉ ✓" : "JE VALIDE"}
+          </button>
+        </div>
       </div>
 
       {/* Duel counter + swipe hint removed per request */}
@@ -189,12 +201,13 @@ const CandidateCard = ({
   percent: number;
   dotColor: string;
 }) => (
-  <div className="flex flex-col w-full bg-[#1a1c1c] rounded-xl md:rounded-2xl overflow-hidden text-left shadow-lg h-full">
+  <div className="flex flex-col w-full bg-[#1a1c1c] rounded-xl md:rounded-2xl overflow-hidden text-left shadow-lg max-h-full">
     <div className="relative group cursor-pointer w-full aspect-square md:aspect-[5/6] shrink-0">
       <img
         alt={talent.name}
-        className="w-full h-full object-cover transition-all duration-700 opacity-90 group-hover:opacity-100"
+        className="w-full h-full object-cover transition-all duration-700 opacity-90 group-hover:opacity-100 pointer-events-none"
         src={talent.image}
+        draggable={false}
       />
       <div className="absolute bottom-2 right-2 md:bottom-4 md:right-4 flex items-center justify-center">
         <div className="bg-black/50 backdrop-blur-md rounded-full p-2 group-hover:scale-110 transition-transform duration-300">
@@ -203,24 +216,31 @@ const CandidateCard = ({
       </div>
     </div>
     
-    <div className="p-2 md:p-6 flex flex-col flex-1 h-full min-h-0 bg-[#1a1c1c] z-10 w-full overflow-hidden">
-      <div className="flex flex-col md:flex-row md:items-center justify-between mb-1 md:mb-2 max-w-full">
-        <h2 className="font-display font-bold text-xs md:text-xl tracking-wider text-[#ffd31a] truncate overflow-hidden whitespace-nowrap">
-          {talent.name}
-        </h2>
+    <div className="p-3 md:p-6 flex flex-col min-h-0 bg-[#1a1c1c] z-10 w-full overflow-hidden shrink">
+      {/* Ligne d'entête: Point, Nom, et Pourcentage */}
+      <div className="flex items-center justify-between mb-1 md:mb-2 max-w-full">
+        <div className="flex items-center gap-2 overflow-hidden">
+          <div 
+            className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full shadow-sm shrink-0" 
+            style={{ backgroundColor: dotColor, boxShadow: `0 0 8px ${dotColor}` }} 
+          />
+          <h2 className="font-display font-bold text-sm md:text-xl tracking-[0.1em] md:tracking-[0.2em] text-white truncate whitespace-nowrap">
+            {talent.name}
+          </h2>
+        </div>
         <div 
-          className="font-display text-sm md:text-xl font-extrabold"
+          className="font-display text-sm md:text-xl font-extrabold shrink-0 pl-1"
           style={{ color: dotColor }}
         >
           {Math.round(percent)}%
         </div>
       </div>
       
-      <p className="text-gray-300 text-[10px] md:text-sm line-clamp-3 md:line-clamp-4 leading-tight md:leading-relaxed mb-auto w-full">
+      <p className="text-gray-300 text-[11px] md:text-sm leading-relaxed md:leading-[1.8] w-full mt-1.5 md:mt-2">
         {talent.bio}
       </p>
       
-      <p className="font-sans text-[9px] md:text-xs italic text-[#ffd31a]/80 mt-1 md:mt-3 truncate overflow-hidden">
+      <p className="font-sans text-[10px] md:text-xs italic text-orange-200 mt-2 md:mt-4 leading-relaxed pb-1">
         « {talent.quote} »
       </p>
     </div>
