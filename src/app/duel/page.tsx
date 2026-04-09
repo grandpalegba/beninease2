@@ -25,6 +25,9 @@ const Duel = () => {
   const [swipeDir, setSwipeDir] = useState<"left" | "right" | null>(null);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const [touchStartY, setTouchStartY] = useState<number | null>(null);
+  const [mouseStartX, setMouseStartX] = useState<number | null>(null);
+  const [mouseStartY, setMouseStartY] = useState<number | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
 
   const goTo = useCallback(
     (dir: -1 | 1) => {
@@ -70,6 +73,24 @@ const Duel = () => {
     setTouchStartY(null);
   };
 
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setMouseStartX(e.clientX);
+    setMouseStartY(e.clientY);
+    setIsDragging(true);
+  };
+
+  const handleMouseUp = (e: React.MouseEvent) => {
+    if (!isDragging || mouseStartX === null || mouseStartY === null) return;
+    const diffX = e.clientX - mouseStartX;
+    const diffY = e.clientY - mouseStartY;
+    if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
+      goTo(diffX < 0 ? 1 : -1);
+    }
+    setMouseStartX(null);
+    setMouseStartY(null);
+    setIsDragging(false);
+  };
+
   const swipeClass =
     swipeDir === "left"
       ? "translate-x-[-100%] opacity-0"
@@ -88,6 +109,9 @@ const Duel = () => {
       }}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
+      style={{ cursor: isDragging ? "grabbing" : "grab" }}
     >
       {/* ROW 1 — Category pill (fixed 48px) */}
       <div className="flex items-center justify-center w-full">
