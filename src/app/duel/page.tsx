@@ -79,8 +79,13 @@ const Duel = () => {
 
   return (
     <div
-      className="h-[100dvh] w-full bg-white grid text-[#1a1c1c] select-none overflow-hidden"
-      style={{ gridTemplateRows: "48px 1fr 110px", gap: "12px", padding: "12px 0" }}
+      className="w-full bg-white grid text-[#1a1c1c] select-none overflow-hidden"
+      style={{
+        height: "calc(100svh - 80px)",
+        gridTemplateRows: "44px minmax(0, 1fr) 120px",
+        gap: "10px",
+        padding: "10px 0",
+      }}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
