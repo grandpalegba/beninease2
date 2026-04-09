@@ -1,31 +1,35 @@
 "use client";
 
-import React from "react";
-
 export default function CandidateCard({ talent, score, color }: any) {
-  if (!talent) return <div className="flex-1 rounded-[32px] bg-gray-50 animate-pulse" />;
+  if (!talent) return null;
 
   return (
-    <div className="relative flex-1 w-full flex flex-col items-center text-center group font-manrope">
-      {/* IMAGE CONTAINER : Pas de bordure noire, juste du blanc */}
-      <div className="relative w-full aspect-[3/4] rounded-[32px] overflow-hidden bg-[#eeeeee] mb-8 shadow-sm transition-transform duration-500 group-hover:scale-[1.02]">
+    <div className="flex flex-col w-full group">
+      {/* Image Monumentale rounded-32px */}
+      <div className="relative w-full aspect-[4/5] rounded-[32px] overflow-hidden bg-[#eeeeee] mb-10 shadow-sm border border-black/5">
         <img
           src={talent.profile_image}
           alt={talent.prenom_talent}
-          className="absolute inset-0 w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-700"
+          className="absolute inset-0 w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-1000 ease-out"
         />
+        {/* Play Icon (Optional from your HTML) */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="w-20 h-20 bg-black/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30">
+            <div className="w-0 h-0 border-t-[10px] border-t-transparent border-l-[18px] border-l-white border-b-[10px] border-b-transparent ml-1" />
+          </div>
+        </div>
       </div>
 
-      {/* NOM : Tracking Large + Point National */}
-      <div className="flex items-center gap-4 mb-3">
-        <span className="w-3 h-3 rounded-full" style={{ backgroundColor: color }} />
-        <h2 className="font-black text-3xl tracking-[0.15em] text-[#1a1c1c] uppercase leading-none">
+      {/* Info Line */}
+      <div className="flex items-center gap-4 mb-4">
+        <span className="w-4 h-4 rounded-full" style={{ backgroundColor: color }} />
+        <h2 className="font-black text-5xl tracking-[0.15em] text-[#1a1c1c] uppercase italic">
           {talent.prenom_talent}
         </h2>
       </div>
 
-      {/* SCORE : Sous le nom, massif */}
-      <div className="font-black text-6xl tracking-tighter text-[#1a1c1c] italic">
+      {/* Massive Score */}
+      <div className="font-black text-8xl tracking-tighter text-[#1a1c1c] tabular-nums">
         {score}%
       </div>
     </div>
