@@ -197,48 +197,57 @@ const CandidateCard = ({
   percent: number;
   dotColor: string;
 }) => (
-  <div className="flex flex-col w-full h-full bg-[#1a1c1c] rounded-xl md:rounded-2xl overflow-hidden text-left shadow-lg">
-    {/* Image — takes 52% of card height */}
-    <div className="relative group cursor-pointer w-full bg-[#0a0a0a]" style={{ height: "52%" }}>
-      <img
-        alt={talent.name.split(" ")[0]}
-        className="w-full h-full object-cover transition-opacity duration-300 opacity-90 group-hover:opacity-100 pointer-events-none"
-        src={talent.image}
-        draggable={false}
-      />
-      <div className="absolute bottom-2 right-2 md:bottom-3 md:right-3 flex items-center justify-center">
-        <div className="bg-black/50 backdrop-blur-md rounded-full p-1.5 md:p-2 group-hover:scale-110 transition-transform duration-300">
-          <Play className="w-2.5 h-2.5 md:w-4 md:h-4 text-white fill-white" />
-        </div>
+  <div className="relative w-full h-full rounded-xl md:rounded-2xl overflow-hidden shadow-xl group cursor-pointer bg-[#0a0a0a]">
+    {/* Full-bleed image */}
+    <img
+      alt={talent.name.split(" ")[0]}
+      className="absolute inset-0 w-full h-full object-cover opacity-90 transition-opacity duration-300 group-hover:opacity-100 pointer-events-none"
+      src={talent.image}
+      draggable={false}
+    />
+
+    {/* Play button */}
+    <div className="absolute top-2 right-2 md:top-3 md:right-3 z-20">
+      <div className="bg-black/50 backdrop-blur-md rounded-full p-1.5 md:p-2 group-hover:scale-110 transition-transform duration-300">
+        <Play className="w-2.5 h-2.5 md:w-4 md:h-4 text-white fill-white" />
       </div>
     </div>
 
-    {/* Text — takes 48%, scrollable if text overflows */}
-    <div className="p-2.5 md:p-5 flex flex-col bg-[#1a1c1c] z-10 w-full overflow-y-auto" style={{ height: "48%" }}>
-      {/* Name row */}
-      <div className="flex items-center justify-between mb-1 md:mb-2 shrink-0">
+    {/* Gradient overlay — bottom 60% of card */}
+    <div
+      className="absolute inset-x-0 bottom-0 z-10 pointer-events-none"
+      style={{
+        height: "65%",
+        background: "linear-gradient(to top, rgba(10,10,10,0.98) 0%, rgba(10,10,10,0.85) 40%, rgba(10,10,10,0.4) 70%, transparent 100%)",
+      }}
+    />
+
+    {/* Text overlay — anchored to bottom of card */}
+    <div className="absolute inset-x-0 bottom-0 z-20 p-3 md:p-5 flex flex-col overflow-y-auto max-h-[62%]">
+      {/* Name + percent row */}
+      <div className="flex items-center justify-between mb-1.5 shrink-0">
         <div className="flex items-center gap-1.5 overflow-hidden">
           <div
             className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full shrink-0"
             style={{ backgroundColor: dotColor, boxShadow: `0 0 8px ${dotColor}` }}
           />
-          <h2 className="font-display font-bold text-sm md:text-xl tracking-[0.1em] md:tracking-[0.2em] text-white truncate whitespace-nowrap">
+          <h2 className="font-display font-bold text-sm md:text-xl tracking-[0.1em] md:tracking-[0.15em] text-white truncate whitespace-nowrap drop-shadow-md">
             {talent.name.split(" ")[0]}
           </h2>
         </div>
         <div
-          className="font-display text-sm md:text-xl font-extrabold shrink-0 pl-1"
+          className="font-display text-sm md:text-xl font-extrabold shrink-0 pl-1 drop-shadow-md"
           style={{ color: dotColor }}
         >
           {Math.round(percent)}%
         </div>
       </div>
 
-      <p className="text-gray-300 text-[10px] md:text-sm leading-relaxed md:leading-[1.7] text-justify">
+      <p className="text-gray-200 text-[10px] md:text-sm leading-relaxed md:leading-[1.7] text-justify drop-shadow-sm">
         {talent.bio}
       </p>
 
-      <p className="font-sans text-[9px] md:text-xs italic text-orange-200 mt-2 leading-relaxed text-justify">
+      <p className="font-sans text-[9px] md:text-xs italic text-orange-300 mt-2 leading-relaxed text-justify drop-shadow-sm">
         « {talent.quote} »
       </p>
     </div>
