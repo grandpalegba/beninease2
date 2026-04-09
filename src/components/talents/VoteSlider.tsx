@@ -24,67 +24,55 @@ export default function VoteSlider({ value, onChange, onVoteSubmit, disabled }: 
 
   return (
     <div className="w-full flex flex-col items-center font-manrope">
-      {/* 1. SCORE DISPLAY (Massive Scale Contrast) */}
-      <div className="text-center mb-12">
-        <h3 className="text-7xl font-extrabold text-[#1a1c1c] tracking-tighter tabular-nums">
+      {/* 1. MASSIVE SCORE */}
+      <div className="mb-10 text-center">
+        <span className="text-7xl font-extrabold text-[#1a1c1c] tracking-tighter tabular-nums">
           {value}%
-        </h3>
-        <p className="text-[10px] font-black text-[#1a1c1c]/40 uppercase tracking-[0.5em] mt-2">
-          Intensité du Vote
-        </p>
+        </span>
       </div>
 
-      {/* 2. THE DUEL BAR (National Gradient) */}
+      {/* 2. NATIONAL TRACK */}
       <div
         ref={trackRef}
-        className="relative w-full h-8 bg-gray-100 rounded-full cursor-pointer touch-none mb-16 shadow-inner overflow-visible"
-        onPointerDown={(e) => {
-          if (disabled) return;
-          setIsDragging(true);
-          handleUpdate(e.clientX);
-          e.currentTarget.setPointerCapture(e.pointerId);
-        }}
+        className="relative w-full h-8 bg-[#eeeeee] rounded-full cursor-pointer touch-none mb-14"
+        onPointerDown={(e) => { if (!disabled) { setIsDragging(true); handleUpdate(e.clientX); e.currentTarget.setPointerCapture(e.pointerId); } }}
         onPointerMove={(e) => isDragging && handleUpdate(e.clientX)}
         onPointerUp={() => setIsDragging(false)}
       >
-        {/* Track Split */}
         <div className="absolute inset-0 flex rounded-full overflow-hidden">
           <div className="h-full bg-[#006b3f]" style={{ width: "33.33%" }} />
           <div className="h-full bg-[#fcd116]" style={{ width: "33.33%" }} />
           <div className="h-full bg-[#bd0020]" style={{ width: "33.33%" }} />
         </div>
 
-        {/* Cursor / Thumb (Sceau Béninois) */}
+        {/* CURSOR (Sceau Béninois) */}
         <motion.div
           animate={{ left: `${value}%` }}
           transition={{ type: "spring", damping: 30, stiffness: 400 }}
           className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 z-20"
         >
-          <div className="w-10 h-10 bg-[#bd0020] rounded-full border-4 border-white shadow-2xl flex items-center justify-center">
-            <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+          <div className="w-10 h-10 bg-[#1a1c1c] rounded-full border-4 border-white shadow-2xl flex items-center justify-center">
+            <div className="w-1.5 h-1.5 bg-white rounded-full" />
           </div>
         </motion.div>
       </div>
 
-      {/* 3. PRIMARY ACTION */}
-      <div className="w-full max-w-sm flex flex-col items-center gap-6">
-        <div className="flex flex-col items-center gap-1">
-          <span className="text-[11px] font-black text-[#1a1c1c] uppercase tracking-[0.3em]">
-            Gain potentiel
-          </span>
-          <span className="text-xl font-black text-[#006b3f]">+ 150 PTS</span>
+      {/* 3. CTA */}
+      <div className="w-full flex flex-col items-center gap-6">
+        <div className="text-center">
+          <p className="text-[10px] font-black text-[#1a1c1c]/30 uppercase tracking-[0.4em]">Gain potentiel</p>
+          <p className="text-xl font-black text-[#006b3f]">+ 150 PTS</p>
         </div>
-
         <motion.button
-          whileTap={{ scale: 0.95 }}
+          whileTap={{ scale: 0.96 }}
           onClick={() => onVoteSubmit(value)}
           disabled={disabled}
           className={cn(
-            "w-full bg-[#1a1c1c] text-white py-6 rounded-2xl font-black uppercase tracking-[0.3em] text-xs transition-all",
-            disabled ? "opacity-50" : "hover:bg-[#006b3f] shadow-[0_20px_40px_rgba(0,0,0,0.1)]"
+            "w-full bg-[#1a1c1c] text-white py-6 rounded-2xl font-black uppercase tracking-[0.3em] text-[11px] shadow-2xl transition-all",
+            disabled && "opacity-50 grayscale"
           )}
         >
-          {disabled ? "Validation..." : "Valider mon choix"}
+          {disabled ? "Validation en cours..." : "Valider mon choix"}
         </motion.button>
       </div>
     </div>

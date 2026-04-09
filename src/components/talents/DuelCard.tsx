@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
+import { supabase } from "@/lib/supabase/client";
 import CandidateCard from "./CandidateCard";
 import VoteSlider from "./VoteSlider";
-import { supabase } from "@/lib/supabase/client";
 
 export default function DuelCard({ duel, userId, isActive, onNext }: any) {
   const [voteValue, setVoteValue] = useState(50);
@@ -18,10 +18,13 @@ export default function DuelCard({ duel, userId, isActive, onNext }: any) {
         duel_id: duel.id,
         user_id: userId,
         vote_value: val,
+        voted_at: new Date().toISOString()
       });
-      if (!error) onNext();
+
+      if (error) throw error;
+      onNext(); // Passage au slide suivant après insertion
     } catch (e) {
-      console.error(e);
+      console.error("Erreur vote:", e);
     } finally {
       setLoading(false);
     }
@@ -29,29 +32,29 @@ export default function DuelCard({ duel, userId, isActive, onNext }: any) {
 
   return (
     <div className="h-full w-full bg-white flex flex-col font-manrope">
-      {/* Espace de respiration supérieur */}
-      <div className="h-4 bg-white" />
+      {/* 2rem Respiratory Space */}
+      <div className="h-8 bg-white" />
 
-      {/* ZONE CANDIDATS : Flex-grow pour occuper l'espace dynamique */}
-      <div className="flex-grow flex flex-col px-4 gap-8">
+      {/* CARDS SECTION (Top) */}
+      <div className="flex-grow flex flex-col px-5 gap-8">
         <CandidateCard
-          talent={duel.talent_left}
+          talent={duel?.talent_left}
           score={100 - voteValue}
           color="#006b3f"
           isActive={isActive}
         />
         <CandidateCard
-          talent={duel.talent_right}
+          talent={duel?.talent_right}
           score={voteValue}
           color="#bd0020"
           isActive={isActive}
         />
       </div>
 
-      {/* ESPACE BLANC (Divider Rule: 2rem) */}
+      {/* Divider Rule : 2rem Space */}
       <div className="h-12 bg-white" />
 
-      {/* ZONE DE VOTE : Bas de l'écran */}
+      {/* VOTE SECTION (Bottom) */}
       <div className="bg-white px-8 pb-12">
         <VoteSlider
           value={voteValue}
