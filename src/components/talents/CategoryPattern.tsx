@@ -38,11 +38,12 @@ const CATEGORY_PATTERNS: Record<string, React.ReactNode> = {
     </svg>
   ),
 
-  "voix-lieux": ( // Nested Foundations (Image 4 inspiration)
+  "voix-lieux": ( // Sacred Diamond / Crossroads (Image 4 & 5 inspiration)
     <svg viewBox="0 0 40 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="10" y="4" width="20" height="12" stroke={GOLD_COLOR} strokeWidth={STROKE_WIDTH} strokeLinecap="round" vectorEffect={VECTOR_EFFECT}/>
-      <path d="M14 8H26M14 12H26" stroke={GOLD_COLOR} strokeWidth="0.8" strokeLinecap="round" vectorEffect={VECTOR_EFFECT}/>
-      <path d="M20 4V16" stroke={GOLD_COLOR} strokeWidth="0.8" strokeLinecap="round" vectorEffect={VECTOR_EFFECT}/>
+      <path d="M11 10L20 3L29 10L20 17L11 10Z" stroke={GOLD_COLOR} strokeWidth={STROKE_WIDTH} strokeLinecap="round" vectorEffect={VECTOR_EFFECT}/>
+      <path d="M15 10L20 6L25 10L20 14L15 10Z" stroke={GOLD_COLOR} strokeWidth="1" strokeLinecap="round" opacity="0.6" vectorEffect={VECTOR_EFFECT}/>
+      <path d="M20 7V13M17 10H23" stroke={GOLD_COLOR} strokeWidth="0.8" strokeLinecap="round" opacity="0.4" vectorEffect={VECTOR_EFFECT}/>
+      <circle cx="20" cy="10" r="1" fill={GOLD_COLOR}/>
     </svg>
   ),
 
