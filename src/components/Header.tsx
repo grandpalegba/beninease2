@@ -172,7 +172,9 @@ const Header = () => {
                     <div className="px-2 py-2 mb-3 border-b border-gray-50 pb-4">
                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">{profile?.voter_status || 'Votant'}</p>
                       <p className="text-base font-bold text-gray-900 truncate">{profile?.prenom || 'Explorateur'}</p>
-                          <div className="h-full bg-[#22C55E]" style={{ width: `${Math.min((profile?.total_points || 0) / 10, 100)}%` }} />
+                      <div className="mt-2 flex items-center gap-2">
+                        <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                           <div className="h-full bg-[#22C55E]" style={{ width: `${Math.min((profile?.total_points || 0) / 10, 100)}%` }} />
                         </div>
                         <span className="text-[10px] font-bold text-[#22C55E]">{profile?.total_points || 0} pts</span>
                       </div>
