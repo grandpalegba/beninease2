@@ -127,8 +127,34 @@ const DuelContent = () => {
     });
 
     // ÉTAPE 3 : Mélange final de la liste des duels
-    return shuffle(allPairs);
-  }, [talents]);
+    const finalPairs = shuffle(allPairs);
+
+    // ÉTAPE 4 : Insérer le duel partagé au tout début s'il existe
+    const t1 = searchParams.get("t1");
+    const t2 = searchParams.get("t2");
+    if (t1 && t2) {
+      const talent1 = talents.find(t => t.id === t1);
+      const talent2 = talents.find(t => t.id === t2);
+      if (talent1 && talent2) {
+        // Supprimer le duel des paires existantes s'il s'y trouve déjà (pour éviter les doublons)
+        const filteredPairs = finalPairs.filter(p => 
+          !((p.talent1.id === t1 && p.talent2.id === t2) || (p.talent1.id === t2 && p.talent2.id === t1))
+        );
+        
+        return [
+          {
+            category: formatCategoryName(talent1.talent_categorie_id),
+            categoryId: talent1.talent_categorie_id,
+            talent1,
+            talent2
+          },
+          ...filteredPairs
+        ];
+      }
+    }
+
+    return finalPairs;
+  }, [talents, searchParams]);
 
   const goTo = useCallback((dir: -1 | 1) => {
     setSwipeDir(dir === 1 ? "left" : "right");
@@ -286,11 +312,11 @@ const DuelContent = () => {
       </div>
 
       {/* Button */}
-      <div className="flex flex-col items-center gap-4 shrink-0">
+      <div className="flex flex-col items-center gap-6 shrink-0 pb-4">
         <button 
           onClick={handleValidate} 
           disabled={validatedSet.has(currentIndex)} 
-          className="w-full max-w-[180px] bg-[#1a1c1c] text-white py-2.5 rounded-full text-xs font-bold tracking-[0.2em] uppercase hover:bg-zinc-800 transition-all active:scale-[0.98] disabled:opacity-50 shadow-md flex items-center justify-center gap-2"
+          className="w-[180px] bg-[#1a1c1c] text-white py-3 rounded-full text-[11px] font-bold tracking-[0.25em] uppercase hover:bg-zinc-800 transition-all active:scale-[0.98] disabled:opacity-50 shadow-lg flex items-center justify-center gap-2"
         >
           {validatedSet.has(currentIndex) ? (
             <>A VOTÉ <span className="text-green-500">✓</span></>
@@ -301,7 +327,7 @@ const DuelContent = () => {
 
         <button 
           onClick={handleShare}
-          className="p-3 rounded-full bg-white border border-zinc-100 text-zinc-400 hover:text-amber-600 hover:border-amber-200 transition-all active:scale-95 shadow-sm flex items-center justify-center group"
+          className="p-4 rounded-full bg-white border border-zinc-100 text-zinc-400 hover:text-amber-600 hover:border-amber-200 transition-all active:scale-95 shadow-md flex items-center justify-center group"
           title="Partager ce duel"
         >
           {shareSuccess ? (
