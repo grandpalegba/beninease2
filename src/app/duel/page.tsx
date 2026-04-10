@@ -231,10 +231,9 @@ const DuelContent = () => {
 
   return (
     <div 
-      className="w-full bg-white flex flex-col items-center text-[#1a1c1c] overflow-hidden relative select-none pt-4 pb-12" 
+      className="w-full bg-white flex flex-col justify-between items-center text-[#1a1c1c] overflow-hidden relative select-none pt-2 pb-6" 
       style={{ 
-        height: "calc(100svh - 60px)", 
-        gap: "40px", 
+        height: "calc(100svh - 72px)", 
         cursor: isDragging ? "grabbing" : "grab"
       }}
       onTouchStart={handleTouchStart}
@@ -265,14 +264,15 @@ const DuelContent = () => {
         </div>
       </div>
 
-      {/* Track */}
-      <div 
-        className="w-full max-w-2xl px-4 shrink-0 mt-4"
-        onMouseDown={(e) => e.stopPropagation()}
-        onMouseUp={(e) => e.stopPropagation()}
-        onTouchStart={(e) => e.stopPropagation()}
-        onTouchEnd={(e) => e.stopPropagation()}
-      >
+      {/* Track Container */}
+      <div className="w-full flex flex-col items-center gap-8 shrink-0">
+        <div 
+          className="w-full max-w-2xl px-4"
+          onMouseDown={(e) => e.stopPropagation()}
+          onMouseUp={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+          onTouchEnd={(e) => e.stopPropagation()}
+        >
         <div className="w-full max-w-2xl mx-auto relative h-3 rounded-full bg-gray-100 flex shadow-inner">
           <div className="absolute inset-0 flex rounded-full overflow-hidden">
             <div className="h-full transition-all duration-300" style={{ width: `${100 - sliderValue}%`, backgroundColor: "#008751" }} />
@@ -287,31 +287,32 @@ const DuelContent = () => {
         </div>
       </div>
 
-      {/* Button Group */}
-      <div className="flex flex-col items-center justify-center gap-6 shrink-0 pb-8">
-        <button 
-          onClick={handleShare}
-          className="p-4 rounded-full bg-white border border-zinc-100 text-zinc-400 hover:text-amber-600 hover:border-amber-200 transition-all active:scale-95 shadow-md flex items-center justify-center group"
-          title="Partager ce duel"
-        >
-          {shareSuccess ? (
-            <Check className="w-5 h-5 text-green-500" />
-          ) : (
-            <Share2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
-          )}
-        </button>
+        {/* Button Group */}
+        <div className="flex flex-col items-center justify-center gap-4 pb-4">
+          <button 
+            onClick={handleShare}
+            className="p-3.5 rounded-full bg-white border border-zinc-100 text-zinc-400 hover:text-amber-600 hover:border-amber-200 transition-all active:scale-95 shadow-md flex items-center justify-center group"
+            title="Partager ce duel"
+          >
+            {shareSuccess ? (
+              <Check className="w-5 h-5 text-green-500" />
+            ) : (
+              <Share2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
+            )}
+          </button>
 
-        <button 
-          onClick={handleValidate} 
-          disabled={validatedSet.has(currentIndex)} 
-          className="w-[180px] bg-[#1a1c1c] text-white py-3 rounded-full text-[11px] font-bold tracking-[0.25em] uppercase hover:bg-zinc-800 transition-all active:scale-[0.98] disabled:opacity-50 shadow-lg flex items-center justify-center gap-2"
-        >
-          {validatedSet.has(currentIndex) ? (
-            <>A VOTÉ <span className="text-green-500">✓</span></>
-          ) : (
-            "VALIDER"
-          )}
-        </button>
+          <button 
+            onClick={handleValidate} 
+            disabled={validatedSet.has(currentIndex)} 
+            className="w-[180px] bg-[#1a1c1c] text-white py-2.5 rounded-full text-[10px] font-bold tracking-[0.25em] uppercase hover:bg-zinc-800 transition-all active:scale-[0.98] disabled:opacity-50 shadow-lg flex items-center justify-center gap-2"
+          >
+            {validatedSet.has(currentIndex) ? (
+              <>A VOTÉ <span className="text-green-500">✓</span></>
+            ) : (
+              "VALIDER"
+            )}
+          </button>
+        </div>
       </div>
 
       {/* MODALE VIDÉO */}
