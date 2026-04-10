@@ -3,7 +3,7 @@ const Footer = () => {
     <footer className="bg-[#006B3F] text-white py-12 px-6">
       <div className="container max-w-7xl mx-auto text-center">
         <div className="flex flex-col items-center gap-1 mb-6">
-          <h2 className="font-lato text-3xl md:text-4xl font-black tracking-[3px] uppercase">
+          <h2 className="font-lato text-3xl md:text-4xl font-black tracking-[3px]">
             <span className="text-white">Benin</span><span className="text-[#FFD700]">Ease</span>
           </h2>
           <span className="text-sm md:text-base font-light tracking-[0.3em] uppercase text-white/80">

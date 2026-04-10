@@ -243,7 +243,7 @@ const TalentsContent = () => {
     >
 
       {/* Catégorie */}
-      <div className="flex flex-col items-center justify-center gap-3 shrink-0">
+      <div className="flex flex-col items-center justify-center gap-3 shrink-0 mb-10">
         <span className="text-[#B8860B] font-display text-[11px] font-bold tracking-[0.3em] uppercase">
           TALENTS DU BÉNIN
         </span>
@@ -265,7 +265,7 @@ const TalentsContent = () => {
       </div>
 
       {/* Track Container */}
-      <div className="w-full flex flex-col items-center gap-8 shrink-0">
+      <div className="w-full flex flex-col items-center gap-8 shrink-0 mt-10">
         <div
           className="w-full max-w-2xl px-4"
           onMouseDown={(e) => e.stopPropagation()}
