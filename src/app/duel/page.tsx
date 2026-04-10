@@ -88,41 +88,17 @@ const DuelContent = () => {
 
     const allPairs: DuelPair[] = [];
 
-    // ÉTAPE EXTRA : Vérifier si un duel spécifique a été partagé
-    const t1 = searchParams.get("t1");
-    const t2 = searchParams.get("t2");
-    if (t1 && t2) {
-      const talent1 = talents.find(t => t.id === t1);
-      const talent2 = talents.find(t => t.id === t2);
-      if (talent1 && talent2) {
-        allPairs.push({
-          category: formatCategoryName(talent1.talent_categorie_id),
-          categoryId: talent1.talent_categorie_id,
-          talent1,
-          talent2
-        });
-      }
-    }
-
     // ÉTAPE 2 : Création de paires intra-catégorie
     Object.keys(grouped).forEach((catId) => {
       const catTalents = shuffle(grouped[catId]); 
       
       for (let i = 0; i < catTalents.length - 1; i += 2) {
-        // Éviter les doublons si le duel partagé est déjà inclus
-        const isAlreadyPresent = allPairs.some(p => 
-          (p.talent1.id === catTalents[i].id && p.talent2.id === catTalents[i+1].id) ||
-          (p.talent1.id === catTalents[i+1].id && p.talent2.id === catTalents[i].id)
-        );
-
-        if (!isAlreadyPresent) {
-          allPairs.push({
-            category: formatCategoryName(catId),
-            categoryId: catId,
-            talent1: catTalents[i],
-            talent2: catTalents[i + 1]
-          });
-        }
+        allPairs.push({
+          category: formatCategoryName(catId),
+          categoryId: catId,
+          talent1: catTalents[i],
+          talent2: catTalents[i + 1]
+        });
       }
     });
 
