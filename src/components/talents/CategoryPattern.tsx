@@ -15,11 +15,10 @@ const VECTOR_EFFECT = "non-scaling-stroke";
 const CATEGORY_PATTERNS: Record<string, React.ReactNode> = {
   // --- ANCESTRAL GEOMETRY SIGNATURES ---
   
-  "artisanat": ( // Stylized Eye / Bogolan Loom (Image 4 inspiration)
+  "artisanat": ( // Creative Spiral / Genesis (Inspired by Bogolan patterns)
     <svg viewBox="0 0 40 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M8 10C12 5 28 5 32 10C28 15 12 15 8 10Z" stroke={GOLD_COLOR} strokeWidth={STROKE_WIDTH} strokeLinecap="round" vectorEffect={VECTOR_EFFECT}/>
-      <circle cx="20" cy="10" r="2" stroke={GOLD_COLOR} strokeWidth="1" vectorEffect={VECTOR_EFFECT}/>
-      <circle cx="20" cy="10" r="0.5" fill={GOLD_COLOR}/>
+      <path d="M14 10C14 8.5 15.5 7 20 7C24.5 7 26 8.5 26 10C26 13 23 15 20 15C17 15 14 13 14 12" stroke={GOLD_COLOR} strokeWidth={STROKE_WIDTH} strokeLinecap="round" vectorEffect={VECTOR_EFFECT}/>
+      <path d="M10 10C10 6 14 3 20 3C26 3 30 6 30 10C30 15 26 18 20 18C14 18 10 15 10 13" stroke={GOLD_COLOR} strokeWidth="0.8" strokeLinecap="round" opacity="0.4" vectorEffect={VECTOR_EFFECT}/>
     </svg>
   ),
 
@@ -39,10 +38,14 @@ const CATEGORY_PATTERNS: Record<string, React.ReactNode> = {
     </svg>
   ),
 
-  "saveurs-benin": ( // Sunburst / Circular Seeds (Image 5 inspiration)
+  "saveurs-benin": ( // Gastronomie (Diamond seeds grid / Abundance)
     <svg viewBox="0 0 40 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="20" cy="10" r="1.5" stroke={GOLD_COLOR} strokeWidth={STROKE_WIDTH} vectorEffect={VECTOR_EFFECT}/>
-      <path d="M20 4V7M20 13V16M14 10H17M23 10H26M16 6L18 8M22 6L20 8M16 14L18 12M22 14L20 12" stroke={GOLD_COLOR} strokeWidth="1" strokeLinecap="round" vectorEffect={VECTOR_EFFECT}/>
+      <circle cx="20" cy="10" r="1.5" fill={GOLD_COLOR}/>
+      <circle cx="20" cy="5" r="1.2" fill={GOLD_COLOR} opacity="0.6"/>
+      <circle cx="20" cy="15" r="1.2" fill={GOLD_COLOR} opacity="0.6"/>
+      <circle cx="15" cy="10" r="1.2" fill={GOLD_COLOR} opacity="0.6"/>
+      <circle cx="25" cy="10" r="1.2" fill={GOLD_COLOR} opacity="0.6"/>
+      <path d="M12 10L20 2L28 10L20 18L12 10Z" stroke={GOLD_COLOR} strokeWidth="0.8" strokeLinecap="round" opacity="0.3" vectorEffect={VECTOR_EFFECT}/>
     </svg>
   ),
 
