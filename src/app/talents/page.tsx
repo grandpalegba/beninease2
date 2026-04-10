@@ -22,7 +22,7 @@ interface DuelPair {
   talent2: Talent;
 }
 
-const DuelPage = () => {
+const TalentsPage = () => {
   const [talents, setTalents] = useState<Talent[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -287,4 +287,4 @@ const VideoModal = ({ url, onClose }: { url: string, onClose: () => void }) => {
   );
 };
 
-export default DuelPage;
+export default TalentsPage;

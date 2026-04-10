@@ -33,7 +33,7 @@ type UserProfile = {
 
 const Header = () => {
   const pathname = usePathname();
-  const isBottomNav = pathname === "/ambassadeurs" || pathname === "/tresors" || pathname === "/duel" || pathname?.startsWith("/ambassadeurs/");
+  const isBottomNav = pathname === "/ambassadeurs" || pathname === "/tresors" || pathname === "/duel" || pathname === "/talents" || pathname?.startsWith("/ambassadeurs/");
 
   const [scrolled, setScrolled] = useState(false);
   const [user, setUser] = useState<User | null>(null);
