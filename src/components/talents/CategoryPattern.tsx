@@ -190,7 +190,8 @@ const ALIASES: Record<string, string> = {
   "aines": "parole-aines",
   "aînés": "parole-aines",
   "gastronomie": "saveurs-benin",
-  "gastrononie": "saveurs-benin"
+  "gastrononie": "saveurs-benin",
+  "voix-des-lieux": "voix-lieux"
 };
 
 const DEFAULT_PATTERN = (

@@ -34,6 +34,17 @@ const shuffle = (array: any[]) => {
   return newArray;
 };
 
+const formatCategoryName = (catId: string) => {
+  const overrides: Record<string, string> = {
+    "voix-lieux": "VOIX DES LIEUX",
+    "voix-des-lieux": "VOIX DES LIEUX",
+    "saveurs-benin": "GASTRONOMIE",
+    "saveurs": "GASTRONOMIE",
+    "gastronomie": "GASTRONOMIE"
+  };
+  return overrides[catId.toLowerCase()] || catId.replace("-", " ").toUpperCase();
+};
+
 const DuelPage = () => {
   const [talents, setTalents] = useState<Talent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -81,7 +92,7 @@ const DuelPage = () => {
       // On crée des duels 1vs1 au sein de la catégorie
       for (let i = 0; i < catTalents.length - 1; i += 2) {
         allPairs.push({
-          category: catId.replace("-", " ").toUpperCase(),
+          category: formatCategoryName(catId),
           categoryId: catId,
           talent1: catTalents[i],
           talent2: catTalents[i + 1]
@@ -227,7 +238,7 @@ const DuelPage = () => {
         className="w-full max-w-[180px] bg-[#1a1c1c] text-white py-2.5 rounded-full text-xs font-bold tracking-[0.2em] uppercase hover:bg-zinc-800 transition-all active:scale-[0.98] disabled:opacity-50 shadow-md flex items-center justify-center gap-2 shrink-0 mb-4"
       >
         {validatedSet.has(currentIndex) ? (
-          <>VOTÉ <span className="text-green-500">✓</span></>
+          <>A VOTÉ <span className="text-green-500">✓</span></>
         ) : (
           "VALIDER"
         )}
