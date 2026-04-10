@@ -220,12 +220,12 @@ const TalentsPage = () => {
         <button
           onClick={handleValidate}
           disabled={validatedSet.has(currentIndex)}
-          className="w-full max-w-[240px] bg-[#1a1c1c] text-white py-3 md:py-4 rounded-xl font-bold tracking-[0.2em] uppercase hover:bg-zinc-800 transition-all active:scale-[0.98] disabled:opacity-50 shadow-lg flex items-center justify-center gap-2"
+          className="w-full max-w-[180px] bg-[#1a1c1c] text-white py-2.5 rounded-full text-xs font-bold tracking-[0.2em] uppercase hover:bg-zinc-800 transition-all active:scale-[0.98] disabled:opacity-50 shadow-md flex items-center justify-center gap-2"
         >
           {validatedSet.has(currentIndex) ? (
             <>VOTÉ <span className="text-green-500">✓</span></>
           ) : (
-            "JE VALIDE"
+            "VALIDER"
           )}
         </button>
       </div>
