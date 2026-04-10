@@ -231,10 +231,10 @@ const DuelContent = () => {
 
   return (
     <div 
-      className="w-full bg-white flex flex-col items-center text-[#1a1c1c] overflow-hidden relative select-none py-8" 
+      className="w-full bg-white flex flex-col items-center text-[#1a1c1c] overflow-hidden relative select-none pt-4 pb-12" 
       style={{ 
-        height: "calc(100svh - 80px)", 
-        gap: "24px", 
+        height: "calc(100svh - 60px)", 
+        gap: "40px", 
         cursor: isDragging ? "grabbing" : "grab"
       }}
       onTouchStart={handleTouchStart}
@@ -267,7 +267,7 @@ const DuelContent = () => {
 
       {/* Track */}
       <div 
-        className="w-full max-w-2xl px-4 shrink-0"
+        className="w-full max-w-2xl px-4 shrink-0 mt-4"
         onMouseDown={(e) => e.stopPropagation()}
         onMouseUp={(e) => e.stopPropagation()}
         onTouchStart={(e) => e.stopPropagation()}
