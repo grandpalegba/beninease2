@@ -166,8 +166,8 @@ const TalentsContent = () => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: "Beninease - Duel de Talents",
-          text: `Découvre ce duel entre ${pair.talent1.prenom_talent} et ${pair.talent2.prenom_talent} sur Beninease !`,
+          title: "BeninEase - L'Espace béninois",
+          text: "Découvrez les Trésors, les Ambassadeurs et les Talents du patrimoine du Bénin.",
           url: shareUrl,
         });
       } catch (err) {
