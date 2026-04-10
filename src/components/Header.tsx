@@ -117,7 +117,7 @@ const Header = () => {
 
         <Link href="/" className="flex items-center gap-3">
           <Image src="/logo.png" alt="logo" width={32} height={32} />
-          <span className="text-xl font-bold font-display">
+          <span className="text-xl font-black font-lato tracking-[3px] uppercase">
             <span className="text-white">Benin</span>
             <span className="text-[#FFD700]">Ease</span>
           </span>
