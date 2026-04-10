@@ -33,6 +33,13 @@ const DuelPage = () => {
   // État pour la modale vidéo
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
 
+  // État pour la navigation (swipe)
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [touchStartY, setTouchStartY] = useState<number | null>(null);
+  const [mouseStartX, setMouseStartX] = useState<number | null>(null);
+  const [mouseStartY, setMouseStartY] = useState<number | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+
   useEffect(() => {
     const fetchTalents = async () => {
       const { data } = await supabase.from("talents").select("*");
@@ -89,6 +96,43 @@ const DuelPage = () => {
     }
   };
 
+  // Handlers pour le swipe (Touch)
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.touches[0].clientX);
+    setTouchStartY(e.touches[0].clientY);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX === null || touchStartY === null) return;
+    const diffX = e.changedTouches[0].clientX - touchStartX;
+    const diffY = e.changedTouches[0].clientY - touchStartY;
+    // Détection horizontale (au moins 50px de swipe, et plus horizontal que vertical)
+    if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
+      goTo(diffX < 0 ? 1 : -1);
+    }
+    setTouchStartX(null);
+    setTouchStartY(null);
+  };
+
+  // Handlers pour le swipe (Mouse/Desktop)
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setMouseStartX(e.clientX);
+    setMouseStartY(e.clientY);
+    setIsDragging(true);
+  };
+
+  const handleMouseUp = (e: React.MouseEvent) => {
+    if (!isDragging || mouseStartX === null || mouseStartY === null) return;
+    const diffX = e.clientX - mouseStartX;
+    const diffY = e.clientY - mouseStartY;
+    if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
+      goTo(diffX < 0 ? 1 : -1);
+    }
+    setMouseStartX(null);
+    setMouseStartY(null);
+    setIsDragging(false);
+  };
+
   if (loading) return (
     <div className="h-screen w-full flex items-center justify-center bg-white"><Loader2 className="w-8 h-8 animate-spin text-zinc-900" /></div>
   );
@@ -97,7 +141,20 @@ const DuelPage = () => {
   if (!pair) return null;
 
   return (
-    <div className="w-full bg-white grid text-[#1a1c1c] overflow-hidden relative" style={{ height: "calc(100svh - 80px)", gridTemplateRows: "48px minmax(0, 1fr) 140px", gap: "12px", padding: "12px 0" }}>
+    <div 
+      className="w-full bg-white grid text-[#1a1c1c] overflow-hidden relative select-none" 
+      style={{ 
+        height: "calc(100svh - 80px)", 
+        gridTemplateRows: "48px minmax(0, 1fr) 140px", 
+        gap: "12px", 
+        padding: "12px 0",
+        cursor: isDragging ? "grabbing" : "grab"
+      }}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
+    >
 
       {/* Catégorie */}
       <div className="flex items-center justify-center">
@@ -116,9 +173,11 @@ const DuelPage = () => {
 
       {/* Controls */}
       <div className="flex flex-col items-center justify-center gap-6 px-4">
-        <div className="w-full max-w-2xl relative h-6 rounded-full bg-gray-100 overflow-hidden flex shadow-inner">
-          <div className="h-full transition-all duration-300" style={{ width: `${100 - sliderValue}%`, backgroundColor: "#008751" }} />
-          <div className="h-full transition-all duration-300" style={{ width: `${sliderValue}%`, backgroundColor: "#ffd31a" }} />
+        <div className="w-full max-w-2xl relative h-6 rounded-full bg-gray-100 flex shadow-inner">
+          <div className="absolute inset-0 flex rounded-full overflow-hidden">
+            <div className="h-full transition-all duration-300" style={{ width: `${100 - sliderValue}%`, backgroundColor: "#008751" }} />
+            <div className="h-full transition-all duration-300" style={{ width: `${sliderValue}%`, backgroundColor: "#ffd31a" }} />
+          </div>
           <input 
             type="range" 
             value={sliderValue} 
@@ -126,8 +185,16 @@ const DuelPage = () => {
             className="absolute inset-0 w-full h-full appearance-none bg-transparent cursor-pointer z-10 outline-none" 
           />
         </div>
-        <button onClick={handleValidate} disabled={validatedSet.has(currentIndex)} className="w-full max-w-[280px] bg-[#1a1c1c] text-white py-4 rounded-2xl font-black tracking-widest uppercase disabled:opacity-50">
-          {validatedSet.has(currentIndex) ? "VOTÉ ✓" : "JE VALIDE"}
+        <button 
+          onClick={handleValidate} 
+          disabled={validatedSet.has(currentIndex)} 
+          className="w-full max-w-[240px] bg-[#1a1c1c] text-white py-3 md:py-4 rounded-xl font-bold tracking-[0.2em] uppercase hover:bg-zinc-800 transition-all active:scale-[0.98] disabled:opacity-50 shadow-lg flex items-center justify-center gap-2"
+        >
+          {validatedSet.has(currentIndex) ? (
+            <>VOTÉ <span className="text-green-500">✓</span></>
+          ) : (
+            "JE VALIDE"
+          )}
         </button>
       </div>
 
