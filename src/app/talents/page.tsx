@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { supabase } from "@/utils/supabase/client";
 import { Play, Loader2, X } from "lucide-react";
+import { CategoryPattern } from "@/components/talents/CategoryPattern";
 
 interface Talent {
   id: string;
@@ -18,6 +19,7 @@ interface Talent {
 
 interface DuelPair {
   category: string;
+  categoryId: string;
   talent1: Talent;
   talent2: Talent;
 }
@@ -80,6 +82,7 @@ const TalentsPage = () => {
       for (let i = 0; i < catTalents.length - 1; i += 2) {
         allPairs.push({
           category: catId.replace("-", " ").toUpperCase(),
+          categoryId: catId,
           talent1: catTalents[i],
           talent2: catTalents[i + 1]
         });
@@ -177,9 +180,13 @@ const TalentsPage = () => {
 
       {/* Catégorie */}
       <div className="flex items-center justify-center">
-        <span className="bg-[#1a1c1c] text-white px-6 py-2 rounded-full font-display text-[10px] font-bold tracking-[0.2em] uppercase">
-          {pair.category}
-        </span>
+        <div className="flex items-center gap-4 bg-[#1a1c1c] text-white px-6 py-2 rounded-full shadow-xl">
+          <CategoryPattern id={pair.categoryId} />
+          <span className="font-display text-[10px] font-bold tracking-[0.2em] uppercase whitespace-nowrap">
+            {pair.category}
+          </span>
+          <CategoryPattern id={pair.categoryId} className="scale-x-[-1]" />
+        </div>
       </div>
 
       {/* Duel Cards */}
