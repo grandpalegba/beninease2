@@ -200,13 +200,13 @@ const DuelPage = () => {
 
       {/* Track */}
       <div 
-        className="w-full max-w-2l px-4 shrink-0"
+        className="w-full max-w-2xl px-4 shrink-0"
         onMouseDown={(e) => e.stopPropagation()}
         onMouseUp={(e) => e.stopPropagation()}
         onTouchStart={(e) => e.stopPropagation()}
         onTouchEnd={(e) => e.stopPropagation()}
       >
-        <div className="w-full max-w-2xl mx-auto relative h-6 rounded-full bg-gray-100 flex shadow-inner">
+        <div className="w-full max-w-2xl mx-auto relative h-3 rounded-full bg-gray-100 flex shadow-inner">
           <div className="absolute inset-0 flex rounded-full overflow-hidden">
             <div className="h-full transition-all duration-300" style={{ width: `${100 - sliderValue}%`, backgroundColor: "#008751" }} />
             <div className="h-full transition-all duration-300" style={{ width: `${sliderValue}%`, backgroundColor: "#ffd31a" }} />
@@ -240,23 +240,23 @@ const DuelPage = () => {
         input[type=range]::-webkit-slider-thumb {
           -webkit-appearance: none;
           appearance: none;
-          width: 44px;
-          height: 44px;
+          width: 28px;
+          height: 28px;
           background: #bd0020;
-          border: 4px solid white;
+          border: 2.5px solid white;
           border-radius: 50%;
           cursor: pointer;
-          box-shadow: 0 4px 15px rgba(189, 0, 32, 0.4);
+          box-shadow: 0 2px 8px rgba(189, 0, 32, 0.4);
           transition: transform 0.2s;
         }
         input[type=range]::-moz-range-thumb {
-          width: 44px;
-          height: 44px;
+          width: 28px;
+          height: 28px;
           background: #bd0020;
-          border: 4px solid white;
+          border: 2.5px solid white;
           border-radius: 50%;
           cursor: pointer;
-          box-shadow: 0 4px 15px rgba(189, 0, 32, 0.4);
+          box-shadow: 0 2px 8px rgba(189, 0, 32, 0.4);
         }
         input[type=range]:active::-webkit-slider-thumb {
           transform: scale(1.1);
