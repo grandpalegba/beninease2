@@ -1,280 +1,188 @@
 "use client";
-import { useState, useMemo, useCallback } from "react";
-import { talents } from "@/data/talents";
-import { Play } from "lucide-react";
 
-const categories = [...new Set(talents.map((t) => t.category))];
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Play, Loader2 } from "lucide-react";
 
-const getDuelPairs = () => {
-  const pairs: { category: string; talent1: typeof talents[0]; talent2: typeof talents[0] }[] = [];
-  categories.forEach((cat) => {
-    const catTalents = talents.filter((t) => t.category === cat);
-    if (catTalents.length >= 2) {
-      pairs.push({ category: cat, talent1: catTalents[0], talent2: catTalents[1] });
-    }
-  });
-  return pairs;
-};
+interface Talent {
+  id: string;
+  prenom_talent: string;
+  nom_talent: string;
+  profile_image: string;
+  video_url: string;
+  bio: string;
+  quote: string;
+  talent_categorie_id: string;
+  total_votes: number;
+}
 
-const Duel = () => {
-  const pairs = useMemo(getDuelPairs, []);
+interface DuelPair {
+  category: string;
+  talent1: Talent;
+  talent2: Talent;
+}
+
+const DuelPage = () => {
+  const [talents, setTalents] = useState<Talent[]>([]);
+  const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [sliderValue, setSliderValue] = useState(50);
-  const [totalPoints, setTotalPoints] = useState(1250);
   const [validatedSet, setValidatedSet] = useState<Set<number>>(new Set());
   const [swipeDir, setSwipeDir] = useState<"left" | "right" | null>(null);
-  const [touchStartX, setTouchStartX] = useState<number | null>(null);
-  const [touchStartY, setTouchStartY] = useState<number | null>(null);
-  const [mouseStartX, setMouseStartX] = useState<number | null>(null);
-  const [mouseStartY, setMouseStartY] = useState<number | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
 
-  const goTo = useCallback(
-    (dir: -1 | 1) => {
-      setSwipeDir(dir === 1 ? "left" : "right");
-      setTimeout(() => {
-        setCurrentIndex((prev) => (prev + dir + pairs.length) % pairs.length);
-        setSliderValue(50);
-      }, 220);
-      setTimeout(() => {
-        setSwipeDir(null);
-      }, 280);
-    },
-    [pairs.length],
+  // 1. Fetching des données depuis Supabase
+  useEffect(() => {
+    const fetchTalents = async () => {
+      const { data, error } = await supabase
+        .from("talents")
+        .select("*");
+
+      if (data) setTalents(data as Talent[]);
+      setLoading(false);
+    };
+    fetchTalents();
+  }, []);
+
+  // 2. Création dynamique des paires par catégorie
+  const pairs = useMemo(() => {
+    if (talents.length === 0) return [];
+
+    const grouped = talents.reduce((acc, t) => {
+      if (!acc[t.talent_categorie_id]) acc[t.talent_categorie_id] = [];
+      acc[t.talent_categorie_id].push(t);
+      return acc;
+    }, {} as Record<string, Talent[]>);
+
+    const generatedPairs: DuelPair[] = [];
+    Object.keys(grouped).forEach((catId) => {
+      const catTalents = grouped[catId];
+      // On crée des paires (Talent 0 vs 1, 2 vs 3, etc.)
+      for (let i = 0; i < catTalents.length - 1; i += 2) {
+        generatedPairs.push({
+          category: catId.replace("-", " ").toUpperCase(),
+          talent1: catTalents[i],
+          talent2: catTalents[i + 1]
+        });
+      }
+    });
+    return generatedPairs;
+  }, [talents]);
+
+  const goTo = useCallback((dir: -1 | 1) => {
+    setSwipeDir(dir === 1 ? "left" : "right");
+    setTimeout(() => {
+      setCurrentIndex((prev) => (prev + dir + pairs.length) % pairs.length);
+      setSliderValue(50);
+      setSwipeDir(null);
+    }, 250);
+  }, [pairs.length]);
+
+  const handleValidate = async () => {
+    const pair = pairs[currentIndex];
+    if (!pair || validatedSet.has(currentIndex)) return;
+
+    // Déterminer le gagnant selon la logique inversée du slider
+    const winner = sliderValue <= 50 ? pair.talent1 : pair.talent2;
+
+    // Mise à jour de Supabase
+    const { error } = await supabase
+      .from("talents")
+      .update({ total_votes: (winner.total_votes || 0) + 1 })
+      .eq("id", winner.id);
+
+    if (!error) {
+      setValidatedSet((prev) => new Set(prev).add(currentIndex));
+      setTimeout(() => goTo(1), 600);
+    }
+  };
+
+  if (loading) return (
+    <div className="h-screen w-full flex items-center justify-center bg-white text-zinc-900">
+      <Loader2 className="w-8 h-8 animate-spin" />
+    </div>
   );
 
+  if (pairs.length === 0) return null;
+
   const pair = pairs[currentIndex];
-  if (!pair) return null;
-
-  const isValidated = validatedSet.has(currentIndex);
-
-  /** * LOGIQUE INVERSÉE : 
-   * sliderValue = 0   => Talent 1: 100%, Talent 2: 0%
-   * sliderValue = 100 => Talent 1: 0%,   Talent 2: 100%
-   */
   const leftPercent = 100 - sliderValue;
   const rightPercent = sliderValue;
-
-  const handleValidate = () => {
-    if (isValidated) return;
-    setValidatedSet((prev) => new Set(prev).add(currentIndex));
-    setTotalPoints((p) => p + Math.abs(sliderValue - 50) * 10);
-    setTimeout(() => { goTo(1); }, 600);
-  };
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchStartX(e.touches[0].clientX);
-    setTouchStartY(e.touches[0].clientY);
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX === null || touchStartY === null) return;
-    const diffX = e.changedTouches[0].clientX - touchStartX;
-    const diffY = e.changedTouches[0].clientY - touchStartY;
-    if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
-      goTo(diffX < 0 ? 1 : -1);
-    }
-    setTouchStartX(null);
-    setTouchStartY(null);
-  };
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    setMouseStartX(e.clientX);
-    setMouseStartY(e.clientY);
-    setIsDragging(true);
-  };
-
-  const handleMouseUp = (e: React.MouseEvent) => {
-    if (!isDragging || mouseStartX === null || mouseStartY === null) return;
-    const diffX = e.clientX - mouseStartX;
-    const diffY = e.clientY - mouseStartY;
-    if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
-      goTo(diffX < 0 ? 1 : -1);
-    }
-    setMouseStartX(null);
-    setMouseStartY(null);
-    setIsDragging(false);
-  };
-
-  const swipeClass =
-    swipeDir === "left"
-      ? "translate-x-[-100%] opacity-0"
-      : swipeDir === "right"
-        ? "translate-x-[100%] opacity-0"
-        : "translate-x-0 opacity-100";
+  const isValidated = validatedSet.has(currentIndex);
 
   return (
-    <div
-      className="w-full bg-white grid text-[#1a1c1c] select-none overflow-hidden"
-      style={{
-        height: "calc(100svh - 80px)",
-        gridTemplateRows: "48px minmax(0, 1fr) 140px",
-        gap: "12px",
-        padding: "12px 0",
-        cursor: isDragging ? "grabbing" : "grab",
-      }}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-      onMouseDown={handleMouseDown}
-      onMouseUp={handleMouseUp}
-    >
-      {/* ROW 1 — Category pill */}
-      <div className="flex items-center justify-center w-full">
-        <span className="bg-[#1a1c1c] text-white px-4 py-1.5 md:px-6 md:py-2 rounded-full font-display text-[10px] md:text-sm font-bold tracking-[0.2em] uppercase shadow-sm">
+    <div className="w-full bg-white grid text-[#1a1c1c] overflow-hidden" style={{ height: "calc(100svh - 80px)", gridTemplateRows: "48px minmax(0, 1fr) 140px", gap: "12px", padding: "12px 0" }}>
+
+      {/* Categorie */}
+      <div className="flex items-center justify-center">
+        <span className="bg-[#1a1c1c] text-white px-6 py-2 rounded-full font-display text-[10px] font-bold tracking-[0.2em] uppercase">
           {pair.category}
         </span>
       </div>
 
-      {/* ROW 2 — Cards */}
-      <div className="relative w-full overflow-hidden min-h-0">
-        <div
-          className={`absolute inset-0 transition-all duration-250 ease-out ${swipeClass} flex items-stretch px-2 md:px-8 max-w-4xl mx-auto`}
-        >
-          <div className="w-full grid grid-cols-2 gap-3 md:gap-8 h-full">
-            <CandidateCard talent={pair.talent1} percent={leftPercent} dotColor="#22C55E" />
-            <CandidateCard talent={pair.talent2} percent={rightPercent} dotColor="#ffd31a" />
-          </div>
+      {/* Duel Cards */}
+      <div className="relative w-full overflow-hidden px-2 md:px-8 max-w-5xl mx-auto">
+        <div className={`grid grid-cols-2 gap-3 md:gap-8 h-full transition-all duration-300 ${swipeDir === "left" ? "-translate-x-full opacity-0" : swipeDir === "right" ? "translate-x-full opacity-0" : "translate-x-0 opacity-100"}`}>
+          <CandidateCard talent={pair.talent1} percent={leftPercent} dotColor="#22C55E" />
+          <CandidateCard talent={pair.talent2} percent={rightPercent} dotColor="#ffd31a" />
         </div>
       </div>
 
-      {/* ROW 3 — Controls */}
-      <div
-        className="w-full flex flex-col items-center justify-center gap-6 px-4 pb-4 z-20"
-        onTouchStart={(e) => e.stopPropagation()}
-        onTouchEnd={(e) => e.stopPropagation()}
-        onTouchMove={(e) => e.stopPropagation()}
-      >
-        {/* Voting track */}
-        <div className="w-full max-w-sm md:max-w-2xl px-2 relative">
-          <div className="relative w-full h-4 md:h-6 rounded-full overflow-visible">
-            <div className="absolute inset-0 flex rounded-full overflow-hidden shadow-inner bg-gray-100">
-              {/* Le Talent 1 occupe la partie gauche selon leftPercent */}
-              <div
-                className="h-full transition-all duration-300 ease-out"
-                style={{ width: `${leftPercent}%`, backgroundColor: "#22C55E", boxShadow: "inset 0 0 10px rgba(0,0,0,0.1)" }}
-              />
-              {/* Le Talent 2 occupe la partie droite selon rightPercent */}
-              <div
-                className="h-full transition-all duration-300 ease-out"
-                style={{ width: `${rightPercent}%`, backgroundColor: "#ffd31a", boxShadow: "inset 0 0 10px rgba(0,0,0,0.1)" }}
-              />
-            </div>
-            <input
-              type="range"
-              min={0}
-              max={100}
-              value={sliderValue}
-              onChange={(e) => !isValidated && setSliderValue(Number(e.target.value))}
-              disabled={isValidated}
-              className="duel-slider absolute inset-0 w-full h-full appearance-none bg-transparent cursor-pointer z-10 disabled:cursor-default"
-            />
-          </div>
+      {/* Controls */}
+      <div className="flex flex-col items-center justify-center gap-6 px-4">
+        <div className="w-full max-w-2xl relative h-6 rounded-full bg-gray-100 overflow-hidden shadow-inner flex">
+          <div className="h-full transition-all duration-300" style={{ width: `${leftPercent}%`, backgroundColor: "#22C55E" }} />
+          <div className="h-full transition-all duration-300" style={{ width: `${rightPercent}%`, backgroundColor: "#ffd31a" }} />
+          <input
+            type="range" value={sliderValue}
+            onChange={(e) => !isValidated && setSliderValue(Number(e.target.value))}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+          />
         </div>
 
-        {/* CTA Validation */}
         <button
           onClick={handleValidate}
           disabled={isValidated}
-          className="w-full max-w-[280px] bg-[#1a1c1c] text-white py-4 md:py-5 rounded-2xl font-display text-sm md:text-base font-black tracking-[0.2em] uppercase hover:bg-zinc-800 transition-all active:scale-[0.98] duration-200 disabled:opacity-50 shadow-[0_10px_30px_rgba(0,0,0,0.15)] flex items-center justify-center gap-2"
+          className="w-full max-w-[280px] bg-[#1a1c1c] text-white py-4 rounded-2xl font-black tracking-widest uppercase disabled:opacity-50"
         >
-          {isValidated ? (
-            <>DÉJÀ ÉVALUÉ <span className="text-[#22C55E]">✓</span></>
-          ) : (
-            "JE VALIDE"
-          )}
+          {isValidated ? "VOTÉ ✓" : "JE VALIDE"}
         </button>
       </div>
 
-      {/* Tap zones for desktop navigation */}
-      <div className="fixed left-0 top-0 h-full w-12 md:w-16 z-10 cursor-pointer hidden md:block" onClick={() => goTo(-1)} />
-      <div className="fixed right-0 top-0 h-full w-12 md:w-16 z-10 cursor-pointer hidden md:block" onClick={() => goTo(1)} />
-
       <style>{`
-        .duel-slider::-webkit-slider-thumb {
-          -webkit-appearance: none;
-          appearance: none;
-          width: 28px;
-          height: 28px;
-          border-radius: 50%;
-          background: #bd0020;
-          border: 4px solid white;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-          cursor: pointer;
-        }
-        .duel-slider::-moz-range-thumb {
-          width: 28px;
-          height: 28px;
-          border-radius: 50%;
-          background: #bd0020;
-          border: 4px solid white;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-          cursor: pointer;
-        }
-        .duel-slider::-webkit-slider-runnable-track { background: transparent; }
-        .duel-slider::-moz-range-track { background: transparent; }
-        @media (min-width: 768px) {
-          .duel-slider::-webkit-slider-thumb { width: 36px; height: 36px; }
-          .duel-slider::-moz-range-thumb { width: 36px; height: 36px; }
-        }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 40px; height: 40px; background: #bd0020; border: 4px solid white; border-radius: 50%; cursor: pointer; }
       `}</style>
     </div>
   );
 };
 
-const CandidateCard = ({
-  talent,
-  percent,
-  dotColor,
-}: {
-  talent: typeof talents[0];
-  percent: number;
-  dotColor: string;
-}) => (
-  <div className="relative w-full h-full rounded-xl md:rounded-2xl overflow-hidden shadow-xl group cursor-pointer bg-[#0a0a0a]">
-    <img
-      alt={talent.name.split(" ")[0]}
-      className="absolute inset-0 w-full h-full object-cover opacity-90 transition-opacity duration-300 group-hover:opacity-100 pointer-events-none"
-      src={talent.image}
-      draggable={false}
-    />
-    <div className="absolute top-2 right-2 md:top-3 md:right-3 z-20">
-      <div className="bg-black/50 backdrop-blur-md rounded-full p-1.5 md:p-2 group-hover:scale-110 transition-transform duration-300">
-        <Play className="w-2.5 h-2.5 md:w-4 md:h-4 text-white fill-white" />
-      </div>
-    </div>
-    <div
-      className="absolute inset-x-0 bottom-0 z-10 pointer-events-none"
-      style={{
-        height: "65%",
-        background: "linear-gradient(to top, rgba(10,10,10,0.98) 0%, rgba(10,10,10,0.85) 40%, rgba(10,10,10,0.4) 70%, transparent 100%)",
-      }}
-    />
-    <div className="absolute inset-x-0 bottom-0 z-20 p-3 md:p-5 flex flex-col overflow-y-auto max-h-[62%]">
-      <div className="flex items-center justify-between mb-1.5 shrink-0">
-        <div className="flex items-center gap-1.5 overflow-hidden">
-          <div
-            className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full shrink-0"
-            style={{ backgroundColor: dotColor, boxShadow: `0 0 12px ${dotColor}, 0 0 24px ${dotColor}40` }}
-          />
-          <h2 className="font-display font-bold text-sm md:text-xl tracking-[0.1em] md:tracking-[0.15em] text-white truncate whitespace-nowrap drop-shadow-md">
-            {talent.name.split(" ")[0]}
-          </h2>
-        </div>
-        <div
-          className="font-display text-sm md:text-xl font-extrabold shrink-0 pl-1 drop-shadow-md"
-          style={{ color: dotColor }}
-        >
-          {Math.round(percent)}%
-        </div>
-      </div>
-      <p className="text-gray-200 text-[10px] md:text-sm leading-relaxed md:leading-[1.7] text-justify drop-shadow-sm">
-        {talent.bio}
-      </p>
-      <p className="font-sans text-[9px] md:text-xs italic text-orange-300 mt-2 leading-relaxed text-justify drop-shadow-sm">
-        « {talent.quote} »
-      </p>
-    </div>
-  </div>
-);
+const CandidateCard = ({ talent, percent, dotColor }: { talent: Talent, percent: number, dotColor: string }) => {
+  // Génération de l'URL publique du Storage Supabase
+  const imageUrl = supabase.storage.from("talents-images").getPublicUrl(talent.profile_image).data.publicUrl;
 
-export default Duel;
+  return (
+    <div className="relative w-full h-full rounded-2xl overflow-hidden bg-black shadow-2xl group">
+      <img src={imageUrl} alt={talent.prenom_talent} className="absolute inset-0 w-full h-full object-cover opacity-80" />
+
+      {/* Video Play Button */}
+      <a href={talent.video_url} target="_blank" rel="noopener noreferrer" className="absolute top-3 right-3 z-30 bg-black/40 p-2 rounded-full backdrop-blur-sm">
+        <Play className="w-4 h-4 text-white fill-white" />
+      </a>
+
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10" />
+
+      <div className="absolute inset-x-0 bottom-0 z-20 p-4 md:p-6 flex flex-col">
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-2">
+            <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: dotColor, boxShadow: `0 0 10px ${dotColor}` }} />
+            <h2 className="text-white font-bold text-lg md:text-2xl uppercase tracking-tighter">{talent.prenom_talent}</h2>
+          </div>
+          <span className="text-xl font-black" style={{ color: dotColor }}>{Math.round(percent)}%</span>
+        </div>
+        <p className="text-gray-300 text-xs md:text-sm line-clamp-3 md:line-clamp-none">{talent.bio}</p>
+        <p className="text-orange-300 text-[10px] italic mt-2 opacity-80">« {talent.quote} »</p>
+      </div>
+    </div>
+  );
+};
+
+export default DuelPage;
