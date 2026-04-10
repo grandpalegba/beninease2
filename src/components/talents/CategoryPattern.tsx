@@ -168,6 +168,7 @@ const ALIASES: Record<string, string> = {
   "danses": "danses-benin",
   "art": "artisanat",
   "artisanat": "artisanat",
+  "vision": "artisanat",
   "beaute": "beaute-feminine",
   "beauté": "beaute-feminine",
   "beninois": "beninois-du-monde",
@@ -177,7 +178,9 @@ const ALIASES: Record<string, string> = {
   "ancetres": "memoire-ancetres",
   "ancêtres": "memoire-ancetres",
   "aines": "parole-aines",
-  "aînés": "parole-aines"
+  "aînés": "parole-aines",
+  "gastronomie": "saveurs-benin",
+  "gastrononie": "saveurs-benin"
 };
 
 const DEFAULT_PATTERN = (
