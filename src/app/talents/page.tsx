@@ -246,7 +246,11 @@ const CandidateCard = ({ talent, percent, dotColor, onPlay }: { talent: Talent, 
   return (
     <div className="relative w-full h-full rounded-2xl overflow-hidden bg-black shadow-2xl">
       <img src={imageUrl} alt={talent.prenom_talent} className="absolute inset-0 w-full h-full object-cover opacity-80" />
-      <button onClick={() => onPlay(talent.video_url)} className="absolute top-3 right-3 z-30 bg-black/40 p-2 rounded-full backdrop-blur-sm hover:scale-110 transition-transform">
+      <button 
+        onClick={() => onPlay(talent.video_url)} 
+        className="absolute top-3 right-3 z-30 p-2 rounded-full backdrop-blur-md hover:scale-110 transition-transform shadow-lg"
+        style={{ backgroundColor: `${dotColor}4D` }}
+      >
         <Play className="w-4 h-4 text-white fill-white" />
       </button>
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10" />
