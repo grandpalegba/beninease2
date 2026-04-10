@@ -157,6 +157,29 @@ const CATEGORY_PATTERNS: Record<string, React.ReactNode> = {
   )
 };
 
+// Mappage de secours pour les identifiants courts ou alternatifs
+const ALIASES: Record<string, string> = {
+  "mythes": "mythes-legendes",
+  "innovation": "startup-innovation",
+  "saveurs": "saveurs-benin",
+  "musique": "musiques-benin",
+  "musiques": "musiques-benin",
+  "danse": "danses-benin",
+  "danses": "danses-benin",
+  "art": "artisanat",
+  "artisanat": "artisanat",
+  "beaute": "beaute-feminine",
+  "beauté": "beaute-feminine",
+  "beninois": "beninois-du-monde",
+  "diaspora": "beninois-du-monde",
+  "mode": "mode-style",
+  "style": "mode-style",
+  "ancetres": "memoire-ancetres",
+  "ancêtres": "memoire-ancetres",
+  "aines": "parole-aines",
+  "aînés": "parole-aines"
+};
+
 const DEFAULT_PATTERN = (
   <svg viewBox="0 0 40 20" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M5 10H35" stroke={GOLD_COLOR} strokeWidth={STROKE_WIDTH} strokeLinecap="round" opacity="0.3" vectorEffect={VECTOR_EFFECT}/>
@@ -164,11 +187,28 @@ const DEFAULT_PATTERN = (
 );
 
 export const CategoryPattern = ({ id, className }: CategoryPatternProps) => {
-  const pattern = CATEGORY_PATTERNS[id] || DEFAULT_PATTERN;
+  const normalizedId = id.toLowerCase().trim();
+  
+  // 1. Recherche directe
+  let pattern = CATEGORY_PATTERNS[normalizedId];
+  
+  // 2. Recherche via alias
+  if (!pattern) {
+    const aliasKey = ALIASES[normalizedId];
+    if (aliasKey) pattern = CATEGORY_PATTERNS[aliasKey];
+  }
+  
+  // 3. Recherche floue (si l'ID contient un mot clé d'un des patterns)
+  if (!pattern) {
+    const matchingKey = Object.keys(CATEGORY_PATTERNS).find(key => 
+      normalizedId.includes(key) || key.includes(normalizedId)
+    );
+    if (matchingKey) pattern = CATEGORY_PATTERNS[matchingKey];
+  }
 
   return (
     <div className={cn("w-10 h-5 animate-in fade-in duration-500", className)}>
-      {pattern}
+      {pattern || DEFAULT_PATTERN}
     </div>
   );
 };
