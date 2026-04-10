@@ -231,7 +231,7 @@ const TalentsContent = () => {
 
   return (
     <div
-      className="w-full bg-white flex flex-col justify-between items-center text-[#1a1c1c] overflow-hidden relative select-none pt-8 pb-6"
+      className="w-full bg-white flex flex-col items-center text-[#1a1c1c] overflow-hidden relative select-none pt-6 pb-6 px-4"
       style={{
         height: "calc(100svh - 72px)",
         cursor: isDragging ? "grabbing" : "grab"
@@ -242,8 +242,8 @@ const TalentsContent = () => {
       onMouseUp={handleMouseUp}
     >
 
-      {/* Catégorie */}
-      <div className="flex flex-col items-center justify-center gap-3 shrink-0 mb-10">
+      {/* Header Section: Title + Pill */}
+      <div className="flex flex-col items-center justify-center gap-6 shrink-0 w-full">
         <span className="text-[#B8860B] font-display text-[11px] font-bold tracking-[0.3em] uppercase">
           TALENTS DU BÉNIN
         </span>
@@ -256,42 +256,42 @@ const TalentsContent = () => {
         </div>
       </div>
 
-      {/* Duel Cards */}
-      <div className="relative w-full flex-1 min-h-0 overflow-hidden px-2 md:px-8 max-w-5xl mx-auto">
+      {/* Duel Cards Section */}
+      <div className="relative w-full flex-1 min-h-0 overflow-hidden px-2 md:px-4 max-w-5xl mx-auto my-6">
         <div className={`grid grid-cols-2 gap-3 md:gap-8 h-full transition-all duration-300 ${swipeDir === "left" ? "-translate-x-full opacity-0" : swipeDir === "right" ? "translate-x-full opacity-0" : "translate-x-0 opacity-100"}`}>
           <CandidateCard talent={pair.talent1} percent={100 - sliderValue} dotColor="#22C55E" onPlay={(url) => setActiveVideo(url)} />
           <CandidateCard talent={pair.talent2} percent={sliderValue} dotColor="#ffd31a" onPlay={(url) => setActiveVideo(url)} />
         </div>
       </div>
 
-      {/* Track Container */}
-      <div className="w-full flex flex-col items-center gap-8 shrink-0 mt-10">
-        <div
+      {/* Footer Section: Track + Buttons */}
+      <div className="w-full flex flex-col items-center gap-6 shrink-0">
+        <div 
           className="w-full max-w-2xl px-4"
           onMouseDown={(e) => e.stopPropagation()}
           onMouseUp={(e) => e.stopPropagation()}
           onTouchStart={(e) => e.stopPropagation()}
           onTouchEnd={(e) => e.stopPropagation()}
         >
-        <div className="w-full max-w-2xl mx-auto relative h-3 rounded-full bg-gray-100 flex shadow-inner">
-          <div className="absolute inset-0 flex rounded-full overflow-hidden">
-            <div className="h-full transition-all duration-300" style={{ width: `${100 - sliderValue}%`, backgroundColor: "#008751" }} />
-            <div className="h-full transition-all duration-300" style={{ width: `${sliderValue}%`, backgroundColor: "#ffd31a" }} />
+          <div className="w-full max-w-2xl mx-auto relative h-3 rounded-full bg-gray-100 flex shadow-inner">
+            <div className="absolute inset-0 flex rounded-full overflow-hidden">
+              <div className="h-full transition-all duration-300" style={{ width: `${100 - sliderValue}%`, backgroundColor: "#008751" }} />
+              <div className="h-full transition-all duration-300" style={{ width: `${sliderValue}%`, backgroundColor: "#ffd31a" }} />
+            </div>
+            <input 
+              type="range" 
+              value={sliderValue} 
+              onChange={(e) => !validatedSet.has(currentIndex) && setSliderValue(Number(e.target.value))} 
+              className="absolute inset-0 w-full h-full appearance-none bg-transparent cursor-pointer z-10 outline-none" 
+            />
           </div>
-          <input
-            type="range"
-            value={sliderValue}
-            onChange={(e) => !validatedSet.has(currentIndex) && setSliderValue(Number(e.target.value))}
-            className="absolute inset-0 w-full h-full appearance-none bg-transparent cursor-pointer z-10 outline-none"
-          />
         </div>
-      </div>
 
-        {/* Button Group */}
-        <div className="flex flex-col items-center justify-center gap-4 pb-4">
-          <button
+        {/* Action Group: Share + Validate side-by-side */}
+        <div className="flex flex-row items-center justify-center gap-4 w-full max-w-2xl px-4">
+          <button 
             onClick={handleShare}
-            className="p-3.5 rounded-full bg-white border border-zinc-100 text-zinc-400 hover:text-amber-600 hover:border-amber-200 transition-all active:scale-95 shadow-md flex items-center justify-center group"
+            className="p-3.5 rounded-full bg-white border border-zinc-100 text-zinc-400 hover:text-amber-600 hover:border-amber-200 transition-all active:scale-95 shadow-md flex items-center justify-center group shrink-0"
             title="Partager ce duel"
           >
             {shareSuccess ? (
@@ -301,10 +301,10 @@ const TalentsContent = () => {
             )}
           </button>
 
-          <button
-            onClick={handleValidate}
-            disabled={validatedSet.has(currentIndex)}
-            className="w-[180px] bg-[#1a1c1c] text-white py-2.5 rounded-full text-[10px] font-bold tracking-[0.25em] uppercase hover:bg-zinc-800 transition-all active:scale-[0.98] disabled:opacity-50 shadow-lg flex items-center justify-center gap-2"
+          <button 
+            onClick={handleValidate} 
+            disabled={validatedSet.has(currentIndex)} 
+            className="flex-1 max-w-[200px] bg-[#1a1c1c] text-white py-3.5 rounded-full text-[10px] font-bold tracking-[0.25em] uppercase hover:bg-zinc-800 transition-all active:scale-[0.98] disabled:opacity-50 shadow-lg flex items-center justify-center gap-2"
           >
             {validatedSet.has(currentIndex) ? (
               <>A VOTÉ <span className="text-green-500">✓</span></>
