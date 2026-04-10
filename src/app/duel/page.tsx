@@ -231,7 +231,7 @@ const DuelContent = () => {
 
   return (
     <div 
-      className="w-full bg-white flex flex-col justify-between items-center text-[#1a1c1c] overflow-hidden relative select-none pt-2 pb-6" 
+      className="w-full bg-white flex flex-col justify-between items-center text-[#1a1c1c] overflow-hidden relative select-none pt-8 pb-6" 
       style={{ 
         height: "calc(100svh - 72px)", 
         cursor: isDragging ? "grabbing" : "grab"
