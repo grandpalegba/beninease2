@@ -32,7 +32,7 @@ export default function VoteSlider({ value, onChange, onVoteSubmit }: any) {
         onPointerUp={() => setIsDragging(false)}
       >
         <div className="absolute inset-0 flex rounded-full overflow-hidden">
-          <div className="w-1/2 h-full bg-[#006b3f]" />
+          <div className="w-1/2 h-full bg-[#22C55E]" />
           <div className="w-1/2 h-full bg-[#715c00]" />
         </div>
 
@@ -50,7 +50,7 @@ export default function VoteSlider({ value, onChange, onVoteSubmit }: any) {
       <div className="flex flex-col items-center gap-10">
         <div className="text-center">
           <p className="text-[12px] font-black text-[#1a1c1c]/40 uppercase tracking-[0.5em] mb-2">Gain potentiel</p>
-          <p className="text-4xl font-black text-[#006b3f] italic">+ 150 PTS</p>
+          <p className="text-4xl font-black text-[#22C55E] italic">+ 150 PTS</p>
         </div>
         <button
           onClick={() => onVoteSubmit(value)}

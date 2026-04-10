@@ -22,7 +22,7 @@ export default function DuelCard({ duel, onNext }: any) {
           <CandidateCard
             talent={duel?.talent_left}
             score={100 - voteValue}
-            color="#006b3f"
+            color="#22C55E"
           />
           <CandidateCard
             talent={duel?.talent_right}

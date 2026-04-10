@@ -47,8 +47,13 @@ const Duel = () => {
   if (!pair) return null;
 
   const isValidated = validatedSet.has(currentIndex);
-  const leftPercent = sliderValue;
-  const rightPercent = 100 - sliderValue;
+
+  /** * LOGIQUE INVERSÉE : 
+   * sliderValue = 0   => Talent 1: 100%, Talent 2: 0%
+   * sliderValue = 100 => Talent 1: 0%,   Talent 2: 100%
+   */
+  const leftPercent = 100 - sliderValue;
+  const rightPercent = sliderValue;
 
   const handleValidate = () => {
     if (isValidated) return;
@@ -103,9 +108,9 @@ const Duel = () => {
       className="w-full bg-white grid text-[#1a1c1c] select-none overflow-hidden"
       style={{
         height: "calc(100svh - 80px)",
-        gridTemplateRows: "44px minmax(0, 1fr) 120px",
-        gap: "10px",
-        padding: "10px 0",
+        gridTemplateRows: "48px minmax(0, 1fr) 140px",
+        gap: "12px",
+        padding: "12px 0",
         cursor: isDragging ? "grabbing" : "grab",
       }}
       onTouchStart={handleTouchStart}
@@ -113,43 +118,45 @@ const Duel = () => {
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
     >
-      {/* ROW 1 — Category pill (fixed 48px) */}
+      {/* ROW 1 — Category pill */}
       <div className="flex items-center justify-center w-full">
         <span className="bg-[#1a1c1c] text-white px-4 py-1.5 md:px-6 md:py-2 rounded-full font-display text-[10px] md:text-sm font-bold tracking-[0.2em] uppercase shadow-sm">
           {pair.category}
         </span>
       </div>
 
-      {/* ROW 2 — Cards (1fr = all remaining space) */}
+      {/* ROW 2 — Cards */}
       <div className="relative w-full overflow-hidden min-h-0">
         <div
           className={`absolute inset-0 transition-all duration-250 ease-out ${swipeClass} flex items-stretch px-2 md:px-8 max-w-4xl mx-auto`}
         >
           <div className="w-full grid grid-cols-2 gap-3 md:gap-8 h-full">
-            <CandidateCard talent={pair.talent1} percent={leftPercent} dotColor="#006b3f" />
+            <CandidateCard talent={pair.talent1} percent={leftPercent} dotColor="#22C55E" />
             <CandidateCard talent={pair.talent2} percent={rightPercent} dotColor="#ffd31a" />
           </div>
         </div>
       </div>
 
-      {/* ROW 3 — Controls (fixed 110px) */}
+      {/* ROW 3 — Controls */}
       <div
-        className="w-full flex flex-col items-center justify-around px-4 z-20"
+        className="w-full flex flex-col items-center justify-center gap-6 px-4 pb-4 z-20"
         onTouchStart={(e) => e.stopPropagation()}
         onTouchEnd={(e) => e.stopPropagation()}
         onTouchMove={(e) => e.stopPropagation()}
       >
         {/* Voting track */}
         <div className="w-full max-w-sm md:max-w-2xl px-2 relative">
-          <div className="relative w-full h-5 md:h-7 rounded-full overflow-visible">
-            <div className="absolute inset-0 flex rounded-full overflow-hidden shadow-inner">
+          <div className="relative w-full h-4 md:h-6 rounded-full overflow-visible">
+            <div className="absolute inset-0 flex rounded-full overflow-hidden shadow-inner bg-gray-100">
+              {/* Le Talent 1 occupe la partie gauche selon leftPercent */}
               <div
-                className="h-full transition-all duration-200"
-                style={{ width: `${leftPercent}%`, backgroundColor: "#006b3f" }}
+                className="h-full transition-all duration-300 ease-out"
+                style={{ width: `${leftPercent}%`, backgroundColor: "#22C55E", boxShadow: "inset 0 0 10px rgba(0,0,0,0.1)" }}
               />
+              {/* Le Talent 2 occupe la partie droite selon rightPercent */}
               <div
-                className="h-full transition-all duration-200"
-                style={{ width: `${rightPercent}%`, backgroundColor: "#ffd31a" }}
+                className="h-full transition-all duration-300 ease-out"
+                style={{ width: `${rightPercent}%`, backgroundColor: "#ffd31a", boxShadow: "inset 0 0 10px rgba(0,0,0,0.1)" }}
               />
             </div>
             <input
@@ -168,23 +175,20 @@ const Duel = () => {
         <button
           onClick={handleValidate}
           disabled={isValidated}
-          className="bg-[#1a1c1c] text-white px-8 py-2.5 md:px-10 md:py-3 rounded-full font-display text-xs md:text-base font-bold tracking-widest uppercase hover:bg-zinc-700 transition-colors active:scale-95 duration-200 disabled:opacity-50 shadow-lg"
+          className="w-full max-w-[280px] bg-[#1a1c1c] text-white py-4 md:py-5 rounded-2xl font-display text-sm md:text-base font-black tracking-[0.2em] uppercase hover:bg-zinc-800 transition-all active:scale-[0.98] duration-200 disabled:opacity-50 shadow-[0_10px_30px_rgba(0,0,0,0.15)] flex items-center justify-center gap-2"
         >
-          {isValidated ? "DÉJÀ ÉVALUÉ ✓" : "JE VALIDE"}
+          {isValidated ? (
+            <>DÉJÀ ÉVALUÉ <span className="text-[#22C55E]">✓</span></>
+          ) : (
+            "JE VALIDE"
+          )}
         </button>
       </div>
 
       {/* Tap zones for desktop navigation */}
-      <div
-        className="fixed left-0 top-0 h-full w-12 md:w-16 z-10 cursor-pointer hidden md:block"
-        onClick={() => goTo(-1)}
-      />
-      <div
-        className="fixed right-0 top-0 h-full w-12 md:w-16 z-10 cursor-pointer hidden md:block"
-        onClick={() => goTo(1)}
-      />
+      <div className="fixed left-0 top-0 h-full w-12 md:w-16 z-10 cursor-pointer hidden md:block" onClick={() => goTo(-1)} />
+      <div className="fixed right-0 top-0 h-full w-12 md:w-16 z-10 cursor-pointer hidden md:block" onClick={() => goTo(1)} />
 
-      {/* Custom slider styles */}
       <style>{`
         .duel-slider::-webkit-slider-thumb {
           -webkit-appearance: none;
@@ -227,22 +231,17 @@ const CandidateCard = ({
   dotColor: string;
 }) => (
   <div className="relative w-full h-full rounded-xl md:rounded-2xl overflow-hidden shadow-xl group cursor-pointer bg-[#0a0a0a]">
-    {/* Full-bleed image */}
     <img
       alt={talent.name.split(" ")[0]}
       className="absolute inset-0 w-full h-full object-cover opacity-90 transition-opacity duration-300 group-hover:opacity-100 pointer-events-none"
       src={talent.image}
       draggable={false}
     />
-
-    {/* Play button */}
     <div className="absolute top-2 right-2 md:top-3 md:right-3 z-20">
       <div className="bg-black/50 backdrop-blur-md rounded-full p-1.5 md:p-2 group-hover:scale-110 transition-transform duration-300">
         <Play className="w-2.5 h-2.5 md:w-4 md:h-4 text-white fill-white" />
       </div>
     </div>
-
-    {/* Gradient overlay — bottom 60% of card */}
     <div
       className="absolute inset-x-0 bottom-0 z-10 pointer-events-none"
       style={{
@@ -250,15 +249,12 @@ const CandidateCard = ({
         background: "linear-gradient(to top, rgba(10,10,10,0.98) 0%, rgba(10,10,10,0.85) 40%, rgba(10,10,10,0.4) 70%, transparent 100%)",
       }}
     />
-
-    {/* Text overlay — anchored to bottom of card */}
     <div className="absolute inset-x-0 bottom-0 z-20 p-3 md:p-5 flex flex-col overflow-y-auto max-h-[62%]">
-      {/* Name + percent row */}
       <div className="flex items-center justify-between mb-1.5 shrink-0">
         <div className="flex items-center gap-1.5 overflow-hidden">
           <div
             className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full shrink-0"
-            style={{ backgroundColor: dotColor, boxShadow: `0 0 8px ${dotColor}` }}
+            style={{ backgroundColor: dotColor, boxShadow: `0 0 12px ${dotColor}, 0 0 24px ${dotColor}40` }}
           />
           <h2 className="font-display font-bold text-sm md:text-xl tracking-[0.1em] md:tracking-[0.15em] text-white truncate whitespace-nowrap drop-shadow-md">
             {talent.name.split(" ")[0]}
@@ -271,11 +267,9 @@ const CandidateCard = ({
           {Math.round(percent)}%
         </div>
       </div>
-
       <p className="text-gray-200 text-[10px] md:text-sm leading-relaxed md:leading-[1.7] text-justify drop-shadow-sm">
         {talent.bio}
       </p>
-
       <p className="font-sans text-[9px] md:text-xs italic text-orange-300 mt-2 leading-relaxed text-justify drop-shadow-sm">
         « {talent.quote} »
       </p>
