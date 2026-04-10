@@ -287,8 +287,8 @@ const DuelContent = () => {
         </div>
       </div>
 
-      {/* Button */}
-      <div className="flex flex-col items-center gap-6 shrink-0 pb-4">
+      {/* Button Group */}
+      <div className="flex flex-row items-center justify-center gap-4 shrink-0 pb-4">
         <button 
           onClick={handleValidate} 
           disabled={validatedSet.has(currentIndex)} 
