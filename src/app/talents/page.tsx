@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, Suspense } from "react";
 import { supabase } from "@/utils/supabase/client";
-import { Play, Loader2, X } from "lucide-react";
+import { Play, Loader2, X, Share2, Check } from "lucide-react";
 import { CategoryPattern } from "@/components/talents/CategoryPattern";
+import { useSearchParams } from "next/navigation";
 
 interface Talent {
   id: string;
@@ -45,13 +46,15 @@ const formatCategoryName = (catId: string) => {
   return overrides[catId.toLowerCase()] || catId.replace("-", " ").toUpperCase();
 };
 
-const TalentsPage = () => {
+const TalentsContent = () => {
+  const searchParams = useSearchParams();
   const [talents, setTalents] = useState<Talent[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [sliderValue, setSliderValue] = useState(50);
   const [validatedSet, setValidatedSet] = useState<Set<number>>(new Set());
   const [swipeDir, setSwipeDir] = useState<"left" | "right" | null>(null);
+  const [shareSuccess, setShareSuccess] = useState(false);
 
   // État pour la modale vidéo
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
@@ -85,18 +88,41 @@ const TalentsPage = () => {
 
     const allPairs: DuelPair[] = [];
 
+    // ÉTAPE EXTRA : Vérifier si un duel spécifique a été partagé
+    const t1 = searchParams.get("t1");
+    const t2 = searchParams.get("t2");
+    if (t1 && t2) {
+      const talent1 = talents.find(t => t.id === t1);
+      const talent2 = talents.find(t => t.id === t2);
+      if (talent1 && talent2) {
+        allPairs.push({
+          category: formatCategoryName(talent1.talent_categorie_id),
+          categoryId: talent1.talent_categorie_id,
+          talent1,
+          talent2
+        });
+      }
+    }
+
     // ÉTAPE 2 : Création de paires intra-catégorie
     Object.keys(grouped).forEach((catId) => {
-      const catTalents = shuffle(grouped[catId]); // Mélange des talents de cette catégorie
+      const catTalents = shuffle(grouped[catId]); 
       
-      // On crée des duels 1vs1 au sein de la catégorie
       for (let i = 0; i < catTalents.length - 1; i += 2) {
-        allPairs.push({
-          category: formatCategoryName(catId),
-          categoryId: catId,
-          talent1: catTalents[i],
-          talent2: catTalents[i + 1]
-        });
+        // Éviter les doublons si le duel partagé est déjà inclus
+        const isAlreadyPresent = allPairs.some(p => 
+          (p.talent1.id === catTalents[i].id && p.talent2.id === catTalents[i+1].id) ||
+          (p.talent1.id === catTalents[i+1].id && p.talent2.id === catTalents[i].id)
+        );
+
+        if (!isAlreadyPresent) {
+          allPairs.push({
+            category: formatCategoryName(catId),
+            categoryId: catId,
+            talent1: catTalents[i],
+            talent2: catTalents[i + 1]
+          });
+        }
       }
     });
 
@@ -126,6 +152,34 @@ const TalentsPage = () => {
     if (!error) {
       setValidatedSet((prev) => new Set(prev).add(currentIndex));
       setTimeout(() => goTo(1), 600);
+    }
+  };
+
+  const handleShare = async () => {
+    const pair = pairs[currentIndex];
+    if (!pair) return;
+
+    const shareUrl = `${window.location.origin}${window.location.pathname}?t1=${pair.talent1.id}&t2=${pair.talent2.id}`;
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "Beninease - Duel de Talents",
+          text: `Découvre ce duel entre ${pair.talent1.prenom_talent} et ${pair.talent2.prenom_talent} sur Beninease !`,
+          url: shareUrl,
+        });
+      } catch (err) {
+        console.error("Erreur de partage:", err);
+      }
+    } else {
+      // Fallback : Copie dans le presse-papier
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        setShareSuccess(true);
+        setTimeout(() => setShareSuccess(false), 2000);
+      } catch (err) {
+        console.error("Erreur copie:", err);
+      }
     }
   };
 
@@ -232,17 +286,31 @@ const TalentsPage = () => {
       </div>
 
       {/* Button */}
-      <button
-        onClick={handleValidate}
-        disabled={validatedSet.has(currentIndex)}
-        className="w-full max-w-[180px] bg-[#1a1c1c] text-white py-2.5 rounded-full text-xs font-bold tracking-[0.2em] uppercase hover:bg-zinc-800 transition-all active:scale-[0.98] disabled:opacity-50 shadow-md flex items-center justify-center gap-2 shrink-0 mb-4"
-      >
-        {validatedSet.has(currentIndex) ? (
-          <>A VOTÉ <span className="text-green-500">✓</span></>
-        ) : (
-          "VALIDER"
-        )}
-      </button>
+      <div className="flex flex-col items-center gap-4 shrink-0">
+        <button
+          onClick={handleValidate}
+          disabled={validatedSet.has(currentIndex)}
+          className="w-full max-w-[180px] bg-[#1a1c1c] text-white py-2.5 rounded-full text-xs font-bold tracking-[0.2em] uppercase hover:bg-zinc-800 transition-all active:scale-[0.98] disabled:opacity-50 shadow-md flex items-center justify-center gap-2"
+        >
+          {validatedSet.has(currentIndex) ? (
+            <>A VOTÉ <span className="text-green-500">✓</span></>
+          ) : (
+            "VALIDER"
+          )}
+        </button>
+
+        <button 
+          onClick={handleShare}
+          className="p-3 rounded-full bg-white border border-zinc-100 text-zinc-400 hover:text-amber-600 hover:border-amber-200 transition-all active:scale-95 shadow-sm flex items-center justify-center group"
+          title="Partager ce duel"
+        >
+          {shareSuccess ? (
+            <Check className="w-5 h-5 text-green-500" />
+          ) : (
+            <Share2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
+          )}
+        </button>
+      </div>
 
       {/* MODALE VIDÉO */}
       {activeVideo && <VideoModal url={activeVideo} onClose={() => setActiveVideo(null)} />}
@@ -312,11 +380,7 @@ const CandidateCard = ({ talent, percent, dotColor, onPlay }: { talent: Talent, 
 // Composant de la Modale Vidéo
 const VideoModal = ({ url, onClose }: { url: string, onClose: () => void }) => {
   // Transformation de l'URL YouTube standard en URL embed
-  const getEmbedUrl = (url: string) => {
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-    const match = url.match(regExp);
-    const id = (match && match[2].length === 11) ? match[2] : null;
-    return id ? `https://www.youtube.com/embed/${id}?autoplay=1` : url;
+    return id ? `https://www.youtube.com/embed/${id}?autoplay=1&rel=0&playsinline=1` : url;
   };
 
   return (
@@ -324,10 +388,23 @@ const VideoModal = ({ url, onClose }: { url: string, onClose: () => void }) => {
       <button onClick={onClose} className="absolute top-6 right-6 text-white hover:rotate-90 transition-transform">
         <X className="w-8 h-8" />
       </button>
-      <div className="w-full max-w-4xl aspect-video bg-black rounded-lg overflow-hidden shadow-2xl">
-        <iframe src={getEmbedUrl(url)} className="w-full h-full" allow="autoplay; encrypted-media" allowFullScreen />
+      <div className="w-full max-w-4xl aspect-video bg-black rounded-lg overflow-hidden shadow-2xl relative">
+        <iframe 
+          src={getEmbedUrl(url)} 
+          className="w-full h-full" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+          allowFullScreen 
+        />
       </div>
     </div>
+  );
+};
+
+const TalentsPage = () => {
+  return (
+    <Suspense fallback={<div className="h-screen w-full flex items-center justify-center bg-white"><Loader2 className="w-8 h-8 animate-spin text-zinc-900" /></div>}>
+      <TalentsContent />
+    </Suspense>
   );
 };
 
