@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/utils/supabase/client";
 import { Play, Loader2, X } from "lucide-react";
 
 interface Talent {
@@ -183,4 +183,4 @@ const VideoModal = ({ url, onClose }: { url: string, onClose: () => void }) => {
   );
 };
 
-export default DuelPage; s
+export default DuelPage;
