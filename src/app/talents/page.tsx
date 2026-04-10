@@ -288,19 +288,7 @@ const TalentsContent = () => {
       </div>
 
       {/* Button Group */}
-      <div className="flex flex-row items-center justify-center gap-4 shrink-0 pb-4">
-        <button
-          onClick={handleValidate}
-          disabled={validatedSet.has(currentIndex)}
-          className="w-[180px] bg-[#1a1c1c] text-white py-3 rounded-full text-[11px] font-bold tracking-[0.25em] uppercase hover:bg-zinc-800 transition-all active:scale-[0.98] disabled:opacity-50 shadow-lg flex items-center justify-center gap-2"
-        >
-          {validatedSet.has(currentIndex) ? (
-            <>A VOTÉ <span className="text-green-500">✓</span></>
-          ) : (
-            "VALIDER"
-          )}
-        </button>
-
+      <div className="flex flex-col items-center justify-center gap-6 shrink-0 pb-8">
         <button 
           onClick={handleShare}
           className="p-4 rounded-full bg-white border border-zinc-100 text-zinc-400 hover:text-amber-600 hover:border-amber-200 transition-all active:scale-95 shadow-md flex items-center justify-center group"
@@ -310,6 +298,18 @@ const TalentsContent = () => {
             <Check className="w-5 h-5 text-green-500" />
           ) : (
             <Share2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
+          )}
+        </button>
+
+        <button
+          onClick={handleValidate}
+          disabled={validatedSet.has(currentIndex)}
+          className="w-[180px] bg-[#1a1c1c] text-white py-3 rounded-full text-[11px] font-bold tracking-[0.25em] uppercase hover:bg-zinc-800 transition-all active:scale-[0.98] disabled:opacity-50 shadow-lg flex items-center justify-center gap-2"
+        >
+          {validatedSet.has(currentIndex) ? (
+            <>A VOTÉ <span className="text-green-500">✓</span></>
+          ) : (
+            "VALIDER"
           )}
         </button>
       </div>
