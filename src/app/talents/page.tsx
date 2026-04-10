@@ -167,7 +167,7 @@ const TalentsPage = () => {
       className="w-full bg-white flex flex-col items-center text-[#1a1c1c] overflow-hidden relative select-none py-8"
       style={{
         height: "calc(100svh - 80px)",
-        gap: "32px",
+        gap: "24px",
         cursor: isDragging ? "grabbing" : "grab"
       }}
       onTouchStart={handleTouchStart}
@@ -191,7 +191,7 @@ const TalentsPage = () => {
       </div>
 
       {/* Duel Cards */}
-      <div className="relative w-full overflow-hidden px-2 md:px-8 max-w-5xl mx-auto">
+      <div className="relative w-full flex-1 min-h-0 overflow-hidden px-2 md:px-8 max-w-5xl mx-auto">
         <div className={`grid grid-cols-2 gap-3 md:gap-8 h-full transition-all duration-300 ${swipeDir === "left" ? "-translate-x-full opacity-0" : swipeDir === "right" ? "translate-x-full opacity-0" : "translate-x-0 opacity-100"}`}>
           <CandidateCard talent={pair.talent1} percent={100 - sliderValue} dotColor="#22C55E" onPlay={(url) => setActiveVideo(url)} />
           <CandidateCard talent={pair.talent2} percent={sliderValue} dotColor="#ffd31a" onPlay={(url) => setActiveVideo(url)} />
