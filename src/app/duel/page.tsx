@@ -164,12 +164,10 @@ const DuelPage = () => {
 
   return (
     <div 
-      className="w-full bg-white grid text-[#1a1c1c] overflow-hidden relative select-none" 
+      className="w-full bg-white flex flex-col items-center text-[#1a1c1c] overflow-hidden relative select-none py-8" 
       style={{ 
         height: "calc(100svh - 80px)", 
-        gridTemplateRows: "48px minmax(0, 1fr) 140px", 
-        gap: "12px", 
-        padding: "12px 0",
+        gap: "32px", 
         cursor: isDragging ? "grabbing" : "grab"
       }}
       onTouchStart={handleTouchStart}
@@ -179,9 +177,9 @@ const DuelPage = () => {
     >
 
       {/* Catégorie */}
-      <div className="flex flex-col items-center justify-center gap-3">
-        <span className="text-[#B8860B] font-display text-[9px] font-bold tracking-[0.3em] uppercase">
-          TALENTS
+      <div className="flex flex-col items-center justify-center gap-3 shrink-0">
+        <span className="text-[#B8860B] font-display text-[11px] font-bold tracking-[0.3em] uppercase">
+          TALENTS DU BÉNIN
         </span>
         <div className="flex items-center gap-4 bg-white text-[#1a1c1c] border border-zinc-100 px-6 py-2 rounded-full shadow-sm">
           <CategoryPattern id={pair.categoryId} />
@@ -200,15 +198,15 @@ const DuelPage = () => {
         </div>
       </div>
 
-      {/* Controls */}
+      {/* Track */}
       <div 
-        className="flex flex-col items-center justify-center gap-6 px-4"
+        className="w-full max-w-2l px-4 shrink-0"
         onMouseDown={(e) => e.stopPropagation()}
         onMouseUp={(e) => e.stopPropagation()}
         onTouchStart={(e) => e.stopPropagation()}
         onTouchEnd={(e) => e.stopPropagation()}
       >
-        <div className="w-full max-w-2xl relative h-6 rounded-full bg-gray-100 flex shadow-inner">
+        <div className="w-full max-w-2xl mx-auto relative h-6 rounded-full bg-gray-100 flex shadow-inner">
           <div className="absolute inset-0 flex rounded-full overflow-hidden">
             <div className="h-full transition-all duration-300" style={{ width: `${100 - sliderValue}%`, backgroundColor: "#008751" }} />
             <div className="h-full transition-all duration-300" style={{ width: `${sliderValue}%`, backgroundColor: "#ffd31a" }} />
@@ -220,18 +218,20 @@ const DuelPage = () => {
             className="absolute inset-0 w-full h-full appearance-none bg-transparent cursor-pointer z-10 outline-none" 
           />
         </div>
-        <button 
-          onClick={handleValidate} 
-          disabled={validatedSet.has(currentIndex)} 
-          className="w-full max-w-[180px] bg-[#1a1c1c] text-white py-2.5 rounded-full text-xs font-bold tracking-[0.2em] uppercase hover:bg-zinc-800 transition-all active:scale-[0.98] disabled:opacity-50 shadow-md flex items-center justify-center gap-2"
-        >
-          {validatedSet.has(currentIndex) ? (
-            <>VOTÉ <span className="text-green-500">✓</span></>
-          ) : (
-            "VALIDER"
-          )}
-        </button>
       </div>
+
+      {/* Button */}
+      <button 
+        onClick={handleValidate} 
+        disabled={validatedSet.has(currentIndex)} 
+        className="w-full max-w-[180px] bg-[#1a1c1c] text-white py-2.5 rounded-full text-xs font-bold tracking-[0.2em] uppercase hover:bg-zinc-800 transition-all active:scale-[0.98] disabled:opacity-50 shadow-md flex items-center justify-center gap-2 shrink-0 mb-4"
+      >
+        {validatedSet.has(currentIndex) ? (
+          <>VOTÉ <span className="text-green-500">✓</span></>
+        ) : (
+          "VALIDER"
+        )}
+      </button>
 
       {/* MODALE VIDÉO */}
       {activeVideo && <VideoModal url={activeVideo} onClose={() => setActiveVideo(null)} />}
