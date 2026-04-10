@@ -379,7 +379,10 @@ const CandidateCard = ({ talent, percent, dotColor, onPlay }: { talent: Talent, 
 
 // Composant de la Modale Vidéo
 const VideoModal = ({ url, onClose }: { url: string, onClose: () => void }) => {
-  // Transformation de l'URL YouTube standard en URL embed
+  const getEmbedUrl = (url: string) => {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    const id = (match && match[2].length === 11) ? match[2] : null;
     return id ? `https://www.youtube.com/embed/${id}?autoplay=1&rel=0&playsinline=1` : url;
   };
 
