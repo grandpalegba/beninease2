@@ -180,7 +180,7 @@ const DuelPage = () => {
 
       {/* Catégorie */}
       <div className="flex items-center justify-center">
-        <div className="flex items-center gap-4 bg-[#1a1c1c] text-white px-6 py-2 rounded-full shadow-xl">
+        <div className="flex items-center gap-4 bg-white text-[#1a1c1c] border border-zinc-100 px-6 py-2 rounded-full shadow-sm">
           <CategoryPattern id={pair.categoryId} />
           <span className="font-display text-[10px] font-bold tracking-[0.2em] uppercase whitespace-nowrap">
             {pair.category}
