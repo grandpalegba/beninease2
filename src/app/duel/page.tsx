@@ -287,24 +287,24 @@ const DuelContent = () => {
           </div>
         </div>
 
-        {/* Action Group: Share + Validate side-by-side */}
-        <div className="flex flex-row items-center justify-center gap-4 w-full max-w-2xl px-4">
+        {/* Action Group: Share + Validate side-by-side (Share absolute to keep Validate centered) */}
+        <div className="relative flex items-center justify-center w-full max-w-2xl px-4">
           <button 
             onClick={handleShare}
-            className="p-3.5 rounded-full bg-white border border-zinc-100 text-zinc-400 hover:text-amber-600 hover:border-amber-200 transition-all active:scale-95 shadow-md flex items-center justify-center group shrink-0"
+            className="absolute right-[calc(50%+105px)] p-2.5 rounded-full bg-white border border-zinc-100 text-zinc-400 hover:text-amber-600 hover:border-amber-200 transition-all active:scale-95 shadow-md flex items-center justify-center group shrink-0"
             title="Partager ce duel"
           >
             {shareSuccess ? (
-              <Check className="w-5 h-5 text-green-500" />
+              <Check className="w-4 h-4 text-green-500" />
             ) : (
-              <Share2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
+              <Share2 className="w-4 h-4 group-hover:scale-110 transition-transform" />
             )}
           </button>
 
           <button 
             onClick={handleValidate} 
             disabled={validatedSet.has(currentIndex)} 
-            className="flex-1 max-w-[200px] bg-[#1a1c1c] text-white py-3.5 rounded-full text-[10px] font-bold tracking-[0.25em] uppercase hover:bg-zinc-800 transition-all active:scale-[0.98] disabled:opacity-50 shadow-lg flex items-center justify-center gap-2"
+            className="w-[180px] bg-[#1a1c1c] text-white py-3 rounded-full text-[10px] font-bold tracking-[0.25em] uppercase hover:bg-zinc-800 transition-all active:scale-[0.98] disabled:opacity-50 shadow-lg flex items-center justify-center gap-2"
           >
             {validatedSet.has(currentIndex) ? (
               <>A VOTÉ <span className="text-green-500">✓</span></>
