@@ -22,6 +22,14 @@ const CATEGORY_PATTERNS: Record<string, React.ReactNode> = {
     </svg>
   ),
 
+  "vision": ( // Bogolan Eye / Vision (Irossoun-Médji inspiration)
+    <svg viewBox="0 0 40 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 10C12 5 28 5 32 10C28 15 12 15 8 10Z" stroke={GOLD_COLOR} strokeWidth={STROKE_WIDTH} strokeLinecap="round" vectorEffect={VECTOR_EFFECT}/>
+      <circle cx="20" cy="10" r="2" stroke={GOLD_COLOR} strokeWidth="1" vectorEffect={VECTOR_EFFECT}/>
+      <circle cx="20" cy="10" r="0.5" fill={GOLD_COLOR}/>
+    </svg>
+  ),
+
   "humour-comedie": ( // Diamond Shards (Image 3 inspiration)
     <svg viewBox="0 0 40 20" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M12 6L16 10L12 14L8 10L12 6Z" stroke={GOLD_COLOR} strokeWidth={STROKE_WIDTH} strokeLinecap="round" vectorEffect={VECTOR_EFFECT}/>
@@ -171,7 +179,6 @@ const ALIASES: Record<string, string> = {
   "danses": "danses-benin",
   "art": "artisanat",
   "artisanat": "artisanat",
-  "vision": "artisanat",
   "beaute": "beaute-feminine",
   "beauté": "beaute-feminine",
   "beninois": "beninois-du-monde",
