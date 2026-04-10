@@ -22,6 +22,16 @@ interface DuelPair {
   talent2: Talent;
 }
 
+// Algorithme de mélange Fisher-Yates
+const shuffle = (array: any[]) => {
+  const newArray = [...array];
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
+};
+
 const TalentsPage = () => {
   const [talents, setTalents] = useState<Talent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,24 +61,33 @@ const TalentsPage = () => {
 
   const pairs = useMemo(() => {
     if (talents.length === 0) return [];
+
+    // ÉTAPE 1 : Groupage strict par catégorie
     const grouped = talents.reduce((acc, t) => {
-      if (!acc[t.talent_categorie_id]) acc[t.talent_categorie_id] = [];
-      acc[t.talent_categorie_id].push(t);
+      const catId = t.talent_categorie_id || "divers";
+      if (!acc[catId]) acc[catId] = [];
+      acc[catId].push(t);
       return acc;
     }, {} as Record<string, Talent[]>);
 
-    const generatedPairs: DuelPair[] = [];
+    const allPairs: DuelPair[] = [];
+
+    // ÉTAPE 2 : Création de paires intra-catégorie
     Object.keys(grouped).forEach((catId) => {
-      const catTalents = grouped[catId];
+      const catTalents = shuffle(grouped[catId]); // Mélange des talents de cette catégorie
+      
+      // On crée des duels 1vs1 au sein de la catégorie
       for (let i = 0; i < catTalents.length - 1; i += 2) {
-        generatedPairs.push({
+        allPairs.push({
           category: catId.replace("-", " ").toUpperCase(),
           talent1: catTalents[i],
           talent2: catTalents[i + 1]
         });
       }
     });
-    return generatedPairs;
+
+    // ÉTAPE 3 : Mélange final de la liste des duels
+    return shuffle(allPairs);
   }, [talents]);
 
   const goTo = useCallback((dir: -1 | 1) => {
