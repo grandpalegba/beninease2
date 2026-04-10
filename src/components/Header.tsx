@@ -152,9 +152,9 @@ const Header = () => {
                 <button onClick={() => setShowDropdown(!showDropdown)} className="flex items-center gap-2 group">
                   <div className="relative">
                     {profile?.avatar_url ? (
-                      <Image src={profile.avatar_url} alt="avatar" width={36} height={36} className="rounded-full ring-2 ring-transparent group-hover:ring-[#22C55E]/20 transition-all" />
+                      <Image src={profile.avatar_url} alt="avatar" width={36} height={36} className="rounded-full ring-2 ring-transparent group-hover:ring-[#008751]/20 transition-all" />
                     ) : (
-                      <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 group-hover:bg-[#22C55E]/10 group-hover:text-[#22C55E] transition-all">
+                      <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 group-hover:bg-[#008751]/10 group-hover:text-[#008751] transition-all">
                         <UserIcon size={20} />
                       </div>
                     )}
@@ -174,15 +174,15 @@ const Header = () => {
                       <p className="text-base font-bold text-gray-900 truncate">{profile?.prenom || 'Explorateur'}</p>
                       <div className="mt-2 flex items-center gap-2">
                         <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                           <div className="h-full bg-[#22C55E]" style={{ width: `${Math.min((profile?.total_points || 0) / 10, 100)}%` }} />
+                           <div className="h-full bg-[#008751]" style={{ width: `${Math.min((profile?.total_points || 0) / 10, 100)}%` }} />
                         </div>
-                        <span className="text-[10px] font-bold text-[#22C55E]">{profile?.total_points || 0} pts</span>
+                        <span className="text-[10px] font-bold text-[#008751]">{profile?.total_points || 0} pts</span>
                       </div>
                     </div>
 
                     <div className="space-y-1">
-                      <div className="md:hidden px-2 py-2 mb-2 bg-[#22C55E]/5 rounded-lg border border-[#22C55E]/10">
-                        <p className="text-[10px] font-bold text-[#22C55E] uppercase tracking-widest">Poids : +{profile?.voter_weight || 1} pts</p>
+                      <div className="md:hidden px-2 py-2 mb-2 bg-[#008751]/5 rounded-lg border border-[#008751]/10">
+                        <p className="text-[10px] font-bold text-[#008751] uppercase tracking-widest">Poids : +{profile?.voter_weight || 1} pts</p>
                       </div>
 
                       <button 
@@ -202,7 +202,7 @@ const Header = () => {
           ) : (
             <Link 
               href="/login" 
-              className="px-6 py-2.5 rounded-full bg-[#22C55E] text-white text-sm font-bold shadow-lg shadow-[#22C55E]/20 hover:bg-[#16a34a] hover:-translate-y-0.5 transition-all active:translate-y-0"
+              className="px-6 py-2.5 rounded-full bg-[#008751] text-white text-sm font-bold shadow-lg shadow-[#008751]/20 hover:bg-[#16a34a] hover:-translate-y-0.5 transition-all active:translate-y-0"
             >
               Connexion
             </Link>
@@ -246,7 +246,7 @@ const Header = () => {
                 <Link 
                   href="/login" 
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="w-full flex items-center justify-center py-4 bg-[#22C55E] text-white rounded-2xl font-bold text-lg shadow-xl shadow-[#22C55E]/20"
+                  className="w-full flex items-center justify-center py-4 bg-[#008751] text-white rounded-2xl font-bold text-lg shadow-xl shadow-[#008751]/20"
                 >
                   Se connecter
                 </Link>

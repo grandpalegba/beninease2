@@ -116,10 +116,15 @@ const DuelPage = () => {
 
       {/* Controls */}
       <div className="flex flex-col items-center justify-center gap-6 px-4">
-        <div className="w-full max-w-2xl relative h-6 rounded-full bg-gray-100 overflow-hidden flex">
-          <div className="h-full transition-all duration-300" style={{ width: `${100 - sliderValue}%`, backgroundColor: "#22C55E" }} />
+        <div className="w-full max-w-2xl relative h-6 rounded-full bg-gray-100 overflow-hidden flex shadow-inner">
+          <div className="h-full transition-all duration-300" style={{ width: `${100 - sliderValue}%`, backgroundColor: "#008751" }} />
           <div className="h-full transition-all duration-300" style={{ width: `${sliderValue}%`, backgroundColor: "#ffd31a" }} />
-          <input type="range" value={sliderValue} onChange={(e) => !validatedSet.has(currentIndex) && setSliderValue(Number(e.target.value))} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+          <input 
+            type="range" 
+            value={sliderValue} 
+            onChange={(e) => !validatedSet.has(currentIndex) && setSliderValue(Number(e.target.value))} 
+            className="absolute inset-0 w-full h-full appearance-none bg-transparent cursor-pointer z-10 outline-none" 
+          />
         </div>
         <button onClick={handleValidate} disabled={validatedSet.has(currentIndex)} className="w-full max-w-[280px] bg-[#1a1c1c] text-white py-4 rounded-2xl font-black tracking-widest uppercase disabled:opacity-50">
           {validatedSet.has(currentIndex) ? "VOTÉ ✓" : "JE VALIDE"}
@@ -129,7 +134,32 @@ const DuelPage = () => {
       {/* MODALE VIDÉO */}
       {activeVideo && <VideoModal url={activeVideo} onClose={() => setActiveVideo(null)} />}
 
-      <style>{`input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 40px; height: 40px; background: #bd0020; border: 4px solid white; border-radius: 50%; cursor: pointer; }`}</style>
+      <style>{`
+        input[type=range]::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 44px;
+          height: 44px;
+          background: #bd0020;
+          border: 4px solid white;
+          border-radius: 50%;
+          cursor: pointer;
+          box-shadow: 0 4px 15px rgba(189, 0, 32, 0.4);
+          transition: transform 0.2s;
+        }
+        input[type=range]::-moz-range-thumb {
+          width: 44px;
+          height: 44px;
+          background: #bd0020;
+          border: 4px solid white;
+          border-radius: 50%;
+          cursor: pointer;
+          box-shadow: 0 4px 15px rgba(189, 0, 32, 0.4);
+        }
+        input[type=range]:active::-webkit-slider-thumb {
+          transform: scale(1.1);
+        }
+      `}</style>
     </div>
   );
 };
@@ -156,6 +186,7 @@ const CandidateCard = ({ talent, percent, dotColor, onPlay }: { talent: Talent, 
           <span className="text-xl font-black" style={{ color: dotColor }}>{Math.round(percent)}%</span>
         </div>
         <p className="text-gray-300 text-xs line-clamp-3">{talent.bio}</p>
+        <p className="text-orange-300 text-[10px] italic mt-2 opacity-80 drop-shadow-sm">« {talent.quote} »</p>
       </div>
     </div>
   );
