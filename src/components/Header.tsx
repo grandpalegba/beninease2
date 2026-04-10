@@ -104,34 +104,37 @@ const Header = () => {
     window.location.href = "/";
   };
 
-  const navLinkClasses = "text-sm font-bold text-[#1A1A1A] hover:text-[#006B3F] transition-colors";
+  const navLinkClasses = "text-sm font-bold text-white hover:text-[#FFD700] transition-colors";
 
   return (
     <header className={cn(
       "fixed left-0 right-0 z-50 transition-all duration-300",
       isBottomNav 
-        ? "bottom-0 bg-white shadow-[0_-10px_40px_rgba(0,0,0,0.08)] py-3 md:py-4 rounded-t-[2.5rem] border-t border-gray-100" 
-        : `top-0 bg-white ${scrolled ? "bg-white/90 backdrop-blur-md shadow-sm py-2" : "py-4"}`
+        ? "bottom-0 bg-black shadow-[0_-10px_40px_rgba(255,255,255,0.08)] py-3 md:py-4 rounded-t-[2.5rem] border-t border-white/5" 
+        : `top-0 ${scrolled ? "bg-black/80 backdrop-blur-md shadow-sm py-2" : "bg-black py-4"}`
     )}>
       <div className="container max-w-7xl mx-auto flex items-center justify-between px-6">
 
         <Link href="/" className="flex items-center gap-3">
           <Image src="/logo.png" alt="logo" width={32} height={32} />
-          <span className="text-xl font-bold text-[#006B3F] font-display">BeninEase</span>
+          <span className="text-xl font-bold font-display">
+            <span className="text-white">Benin</span>
+            <span className="text-[#FFD700]">Ease</span>
+          </span>
         </Link>
 
         <div className="flex items-center gap-4 md:gap-8">
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-6">
-            <Link href="/ambassadeurs" className={cn(navLinkClasses, pathname === "/ambassadeurs" && "text-[#008751]")}>Ambassadeurs</Link>
-            <Link href="/talents" className={cn(navLinkClasses, pathname === "/talents" && "text-[#008751]")}>Talents</Link>
-            <Link href="/tresors" className={cn(navLinkClasses, pathname === "/tresors" && "text-[#008751]")}>Trésors</Link>
+            <Link href="/ambassadeurs" className={cn(navLinkClasses, pathname === "/ambassadeurs" && "text-[#FFD700]")}>Ambassadeurs</Link>
+            <Link href="/talents" className={cn(navLinkClasses, pathname === "/talents" && "text-[#FFD700]")}>Talents</Link>
+            <Link href="/tresors" className={cn(navLinkClasses, pathname === "/tresors" && "text-[#FFD700]")}>Trésors</Link>
           </div>
           
           {/* Mobile Hamburger Toggle */}
           <button 
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-full transition-all"
+            className="md:hidden p-2 text-white hover:bg-white/10 rounded-full transition-all"
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -155,8 +158,8 @@ const Header = () => {
                         <UserIcon size={20} />
                       </div>
                     )}
-                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-white rounded-full flex items-center justify-center shadow-sm">
-                       <ChevronDown size={10} className={cn("text-gray-400 transition-transform", showDropdown && "rotate-180")} />
+                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-black rounded-full flex items-center justify-center shadow-sm border border-white/10">
+                       <ChevronDown size={10} className={cn("text-white transition-transform", showDropdown && "rotate-180")} />
                     </div>
                   </div>
                 </button>
@@ -211,7 +214,7 @@ const Header = () => {
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
         <div className={cn(
-          "fixed inset-0 z-40 bg-white/95 backdrop-blur-xl md:hidden animate-in fade-in duration-300",
+          "fixed inset-0 z-40 bg-black/95 backdrop-blur-xl md:hidden animate-in fade-in duration-300",
           isBottomNav ? "bottom-20 mb-4" : "top-20"
         )}>
           <div className="p-8 flex flex-col gap-6">
@@ -219,23 +222,23 @@ const Header = () => {
             <Link 
               href="/ambassadeurs" 
               onClick={() => setIsMobileMenuOpen(false)}
-              className="text-3xl font-display font-black text-gray-900 flex items-center justify-between"
+              className="text-3xl font-display font-black text-white flex items-center justify-between"
             >
-              Ambassadeurs <ChevronDown size={20} className="-rotate-90 text-gray-300" />
+              Ambassadeurs <ChevronDown size={20} className="-rotate-90 text-white/30" />
             </Link>
             <Link 
               href="/talents" 
               onClick={() => setIsMobileMenuOpen(false)}
-              className="text-3xl font-display font-black text-gray-900 flex items-center justify-between"
+              className="text-3xl font-display font-black text-white flex items-center justify-between"
             >
-              Talents <ChevronDown size={20} className="-rotate-90 text-gray-300" />
+              Talents <ChevronDown size={20} className="-rotate-90 text-white/30" />
             </Link>
             <Link 
               href="/tresors" 
               onClick={() => setIsMobileMenuOpen(false)}
-              className="text-3xl font-display font-black text-gray-900 flex items-center justify-between"
+              className="text-3xl font-display font-black text-white flex items-center justify-between"
             >
-              Trésors <ChevronDown size={20} className="-rotate-90 text-gray-300" />
+              Trésors <ChevronDown size={20} className="-rotate-90 text-white/30" />
             </Link>
             
             <div className="mt-8 pt-8 border-t border-gray-100">
