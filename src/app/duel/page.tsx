@@ -172,7 +172,13 @@ const DuelPage = () => {
       </div>
 
       {/* Controls */}
-      <div className="flex flex-col items-center justify-center gap-6 px-4">
+      <div 
+        className="flex flex-col items-center justify-center gap-6 px-4"
+        onMouseDown={(e) => e.stopPropagation()}
+        onMouseUp={(e) => e.stopPropagation()}
+        onTouchStart={(e) => e.stopPropagation()}
+        onTouchEnd={(e) => e.stopPropagation()}
+      >
         <div className="w-full max-w-2xl relative h-6 rounded-full bg-gray-100 flex shadow-inner">
           <div className="absolute inset-0 flex rounded-full overflow-hidden">
             <div className="h-full transition-all duration-300" style={{ width: `${100 - sliderValue}%`, backgroundColor: "#008751" }} />
@@ -248,12 +254,12 @@ const CandidateCard = ({ talent, percent, dotColor, onPlay }: { talent: Talent, 
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: dotColor, boxShadow: `0 0 10px ${dotColor}` }} />
-            <h2 className="text-white font-bold text-lg uppercase">{talent.prenom_talent}</h2>
+            <h2 className="text-white font-bold text-lg md:text-xl tracking-[0.15em]">{talent.prenom_talent}</h2>
           </div>
           <span className="text-xl font-black" style={{ color: dotColor }}>{Math.round(percent)}%</span>
         </div>
-        <p className="text-gray-300 text-xs line-clamp-3">{talent.bio}</p>
-        <p className="text-orange-300 text-[10px] italic mt-2 opacity-80 drop-shadow-sm">« {talent.quote} »</p>
+        <p className="text-gray-300 text-xs leading-relaxed line-clamp-3">{talent.bio}</p>
+        <p className="text-orange-300 text-[10px] italic mt-2 leading-relaxed opacity-80 drop-shadow-sm">« {talent.quote} »</p>
       </div>
     </div>
   );
