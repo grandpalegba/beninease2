@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import heroBg from "@/assets/hero-benin-2.png";
+import heroBg from "@/assets/hero-collage.jpg";
 
 const HeroSection = () => {
   const words = ['Beautiful', 'Powerful', 'Creative', 'Space', 'Magic', 'United', 'Shining', 'Rich'];
