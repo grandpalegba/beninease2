@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { confetti } from "tsparticles-confetti";
 import { toast } from "sonner";
 import { CategoryPattern } from "@/components/talents/CategoryPattern";
+import { HourglassTimer } from "@/components/mysteres/HourglassTimer";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -511,6 +512,10 @@ export default function MystereDetailPage() {
   const [isLiberated, setIsLiberated] = useState(false);
   const [questionAnswered, setQuestionAnswered] = useState(false);
 
+  // Timer state
+  const [timeLeft, setTimeLeft] = useState(30);
+  const [isFlipping, setIsFlipping] = useState(false);
+
   // Swipe
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -544,6 +549,57 @@ export default function MystereDetailPage() {
     if (savedPoints) setPoints(parseInt(savedPoints));
   }, []);
 
+  // ── Timer Logic ─────────────────────────────────────────────────────────────
+
+  useEffect(() => {
+    // Stop timer if locked, answered, or showing explanation/treasure
+    if (isLocked || loading || questionAnswered || showExplanation || showTreasure) {
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          // Time is up!
+          handleTimeOut();
+          return 30;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [isLocked, loading, questionAnswered, showExplanation, showTreasure]);
+
+  const handleTimeOut = useCallback(() => {
+    // Sanction: lose a life
+    setLives((prev) => {
+      const newLives = Math.max(0, prev - 1);
+      localStorage.setItem("mystere_lives", String(newLives));
+      
+      if (newLives <= 0) {
+        localStorage.setItem("mystere_lock_time", String(Date.now()));
+        setIsLocked(true);
+      }
+      return newLives;
+    });
+    
+    setShakeLives(true);
+    setTimeout(() => setShakeLives(false), 500);
+    
+    // Virtual flip animation
+    setIsFlipping(true);
+    setTimeout(() => setIsFlipping(false), 800);
+    
+    toast.error("⏳ Temps écoulé ! Une graine sacrée est perdue.");
+  }, []);
+
+  const resetTimer = useCallback(() => {
+    setTimeLeft(30);
+    setIsFlipping(true);
+    setTimeout(() => setIsFlipping(false), 800);
+  }, []);
+
   // ── Derived data ──────────────────────────────────────────────────────────────
 
   const currentMystere = mysteres[mystereIndex];
@@ -563,14 +619,16 @@ export default function MystereDetailPage() {
     setQuestionAnswered(false);
     const key = `mystere_liberated_${mysteres[mystereIndex]?.id}`;
     setIsLiberated(localStorage.getItem(key) === "true");
-  }, [mystereIndex, mysteres]);
+    resetTimer();
+  }, [mystereIndex, mysteres, resetTimer]);
 
   // Reset choice state on question change
   useEffect(() => {
     setShowExplanation(false);
     setChoiceState({});
     setQuestionAnswered(false);
-  }, [questionIndex]);
+    resetTimer();
+  }, [questionIndex, resetTimer]);
 
   // ── Handlers ──────────────────────────────────────────────────────────────────
 
@@ -762,27 +820,46 @@ export default function MystereDetailPage() {
             </h1>
           </div>
 
-          {/* ── Dashboard & Jar ──────────────────────────────────────────── */}
-          <div className="flex items-center justify-center gap-4 md:gap-12 w-full mb-6 md:mb-10 px-2">
-            {/* Left side: LifeBar & Points */}
-            <div className="flex flex-col items-center justify-center gap-3 w-1/3">
-              <LifeBar lives={lives} shake={shakeLives} />
-              <motion.div
-                key={points}
-                initial={{ scale: 1.2 }}
-                animate={{ scale: 1 }}
-                className="px-3 py-1.5 rounded-full text-[10px] md:text-xs font-bold shadow-md whitespace-nowrap"
-                style={{ background: "#5c3c35", color: "#fdb813", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-              >
-                ⭐ {points} pts
-              </motion.div>
-            </div>
-
-            {/* Right side: Jar */}
-            <div className="relative flex items-center justify-center w-[150px] h-[200px] md:w-[208px] md:h-[272px]">
-              <div className="scale-[0.7] md:scale-100 origin-center absolute flex items-center justify-center">
-                <SacredJar filledHoles={filledHoles} />
+          {/* ── Dashboard (The Ancestral Time) ────────────────────────────── */}
+          <div className="w-full mb-6 md:mb-12 px-2">
+            <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr_1fr] items-center gap-6 md:gap-4">
+              
+              {/* Left Column: The Past (Timer) */}
+              <div className="flex flex-col items-center justify-center order-2 md:order-1">
+                <HourglassTimer timeLeft={timeLeft} isFlipping={isFlipping} />
+                <p className="text-[10px] uppercase tracking-widest text-gray-400 mt-6 font-bold">Le Sablier du Destin</p>
               </div>
+
+              {/* Center Column: The Present (Jar) */}
+              <div className="relative flex items-center justify-center h-[220px] md:h-[300px] order-1 md:order-2">
+                <div className="scale-[0.85] md:scale-110 origin-center absolute flex items-center justify-center">
+                  <SacredJar filledHoles={filledHoles} />
+                </div>
+              </div>
+
+              {/* Right Column: The Future (Stats) */}
+              <div className="flex flex-col items-center justify-center gap-6 order-3 md:order-3">
+                <div className="flex flex-col items-center gap-3">
+                  <p className="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-1">Graines Sacrées</p>
+                  <LifeBar lives={lives} shake={shakeLives} />
+                </div>
+
+                <motion.div
+                  key={points}
+                  initial={{ scale: 1.2 }}
+                  animate={{ scale: 1 }}
+                  className="px-6 py-2.5 rounded-2xl text-xs md:text-sm font-black shadow-lg flex items-center gap-2 border border-[#fdb813]/20"
+                  style={{ 
+                    background: "linear-gradient(135deg, #5c3c35, #3d1810)", 
+                    color: "#fdb813", 
+                    fontFamily: "'Plus Jakarta Sans', sans-serif" 
+                  }}
+                >
+                  <span className="text-lg">⭐</span>
+                  <span>{points.toLocaleString()} PTS</span>
+                </motion.div>
+              </div>
+
             </div>
           </div>
 
