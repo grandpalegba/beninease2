@@ -80,7 +80,7 @@ function SacredJar({ filledHoles }: { filledHoles: number }) {
   ];
 
   return (
-    <div className="relative w-52 h-68 flex-shrink-0">
+    <div className="relative w-52 h-[272px] flex-shrink-0 z-10">
       {/* Glow behind jar */}
       <div className="absolute -z-10 inset-0 scale-[1.4] bg-[#a0412d]/10 rounded-full blur-3xl" />
 
@@ -216,25 +216,35 @@ function ChoiceButton({
   };
   const c = colors[state];
 
-  return (
-    <motion.button
-      onClick={onClick}
-      disabled={disabled}
-      whileHover={!disabled ? { scale: 1.02, y: -2 } : {}}
-      whileTap={!disabled ? { scale: 0.97 } : {}}
-      animate={
-        state === "wrong"
-          ? { x: [-4, 4, -4, 4, 0] }
-          : { x: 0 }
-      }
-      transition={state === "wrong" ? { duration: 0.35 } : {}}
-      className="flex items-center gap-4 p-4 rounded-2xl text-left transition-all duration-200"
-      style={{
-        backgroundColor: c.bg,
-        border: `1.5px solid ${c.border === "transparent" ? "transparent" : c.border}`,
-        cursor: disabled ? "default" : "pointer",
+    <motion.div
+      drag={!disabled}
+      dragConstraints={{ top: 0, left: 0, right: 0, bottom: 0 }}
+      dragElastic={0.8}
+      onDragEnd={(_, info) => {
+        if (!disabled && (info.offset.y < -60 || Math.abs(info.offset.x) > 100)) {
+          onClick();
+        }
       }}
+      className="w-full"
     >
+      <motion.button
+        onClick={onClick}
+        disabled={disabled}
+        whileHover={!disabled ? { scale: 1.02, y: -2 } : {}}
+        whileTap={!disabled ? { scale: 0.97 } : {}}
+        animate={
+          state === "wrong"
+            ? { x: [-4, 4, -4, 4, 0] }
+            : { x: 0 }
+        }
+        transition={state === "wrong" ? { duration: 0.35 } : {}}
+        className="flex items-center gap-4 p-4 rounded-2xl text-left w-full transition-all duration-200 relative z-20"
+        style={{
+          backgroundColor: c.bg,
+          border: `1.5px solid ${c.border === "transparent" ? "transparent" : c.border}`,
+          cursor: disabled ? "default" : "grab",
+        }}
+      >
       <span
         className="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-xl font-bold text-sm"
         style={{ backgroundColor: c.label, color: state === "idle" ? "#303333" : "#fff" }}
@@ -244,7 +254,8 @@ function ChoiceButton({
       <span className="text-sm font-medium leading-snug" style={{ color: c.text }}>
         {text}
       </span>
-    </motion.button>
+      </motion.button>
+    </motion.div>
   );
 }
 
