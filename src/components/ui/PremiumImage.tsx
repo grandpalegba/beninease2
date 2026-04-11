@@ -11,6 +11,7 @@ interface PremiumImageProps {
   className?: string;
   onClick?: () => void;
   noRounded?: boolean;
+  rounded?: "2xl" | "3xl" | "none" | "full";
 }
 
 const FALLBACK_SRC =
@@ -47,6 +48,7 @@ export default function PremiumImage({
   className,
   onClick,
   noRounded = false,
+  rounded = "2xl",
 }: PremiumImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasEnteredView, setHasEnteredView] = useState(false);
@@ -127,7 +129,7 @@ export default function PremiumImage({
       ref={containerRef}
       className={cn(
         "relative w-full overflow-hidden shadow-xl bg-[#f3f3f3] group",
-        !noRounded && "rounded-2xl",
+        !noRounded && (rounded === "3xl" ? "rounded-3xl" : rounded === "full" ? "rounded-full" : "rounded-2xl"),
         onClick && "cursor-zoom-in",
         ratioClasses[aspectRatio],
         className

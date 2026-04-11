@@ -28,19 +28,18 @@ export default function MediaTile({ type, url, alt, onClick }: MediaTileProps) {
 
   return (
     <div 
-      className="relative group cursor-pointer overflow-hidden rounded-none"
+      className="relative group cursor-pointer overflow-hidden rounded-none aspect-square md:aspect-video"
       onClick={handleClick}
     >
       {type === "photo" ? (
         <PremiumImage
           src={url}
           alt={alt}
-          aspectRatio="video"
           noRounded={true}
-          className="w-full h-full transition-all duration-700 md:group-hover:brightness-110 group-hover:scale-105"
+          className="absolute inset-0 w-full h-full transition-all duration-700 md:group-hover:brightness-110 group-hover:scale-105 shadow-none"
         />
       ) : (
-        <div className="relative aspect-square md:aspect-video bg-black overflow-hidden">
+        <div className="absolute inset-0 bg-black overflow-hidden">
           <img
             src={`https://img.youtube.com/vi/${url.split('/').pop()?.split('?')[0]}/maxresdefault.jpg`}
             alt={alt}
@@ -53,9 +52,9 @@ export default function MediaTile({ type, url, alt, onClick }: MediaTileProps) {
             <motion.div 
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center shadow-2xl"
+              className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center shadow-2xl"
             >
-              <Play className="w-6 h-6 text-white fill-white ml-1" />
+              <Play className="w-5 h-5 md:w-6 md:h-6 text-white fill-white ml-1" />
             </motion.div>
           </div>
         </div>
