@@ -229,7 +229,6 @@ function ChoiceButton({
       className="w-full"
     >
       <motion.button
-        onClick={onClick}
         disabled={disabled}
         whileHover={!disabled ? { scale: 1.02, y: -2 } : {}}
         whileTap={!disabled ? { scale: 0.97 } : {}}
@@ -570,6 +569,16 @@ export default function MystereDetailPage() {
         // CORRECT
         setChoiceState({ [choice]: "correct" });
         setFilledHoles((h) => Math.min(h + 1, 4));
+        confetti({
+          particleCount: 50,
+          spread: 60,
+          origin: { y: 0.35, x: 0.5 },
+          colors: ["#fdb813", "#ffffff", "#ffea00"],
+          disableForReducedMotion: true,
+          gravity: 1.2,
+          ticks: 80,
+          zIndex: 50
+        });
         setPoints((p) => {
           const newP = p + 10;
           localStorage.setItem("mystere_points", String(newP));
@@ -715,15 +724,6 @@ export default function MystereDetailPage() {
         </motion.div>
       </div>
 
-      {/* ── Mystere counter + swipe hint ────────────────────────────────── */}
-      <div className="flex items-center gap-3 mb-2 mt-2">
-        <button onClick={goPrevMystere} className="text-gray-300 hover:text-gray-500 transition-colors text-lg">←</button>
-        <span className="text-xs text-gray-400 tracking-widest">
-          {mystereIndex + 1} / {mysteres.length}
-        </span>
-        <button onClick={goNextMystere} className="text-gray-300 hover:text-gray-500 transition-colors text-lg">→</button>
-      </div>
-
       {/* ── Life bar ────────────────────────────────────────────────────── */}
       <LifeBar lives={lives} shake={shakeLives} />
 
@@ -768,19 +768,6 @@ export default function MystereDetailPage() {
           {/* ── Jar ──────────────────────────────────────────────────────── */}
           <div className="relative mb-10" style={{ height: "280px" }}>
             <SacredJar filledHoles={filledHoles} />
-            {/* Question number ring */}
-            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-              {[0, 1, 2, 3].map((i) => (
-                <div
-                  key={i}
-                  className="w-2.5 h-2.5 rounded-full transition-all duration-300"
-                  style={{
-                    background: i < filledHoles ? "#a0412d" : i === questionIndex && !showTreasure ? "#fdb813" : "#d8dad9",
-                    boxShadow: i < filledHoles ? "0 0 6px rgba(160,65,45,0.5)" : i === questionIndex && !showTreasure ? "0 0 6px rgba(253,184,19,0.8)" : "none",
-                  }}
-                />
-              ))}
-            </div>
           </div>
 
           {/* ── Locked ───────────────────────────────────────────────────── */}
