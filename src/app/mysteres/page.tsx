@@ -446,8 +446,8 @@ export default function MystereDetailPage() {
                 </div>
 
                 {/* Jar Column */}
-                <div className="relative flex items-center justify-center h-[220px] md:h-[300px] order-2">
-                  <div className="scale-[0.85] md:scale-110 origin-center absolute">
+                <div className="relative flex items-center justify-center h-[180px] md:h-[300px] order-2">
+                  <div className="scale-[0.65] md:scale-110 origin-center absolute">
                     <SacredJar filledHoles={filledHoles} />
                   </div>
                 </div>
