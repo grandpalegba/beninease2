@@ -33,7 +33,7 @@ type UserProfile = {
 
 const Header = () => {
   const pathname = usePathname();
-  const isBottomNav = pathname === "/ambassadeurs" || pathname === "/tresors" || pathname === "/duel" || pathname === "/talents" || pathname?.startsWith("/ambassadeurs/");
+  const isBottomNav = pathname === "/ambassadeurs" || pathname === "/tresors" || pathname === "/duel" || pathname === "/talents" || pathname === "/mysteres" || pathname?.startsWith("/ambassadeurs/");
 
   const [scrolled, setScrolled] = useState(false);
   const [user, setUser] = useState<User | null>(null);
@@ -127,6 +127,7 @@ const Header = () => {
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-6">
             <Link href="/ambassadeurs" className={cn(navLinkClasses, pathname === "/ambassadeurs" && "text-[#FFD700]")}>Référents</Link>
+            <Link href="/mysteres" className={cn(navLinkClasses, pathname === "/mysteres" && "text-[#FFD700]")}>Mystères</Link>
             <Link href="/talents" className={cn(navLinkClasses, pathname === "/talents" && "text-[#FFD700]")}>Talents</Link>
             <Link href="/tresors" className={cn(navLinkClasses, pathname === "/tresors" && "text-[#FFD700]")}>Trésors</Link>
           </div>
@@ -225,6 +226,13 @@ const Header = () => {
               className="text-3xl font-display font-black text-white flex items-center justify-between"
             >
               Référents <ChevronDown size={20} className="-rotate-90 text-white/30" />
+            </Link>
+            <Link 
+              href="/mysteres" 
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="text-3xl font-display font-black text-white flex items-center justify-between"
+            >
+              Mystères <ChevronDown size={20} className="-rotate-90 text-white/30" />
             </Link>
             <Link 
               href="/talents" 
