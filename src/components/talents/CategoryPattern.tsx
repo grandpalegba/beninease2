@@ -191,8 +191,11 @@ const ALIASES: Record<string, string> = {
   "aines": "parole-aines",
   "aînés": "parole-aines",
   "gastronomie": "saveurs-benin",
+  "gastronomie sacrée": "saveurs-benin",
   "gastrononie": "saveurs-benin",
-  "voix-des-lieux": "voix-lieux"
+  "voix-des-lieux": "voix-lieux",
+  "royautés & pouvoir": "vision",
+  "spiritualité & vodou": "sagesse"
 };
 
 const DEFAULT_PATTERN = (

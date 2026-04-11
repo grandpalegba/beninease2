@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { confetti } from "tsparticles-confetti";
 import { toast } from "sonner";
+import { CategoryPattern } from "@/components/talents/CategoryPattern";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -725,16 +726,21 @@ export default function MystereDetailPage() {
           className="w-full max-w-2xl flex flex-col items-center cursor-grab active:cursor-grabbing select-none"
         >
           {/* ── Theme + Title ──────────────────────────────────────────── */}
-          <div className="text-center mb-4 md:mb-8">
+          <div className="text-center mb-4 md:mb-8 flex flex-col items-center">
+            <h2 className="text-[#B8860B] text-sm md:text-base tracking-[0.3em] font-bold uppercase mb-6" style={{ fontFamily: "serif" }}>
+              TRÉSORS DU BÉNIN
+            </h2>
+            
             {currentTheme && (
-              <div className="flex items-center justify-center gap-2 mb-3">
-                <span className="text-xl">{currentTheme.icone}</span>
+              <div className="inline-flex items-center justify-center gap-4 px-6 py-2 md:py-3 mb-4 rounded-full border border-black/5 shadow-sm bg-white">
+                <CategoryPattern id={currentTheme.nom} />
                 <span
-                  className="text-xs font-bold uppercase tracking-[0.25em]"
-                  style={{ color: "#303333", fontFamily: "'Inter', sans-serif" }}
+                  className="text-[10px] md:text-xs font-black uppercase tracking-[0.25em]"
+                  style={{ color: "#111827", fontFamily: "'Inter', sans-serif" }}
                 >
                   {currentTheme.nom}
                 </span>
+                <CategoryPattern id={currentTheme.nom} className="rotate-180" />
               </div>
             )}
             <h1
