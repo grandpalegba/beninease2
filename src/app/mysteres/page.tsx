@@ -208,9 +208,9 @@ function ChoiceButton({
 }) {
   const colors = {
     idle: {
-      bg: "#fff8e7",
-      border: "#ffe082",
-      label: "#fdb813",
+      bg: "rgba(160, 65, 45, 0.06)",
+      border: "rgba(160, 65, 45, 0.2)",
+      label: "#a0412d",
       text: "#303333",
     },
     correct: {
@@ -259,7 +259,7 @@ function ChoiceButton({
       >
       <span
         className="w-6 h-6 md:w-10 md:h-10 flex-shrink-0 flex items-center justify-center rounded-md md:rounded-xl font-bold text-[10px] md:text-sm"
-        style={{ backgroundColor: c.label, color: state === "idle" ? "#303333" : "#fff" }}
+        style={{ backgroundColor: c.label, color: "#fff" }}
       >
         {letter}
       </span>
