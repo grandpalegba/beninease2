@@ -385,14 +385,11 @@ export default function MystereDetailPage() {
       <AnimatePresence mode="wait">
         <motion.div 
           key={mystereIndex} 
-          drag="x"
-          dragConstraints={{ left: 0, right: 0 }}
-          dragElastic={0.7}
-          onDragEnd={handleDragEnd}
+          onPanEnd={handleDragEnd}
           initial={{ opacity: 0, x: 20 }} 
           animate={{ opacity: 1, x: 0 }} 
           exit={{ opacity: 0, x: -20 }} 
-          className="w-full max-w-2xl flex flex-col items-center cursor-grab active:cursor-grabbing"
+          className="w-full max-w-2xl flex flex-col items-center"
         >
           
           {isLiberated ? (
