@@ -17,7 +17,7 @@ export function HourglassTimer({ timeLeft, isFlipping }: HourglassTimerProps) {
   // Bottom sand: slowly grows vertically
   
   return (
-    <div className="relative flex flex-col items-center justify-center w-24 h-32 md:w-32 md:h-44">
+    <div className="relative flex flex-col items-center justify-center w-16 h-24 md:w-20 md:h-28">
       <motion.div
         animate={{ 
           rotate: isFlipping ? 180 : 0 
