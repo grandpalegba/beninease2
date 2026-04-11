@@ -141,6 +141,29 @@ function SacredJar({ filledHoles }: { filledHoles: number }) {
 // ─── Seed / Life Display ──────────────────────────────────────────────────────
 
 function LifeBar({ lives, shake }: { lives: number; shake: boolean }) {
+  const renderHole = (i: number) => (
+    <div
+      key={i}
+      className="w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center shadow-inner"
+      style={{ backgroundColor: "#2a100a", boxShadow: "inset 0 3px 6px rgba(0,0,0,0.8)" }}
+    >
+      <motion.div
+        initial={false}
+        animate={
+          i < lives
+            ? { scale: 1, opacity: 1 }
+            : { scale: 0, opacity: 0 }
+        }
+        transition={{ duration: 0.3 }}
+        className="rounded-full w-2 h-2.5 md:w-2.5 md:h-3"
+        style={{
+          backgroundColor: "#fdb813",
+          boxShadow: "0 0 8px rgba(253,184,19,0.9), 0 0 3px rgba(253,184,19,0.5)",
+        }}
+      />
+    </div>
+  );
+
   return (
     <motion.div
       animate={shake ? { x: [-6, 6, -5, 5, -3, 3, 0] } : { x: 0 }}
@@ -148,32 +171,20 @@ function LifeBar({ lives, shake }: { lives: number; shake: boolean }) {
       className="flex justify-center"
     >
       <div
-        className="p-3 rounded-2xl flex items-center border border-black/10 shadow-lg"
-        style={{ background: "#5c3c35" }}
+        className="p-3 rounded-[20px] flex items-center shadow-xl overflow-hidden relative"
+        style={{ 
+          background: "linear-gradient(to right, #5c3c35 0%, #4a2f29 48%, #1a0f0c 50%, #4a2f29 52%, #5c3c35 100%)",
+          boxShadow: "inset 0 2px 10px rgba(0,0,0,0.5), 0 10px 20px rgba(0,0,0,0.3)",
+          border: "1px solid #3e241e"
+        }}
       >
-        <div className="grid grid-cols-2 gap-2 md:gap-3">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <div
-              key={i}
-              className="w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center shadow-inner"
-              style={{ backgroundColor: "#2a100a", boxShadow: "inset 0 3px 6px rgba(0,0,0,0.8)" }}
-            >
-              <motion.div
-                initial={false}
-                animate={
-                  i < lives
-                    ? { scale: 1, opacity: 1 }
-                    : { scale: 0, opacity: 0 }
-                }
-                transition={{ duration: 0.3 }}
-                className="rounded-full w-2 h-2.5 md:w-2.5 md:h-3"
-                style={{
-                  backgroundColor: "#fdb813",
-                  boxShadow: "0 0 8px rgba(253,184,19,0.9), 0 0 3px rgba(253,184,19,0.5)",
-                }}
-              />
-            </div>
-          ))}
+        <div className="flex">
+          <div className="flex flex-col gap-2 md:gap-3 pr-2 border-r border-[#1a0f0c]">
+            {Array.from({ length: 4 }).map((_, i) => renderHole(i))}
+          </div>
+          <div className="flex flex-col gap-2 md:gap-3 pl-2 border-l border-[#6b473f]">
+            {Array.from({ length: 4 }).map((_, i) => renderHole(i + 4))}
+          </div>
         </div>
       </div>
     </motion.div>
