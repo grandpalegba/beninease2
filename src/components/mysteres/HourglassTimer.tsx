@@ -10,7 +10,7 @@ interface HourglassTimerProps {
 
 export function HourglassTimer({ timeLeft, isFlipping }: HourglassTimerProps) {
   // Calculate percentage of time remaining (0 to 1)
-  const progress = timeLeft / 30;
+  const progress = timeLeft / 60;
   
   // Bulbes and sand paths
   // Top sand: slowly shrinks vertically

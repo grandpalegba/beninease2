@@ -513,7 +513,7 @@ export default function MystereDetailPage() {
   const [questionAnswered, setQuestionAnswered] = useState(false);
 
   // Timer state
-  const [timeLeft, setTimeLeft] = useState(30);
+  const [timeLeft, setTimeLeft] = useState(60);
   const [isFlipping, setIsFlipping] = useState(false);
 
   // Swipe
@@ -562,7 +562,7 @@ export default function MystereDetailPage() {
         if (prev <= 1) {
           // Time is up!
           handleTimeOut();
-          return 30;
+          return 60;
         }
         return prev - 1;
       });
@@ -595,7 +595,7 @@ export default function MystereDetailPage() {
   }, []);
 
   const resetTimer = useCallback(() => {
-    setTimeLeft(30);
+    setTimeLeft(60);
     setIsFlipping(true);
     setTimeout(() => setIsFlipping(false), 800);
   }, []);
