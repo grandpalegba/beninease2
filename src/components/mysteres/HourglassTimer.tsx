@@ -59,21 +59,22 @@ export function HourglassTimer({ timeLeft, isFlipping }: HourglassTimerProps) {
                transition={{ duration: 1, ease: "linear" }}
              />
           </mask>
+          {/* Top Bulb Sand (Refined path for more organic look) */}
           <motion.path
-            d="M25 10C25 10 25 50 50 75C75 50 75 10 75 10Z"
+            d="M30 15C30 15 30 45 50 65C70 45 70 15 30 15Z"
             fill="#fdb813"
             initial={false}
             animate={{ 
               scaleY: progress,
-              originY: 1
+              originY: 1,
+              opacity: progress > 0.05 ? 1 : progress * 20
             }}
             transition={{ duration: 1, ease: "linear" }}
-            style={{ opacity: progress > 0 ? 1 : 0 }}
           />
 
-          {/* Bottom Bulb Sand */}
+          {/* Bottom Bulb Sand (Heaped look) */}
           <motion.path
-            d="M25 140C25 140 25 100 50 75C75 100 75 140 75 140Z"
+            d="M25 140C30 130 40 120 50 120C60 120 70 130 75 140L25 140Z"
             fill="#fdb813"
             initial={false}
             animate={{ 
@@ -115,13 +116,14 @@ export function HourglassTimer({ timeLeft, isFlipping }: HourglassTimerProps) {
         </svg>
       </motion.div>
 
-      {/* Digital Timer Overlay (Self-styled) */}
+      {/* Digital Timer (Detached from the body) */}
       <div 
-        className="absolute bottom-[-20px] px-3 py-1 rounded-full text-[10px] font-bold shadow-sm border border-[#5c3c35]/10"
+        className="absolute -bottom-10 px-4 py-1.5 rounded-full text-[11px] font-black shadow-lg border border-[#5c3c35]/5"
         style={{ 
           background: "white", 
           color: timeLeft <= 5 ? "#a0412d" : "#5c3c35",
-          fontFamily: "'Plus Jakarta Sans', sans-serif"
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.05)"
         }}
       >
         {timeLeft}s
