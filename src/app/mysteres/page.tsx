@@ -262,8 +262,9 @@ function ChoiceButton({
 
 // ─── Locked Screen ────────────────────────────────────────────────────────────
 
-function LockedScreen({ onPowerWord }: { onPowerWord: () => void }) {
+function LockedScreen({ onPowerWord }: { onPowerWord: (word: string) => void }) {
   const [remaining, setRemaining] = useState("");
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
     const lockTime = localStorage.getItem("mystere_lock_time");
@@ -305,19 +306,28 @@ function LockedScreen({ onPowerWord }: { onPowerWord: () => void }) {
       >
         {remaining || "Calcul…"}
       </div>
-      <p className="text-xs text-gray-400">ou utilisez un Mot de Pouvoir</p>
-      <motion.button
-        whileHover={{ scale: 1.03 }}
-        whileTap={{ scale: 0.97 }}
-        onClick={onPowerWord}
-        className="px-8 py-4 rounded-full font-bold text-white text-sm tracking-wide shadow-lg"
-        style={{
-          background: "linear-gradient(135deg, #a0412d, #5c3c35)",
-          boxShadow: "0 8px 24px rgba(160,65,45,0.3)",
-        }}
-      >
-        🌟 Mot de Pouvoir — Scanner un lieu partenaire
-      </motion.button>
+      <div className="flex flex-col gap-3 w-full max-w-xs mt-4">
+        <input
+          type="text"
+          placeholder="Entrer le mot de passe"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full px-4 py-3 rounded-full text-center border-2 border-[#a0412d]/20 outline-none focus:border-[#a0412d] transition-all bg-transparent"
+          style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+        />
+        <motion.button
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={() => onPowerWord(password)}
+          className="w-full px-8 py-3 rounded-full font-bold text-white text-sm tracking-wide shadow-lg"
+          style={{
+            background: "linear-gradient(135deg, #a0412d, #5c3c35)",
+            boxShadow: "0 8px 24px rgba(160,65,45,0.3)",
+          }}
+        >
+          🌟 Déverrouiller la Jarre
+        </motion.button>
+      </div>
     </motion.div>
   );
 }
@@ -618,8 +628,16 @@ export default function MystereDetailPage() {
     });
   }, [currentMystere]);
 
-  const handlePowerWord = () => {
-    toast.info("🌟 Fonctionnalité de scan Antigravity bientôt disponible !");
+  const handlePowerWord = (word: string) => {
+    if (word.trim().toLowerCase() === "benin") {
+      localStorage.removeItem("mystere_lock_time");
+      localStorage.setItem("mystere_lives", "6");
+      setLives(6);
+      setIsLocked(false);
+      toast.success("🔐 Jarre déverrouillée !");
+    } else {
+      toast.error("❌ Mot de pouvoir incorrect");
+    }
   };
 
   // ── Swipe handlers ────────────────────────────────────────────────────────────
