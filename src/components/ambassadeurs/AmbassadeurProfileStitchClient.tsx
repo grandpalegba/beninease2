@@ -81,7 +81,7 @@ export default function AmbassadeurProfileStitchClient({
         target_ambassadeur_id: ambassadeurData.id,
       });
       if (error) {
-        if (error.message.includes("déjà voté")) toast.info("Vous avez déjà soutenu cet ambassadeur !");
+        if (error.message.includes("déjà voté")) toast.info("Vous avez déjà soutenu ce référent !");
         else throw error;
       } else {
         toast.success("Merci pour votre soutien !");
@@ -101,7 +101,7 @@ export default function AmbassadeurProfileStitchClient({
     const shareUrl = typeof window !== "undefined" ? window.location.href : "";
     const shareData = {
       title: `${ambassadeur.prenom} ${ambassadeur.nom} | BeninEase`,
-      text: `Découvrez l'ambassadeur ${ambassadeur.prenom} ${ambassadeur.nom} sur BeninEase !`,
+      text: `Découvrez le référent ${ambassadeur.prenom} ${ambassadeur.nom} sur BeninEase !`,
       url: shareUrl,
     };
     try {

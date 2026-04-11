@@ -90,7 +90,7 @@ export default function AmbassadeursPage() {
       <div className="h-screen w-full flex flex-col items-center justify-center bg-[#F4F4F2]">
         <Loader2 className="w-10 h-10 animate-spin text-[#008751] mb-4" />
         <p className="text-gray-500 uppercase tracking-widest text-xs">
-          Chargement des Ambassadeurs...
+          Chargement des Référents...
         </p>
       </div>
     );
@@ -102,7 +102,7 @@ export default function AmbassadeursPage() {
           <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
           <h2 className="text-xl font-bold mb-2">Oups !</h2>
           <p className="text-gray-600 mb-6">
-            Impossible de charger les ambassadeurs.
+            Impossible de charger les référents.
           </p>
           <button
             onClick={loadAmbassadeurs}

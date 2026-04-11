@@ -233,7 +233,7 @@ export default function AmbassadeurProfileShell({
         ambassadeur_id: id,
       }]);
       if (error) {
-        if (error.code === "23505") { setHasVoted(true); toast.info("Vous avez déjà soutenu cet ambassadeur !"); }
+        if (error.code === "23505") { setHasVoted(true); toast.info("Vous avez déjà soutenu ce référent !"); }
         else throw error;
       } else {
         setHasVoted(true);
@@ -422,7 +422,7 @@ export default function AmbassadeurProfileShell({
           <div className="rounded-2xl border border-gray-100 p-8 md:p-10 text-center space-y-5 bg-[#FAFAFA]">
             <FlagLine className="w-12 mx-auto" />
             <p className="text-[10px] font-extrabold uppercase tracking-[0.3em] text-[#008751]">
-              Soutenir cet ambassadeur
+              Soutenir ce référent
             </p>
             <p className="text-3xl font-extrabold text-[#1A1A1A]">
               {votesCount}

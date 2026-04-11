@@ -67,9 +67,9 @@ export default function AmbassadeurHeader({ profile }: AmbassadeurHeaderProps) {
           isAmbassadeur ? "bg-amber-500/10 text-amber-600 border-amber-500/20" : "bg-teal-500/10 text-teal-600 border-teal-500/20"
         )}>
           {isAmbassadeur ? <Award className="w-3.5 h-3.5" /> : <User className="w-3.5 h-3.5" />}
-          {isAmbassadeur ? 'Ambassadeur' : 'Candidat'}
+          {isAmbassadeur ? 'Référent' : 'Candidat'}
         </div>
-        <h1 className="font-display text-4xl md:text-5xl font-bold text-black tracking-tight">Mon Espace Ambassadeur</h1>
+        <h1 className="font-display text-4xl md:text-5xl font-bold text-black tracking-tight">Mon Espace Référent</h1>
         <p className="text-gray-500 font-sans text-lg">
           Gérez vos contenus et suivez votre impact sur BeninEase.
         </p>

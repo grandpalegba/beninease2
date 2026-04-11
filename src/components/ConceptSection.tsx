@@ -64,7 +64,7 @@ const ConceptSection = () => {
         <p className="text-lg md:text-xl text-muted-foreground mb-16 max-w-2xl mx-auto text-balance font-body" style={{ lineHeight: "2.1" }}>
           BeninEase est le premier label de confiance communautaire dédié à l'excellence béninoise.
           À travers un système de sélection transparent, ludique et validé par la communauté,
-          nous transformons des pépites locales en véritables Ambassadeurs pour une vitrine de prestige célébrant un Bénin qui gagne.
+          nous transformons des pépites locales en véritables Référents pour une vitrine de prestige célébrant un Bénin qui gagne.
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 md:gap-12">
