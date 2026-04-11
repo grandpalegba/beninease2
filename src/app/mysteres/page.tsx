@@ -216,6 +216,7 @@ function ChoiceButton({
   };
   const c = colors[state];
 
+  return (
     <motion.div
       drag={!disabled}
       dragConstraints={{ top: 0, left: 0, right: 0, bottom: 0 }}
