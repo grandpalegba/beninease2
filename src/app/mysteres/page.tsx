@@ -389,8 +389,9 @@ export default function MystereDetailPage() {
           initial={{ opacity: 0, x: 20 }} 
           animate={{ opacity: 1, x: 0 }} 
           exit={{ opacity: 0, x: -20 }} 
-          className="w-full max-w-2xl flex flex-col items-center"
+          className="w-full max-w-2xl flex flex-col items-center pointer-events-none"
         >
+          <div className="w-full flex flex-col items-center pointer-events-auto">
           
           {isLiberated ? (
             /* ── Purified Editorial View (Post-Liberation) ── */
@@ -533,6 +534,7 @@ export default function MystereDetailPage() {
               )}
             </div>
           )}
+          </div>
         </motion.div>
       </AnimatePresence>
 
