@@ -108,7 +108,7 @@ const Header = () => {
 
   return (
     <header className={cn(
-      "fixed left-0 right-0 z-50 transition-all duration-300",
+      "fixed left-0 right-0 z-[100] transition-all duration-300",
       isBottomNav 
         ? "bottom-0 bg-black shadow-[0_-10px_40px_rgba(255,255,255,0.08)] py-3 md:py-4 rounded-t-[2.5rem] border-t border-white/5" 
         : `top-0 ${scrolled ? "bg-black/80 backdrop-blur-md shadow-sm py-2" : "bg-black py-4"}`
