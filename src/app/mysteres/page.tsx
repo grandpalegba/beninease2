@@ -239,7 +239,7 @@ function ChoiceButton({
             : { x: 0 }
         }
         transition={state === "wrong" ? { duration: 0.35 } : {}}
-        className="flex items-center gap-4 p-4 rounded-2xl text-left w-full transition-all duration-200 relative z-20"
+        className="flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-xl md:rounded-2xl text-left w-full transition-all duration-200 relative z-20"
         style={{
           backgroundColor: c.bg,
           border: `1.5px solid ${c.border === "transparent" ? "transparent" : c.border}`,
@@ -247,12 +247,12 @@ function ChoiceButton({
         }}
       >
       <span
-        className="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-xl font-bold text-sm"
+        className="w-8 h-8 md:w-10 md:h-10 flex-shrink-0 flex items-center justify-center rounded-lg md:rounded-xl font-bold text-xs md:text-sm"
         style={{ backgroundColor: c.label, color: state === "idle" ? "#303333" : "#fff" }}
       >
         {letter}
       </span>
-      <span className="text-sm font-medium leading-snug" style={{ color: c.text }}>
+      <span className="text-xs md:text-sm font-medium leading-snug" style={{ color: c.text }}>
         {text}
       </span>
       </motion.button>
@@ -697,7 +697,7 @@ export default function MystereDetailPage() {
 
   return (
     <div
-      className="min-h-screen flex flex-col items-center pt-20 pb-10 px-4 relative overflow-x-hidden"
+      className="min-h-screen flex flex-col items-center pt-16 md:pt-20 pb-28 md:pb-10 px-4 relative overflow-x-hidden"
       style={{ background: "#faf9f8", fontFamily: "'Inter', sans-serif" }}
     >
       {/* ── Decorative circles (desktop) ────────────────────────────────── */}
@@ -740,7 +740,7 @@ export default function MystereDetailPage() {
           className="w-full max-w-2xl flex flex-col items-center cursor-grab active:cursor-grabbing select-none"
         >
           {/* ── Theme + Title ──────────────────────────────────────────── */}
-          <div className="text-center mb-8">
+          <div className="text-center mb-4 md:mb-8">
             {currentTheme && (
               <div className="flex items-center justify-center gap-2 mb-3">
                 <span className="text-xl">{currentTheme.icone}</span>
@@ -758,13 +758,15 @@ export default function MystereDetailPage() {
             >
               {currentMystere.titre}
             </h1>
-            <p className="text-base text-gray-500 max-w-md mx-auto leading-relaxed">
-              {currentMystere.description}
-            </p>
+            <div className="max-h-24 md:max-h-none overflow-y-auto px-2">
+              <p className="text-sm md:text-base text-gray-500 max-w-md mx-auto leading-relaxed">
+                {currentMystere.description}
+              </p>
+            </div>
           </div>
 
           {/* ── Jar ──────────────────────────────────────────────────────── */}
-          <div className="relative mb-10" style={{ height: "280px" }}>
+          <div className="relative mb-6 md:mb-10 scale-[0.75] md:scale-100 origin-top h-[190px] md:h-[280px]">
             <SacredJar filledHoles={filledHoles} />
           </div>
 
