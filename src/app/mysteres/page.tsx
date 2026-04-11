@@ -722,8 +722,8 @@ export default function MystereDetailPage() {
   const handlePowerWord = (word: string) => {
     if (word.trim().toLowerCase() === "benin") {
       localStorage.removeItem("mystere_lock_time");
-      localStorage.setItem("mystere_lives", "6");
-      setLives(6);
+      localStorage.setItem("mystere_lives", "8");
+      setLives(8);
       setIsLocked(false);
       toast.success("🔐 Jarre déverrouillée !");
     } else {
@@ -794,69 +794,45 @@ export default function MystereDetailPage() {
           transition={{ duration: 0.4, ease: [0.21, 0.47, 0.32, 0.98] }}
           className="w-full max-w-2xl flex flex-col items-center cursor-grab active:cursor-grabbing select-none"
         >
-          {/* ── Theme + Title ──────────────────────────────────────────── */}
-          <div className="text-center mb-4 md:mb-8 flex flex-col items-center">
-            <h2 className="text-[#B8860B] text-sm md:text-base tracking-[0.3em] font-bold uppercase mb-4" style={{ fontFamily: "serif" }}>
-              TRÉSORS DU BÉNIN
-            </h2>
-            
-            {currentTheme && (
-              <div className="inline-flex items-center justify-center gap-4 px-6 py-2 md:py-3 mb-4 rounded-full border border-black/5 shadow-sm bg-white">
-                <CategoryPattern id={currentTheme.nom} />
-                <span
-                  className="text-[10px] md:text-xs font-black uppercase tracking-[0.25em]"
-                  style={{ color: "#111827", fontFamily: "'Inter', sans-serif" }}
-                >
-                  {currentTheme.nom}
-                </span>
-                <CategoryPattern id={currentTheme.nom} className="rotate-180" />
-              </div>
-            )}
-            <h1
-              className="text-2xl md:text-3xl font-extrabold leading-tight mb-4 px-2"
-              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#a0412d" }}
-            >
-              {currentMystere.titre}
-            </h1>
-          </div>
-
           {/* ── Dashboard (The Ancestral Time) ────────────────────────────── */}
           <div className="w-full mb-6 md:mb-12 px-2">
-            <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr_1fr] items-center gap-6 md:gap-4">
+            <div className="grid grid-cols-3 items-center gap-1 md:gap-4">
               
               {/* Left Column: The Past (Timer) */}
-              <div className="flex flex-col items-center justify-center order-2 md:order-1">
-                <p className="text-[10px] uppercase tracking-widest text-gray-400 mb-6 font-bold">Le Sablier du Destin</p>
+              <div className="flex flex-col items-center justify-center order-1">
+                <p className="text-[10px] uppercase tracking-widest text-gray-400 mb-6 font-bold hidden md:block">Le Sablier du Destin</p>
                 <HourglassTimer timeLeft={timeLeft} isFlipping={isFlipping} />
               </div>
 
               {/* Center Column: The Present (Jar) */}
-              <div className="relative flex items-center justify-center h-[220px] md:h-[300px] order-1 md:order-2">
-                <div className="scale-[0.85] md:scale-110 origin-center absolute flex items-center justify-center">
+              <div className="relative flex items-center justify-center h-[220px] md:h-[300px] order-2">
+                <div className="scale-[0.8] md:scale-110 origin-center absolute flex items-center justify-center">
                   <SacredJar filledHoles={filledHoles} />
                 </div>
               </div>
 
               {/* Right Column: The Future (Stats) */}
-              <div className="flex flex-col items-center justify-center gap-6 order-3 md:order-3">
-                <div className="flex flex-col items-center gap-3">
-                  <p className="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-1">Graines Sacrées</p>
-                  <LifeBar lives={lives} shake={shakeLives} />
+              <div className="flex flex-col items-center justify-center gap-4 md:gap-6 order-3">
+                <div className="flex flex-col items-center gap-2 md:gap-3">
+                  <p className="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-1 hidden md:block">Graines Sacrées</p>
+                  <div className="scale-[0.8] md:scale-100">
+                    <LifeBar lives={lives} shake={shakeLives} />
+                  </div>
                 </div>
 
                 <motion.div
                   key={points}
                   initial={{ scale: 1.2 }}
                   animate={{ scale: 1 }}
-                  className="px-6 py-2.5 rounded-2xl text-xs md:text-sm font-black shadow-lg flex items-center gap-2 border border-[#fdb813]/20"
+                  className="px-3 md:px-6 py-2 md:py-2.5 rounded-xl md:rounded-2xl text-[10px] md:text-sm font-black shadow-lg flex items-center gap-1 md:gap-2 border border-[#fdb813]/20"
                   style={{ 
                     background: "linear-gradient(135deg, #5c3c35, #3d1810)", 
                     color: "#fdb813", 
                     fontFamily: "'Plus Jakarta Sans', sans-serif" 
                   }}
                 >
-                  <span className="text-lg">⭐</span>
-                  <span>{points.toLocaleString()} PTS</span>
+                  <span className="text-base md:text-lg">⭐</span>
+                  <span>{points.toLocaleString()}</span>
                 </motion.div>
               </div>
 
