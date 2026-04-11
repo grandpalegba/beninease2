@@ -720,21 +720,9 @@ export default function MystereDetailPage() {
 
   return (
     <div
-      className="min-h-screen flex flex-col items-center pt-16 md:pt-20 pb-28 md:pb-10 px-4 relative overflow-x-hidden"
+      className="min-h-screen flex flex-col items-center pt-8 md:pt-12 pb-28 md:pb-10 px-4 relative overflow-x-hidden"
       style={{ background: "#faf9f8", fontFamily: "'Inter', sans-serif" }}
     >
-      {/* ── Decorative circles (desktop) ────────────────────────────────── */}
-      <div className="fixed top-1/2 -left-20 -translate-y-1/2 opacity-[0.04] pointer-events-none hidden xl:block">
-        <div className="w-72 h-72 border-[32px] border-[#a0412d] rounded-full" />
-      </div>
-      <div className="fixed top-1/4 -right-20 opacity-[0.04] pointer-events-none hidden xl:block">
-        <div className="grid grid-cols-2 gap-6">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="w-10 h-10 bg-[#a0412d] rounded-full" />
-          ))}
-        </div>
-      </div>
-
       {/* Navigation and layout are handled differently below */}
 
       {/* ── Main swipeable area ──────────────────────────────────────────── */}
@@ -750,7 +738,7 @@ export default function MystereDetailPage() {
         >
           {/* ── Theme + Title ──────────────────────────────────────────── */}
           <div className="text-center mb-4 md:mb-8 flex flex-col items-center">
-            <h2 className="text-[#B8860B] text-sm md:text-base tracking-[0.3em] font-bold uppercase mb-6" style={{ fontFamily: "serif" }}>
+            <h2 className="text-[#B8860B] text-sm md:text-base tracking-[0.3em] font-bold uppercase mb-4" style={{ fontFamily: "serif" }}>
               TRÉSORS DU BÉNIN
             </h2>
             
@@ -767,7 +755,7 @@ export default function MystereDetailPage() {
               </div>
             )}
             <h1
-              className="text-4xl md:text-5xl font-extrabold leading-tight mb-4"
+              className="text-3xl md:text-4xl font-extrabold leading-tight mb-4"
               style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#a0412d" }}
             >
               {currentMystere.titre}
@@ -826,9 +814,6 @@ export default function MystereDetailPage() {
                 {/* Question text */}
                 {currentQuestion && (
                   <div className="mb-6 text-center px-2">
-                    <p className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: "#5d605f" }}>
-                      Épreuve {questionIndex + 1} / 4
-                    </p>
                     <h2
                       className="text-lg md:text-xl font-bold leading-snug"
                       style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#303333" }}
@@ -893,16 +878,6 @@ export default function MystereDetailPage() {
         </motion.div>
       </AnimatePresence>
 
-      {/* ── Bottom nav hint ────────────────────────────────────────────── */}
-      {!showTreasure && !isLocked && (
-        <div className="mt-8 mb-4 px-6 py-2 rounded-full border border-[#B8860B]/30 bg-[#B8860B]/5 backdrop-blur-sm mx-auto flex items-center justify-center gap-3">
-          <span className="text-[#B8860B] opacity-70">←</span>
-          <p className="text-[10px] md:text-xs text-[#B8860B] font-bold tracking-widest uppercase mb-0">
-            Swipe pour changer de mystère
-          </p>
-          <span className="text-[#B8860B] opacity-70">→</span>
-        </div>
-      )}
     </div>
   );
 }
