@@ -826,8 +826,8 @@ export default function MystereDetailPage() {
               
               {/* Left Column: The Past (Timer) */}
               <div className="flex flex-col items-center justify-center order-2 md:order-1">
+                <p className="text-[10px] uppercase tracking-widest text-gray-400 mb-6 font-bold">Le Sablier du Destin</p>
                 <HourglassTimer timeLeft={timeLeft} isFlipping={isFlipping} />
-                <p className="text-[10px] uppercase tracking-widest text-gray-400 mt-6 font-bold">Le Sablier du Destin</p>
               </div>
 
               {/* Center Column: The Present (Jar) */}
