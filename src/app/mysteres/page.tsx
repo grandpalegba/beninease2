@@ -163,8 +163,9 @@ function LifeBar({ lives, shake }: { lives: number; shake: boolean }) {
               transition={{ duration: 0.3 }}
               className="rounded-full"
               style={{
-                width: "20px",
-                height: "20px",
+                width: "12px",
+                height: "16px",
+                borderRadius: "50%",
                 backgroundColor: i < lives ? "#fdb813" : "#2a100a",
                 boxShadow:
                   i < lives
@@ -731,10 +732,7 @@ export default function MystereDetailPage() {
       <AnimatePresence mode="wait">
         <motion.div
           key={mystereIndex}
-          drag
-          dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-          dragElastic={0.06}
-          onDragEnd={handleDragEnd}
+          onPanEnd={handleDragEnd}
           initial={{ opacity: 0, x: 40 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -40 }}
