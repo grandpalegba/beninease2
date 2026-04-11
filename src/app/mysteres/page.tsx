@@ -494,6 +494,7 @@ export default function MystereDetailPage() {
   const [filledHoles, setFilledHoles] = useState(0); // 0-4
   const [choiceState, setChoiceState] = useState<Record<string, "idle" | "correct" | "wrong">>({});
   const [showExplanation, setShowExplanation] = useState(false);
+  const [previousExplanation, setPreviousExplanation] = useState<{text: string; questionNum: number} | null>(null);
   const [points, setPoints] = useState(0);
   const [shakeLives, setShakeLives] = useState(false);
   const [isLiberated, setIsLiberated] = useState(false);
@@ -586,7 +587,18 @@ export default function MystereDetailPage() {
           return newP;
         });
         setQuestionAnswered(true);
-        setTimeout(() => setShowExplanation(true), 600);
+
+        // Auto-advance logic
+        if (questionIndex < questions.length - 1) {
+          setPreviousExplanation({
+            text: currentQuestion.explication,
+            questionNum: questionIndex + 1,
+          });
+          setTimeout(() => goNextQuestion(), 1500); // auto advance after 1.5s
+        } else {
+          // For the final question, we still show the explanation card before the Treasure
+          setTimeout(() => setShowExplanation(true), 600);
+        }
       } else {
         // WRONG
         setChoiceState((prev) => ({ ...prev, [choice]: "wrong" }));
@@ -825,21 +837,42 @@ export default function MystereDetailPage() {
                 ) : (
                   /* Choices grid */
                   currentQuestion && (
-                    <div className="grid grid-cols-2 gap-2 md:gap-3 w-full">
-                      {choices.map(({ letter, text }) => {
-                        if (!text) return null;
-                        const state = choiceState[letter] || "idle";
-                        return (
-                          <ChoiceButton
-                            key={letter}
-                            letter={letter}
-                            text={text}
-                            state={state}
-                            onClick={() => handleAnswer(letter)}
-                            disabled={questionAnswered}
-                          />
-                        );
-                      })}
+                    <div className="flex flex-col items-center w-full">
+                      <div className="grid grid-cols-2 gap-2 md:gap-3 w-full">
+                        {choices.map(({ letter, text }) => {
+                          if (!text) return null;
+                          const state = choiceState[letter] || "idle";
+                          return (
+                            <ChoiceButton
+                              key={letter}
+                              letter={letter}
+                              text={text}
+                              state={state}
+                              onClick={() => handleAnswer(letter)}
+                              disabled={questionAnswered}
+                            />
+                          );
+                        })}
+                      </div>
+
+                      {/* Explication de la question précédente */}
+                      <AnimatePresence>
+                        {previousExplanation && !questionAnswered && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="mt-6 w-full max-w-[300px] text-center border-t border-[#a0412d]/10 pt-4"
+                          >
+                            <p className="text-[10px] font-bold text-[#a0412d] uppercase tracking-widest mb-1.5 flex items-center justify-center gap-1">
+                              <span>📖</span> Révélation (Épreuve {previousExplanation.questionNum})
+                            </p>
+                            <p className="text-xs text-gray-500 leading-relaxed">
+                              {previousExplanation.text}
+                            </p>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
                   )
                 )}
