@@ -281,6 +281,14 @@ export default function MystereDetailPage() {
     toast.success("✨ Trésor libéré !");
   };
 
+  const goNextMystere = useCallback(() => {
+    setMystereIndex((i) => (i + 1) % mysteres.length);
+  }, [mysteres.length]);
+
+  const goPrevMystere = useCallback(() => {
+    setMystereIndex((i) => (i - 1 + mysteres.length) % mysteres.length);
+  }, [mysteres.length]);
+
   const handleShare = () => {
     const text = `🏺 J'ai libéré le trésor "${currentMystere.titre}" sur BeninEase !\n\n📜 Révélations :\n${answeredExplanations.map((ex,i)=>`${i+1}. ${ex}`).join("\n")}`;
     if (navigator.share) navigator.share({ title: currentMystere.titre, text }).catch(console.error);
