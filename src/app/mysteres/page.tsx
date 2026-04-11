@@ -755,7 +755,7 @@ export default function MystereDetailPage() {
               </div>
             )}
             <h1
-              className="text-3xl md:text-4xl font-extrabold leading-tight mb-4"
+              className="text-2xl md:text-3xl font-extrabold leading-tight mb-4 px-2"
               style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#a0412d" }}
             >
               {currentMystere.titre}
