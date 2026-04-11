@@ -366,6 +366,12 @@ export default function MystereDetailPage() {
     setMystereIndex((i) => (i - 1 + mysteres.length) % mysteres.length);
   }, [mysteres.length]);
 
+  const handleDragEnd = useCallback((_: any, info: any) => {
+    const threshold = 100;
+    if (info.offset.x > threshold) goPrevMystere();
+    else if (info.offset.x < -threshold) goNextMystere();
+  }, [goPrevMystere, goNextMystere]);
+
   const handleShare = () => {
     const text = `🏺 J'ai libéré le trésor "${currentMystere.titre}" sur BeninEase !\n\n📜 Révélations :\n${answeredExplanations.map((ex,i)=>`${i+1}. ${ex}`).join("\n")}`;
     if (navigator.share) navigator.share({ title: currentMystere.titre, text }).catch(console.error);
@@ -377,7 +383,17 @@ export default function MystereDetailPage() {
   return (
     <div className="min-h-screen flex flex-col items-center pt-8 md:pt-12 px-4 pb-28 relative overflow-x-hidden" style={{ background: "#faf9f8", fontFamily: "'Inter', sans-serif" }}>
       <AnimatePresence mode="wait">
-        <motion.div key={mystereIndex} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="w-full max-w-2xl flex flex-col items-center">
+        <motion.div 
+          key={mystereIndex} 
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.7}
+          onDragEnd={handleDragEnd}
+          initial={{ opacity: 0, x: 20 }} 
+          animate={{ opacity: 1, x: 0 }} 
+          exit={{ opacity: 0, x: -20 }} 
+          className="w-full max-w-2xl flex flex-col items-center cursor-grab active:cursor-grabbing"
+        >
           
           {isLiberated ? (
             /* ── Purified Editorial View (Post-Liberation) ── */
@@ -523,10 +539,7 @@ export default function MystereDetailPage() {
         </motion.div>
       </AnimatePresence>
 
-      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 flex gap-6 z-50">
-        <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={goPrevMystere} className="w-14 h-14 rounded-full bg-white shadow-2xl flex items-center justify-center text-xl border border-black/5">←</motion.button>
-        <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={goNextMystere} className="w-14 h-14 rounded-full bg-white shadow-2xl flex items-center justify-center text-xl border border-black/5">→</motion.button>
-      </div>
+      {/* Swipe everywhere navigation, no buttons needed */}
     </div>
   );
 }
