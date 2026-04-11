@@ -1,10 +1,9 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { confetti } from "tsparticles-confetti";
 import { toast } from "sonner";
-import Link from "next/link";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -471,7 +470,6 @@ export default function MystereDetailPage() {
   const [lives, setLives] = useState(6);
   const [isLocked, setIsLocked] = useState(false);
   const [filledHoles, setFilledHoles] = useState(0); // 0-4
-  const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
   const [choiceState, setChoiceState] = useState<Record<string, "idle" | "correct" | "wrong">>({});
   const [showExplanation, setShowExplanation] = useState(false);
   const [points, setPoints] = useState(0);
@@ -480,8 +478,6 @@ export default function MystereDetailPage() {
   const [questionAnswered, setQuestionAnswered] = useState(false);
 
   // Swipe
-  const dragX = useMotionValue(0);
-  const dragY = useMotionValue(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // ── Load data ────────────────────────────────────────────────────────────────
@@ -529,7 +525,6 @@ export default function MystereDetailPage() {
     setShowTreasure(false);
     setFilledHoles(0);
     setShowExplanation(false);
-    setSelectedChoice(null);
     setChoiceState({});
     setQuestionAnswered(false);
     const key = `mystere_liberated_${mysteres[mystereIndex]?.id}`;
@@ -539,7 +534,6 @@ export default function MystereDetailPage() {
   // Reset choice state on question change
   useEffect(() => {
     setShowExplanation(false);
-    setSelectedChoice(null);
     setChoiceState({});
     setQuestionAnswered(false);
   }, [questionIndex]);
@@ -549,7 +543,6 @@ export default function MystereDetailPage() {
   const handleAnswer = useCallback(
     (choice: string) => {
       if (questionAnswered || isLocked) return;
-      setSelectedChoice(choice);
 
       if (choice === currentQuestion.correct_answer) {
         // CORRECT
@@ -708,7 +701,6 @@ export default function MystereDetailPage() {
       <AnimatePresence mode="wait">
         <motion.div
           key={mystereIndex}
-          ref={containerRef}
           drag
           dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
           dragElastic={0.06}
