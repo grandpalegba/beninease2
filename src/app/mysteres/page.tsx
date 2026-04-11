@@ -176,9 +176,10 @@ function ChoiceButton({ letter, text, state, onClick, disabled }: any) {
       disabled={disabled}
       whileHover={!disabled ? { scale: 1.02, y: -2 } : {}}
       whileTap={!disabled ? { scale: 0.98 } : {}}
-      className="flex items-center gap-3 p-3 rounded-2xl w-full border-2 text-left relative overflow-hidden group shadow-sm"
+      className="flex items-center gap-3 p-3 rounded-2xl w-full border-2 text-left relative overflow-hidden group shadow-sm transition-all duration-200"
       style={{ backgroundColor: c.bg, borderColor: c.border }}
-      onClick={onClick}
+      onClick={(e) => { e.stopPropagation(); onClick(); }}
+      onPointerDown={(e) => e.stopPropagation()}
     >
       <span
         className="w-10 h-10 flex items-center justify-center rounded-xl font-bold text-white shadow-sm transition-transform group-hover:scale-110"
@@ -212,7 +213,8 @@ function TreasureCard({ mystere, points, onLiberate, isLiberated }: any) {
       <motion.button 
         whileHover={{ scale: 1.05 }} 
         whileTap={{ scale: 0.95 }} 
-        onClick={onLiberate} 
+        onClick={(e) => { e.stopPropagation(); onLiberate(); }} 
+        onPointerDown={(e) => e.stopPropagation()}
         className="px-10 py-5 rounded-full font-bold text-white shadow-2xl" 
         style={{ background: "linear-gradient(135deg, #a0412d, #7a2a1b)", boxShadow: "0 12px 36px rgba(160,65,45,0.4)" }}
       >
@@ -242,7 +244,11 @@ function ExplanationCard({ text, questionNum, onContinue }: any) {
         <p className="text-xs font-bold text-[#a0412d] uppercase tracking-widest mb-2 items-center flex gap-2"><span>📖</span> Révélation {questionNum}</p>
         <p className="text-sm text-gray-600 leading-relaxed">{text}</p>
       </div>
-      <button onClick={onContinue} className="w-full py-4 rounded-full bg-[#a0412d] text-white font-bold shadow-md">
+      <button 
+        onClick={(e) => { e.stopPropagation(); onContinue(); }} 
+        onPointerDown={(e) => e.stopPropagation()}
+        className="w-full py-4 rounded-full bg-[#a0412d] text-white font-bold shadow-md"
+      >
         {questionNum < 4 ? "Question suivante →" : "Voir le Trésor →"}
       </button>
     </div>
@@ -366,10 +372,16 @@ export default function MystereDetailPage() {
     setMystereIndex((i) => (i - 1 + mysteres.length) % mysteres.length);
   }, [mysteres.length]);
 
-  const handleDragEnd = useCallback((_: any, info: any) => {
-    const threshold = 100;
-    if (info.offset.x > threshold) goPrevMystere();
-    else if (info.offset.x < -threshold) goNextMystere();
+  const handlePanEnd = useCallback((_: any, info: any) => {
+    // 🚩 Restricted Swipe Area: Only trigger on top 1/3 of the screen or empty side backgrounds
+    const screenHeight = typeof window !== 'undefined' ? window.innerHeight : 1000;
+    const isTopThird = info.point.y < screenHeight / 3;
+    const threshold = 70;
+
+    if (isTopThird && Math.abs(info.offset.x) > threshold) {
+      if (info.offset.x > threshold) goPrevMystere();
+      else if (info.offset.x < -threshold) goNextMystere();
+    }
   }, [goPrevMystere, goNextMystere]);
 
   const handleShare = () => {
@@ -385,13 +397,12 @@ export default function MystereDetailPage() {
       <AnimatePresence mode="wait">
         <motion.div 
           key={mystereIndex} 
-          onPanEnd={handleDragEnd}
+          onPanEnd={handlePanEnd}
           initial={{ opacity: 0, x: 20 }} 
           animate={{ opacity: 1, x: 0 }} 
           exit={{ opacity: 0, x: -20 }} 
-          className="w-full max-w-2xl flex flex-col items-center pointer-events-none"
+          className="w-full max-w-2xl flex flex-col items-center"
         >
-          <div className="w-full flex flex-col items-center pointer-events-auto">
           
           {isLiberated ? (
             /* ── Purified Editorial View (Post-Liberation) ── */
@@ -534,7 +545,6 @@ export default function MystereDetailPage() {
               )}
             </div>
           )}
-          </div>
         </motion.div>
       </AnimatePresence>
 
