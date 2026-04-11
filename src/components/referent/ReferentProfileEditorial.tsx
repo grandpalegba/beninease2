@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Share2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import ReferentEditorialSection from "./ReferentEditorialSection";
+import MediaTile from "./MediaTile";
 import PremiumImage from "../ui/PremiumImage";
+import UnifiedMediaModal from "../ui/UnifiedMediaModal";
 
 interface ReferentProfileEditorialProps {
   ambassadeur: any;
@@ -16,10 +17,10 @@ interface ReferentProfileEditorialProps {
 }
 
 /**
- * ReferentProfileEditorial - Mise en page premium "Diptyque".
- * - Palette : Sable (#faf9f8) & Terracotta (#a0412d).
- * - Sections narratives avec grille média 2 colonnes.
- * - Formulaire de contact épuré en conclusion.
+ * ReferentProfileEditorial - Design "Mur de Médias 2x2" Premium.
+ * - Galerie : Mosaïque continue, photos à gauche, vidéos à droite.
+ * - Récit : Texte narratif unique avec espacement généreux.
+ * - Sécurisation : stopPropagation sur les médias.
  */
 export default function ReferentProfileEditorial({
   ambassadeur,
@@ -29,60 +30,58 @@ export default function ReferentProfileEditorial({
   isVoting = false,
 }: ReferentProfileEditorialProps) {
   const contactFormRef = useRef<HTMLDivElement>(null);
+  const [modalState, setModalState] = useState<{
+    isOpen: boolean;
+    type: "photo" | "video";
+    url: string | null;
+    title?: string;
+  }>({
+    isOpen: false,
+    type: "photo",
+    url: null,
+  });
 
-  // Structure narrative avec fallbacks pour les textes descriptifs
-  const sections = [
-    {
-      id: "qui-je-suis",
-      title: "Qui je suis",
-      videoUrl: ambassadeur.video_qui_je_suis,
-      imageUrl: ambassadeur.photo_qui_je_suis,
-      text: ambassadeur.texte_qui_je_suis || ambassadeur.bio_qui_je_suis,
-    },
-    {
-      id: "mon-histoire",
-      title: "Mon histoire",
-      videoUrl: ambassadeur.video_histoire,
-      imageUrl: ambassadeur.photo_histoire,
-      text: ambassadeur.texte_histoire || ambassadeur.bio_histoire,
-    },
-    {
-      id: "mon-expertise",
-      title: "Mon expertise",
-      videoUrl: ambassadeur.video_expertise || ambassadeur.video_services,
-      imageUrl: ambassadeur.photo_expertise || ambassadeur.photo_services,
-      text: ambassadeur.texte_expertise || ambassadeur.bio_expertise || ambassadeur.description_services,
-    },
-    {
-      id: "pourquoi-moi",
-      title: "Pourquoi moi",
-      videoUrl: ambassadeur.video_pourquoi,
-      imageUrl: ambassadeur.photo_pourquoi,
-      text: ambassadeur.texte_pourquoi || ambassadeur.bio_pourquoi,
-    },
-  ];
+  // 1. Extraction des Médias (Photos à Gauche, Vidéos à Droite)
+  const photos = [
+    { url: ambassadeur.photo_qui_je_suis, alt: "Qui je suis" },
+    { url: ambassadeur.photo_histoire, alt: "Mon histoire" },
+  ].filter(p => p.url);
 
-  const scrollToContact = () => {
-    contactFormRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const videos = [
+    { url: ambassadeur.video_qui_je_suis || ambassadeur.video_expertise, alt: "Expertise" },
+    { url: ambassadeur.video_histoire || ambassadeur.video_pourquoi, alt: "Pourquoi moi" },
+  ].filter(v => v.url);
+
+  // 2. Extraction du Texte Narratif
+  const narrativeTexts = [
+    ambassadeur.texte_qui_je_suis || ambassadeur.bio_qui_je_suis,
+    ambassadeur.texte_histoire || ambassadeur.bio_histoire,
+    ambassadeur.texte_expertise || ambassadeur.bio_expertise || ambassadeur.description_services,
+    ambassadeur.texte_pourquoi || ambassadeur.bio_pourquoi,
+  ].filter(Boolean);
+
+  const openModal = (type: "photo" | "video", url: string, title: string) => {
+    setModalState({ isOpen: true, type, url, title });
   };
 
-  const terracotta = "#a0412d";
+  const closeModal = () => setModalState({ ...modalState, isOpen: false });
+  const scrollToContact = () => contactFormRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 
   return (
     <div 
       className="w-full bg-[#faf9f8] font-manrope selection:bg-[#a0412d]/10 overflow-x-hidden min-h-screen"
       onContextMenu={(e) => e.preventDefault()}
     >
-      <main className="max-w-[1000px] mx-auto px-6 pt-12 md:pt-24 pb-40">
+      <main className="max-w-[1200px] mx-auto px-6 pt-12 md:pt-24 pb-40">
         
         {/* 🎬 HERO SECTION */}
         <motion.section 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: [0.21, 0.47, 0.32, 0.98] }}
-          className="flex flex-col items-center text-center mb-32 md:mb-40"
+          className="flex flex-col items-center text-center mb-24 md:mb-32"
         >
-          <div className="relative w-[300px] h-[300px] md:w-[360px] md:h-[360px] mb-16 mx-auto">
+          <div className="relative w-[280px] h-[280px] md:w-[320px] md:h-[320px] mb-12 mx-auto">
             <PremiumImage 
               src={ambassadeur.avatar_url}
               alt={`${ambassadeur.prenom} ${ambassadeur.nom}`}
@@ -91,27 +90,21 @@ export default function ReferentProfileEditorial({
             />
           </div>
 
-          <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.3em] text-[#a0412d] mb-8">
+          <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.3em] text-[#a0412d] mb-6">
             {ambassadeur.categorie}
           </span>
 
-          <h1 className="text-4xl md:text-6xl font-bold font-manrope text-[#1A1A1A] uppercase tracking-tight leading-tight mb-12 max-w-3xl mx-auto" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          <h1 className="text-4xl md:text-5xl font-bold text-[#1A1A1A] uppercase tracking-tight leading-tight mb-10 max-w-3xl mx-auto" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
             {ambassadeur.prenom} {ambassadeur.nom}
           </h1>
 
-          {ambassadeur.bio && (
-            <p className="text-xl md:text-2xl font-light text-gray-500 max-w-2xl mx-auto mb-14 px-4 leading-relaxed italic">
-              « {ambassadeur.bio} »
-            </p>
-          )}
-
-          <div className="flex flex-col md:flex-row items-center gap-6 w-full max-w-xl mx-auto">
+          <div className="flex flex-col md:flex-row items-center gap-6 w-full max-w-lg mx-auto">
             <motion.button
               whileTap={{ scale: 0.98 }}
               onClick={onVote}
               disabled={isVoting}
               className={cn(
-                "w-full md:flex-1 py-5 px-8 text-white rounded-full font-bold uppercase tracking-widest text-[11px] shadow-sm transition-all",
+                "w-full md:flex-1 py-4 px-8 text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-sm transition-all",
                 isVoting ? "bg-gray-400 cursor-not-allowed" : "bg-[#a0412d] hover:bg-[#8b3827]"
               )}
             >
@@ -121,7 +114,7 @@ export default function ReferentProfileEditorial({
             <motion.button
               whileTap={{ scale: 0.98 }}
               onClick={scrollToContact}
-              className="w-full md:flex-1 py-5 px-8 rounded-full border-2 border-[#a0412d]/20 text-[#a0412d] font-bold uppercase tracking-widest text-[11px] hover:bg-[#a0412d]/5 transition-all"
+              className="w-full md:flex-1 py-4 px-8 rounded-full border border-[#a0412d]/30 text-[#a0412d] font-bold uppercase tracking-widest text-[10px] hover:bg-[#a0412d]/5 transition-all"
             >
               Me contacter
             </motion.button>
@@ -129,40 +122,71 @@ export default function ReferentProfileEditorial({
             <motion.button
               whileTap={{ scale: 0.98 }}
               onClick={onShare}
-              className="w-full md:w-auto p-5 rounded-full border border-gray-200 text-gray-400 hover:text-[#a0412d] transition-all flex items-center justify-center"
+              className="w-full md:w-auto p-4 rounded-full border border-gray-200 text-gray-400 hover:text-[#a0412d] transition-all flex items-center justify-center"
             >
-              <Share2 className="w-5 h-5" />
+              <Share2 className="w-4 h-4" />
             </motion.button>
           </div>
-          
-          {votes > 0 && (
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="mt-12 flex items-center gap-3"
-            >
-               <div className="h-px w-8 bg-[#a0412d]/20" />
-               <span className="text-lg font-bold text-[#a0412d]">
-                 {votes} Soutiens
-               </span>
-               <div className="h-px w-8 bg-[#a0412d]/20" />
-            </motion.div>
-          )}
         </motion.section>
 
-        {/* 📖 STORYTELLING SECTIONS */}
-        <div className="flex flex-col gap-[140px] md:gap-[180px]">
-          {sections.map((section, index) => (
-            <ReferentEditorialSection
-              key={section.id}
-              title={section.title}
-              videoUrl={section.videoUrl}
-              imageUrl={section.imageUrl}
-              text={section.text}
-              index={index}
-            />
-          ))}
-        </div>
+        {/* 🖼️ LE MUR DE MÉDIAS (Galerie 2x2) */}
+        <section className="w-full mb-32">
+          <div className="grid grid-cols-2 gap-0 overflow-hidden rounded-2xl shadow-2xl bg-black">
+            {/* Colonne Gauche (Photos) */}
+            <div className="flex flex-col">
+              {photos[0] && (
+                <MediaTile 
+                  type="photo" 
+                  url={photos[0].url} 
+                  alt={photos[0].alt} 
+                  onClick={() => openModal("photo", photos[0].url, photos[0].alt)} 
+                />
+              )}
+              {photos[1] && (
+                <MediaTile 
+                  type="photo" 
+                  url={photos[1].url} 
+                  alt={photos[1].alt} 
+                  onClick={() => openModal("photo", photos[1].url, photos[1].alt)} 
+                />
+              )}
+            </div>
+
+            {/* Colonne Droite (Vidéos) */}
+            <div className="flex flex-col">
+              {videos[0] && (
+                <MediaTile 
+                  type="video" 
+                  url={videos[0].url} 
+                  alt={videos[0].alt} 
+                  onClick={() => openModal("video", videos[0].url, videos[0].alt)} 
+                />
+              )}
+              {videos[1] && (
+                <MediaTile 
+                  type="video" 
+                  url={videos[1].url} 
+                  alt={videos[1].alt} 
+                  onClick={() => openModal("video", videos[1].url, videos[1].alt)} 
+                />
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* 📖 LE RÉCIT (Texte Narratif) */}
+        <section className="max-w-3xl mx-auto py-20">
+          <div className="space-y-12">
+            {narrativeTexts.map((paragraph, idx) => (
+              <p 
+                key={idx} 
+                className="text-lg md:text-xl text-gray-700 leading-relaxed font-light opacity-90 text-justify md:text-left"
+              >
+                {paragraph}
+              </p>
+            ))}
+          </div>
+        </section>
 
         {/* 📩 CONTACT FORM SECTION */}
         <motion.section 
@@ -219,6 +243,15 @@ export default function ReferentProfileEditorial({
           </div>
         </motion.section>
       </main>
+
+      {/* 4. Modal Unifié */}
+      <UnifiedMediaModal
+        isOpen={modalState.isOpen}
+        onClose={closeModal}
+        type={modalState.type}
+        url={modalState.url}
+        title={modalState.title}
+      />
     </div>
   );
 }

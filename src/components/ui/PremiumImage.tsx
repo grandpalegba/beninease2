@@ -10,6 +10,7 @@ interface PremiumImageProps {
   aspectRatio?: "16/9" | "4/5" | "4/3" | "square" | "portrait" | "video";
   className?: string;
   onClick?: () => void;
+  noRounded?: boolean;
 }
 
 const FALLBACK_SRC =
@@ -45,6 +46,7 @@ export default function PremiumImage({
   aspectRatio = "16/9",
   className,
   onClick,
+  noRounded = false,
 }: PremiumImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasEnteredView, setHasEnteredView] = useState(false);
@@ -124,7 +126,8 @@ export default function PremiumImage({
     <div
       ref={containerRef}
       className={cn(
-        "relative w-full overflow-hidden rounded-2xl shadow-xl bg-[#f3f3f3] group",
+        "relative w-full overflow-hidden shadow-xl bg-[#f3f3f3] group",
+        !noRounded && "rounded-2xl",
         onClick && "cursor-zoom-in",
         ratioClasses[aspectRatio],
         className
