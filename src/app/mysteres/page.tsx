@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { confetti } from "tsparticles-confetti";
 import { toast } from "sonner";
+import { CategoryPattern } from "@/components/talents/CategoryPattern";
 import { HourglassTimer } from "@/components/mysteres/HourglassTimer";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -40,19 +41,20 @@ interface Theme {
   icone: string;
 }
 
-// ─── CSV Parser ────────────────────────────────────────────────────────────
+// ─── CSV Parser (no external dep) ────────────────────────────────────────────
 
 function parseCSV(text: string): Record<string, string>[] {
   const lines = text.trim().split("\n");
   if (lines.length < 2) return [];
   const headers = lines[0].split(",").map((h) => h.trim().replace(/\r/g, ""));
   return lines.slice(1).map((line) => {
+    // Handle commas within values — simple split (our data uses commas only in descriptions w/ escaped commas)
     const values: string[] = [];
     let current = "";
     let inQuotes = false;
     for (let i = 0; i < line.length; i++) {
       const ch = line[i];
-      if (ch === '"') inQuotes = !inQuotes;
+      if (ch === '"') { inQuotes = !inQuotes; }
       else if (ch === "," && !inQuotes) { values.push(current.trim()); current = ""; }
       else { current += ch; }
     }
@@ -69,7 +71,7 @@ async function fetchCSV(path: string) {
   return parseCSV(text);
 }
 
-// ─── Shared Components ───────────────────────────────────────────────────────
+// ─── Sacred Jar Component ────────────────────────────────────────────────────
 
 function SacredJar({ filledHoles }: { filledHoles: number }) {
   const holePositions = [
@@ -98,30 +100,46 @@ function SacredJar({ filledHoles }: { filledHoles: number }) {
       <div
         className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden"
         style={{
-          background: "linear-gradient(165deg, #a0412d 0%, #8b3422 45%, #7a2a1b 100%)",
+          background:
+            "linear-gradient(165deg, #a0412d 0%, #8b3422 45%, #7a2a1b 100%)",
           borderRadius: "42% 38% 34% 36% / 45% 45% 32% 32%",
-          boxShadow: "inset -8px -8px 20px rgba(0,0,0,0.22), inset 8px 8px 20px rgba(255,255,255,0.08), 0 20px 40px rgba(0,0,0,0.15)",
+          boxShadow:
+            "inset -8px -8px 20px rgba(0,0,0,0.22), inset 8px 8px 20px rgba(255,255,255,0.08), 0 20px 40px rgba(0,0,0,0.15)",
         }}
       >
+        {/* Top shadow */}
         <div className="absolute top-0 w-full h-8 bg-gradient-to-b from-black/25 to-transparent" />
-        {holePositions.map((pos, i) => (
-          <motion.div
-            key={i}
-            animate={i < filledHoles ? { backgroundColor: "#7a2a1b", boxShadow: "inset 0 2px 6px rgba(0,0,0,0.3)" } : { backgroundColor: "#2a100a", boxShadow: "inset 0 4px 12px rgba(0,0,0,0.8)" }}
-            className="absolute rounded-full border border-black/10"
-            style={{
-              top: pos.top,
-              left: pos.left,
-              width: i === 2 ? "44px" : "40px",
-              height: i === 2 ? "44px" : "40px",
-              opacity: i < filledHoles ? 0.85 : 0.9,
-            }}
-          />
-        ))}
+
+        {/* Holes */}
+        {holePositions.map((pos, i) => {
+          const isFilled = i < filledHoles;
+          return (
+            <motion.div
+              key={i}
+              initial={false}
+              animate={
+                isFilled
+                  ? { backgroundColor: "#7a2a1b", boxShadow: "inset 0 2px 6px rgba(0,0,0,0.3)" }
+                  : { backgroundColor: "#2a100a", boxShadow: "inset 0 4px 12px rgba(0,0,0,0.8)" }
+              }
+              transition={{ duration: 0.5, ease: "easeInOut" }}
+              className="absolute rounded-full border border-black/10"
+              style={{
+                top: pos.top,
+                left: pos.left,
+                width: i === 2 ? "44px" : i === 0 ? "40px" : "36px",
+                height: i === 2 ? "44px" : i === 0 ? "40px" : "36px",
+                opacity: isFilled ? 0.85 : 0.9,
+              }}
+            />
+          );
+        })}
       </div>
     </div>
   );
 }
+
+// ─── Seed / Life Display ──────────────────────────────────────────────────────
 
 function LifeBar({ lives, shake }: { lives: number; shake: boolean }) {
   const renderHole = (i: number) => (
@@ -131,7 +149,13 @@ function LifeBar({ lives, shake }: { lives: number; shake: boolean }) {
       style={{ backgroundColor: "#2a100a", boxShadow: "inset 0 3px 6px rgba(0,0,0,0.8)" }}
     >
       <motion.div
-        animate={i < lives ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
+        initial={false}
+        animate={
+          i < lives
+            ? { scale: 1, opacity: 1 }
+            : { scale: 0, opacity: 0 }
+        }
+        transition={{ duration: 0.3 }}
         className="rounded-full w-2 h-2.5 md:w-2.5 md:h-3"
         style={{
           backgroundColor: "#fdb813",
@@ -144,225 +168,530 @@ function LifeBar({ lives, shake }: { lives: number; shake: boolean }) {
   return (
     <motion.div
       animate={shake ? { x: [-6, 6, -5, 5, -3, 3, 0] } : { x: 0 }}
-      className="p-3 rounded-[20px] flex items-center shadow-xl overflow-hidden relative"
-      style={{
-        background: "linear-gradient(to right, #5c3c35 0%, #4a2f29 48%, #1a0f0c 50%, #4a2f29 52%, #5c3c35 100%)",
-        boxShadow: "inset 0 2px 10px rgba(0,0,0,0.5), 0 10px 20px rgba(0,0,0,0.3)",
-        border: "1px solid #3e241e",
-      }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="flex justify-center"
     >
-      <div className="flex">
-        <div className="flex flex-col gap-2 pr-2 border-r border-[#1a0f0c]">
-          {[0, 1, 2, 3].map(renderHole)}
-        </div>
-        <div className="flex flex-col gap-2 pl-2 border-l border-[#6b473f]">
-          {[4, 5, 6, 7].map(renderHole)}
+      <div
+        className="p-3 rounded-[20px] flex items-center shadow-xl overflow-hidden relative"
+        style={{ 
+          background: "linear-gradient(to right, #5c3c35 0%, #4a2f29 48%, #1a0f0c 50%, #4a2f29 52%, #5c3c35 100%)",
+          boxShadow: "inset 0 2px 10px rgba(0,0,0,0.5), 0 10px 20px rgba(0,0,0,0.3)",
+          border: "1px solid #3e241e"
+        }}
+      >
+        <div className="flex">
+          <div className="flex flex-col gap-2 md:gap-3 pr-2 border-r border-[#1a0f0c]">
+            {Array.from({ length: 4 }).map((_, i) => renderHole(i))}
+          </div>
+          <div className="flex flex-col gap-2 md:gap-3 pl-2 border-l border-[#6b473f]">
+            {Array.from({ length: 4 }).map((_, i) => renderHole(i + 4))}
+          </div>
         </div>
       </div>
     </motion.div>
   );
 }
 
-function ChoiceButton({ letter, text, state, onClick, disabled }: any) {
-  const colors: any = {
-    idle: { bg: "rgba(160, 65, 45, 0.06)", border: "rgba(160, 65, 45, 0.2)", label: "#a0412d", text: "#303333" },
-    correct: { bg: "#d4edda", border: "#198754", label: "#198754", text: "#155724" },
-    wrong: { bg: "#f8d7da", border: "#ac3149", label: "#ac3149", text: "#6f1325" },
+// ─── Choice Button ────────────────────────────────────────────────────────────
+
+function ChoiceButton({
+  letter,
+  text,
+  state,
+  onClick,
+  disabled,
+}: {
+  letter: string;
+  text: string;
+  state: "idle" | "correct" | "wrong";
+  onClick: () => void;
+  disabled: boolean;
+}) {
+  const colors = {
+    idle: {
+      bg: "rgba(160, 65, 45, 0.06)",
+      border: "rgba(160, 65, 45, 0.2)",
+      label: "#a0412d",
+      text: "#303333",
+    },
+    correct: {
+      bg: "#d4edda",
+      border: "#198754",
+      label: "#198754",
+      text: "#155724",
+    },
+    wrong: {
+      bg: "#f8d7da",
+      border: "#ac3149",
+      label: "#ac3149",
+      text: "#6f1325",
+    },
   };
   const c = colors[state];
 
   return (
-    <motion.button
-      disabled={disabled}
-      whileHover={!disabled ? { scale: 1.02, y: -2 } : {}}
-      whileTap={!disabled ? { scale: 0.98 } : {}}
-      className="flex items-center gap-3 p-3 rounded-2xl w-full border-2 text-left relative overflow-hidden group shadow-sm transition-all duration-200"
-      style={{ backgroundColor: c.bg, borderColor: c.border }}
-      onClick={(e) => { e.stopPropagation(); onClick(); }}
-      onPointerDown={(e) => e.stopPropagation()}
+    <motion.div
+      drag={!disabled}
+      dragConstraints={{ top: 0, left: 0, right: 0, bottom: 0 }}
+      dragElastic={0.8}
+      onDragEnd={(_, info) => {
+        if (!disabled && (info.offset.y < -60 || Math.abs(info.offset.x) > 100)) {
+          onClick();
+        }
+      }}
+      className="w-full"
     >
+      <motion.button
+        disabled={disabled}
+        whileHover={!disabled ? { scale: 1.02, y: -2 } : {}}
+        whileTap={!disabled ? { scale: 0.97 } : {}}
+        animate={
+          state === "wrong"
+            ? { x: [-4, 4, -4, 4, 0] }
+            : { x: 0 }
+        }
+        transition={state === "wrong" ? { duration: 0.35 } : {}}
+        className="flex items-center justify-start gap-3 md:gap-4 p-2 md:p-3 rounded-xl md:rounded-2xl text-left w-full transition-all duration-200 relative z-20 shadow-sm"
+        style={{
+          backgroundColor: c.bg,
+          border: `1.5px solid ${c.border === "transparent" ? "transparent" : c.border}`,
+          cursor: disabled ? "default" : "grab",
+        }}
+      >
       <span
-        className="w-10 h-10 flex items-center justify-center rounded-xl font-bold text-white shadow-sm transition-transform group-hover:scale-110"
-        style={{ backgroundColor: c.label }}
+        className="w-6 h-6 md:w-10 md:h-10 flex-shrink-0 flex items-center justify-center rounded-md md:rounded-xl font-bold text-[10px] md:text-sm"
+        style={{ backgroundColor: c.label, color: "#fff" }}
       >
         {letter}
       </span>
-      <span className="text-sm font-bold leading-tight" style={{ color: c.text }}>
+      <span className="text-[11px] md:text-sm font-medium leading-tight md:leading-snug" style={{ color: c.text }}>
         {text}
       </span>
-    </motion.button>
-  );
-}
-
-function TreasureCard({ mystere, points, onLiberate, isLiberated }: any) {
-  return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center gap-6 w-full max-w-lg text-center pb-12">
-      <div className="w-16 h-1 bg-[#a0412d]/ 20 rounded-full" />
-      <div>
-        {!isLiberated && <p className="text-xs font-bold text-[#a0412d] uppercase tracking-widest mb-2">Fiche Trésor</p>}
-        <h2 className="text-3xl font-black mb-4" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{mystere.titre}</h2>
-        <p className="text-sm text-gray-500 leading-relaxed max-w-sm mx-auto">{mystere.fiche_tresor}</p>
-      </div>
-
-      {!isLiberated && (
-        <div className="px-6 py-4 rounded-2xl bg-[#fdf6f3] border border-[#a0412d]/10 w-full text-left italic text-gray-600 text-sm">
-          « Visualisez que le <strong>{mystere.titre}</strong> revient sur sa terre d'origine. »
-        </div>
-      )}
-
-      <motion.button 
-        whileHover={{ scale: 1.05 }} 
-        whileTap={{ scale: 0.95 }} 
-        onClick={(e) => { e.stopPropagation(); onLiberate(); }} 
-        onPointerDown={(e) => e.stopPropagation()}
-        className="px-10 py-5 rounded-full font-bold text-white shadow-2xl" 
-        style={{ background: "linear-gradient(135deg, #a0412d, #7a2a1b)", boxShadow: "0 12px 36px rgba(160,65,45,0.4)" }}
-      >
-        {isLiberated ? "✨ Partager cette Fiche" : "🏺 Libérer le Trésor"}
       </motion.button>
     </motion.div>
   );
 }
 
-function LockedScreen({ onPowerWord }: any) {
-  const [pass, setPass] = useState("");
+// ─── Locked Screen ────────────────────────────────────────────────────────────
+
+function LockedScreen({ onPowerWord }: { onPowerWord: (word: string) => void }) {
+  const [remaining, setRemaining] = useState("");
+  const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    const lockTime = localStorage.getItem("mystere_lock_time");
+    if (!lockTime) return;
+    const updateTimer = () => {
+      const unlockAt = parseInt(lockTime) + 24 * 60 * 60 * 1000;
+      const diff = unlockAt - Date.now();
+      if (diff <= 0) {
+        localStorage.removeItem("mystere_lock_time");
+        window.location.reload();
+        return;
+      }
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      setRemaining(`${h}h ${m}m ${s}s`);
+    };
+    updateTimer();
+    const id = setInterval(updateTimer, 1000);
+    return () => clearInterval(id);
+  }, []);
+
   return (
-    <div className="flex flex-col items-center gap-6 py-12 text-center">
-      <span className="text-6xl">🔒</span>
-      <h2 className="text-2xl font-bold text-[#a0412d]">Jarre Verrouillée</h2>
-      <p className="text-sm text-gray-500 max-w-xs">Vos graines sacrées sont épuisées. Revenez dans 24h ou entrez le mot de pouvoir.</p>
-      <input type="text" placeholder="Mot de pouvoir" value={pass} onChange={(e)=>setPass(e.target.value)} className="w-full max-w-xs px-4 py-3 rounded-full border-2 border-[#a0412d]/20 outline-none focus:border-[#a0412d]" />
-      <button onClick={()=>onPowerWord(pass)} className="px-8 py-3 rounded-full bg-[#a0412d] text-white font-bold shadow-lg">Déverrouiller</button>
-    </div>
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="flex flex-col items-center text-center gap-6 py-10"
+    >
+      <div className="text-6xl">🔒</div>
+      <h2 className="text-2xl font-bold" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#a0412d" }}>
+        Jarre Verrouillée
+      </h2>
+      <p className="text-sm text-gray-500 max-w-xs">
+        Vos 6 graines sacrées sont épuisées. La jarre se rouvre dans :
+      </p>
+      <div
+        className="text-4xl font-black tabular-nums"
+        style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#5c3c35" }}
+      >
+        {remaining || "Calcul…"}
+      </div>
+      <div className="flex flex-col gap-3 w-full max-w-xs mt-4">
+        <input
+          type="text"
+          placeholder="Entrer le mot de passe"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full px-4 py-3 rounded-full text-center border-2 border-[#a0412d]/20 outline-none focus:border-[#a0412d] transition-all bg-transparent"
+          style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+        />
+        <motion.button
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={() => onPowerWord(password)}
+          className="w-full px-8 py-3 rounded-full font-bold text-white text-sm tracking-wide shadow-lg"
+          style={{
+            background: "linear-gradient(135deg, #a0412d, #5c3c35)",
+            boxShadow: "0 8px 24px rgba(160,65,45,0.3)",
+          }}
+        >
+          🌟 Déverrouiller la Jarre
+        </motion.button>
+      </div>
+    </motion.div>
   );
 }
 
-function ExplanationCard({ text, questionNum, onContinue }: any) {
+// ─── Treasure Card ────────────────────────────────────────────────────────────
+
+function TreasureCard({
+  mystere,
+  points,
+  onLiberate,
+  isLiberated,
+}: {
+  mystere: Mystere;
+  points: number;
+  onLiberate: () => void;
+  isLiberated: boolean;
+}) {
   return (
-    <div className="w-full max-w-lg mx-auto">
-      <div className="p-6 rounded-2xl bg-[#fdf6f3] border border-[#a0412d]/10 mb-4">
-        <p className="text-xs font-bold text-[#a0412d] uppercase tracking-widest mb-2 items-center flex gap-2"><span>📖</span> Révélation {questionNum}</p>
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: [0.21, 0.47, 0.32, 0.98] }}
+      className="flex flex-col items-center gap-8 w-full max-w-lg mx-auto text-center pb-20"
+    >
+      {/* Flame separator */}
+      <div className="flex items-center gap-3 w-full max-w-xs">
+        <div className="flex-1 h-px" style={{ background: "linear-gradient(to right, transparent, #a0412d)" }} />
+        <span className="text-2xl">🔥</span>
+        <div className="flex-1 h-px" style={{ background: "linear-gradient(to left, transparent, #a0412d)" }} />
+      </div>
+
+      <div>
+        <p
+          className="text-xs font-bold uppercase tracking-[0.3em] mb-2"
+          style={{ color: "#a0412d", fontFamily: "'Inter', sans-serif" }}
+        >
+          Fiche Trésor
+        </p>
+        <h2
+          className="text-4xl font-extrabold mb-4"
+          style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#3d1810" }}
+        >
+          {mystere.titre}
+        </h2>
+        <p className="text-sm text-gray-500 leading-relaxed max-w-sm mx-auto">{mystere.fiche_tresor}</p>
+      </div>
+
+      {/* Ritual phrase */}
+      <div
+        className="px-6 py-5 rounded-2xl border text-left w-full"
+        style={{ background: "#fdf6f3", borderColor: "rgba(160,65,45,0.15)" }}
+      >
+        <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "#a0412d" }}>
+          Phrase Rituelle
+        </p>
+        <p className="text-sm italic text-gray-600 leading-relaxed">
+          « Visualisez que le <strong>{mystere.titre}</strong> revient sur sa terre d'origine. »
+        </p>
+      </div>
+
+      {/* Points display */}
+      <div className="flex items-center gap-2">
+        <span className="text-2xl">⭐</span>
+        <span className="text-3xl font-black" style={{ color: "#a0412d", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          {points} pts
+        </span>
+        <span className="text-sm text-gray-400">accumulés</span>
+      </div>
+
+      {isLiberated ? (
+        <div
+          className="px-8 py-4 rounded-full font-bold text-sm tracking-wide"
+          style={{ background: "#d4edda", color: "#198754", border: "1.5px solid #c3e6cb" }}
+        >
+          ✅ Trésor Libéré !
+        </div>
+      ) : (
+        <motion.button
+          whileHover={{ scale: 1.04, y: -3 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={onLiberate}
+          className="px-10 py-5 rounded-full font-bold text-white text-base tracking-wide shadow-xl"
+          style={{
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
+            background: "linear-gradient(135deg, #a0412d 0%, #7a2a1b 100%)",
+            boxShadow: "0 12px 30px rgba(160,65,45,0.3)",
+          }}
+        >
+          🏺 Libérer le Trésor
+        </motion.button>
+      )}
+    </motion.div>
+  );
+}
+
+// ─── Explanation Toast / Card ─────────────────────────────────────────────────
+
+function ExplanationCard({
+  text,
+  questionNum,
+  onContinue,
+}: {
+  text: string;
+  questionNum: number;
+  onContinue: () => void;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      className="w-full max-w-lg mx-auto"
+    >
+      <div
+        className="rounded-2xl p-6 mb-6 border text-left"
+        style={{ background: "#fdf6f3", borderColor: "rgba(160,65,45,0.2)" }}
+      >
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-lg">📖</span>
+          <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#a0412d" }}>
+            Connaissance ancestrale
+          </span>
+        </div>
         <p className="text-sm text-gray-600 leading-relaxed">{text}</p>
       </div>
-      <button 
-        onClick={(e) => { e.stopPropagation(); onContinue(); }} 
-        onPointerDown={(e) => e.stopPropagation()}
-        className="w-full py-4 rounded-full bg-[#a0412d] text-white font-bold shadow-md"
-      >
-        {questionNum < 4 ? "Question suivante →" : "Voir le Trésor →"}
-      </button>
-    </div>
+      <div className="flex justify-between items-center">
+        <span className="text-xs text-gray-400">
+          {questionNum < 4 ? "Swipe ↑ ou bouton pour la suite" : "Swipe ↑ pour la Fiche Trésor"}
+        </span>
+        <motion.button
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={onContinue}
+          className="px-6 py-3 rounded-full font-bold text-white text-sm shadow-md"
+          style={{
+            background: "linear-gradient(135deg, #a0412d, #7a2a1b)",
+            boxShadow: "0 6px 20px rgba(160,65,45,0.25)",
+          }}
+        >
+          {questionNum < 4 ? "Question suivante →" : "Voir la Fiche Trésor →"}
+        </motion.button>
+      </div>
+    </motion.div>
   );
 }
 
-// ─── Main Page Component ──────────────────────────────────────────────────────
+// ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function MystereDetailPage() {
+  // Data
   const [mysteres, setMysteres] = useState<Mystere[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [themes, setThemes] = useState<Theme[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
+  // Navigation
   const [mystereIndex, setMystereIndex] = useState(0);
-  const [questionIndex, setQuestionIndex] = useState(0);
+  const [questionIndex, setQuestionIndex] = useState(0); // 0-3
   const [showTreasure, setShowTreasure] = useState(false);
+
+  // Game state
   const [lives, setLives] = useState(8);
   const [isLocked, setIsLocked] = useState(false);
-  const [filledHoles, setFilledHoles] = useState(0);
-  const [choiceState, setChoiceState] = useState<any>({});
+  const [filledHoles, setFilledHoles] = useState(0); // 0-4
+  const [choiceState, setChoiceState] = useState<Record<string, "idle" | "correct" | "wrong">>({});
   const [showExplanation, setShowExplanation] = useState(false);
+  const [previousExplanation, setPreviousExplanation] = useState<{text: string; questionNum: number} | null>(null);
   const [points, setPoints] = useState(0);
   const [shakeLives, setShakeLives] = useState(false);
   const [isLiberated, setIsLiberated] = useState(false);
   const [questionAnswered, setQuestionAnswered] = useState(false);
+
+  // Timer state
   const [timeLeft, setTimeLeft] = useState(30);
   const [isFlipping, setIsFlipping] = useState(false);
-  const [answeredExplanations, setAnsweredExplanations] = useState<string[]>([]);
+
+  // Swipe
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // ── Load data ────────────────────────────────────────────────────────────────
 
   useEffect(() => {
-    Promise.all([fetchCSV("/data/mysteres_rows.csv"), fetchCSV("/data/questions_rows.csv"), fetchCSV("/data/themes_rows.csv")])
-      .then(([m, q, t]) => {
-        setMysteres(m as any); setQuestions(q as any); setThemes(t as any);
-        setLoading(false);
-      });
+    Promise.all([
+      fetchCSV("/data/mysteres_rows.csv"),
+      fetchCSV("/data/questions_rows.csv"),
+      fetchCSV("/data/themes_rows.csv"),
+    ]).then(([m, q, t]) => {
+      setMysteres(m as unknown as Mystere[]);
+      setQuestions(q as unknown as Question[]);
+      setThemes(t as unknown as Theme[]);
+      setLoading(false);
+    });
   }, []);
+
+  // ── Check lock status ─────────────────────────────────────────────────────────
 
   useEffect(() => {
     const lockTime = localStorage.getItem("mystere_lock_time");
-    if (lockTime && Date.now() < parseInt(lockTime) + 24*60*60*1000) setIsLocked(true);
-    setLives(parseInt(localStorage.getItem("mystere_lives") || "8"));
-    setPoints(parseInt(localStorage.getItem("mystere_points") || "0"));
+    if (lockTime) {
+      const unlockAt = parseInt(lockTime) + 24 * 60 * 60 * 1000;
+      if (Date.now() < unlockAt) setIsLocked(true);
+      else localStorage.removeItem("mystere_lock_time");
+    }
+    const savedLives = localStorage.getItem("mystere_lives");
+    if (savedLives) setLives(parseInt(savedLives));
+    const savedPoints = localStorage.getItem("mystere_points");
+    if (savedPoints) setPoints(parseInt(savedPoints));
   }, []);
 
-  const currentMystere = mysteres[mystereIndex];
-  const currentQuestions = questions.filter(q => q.mystere_id === currentMystere?.id).sort((a,b)=>Number(a.numero)-Number(b.numero));
-  const currentQuestion = currentQuestions[questionIndex];
+  // ── Timer Logic ─────────────────────────────────────────────────────────────
 
   useEffect(() => {
-    if (!currentMystere) return;
-    const key = `mystere_liberated_${currentMystere.id}`;
-    const liberated = localStorage.getItem(key) === "true";
-    setIsLiberated(liberated);
-    if (liberated) {
-      setAnsweredExplanations(currentQuestions.map(q => q.explication));
-    } else {
-      setAnsweredExplanations([]);
-      setQuestionIndex(0);
-      setShowTreasure(false);
-      setFilledHoles(0);
-      setChoiceState({});
+    // Stop timer if locked, answered, or showing explanation/treasure
+    if (isLocked || loading || questionAnswered || showExplanation || showTreasure) {
+      return;
     }
-  }, [mystereIndex, currentMystere, currentQuestions]);
 
-  useEffect(() => {
-    if (isLocked || loading || questionAnswered || showExplanation || showTreasure || isLiberated) return;
-    const id = setInterval(() => setTimeLeft(p => {
-      if (p <= 1) { handleTimeOut(); return 30; }
-      return p - 1;
-    }), 1000);
-    return () => clearInterval(id);
-  }, [isLocked, loading, questionAnswered, showExplanation, showTreasure, isLiberated]);
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          // Time is up!
+          handleTimeOut();
+          return 30;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [isLocked, loading, questionAnswered, showExplanation, showTreasure]);
 
   const handleTimeOut = useCallback(() => {
-    setLives(p => {
-      const n = Math.max(0, p - 1);
-      localStorage.setItem("mystere_lives", String(n));
-      if (n <= 0) { setIsLocked(true); localStorage.setItem("mystere_lock_time", String(Date.now())); }
-      return n;
+    // Sanction: lose a life
+    setLives((prev) => {
+      const newLives = Math.max(0, prev - 1);
+      localStorage.setItem("mystere_lives", String(newLives));
+      
+      if (newLives <= 0) {
+        localStorage.setItem("mystere_lock_time", String(Date.now()));
+        setIsLocked(true);
+      }
+      return newLives;
     });
-    setShakeLives(true); setTimeout(() => setShakeLives(false), 500);
-    setIsFlipping(true); setTimeout(() => setIsFlipping(false), 800);
-    toast.error("⏳ Temps écoulé !");
+    
+    setShakeLives(true);
+    setTimeout(() => setShakeLives(false), 500);
+    
+    // Virtual flip animation
+    setIsFlipping(true);
+    setTimeout(() => setIsFlipping(false), 800);
+    
+    toast.error("⏳ Temps écoulé ! Une graine sacrée est perdue.");
   }, []);
 
-  const handleAnswer = (choice: string) => {
-    if (questionAnswered || isLocked) return;
-    if (choice === currentQuestion.correct_answer) {
-      setChoiceState({ [choice]: "correct" });
-      setFilledHoles(h => Math.min(h+1, 4));
-      confetti({ particleCount: 40, spread: 70, origin: { y: 0.4 }, colors: ["#fdb813", "#ffffff"] });
-      setPoints(p => { const n = p + 10; localStorage.setItem("mystere_points", String(n)); return n; });
-      setAnsweredExplanations(prev => [...prev, currentQuestion.explication]);
-      setQuestionAnswered(true);
-      setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 300);
-      if (questionIndex < currentQuestions.length - 1) {
-        setTimeout(() => { setQuestionIndex(i => i + 1); setChoiceState({}); setQuestionAnswered(false); setTimeLeft(30); }, 2000);
-      } else {
-        setTimeout(() => setShowExplanation(true), 1000);
-      }
-    } else {
-      setChoiceState({ [choice]: "wrong" });
-      setLives(p => { const n = p - 1; localStorage.setItem("mystere_lives", String(n)); return n; });
-      setShakeLives(true); setTimeout(() => setShakeLives(false), 500);
-    }
-  };
+  const resetTimer = useCallback(() => {
+    setTimeLeft(30);
+    setIsFlipping(true);
+    setTimeout(() => setIsFlipping(false), 800);
+  }, []);
 
-  const handleLiberate = () => {
-    localStorage.setItem(`mystere_liberated_${currentMystere.id}`, "true");
-    setIsLiberated(true);
-    setPoints(p => { const n = p + 50; localStorage.setItem("mystere_points", String(n)); return n; });
-    toast.success("✨ Trésor libéré !");
-  };
+  // ── Derived data ──────────────────────────────────────────────────────────────
+
+  const currentMystere = mysteres[mystereIndex];
+  const currentQuestions = questions
+    .filter((q) => q.mystere_id === currentMystere?.id)
+    .sort((a, b) => Number(a.numero) - Number(b.numero));
+  const currentQuestion = currentQuestions[questionIndex];
+  const currentTheme = themes.find((t) => t.id === currentMystere?.theme_id);
+
+  // Reset state on mystere change
+  useEffect(() => {
+    setQuestionIndex(0);
+    setShowTreasure(false);
+    setFilledHoles(0);
+    setShowExplanation(false);
+    setChoiceState({});
+    setQuestionAnswered(false);
+    const key = `mystere_liberated_${mysteres[mystereIndex]?.id}`;
+    setIsLiberated(localStorage.getItem(key) === "true");
+    resetTimer();
+  }, [mystereIndex, mysteres, resetTimer]);
+
+  // Reset choice state on question change
+  useEffect(() => {
+    setShowExplanation(false);
+    setChoiceState({});
+    setQuestionAnswered(false);
+    resetTimer();
+  }, [questionIndex, resetTimer]);
+
+  // ── Handlers ──────────────────────────────────────────────────────────────────
+
+  const handleAnswer = useCallback(
+    (choice: string) => {
+      if (questionAnswered || isLocked) return;
+
+      if (choice === currentQuestion.correct_answer) {
+        // CORRECT
+        setChoiceState({ [choice]: "correct" });
+        setFilledHoles((h) => Math.min(h + 1, 4));
+        confetti({
+          particleCount: 50,
+          spread: 60,
+          origin: { y: 0.35, x: 0.5 },
+          colors: ["#fdb813", "#ffffff", "#ffea00"],
+          disableForReducedMotion: true,
+          gravity: 1.2,
+          ticks: 80,
+          zIndex: 50
+        });
+        setPoints((p) => {
+          const newP = p + 10;
+          localStorage.setItem("mystere_points", String(newP));
+          return newP;
+        });
+        setQuestionAnswered(true);
+
+        // Auto-advance logic
+        if (questionIndex < questions.length - 1) {
+          setPreviousExplanation({
+            text: currentQuestion.explication,
+            questionNum: questionIndex + 1,
+          });
+          setTimeout(() => goNextQuestion(), 1500); // auto advance after 1.5s
+        } else {
+          // For the final question, we still show the explanation card before the Treasure
+          setTimeout(() => setShowExplanation(true), 600);
+        }
+      } else {
+        // WRONG
+        setChoiceState((prev) => ({ ...prev, [choice]: "wrong" }));
+        const newLives = lives - 1;
+        setLives(newLives);
+        localStorage.setItem("mystere_lives", String(newLives));
+        setShakeLives(true);
+        setTimeout(() => setShakeLives(false), 500);
+        if (newLives <= 0) {
+          localStorage.setItem("mystere_lock_time", String(Date.now()));
+          setTimeout(() => setIsLocked(true), 800);
+        }
+      }
+    },
+    [currentQuestion, lives, questionAnswered, isLocked]
+  );
+
+  const goNextQuestion = useCallback(() => {
+    if (questionIndex >= 3) {
+      setShowTreasure(true);
+    } else {
+      setQuestionIndex((i) => i + 1);
+    }
+  }, [questionIndex]);
 
   const goNextMystere = useCallback(() => {
     setMystereIndex((i) => (i + 1) % mysteres.length);
@@ -372,183 +701,243 @@ export default function MystereDetailPage() {
     setMystereIndex((i) => (i - 1 + mysteres.length) % mysteres.length);
   }, [mysteres.length]);
 
-  const handlePanEnd = useCallback((_: any, info: any) => {
-    // 🚩 Restricted Swipe Area: Only trigger on top 1/3 of the screen or empty side backgrounds
-    const screenHeight = typeof window !== 'undefined' ? window.innerHeight : 1000;
-    const isTopThird = info.point.y < screenHeight / 3;
-    const threshold = 70;
+  const handleLiberate = useCallback(async () => {
+    const key = `mystere_liberated_${currentMystere?.id}`;
+    localStorage.setItem(key, "true");
+    setIsLiberated(true);
+    setPoints((p) => {
+      const newP = p + 10;
+      localStorage.setItem("mystere_points", String(newP));
+      return newP;
+    });
+    toast.success("✨ Trésor libéré ! +10 pts Bonus");
+    await confetti(document.createElement("canvas"), {
+      particleCount: 160,
+      spread: 90,
+      origin: { y: 0.5 },
+      colors: ["#fdb813", "#a0412d", "#5c3c35", "#FCD116", "#E8112D"],
+    });
+  }, [currentMystere]);
 
-    if (isTopThird && Math.abs(info.offset.x) > threshold) {
-      if (info.offset.x > threshold) goPrevMystere();
-      else if (info.offset.x < -threshold) goNextMystere();
+  const handlePowerWord = (word: string) => {
+    if (word.trim().toLowerCase() === "benin") {
+      localStorage.removeItem("mystere_lock_time");
+      localStorage.setItem("mystere_lives", "8");
+      setLives(8);
+      setIsLocked(false);
+      toast.success("🔐 Jarre déverrouillée !");
+    } else {
+      toast.error("❌ Mot de pouvoir incorrect");
     }
-  }, [goPrevMystere, goNextMystere]);
-
-  const handleShare = () => {
-    const text = `🏺 J'ai libéré le trésor "${currentMystere.titre}" sur BeninEase !\n\n📜 Révélations :\n${answeredExplanations.map((ex,i)=>`${i+1}. ${ex}`).join("\n")}`;
-    if (navigator.share) navigator.share({ title: currentMystere.titre, text }).catch(console.error);
-    else { navigator.clipboard.writeText(text); toast.success("📋 Copié !"); }
   };
 
-  if (loading || !currentMystere) return <div className="min-h-screen flex items-center justify-center">Chargement…</div>;
+  // ── Swipe handlers ────────────────────────────────────────────────────────────
+
+  const handleDragEnd = useCallback(
+    (_: unknown, info: { offset: { x: number; y: number } }) => {
+      const THRESHOLD = 70;
+      if (Math.abs(info.offset.x) > Math.abs(info.offset.y)) {
+        // Horizontal swipe → change mystere
+        if (info.offset.x < -THRESHOLD) goNextMystere();
+        else if (info.offset.x > THRESHOLD) goPrevMystere();
+      } else {
+        // Vertical swipe ↑ → next question (only if answered)
+        if (info.offset.y < -THRESHOLD && questionAnswered) goNextQuestion();
+      }
+    },
+    [goNextMystere, goPrevMystere, goNextQuestion, questionAnswered]
+  );
+
+  // ── Render ────────────────────────────────────────────────────────────────────
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "#faf9f8" }}>
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 rounded-full animate-spin border-4 border-[#a0412d] border-t-transparent" />
+          <p className="text-sm text-gray-400 tracking-widest uppercase">Invocation en cours…</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!currentMystere) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "#faf9f8" }}>
+        <p className="text-gray-400">Aucun mystère trouvé.</p>
+      </div>
+    );
+  }
+
+  const choices = [
+    { letter: "A", text: currentQuestion?.choice_a },
+    { letter: "B", text: currentQuestion?.choice_b },
+    { letter: "C", text: currentQuestion?.choice_c },
+    { letter: "D", text: currentQuestion?.choice_d },
+  ];
 
   return (
-    <div className="min-h-screen flex flex-col items-center pt-8 md:pt-12 px-4 pb-28 relative overflow-x-hidden" style={{ background: "#faf9f8", fontFamily: "'Inter', sans-serif" }}>
+    <div
+      className="min-h-screen flex flex-col items-center pt-8 md:pt-12 pb-28 md:pb-10 px-4 relative overflow-x-hidden"
+      style={{ background: "#faf9f8", fontFamily: "'Inter', sans-serif" }}
+    >
+      {/* Navigation and layout are handled differently below */}
+
+      {/* ── Main swipeable area ──────────────────────────────────────────── */}
       <AnimatePresence mode="wait">
-        <motion.div 
-          key={mystereIndex} 
-          onPanEnd={handlePanEnd}
-          initial={{ opacity: 0, x: 20 }} 
-          animate={{ opacity: 1, x: 0 }} 
-          exit={{ opacity: 0, x: -20 }} 
-          className="w-full max-w-2xl flex flex-col items-center"
+        <motion.div
+          key={mystereIndex}
+          onPanEnd={handleDragEnd}
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -40 }}
+          transition={{ duration: 0.4, ease: [0.21, 0.47, 0.32, 0.98] }}
+          className="w-full max-w-2xl flex flex-col items-center cursor-grab active:cursor-grabbing select-none"
         >
-          
-          {isLiberated ? (
-            /* ── Purified Editorial View (Post-Liberation) ── */
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full flex flex-col items-center">
-              <div className="w-full h-[40vh] md:h-[50vh] relative mb-12 rounded-3xl overflow-hidden shadow-2xl">
-                {currentMystere.image_url ? (
-                  <img src={currentMystere.image_url} alt={currentMystere.titre} className="w-full h-full object-cover" style={{ filter: "brightness(0.9)" }} />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-[#5c3c35] to-[#3d1810] flex items-center justify-center">
-                    <span className="text-6xl">🏺</span>
+          {/* ── Title ──────────────────────────────────────────── */}
+          <div className="text-center mb-4 md:mb-8 flex flex-col items-center">
+            <h1
+              className="text-2xl md:text-3xl font-extrabold leading-tight mb-4 px-2"
+              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#a0412d" }}
+            >
+              {currentMystere.titre}
+            </h1>
+          </div>
+
+          {/* ── Dashboard (The Ancestral Time) ────────────────────────────── */}
+          <div className="w-full mb-6 md:mb-12 px-2">
+            <div className="grid grid-cols-3 items-center gap-1 md:gap-4">
+              
+              {/* Left Column: The Past (Timer) */}
+              <div className="flex flex-col items-center justify-center order-1">
+                <p className="text-[10px] uppercase tracking-widest text-gray-400 mb-6 font-bold hidden md:block">Le Sablier du Destin</p>
+                <HourglassTimer timeLeft={timeLeft} isFlipping={isFlipping} />
+              </div>
+
+              {/* Center Column: The Present (Jar) */}
+              <div className="relative flex items-center justify-center h-[220px] md:h-[300px] order-2">
+                <div className="scale-[0.8] md:scale-110 origin-center absolute flex items-center justify-center">
+                  <SacredJar filledHoles={filledHoles} />
+                </div>
+              </div>
+
+              {/* Right Column: The Future (Stats) */}
+              <div className="flex flex-col items-center justify-center gap-4 md:gap-6 order-3">
+                <div className="flex flex-col items-center gap-2 md:gap-3">
+                  <p className="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-1 hidden md:block">Graines Sacrées</p>
+                  <div className="scale-[0.8] md:scale-100">
+                    <LifeBar lives={lives} shake={shakeLives} />
+                  </div>
+                </div>
+
+                <motion.div
+                  key={points}
+                  initial={{ scale: 1.2 }}
+                  animate={{ scale: 1 }}
+                  className="px-3 md:px-6 py-2 md:py-2.5 rounded-xl md:rounded-2xl text-[10px] md:text-sm font-black shadow-lg flex items-center gap-1 md:gap-2 border border-[#fdb813]/20"
+                  style={{ 
+                    background: "linear-gradient(135deg, #5c3c35, #3d1810)", 
+                    color: "#fdb813", 
+                    fontFamily: "'Plus Jakarta Sans', sans-serif" 
+                  }}
+                >
+                  <span className="text-base md:text-lg">⭐</span>
+                  <span>{points.toLocaleString()}</span>
+                </motion.div>
+              </div>
+
+            </div>
+          </div>
+
+          {/* ── Locked ───────────────────────────────────────────────────── */}
+          {isLocked ? (
+            <LockedScreen onPowerWord={handlePowerWord} />
+          ) : showTreasure ? (
+            /* ── Treasure Card ────────────────────────────────────────── */
+            <TreasureCard
+              mystere={currentMystere}
+              points={points}
+              onLiberate={handleLiberate}
+              isLiberated={isLiberated}
+            />
+          ) : (
+            /* ── Question + Choices ──────────────────────────────────── */
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`q-${questionIndex}`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.35 }}
+                className="w-full"
+              >
+                {/* Question text */}
+                {currentQuestion && (
+                  <div className="mb-6 text-center px-2">
+                    <h2
+                      className="text-lg md:text-xl font-bold leading-snug"
+                      style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#303333" }}
+                    >
+                      {currentQuestion.question_text}
+                    </h2>
                   </div>
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-8">
-                  <h1 className="text-4xl md:text-6xl font-black text-white" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", textShadow: "0 4px 12px rgba(0,0,0,0.3)" }}>
-                    {currentMystere.titre}
-                  </h1>
-                </div>
-              </div>
 
-              <TreasureCard mystere={currentMystere} points={points} onLiberate={handleShare} isLiberated={true} />
-
-              <div id="Revelations" className="w-full max-w-xl mx-auto mt-12 pb-20">
-                <div className="flex items-center gap-4 mb-8">
-                  <div className="flex-1 h-px bg-[#a0412d]/10" />
-                  <h3 className="text-xs font-black uppercase tracking-[0.4em] text-[#a0412d]">Révélations</h3>
-                  <div className="flex-1 h-px bg-[#a0412d]/10" />
-                </div>
-                <div className="flex flex-col gap-6">
-                  {answeredExplanations.map((text, i) => (
-                    <motion.div key={i} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} className="p-6 rounded-2xl border bg-white/50 backdrop-blur-sm border-black/5">
-                      <p className="text-[10px] font-bold text-gray-400 mb-2 uppercase tracking-widest">Secret No. {i + 1}</p>
-                      <p className="text-sm text-gray-600 leading-relaxed italic">« {text} »</p>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-          ) : (
-            /* ── Interactive Game View (Active Dashboard) ── */
-            <div className="w-full flex flex-col items-center">
-              <div className="text-center mb-8">
-                <h1 className="text-2xl md:text-3xl font-extrabold" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#a0412d" }}>
-                  {currentMystere.titre}
-                </h1>
-              </div>
-
-              {/* High-Fidelity 1:1:1 Grid Dashboard */}
-              <div className="w-full mb-12 grid grid-cols-3 items-center gap-2 md:gap-4 px-2">
-                {/* Timer Column */}
-                <div className="flex flex-col items-center order-1">
-                  <p className="text-[10px] uppercase tracking-widest text-gray-400 mb-6 font-bold hidden md:block">Le Sablier du Destin</p>
-                  <HourglassTimer timeLeft={timeLeft} isFlipping={isFlipping} />
-                </div>
-
-                {/* Jar Column */}
-                <div className="relative flex items-center justify-center h-[180px] md:h-[300px] order-2">
-                  <div className="scale-[0.65] md:scale-110 origin-center absolute">
-                    <SacredJar filledHoles={filledHoles} />
-                  </div>
-                </div>
-
-                {/* Stats Column */}
-                <div className="flex flex-col items-center gap-6 order-3">
-                  <div className="flex flex-col items-center gap-3">
-                    <p className="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-1 hidden md:block">Graines Sacrées</p>
-                    <div className="scale-[0.9] md:scale-100">
-                      <LifeBar lives={lives} shake={shakeLives} />
-                    </div>
-                  </div>
-                  <motion.div
-                    key={points}
-                    initial={{ scale: 1.2 }}
-                    animate={{ scale: 1 }}
-                    className="px-4 py-2.5 rounded-2xl text-sm font-black shadow-lg flex items-center gap-2 border border-[#fdb813]/20"
-                    style={{ background: "linear-gradient(135deg, #5c3c35, #3d1810)", color: "#fdb813", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-                  >
-                    <span className="text-lg">⭐</span>
-                    <span>{points.toLocaleString()}</span>
-                  </motion.div>
-                </div>
-              </div>
-
-              {isLocked ? (
-                <LockedScreen onPowerWord={(w: any) => { if (w.toLowerCase() === "benin") { setIsLocked(false); setLives(8); toast.success("🔐 Jarre déverrouillée !"); } }} />
-              ) : showTreasure ? (
-                <TreasureCard mystere={currentMystere} points={points} onLiberate={handleLiberate} isLiberated={false} />
-              ) : (
-                <div className="w-full flex flex-col gap-8">
-                  {currentQuestion && (
-                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} key={questionIndex} className="w-full">
-                      <div className="mb-8 text-center px-4">
-                        <h2 className="text-xl md:text-2xl font-bold leading-snug" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#303333" }}>
-                          {currentQuestion.question_text}
-                        </h2>
+                {/* Explanation card (after correct answer) */}
+                {showExplanation && currentQuestion ? (
+                  <ExplanationCard
+                    text={currentQuestion.explication}
+                    questionNum={questionIndex + 1}
+                    onContinue={goNextQuestion}
+                  />
+                ) : (
+                  /* Choices grid */
+                  currentQuestion && (
+                    <div className="flex flex-col items-center w-full">
+                      <div className="grid grid-cols-2 gap-2 md:gap-3 w-full">
+                        {choices.map(({ letter, text }) => {
+                          if (!text) return null;
+                          const state = choiceState[letter] || "idle";
+                          return (
+                            <ChoiceButton
+                              key={letter}
+                              letter={letter}
+                              text={text}
+                              state={state}
+                              onClick={() => handleAnswer(letter)}
+                              disabled={questionAnswered}
+                            />
+                          );
+                        })}
                       </div>
-                      
-                      {showExplanation ? (
-                        <ExplanationCard text={currentQuestion.explication} questionNum={questionIndex + 1} onContinue={() => setShowTreasure(true)} />
-                      ) : (
-                        <div className="grid grid-cols-2 gap-3 w-full">
-                          {["A", "B", "C", "D"].map((l) => {
-                            const choiceText = (currentQuestion as any)[`choice_${l.toLowerCase()}`];
-                            if (!choiceText) return null;
-                            return (
-                              <ChoiceButton
-                                key={l}
-                                letter={l}
-                                text={choiceText}
-                                state={choiceState[l] || "idle"}
-                                onClick={() => handleAnswer(l)}
-                                disabled={questionAnswered}
-                              />
-                            );
-                          })}
-                        </div>
-                      )}
-                    </motion.div>
-                  )}
 
-                  {/* Stacking Revelations (During Game) */}
-                  {answeredExplanations.length > 0 && (
-                    <div id="Revelations" className="mt-12 pt-8 border-t border-[#a0412d]/10 w-full pb-10">
-                      <h3 className="text-xs font-black uppercase text-center text-[#a0412d] mb-6 tracking-[0.3em]">Révélations</h3>
-                      <div className="flex flex-col gap-4">
-                        {answeredExplanations.map((ex, i) => (
+                      {/* Explication de la question précédente */}
+                      <AnimatePresence>
+                        {previousExplanation && !questionAnswered && (
                           <motion.div
-                            key={i}
-                            initial={{ opacity: 0, y: 15 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="p-5 rounded-2xl border bg-white/50 border-black/5 shadow-sm"
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="mt-6 w-full max-w-[300px] text-center border-t border-[#a0412d]/10 pt-4"
                           >
-                            <p className="text-[10px] font-bold text-gray-400 mb-2 uppercase">Secret {i + 1}</p>
-                            <p className="text-xs text-gray-500 leading-relaxed italic">{ex}</p>
+                            <p className="text-[10px] font-bold text-[#a0412d] uppercase tracking-widest mb-1.5 flex items-center justify-center gap-1">
+                              <span>📖</span> Révélation (Épreuve {previousExplanation.questionNum})
+                            </p>
+                            <p className="text-xs text-gray-500 leading-relaxed">
+                              {previousExplanation.text}
+                            </p>
                           </motion.div>
-                        ))}
-                      </div>
+                        )}
+                      </AnimatePresence>
                     </div>
-                  )}
-                </div>
-              )}
-            </div>
+                  )
+                )}
+              </motion.div>
+            </AnimatePresence>
           )}
         </motion.div>
       </AnimatePresence>
 
-      {/* Swipe everywhere navigation, no buttons needed */}
     </div>
   );
 }
