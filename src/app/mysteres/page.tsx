@@ -152,11 +152,11 @@ function LifeBar({ lives, shake }: { lives: number; shake: boolean }) {
         style={{ background: "#5c3c35" }}
       >
         <div className="grid grid-cols-2 gap-2 md:gap-3">
-          {Array.from({ length: 6 }).map((_, i) => (
+          {Array.from({ length: 8 }).map((_, i) => (
             <div
               key={i}
               className="w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center shadow-inner"
-              style={{ backgroundColor: "#2a100a", boxShadow: "inset 0 2px 4px rgba(0,0,0,0.6)" }}
+              style={{ backgroundColor: "#2a100a", boxShadow: "inset 0 3px 6px rgba(0,0,0,0.8)" }}
             >
               <motion.div
                 initial={false}
@@ -166,10 +166,10 @@ function LifeBar({ lives, shake }: { lives: number; shake: boolean }) {
                     : { scale: 0, opacity: 0 }
                 }
                 transition={{ duration: 0.3 }}
-                className="rounded-full w-2.5 h-3 md:w-3 md:h-4"
+                className="rounded-full w-2 h-2.5 md:w-2.5 md:h-3"
                 style={{
                   backgroundColor: "#fdb813",
-                  boxShadow: "0 0 10px rgba(253,184,19,0.8), 0 0 4px rgba(253,184,19,0.4)",
+                  boxShadow: "0 0 8px rgba(253,184,19,0.9), 0 0 3px rgba(253,184,19,0.5)",
                 }}
               />
             </div>
@@ -197,9 +197,9 @@ function ChoiceButton({
 }) {
   const colors = {
     idle: {
-      bg: "#f4f3f2",
-      border: "transparent",
-      label: "#5d605f",
+      bg: "#fff8e7",
+      border: "#ffe082",
+      label: "#fdb813",
       text: "#303333",
     },
     correct: {
@@ -239,7 +239,7 @@ function ChoiceButton({
             : { x: 0 }
         }
         transition={state === "wrong" ? { duration: 0.35 } : {}}
-        className="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-4 p-2 md:p-4 rounded-xl md:rounded-2xl text-center md:text-left w-full transition-all duration-200 relative z-20"
+        className="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-4 p-2 md:p-3 rounded-xl md:rounded-2xl text-center md:text-left w-full transition-all duration-200 relative z-20 shadow-sm"
         style={{
           backgroundColor: c.bg,
           border: `1.5px solid ${c.border === "transparent" ? "transparent" : c.border}`,
@@ -489,7 +489,7 @@ export default function MystereDetailPage() {
   const [showTreasure, setShowTreasure] = useState(false);
 
   // Game state
-  const [lives, setLives] = useState(6);
+  const [lives, setLives] = useState(8);
   const [isLocked, setIsLocked] = useState(false);
   const [filledHoles, setFilledHoles] = useState(0); // 0-4
   const [choiceState, setChoiceState] = useState<Record<string, "idle" | "correct" | "wrong">>({});
@@ -884,9 +884,13 @@ export default function MystereDetailPage() {
 
       {/* ── Bottom nav hint ────────────────────────────────────────────── */}
       {!showTreasure && !isLocked && (
-        <p className="mt-10 text-xs text-gray-300 tracking-widest text-center">
-          ← Swipe horizontal pour changer de mystère →
-        </p>
+        <div className="mt-8 mb-4 px-6 py-2 rounded-full border border-[#B8860B]/30 bg-[#B8860B]/5 backdrop-blur-sm mx-auto flex items-center justify-center gap-3">
+          <span className="text-[#B8860B] opacity-70">←</span>
+          <p className="text-[10px] md:text-xs text-[#B8860B] font-bold tracking-widest uppercase mb-0">
+            Swipe pour changer de mystère
+          </p>
+          <span className="text-[#B8860B] opacity-70">→</span>
+        </div>
       )}
     </div>
   );
