@@ -44,6 +44,7 @@ export default function PremiumImage({
   alt,
   aspectRatio = "16/9",
   className,
+  onClick,
 }: PremiumImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasEnteredView, setHasEnteredView] = useState(false);
