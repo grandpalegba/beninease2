@@ -794,6 +794,16 @@ export default function MystereDetailPage() {
           transition={{ duration: 0.4, ease: [0.21, 0.47, 0.32, 0.98] }}
           className="w-full max-w-2xl flex flex-col items-center cursor-grab active:cursor-grabbing select-none"
         >
+          {/* ── Title ──────────────────────────────────────────── */}
+          <div className="text-center mb-4 md:mb-8 flex flex-col items-center">
+            <h1
+              className="text-2xl md:text-3xl font-extrabold leading-tight mb-4 px-2"
+              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#a0412d" }}
+            >
+              {currentMystere.titre}
+            </h1>
+          </div>
+
           {/* ── Dashboard (The Ancestral Time) ────────────────────────────── */}
           <div className="w-full mb-6 md:mb-12 px-2">
             <div className="grid grid-cols-3 items-center gap-1 md:gap-4">
