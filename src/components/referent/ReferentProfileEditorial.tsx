@@ -16,10 +16,10 @@ interface ReferentProfileEditorialProps {
 }
 
 /**
- * ReferentProfileEditorial - Design "V" Asymétrique Haute-Couture.
- * - Header : Portrait 4/5 à gauche, Info à droite (Casse Mixte, font-light).
- * - Mur de Médias : Grille 2x4 en damier (Strict 2 colonnes sur mobile).
- * - Épure : Pas d'icônes sur les boutons, pas de texte narratif.
+ * ReferentProfileEditorial - Design "Harmonie Patriotique".
+ * - Header : Asymétrique, accent Vert Bénin (#008751), Casse Mixte.
+ * - Mur de Médias : 2x4 Damier, Strict 2 colonnes sur mobile.
+ * - Contact : Bloc "Carte de Visite" avec inputs soulignés Vert/Jaune.
  */
 export default function ReferentProfileEditorial({
   ambassadeur,
@@ -55,8 +55,6 @@ export default function ReferentProfileEditorial({
     { url: ambassadeur.video_pourquoi, alt: "Pourquoi" },
   ].filter(v => v.url);
 
-  // 2. Construction du Damier (Photo/Vidéo alternés)
-  // L1: P0 V0 | L2: V1 P1 | L3: P2 V2 | L4: V3 P3
   const mediaGrid = [];
   for (let i = 0; i < 4; i++) {
     if (i % 2 === 0) {
@@ -77,19 +75,18 @@ export default function ReferentProfileEditorial({
 
   return (
     <div 
-      className="w-full bg-[#faf9f8] font-manrope selection:bg-[#a0412d]/10 overflow-x-hidden min-h-screen"
+      className="w-full bg-white font-manrope selection:bg-[#008751]/10 overflow-x-hidden min-h-screen"
       onContextMenu={(e) => e.preventDefault()}
     >
       <main className="max-w-[1100px] mx-auto px-6 pt-12 md:pt-24 pb-40">
         
-        {/* 🎬 HEADER ASYMETRIQUE (Le "V") */}
+        {/* 🎬 HEADER PATRIO-PREMIUM (Le "V") */}
         <motion.section 
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: [0.21, 0.47, 0.32, 0.98] }}
           className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center mb-20 md:mb-32"
         >
-          {/* Gauche : Portrait 4/5 */}
           <div className="relative w-full max-w-[420px] mx-auto md:ml-0">
             <PremiumImage 
               src={ambassadeur.avatar_url}
@@ -100,9 +97,8 @@ export default function ReferentProfileEditorial({
             />
           </div>
 
-          {/* Droite : Informations (Casse Mixte, font-light) */}
           <div className="flex flex-col text-left">
-            <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.3em] text-[#a0412d] mb-4">
+            <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.3em] text-[#008751] mb-4">
               {ambassadeur.categorie}
             </span>
 
@@ -111,26 +107,26 @@ export default function ReferentProfileEditorial({
             </h1>
 
             {ambassadeur.bio && (
-              <p className="text-lg md:text-xl font-light text-gray-500 mb-12 italic border-l-2 border-[#a0412d]/20 pl-6 py-2">
+              <p className="text-lg md:text-xl font-light text-gray-500 mb-12 italic border-l-2 border-[#008751]/10 pl-6 py-2">
                 « {ambassadeur.bio} »
               </p>
             )}
 
             <div className="flex flex-wrap items-center gap-4">
               <button
-                onClick={onVote}
+                onClick={(e) => { e.stopPropagation(); onVote(); }}
                 disabled={isVoting}
                 className={cn(
-                  "py-4 px-10 text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-sm transition-all",
-                  isVoting ? "bg-gray-400 cursor-not-allowed" : "bg-[#a0412d] hover:bg-[#8b3827]"
+                  "py-4 px-10 text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-none transition-all",
+                  isVoting ? "bg-gray-300" : "bg-[#008751] hover:bg-[#007043]"
                 )}
               >
                 {isVoting ? "Soutien..." : "Soutenir ce Référent"}
               </button>
               
               <button
-                onClick={scrollToContact}
-                className="py-4 px-10 rounded-full border border-gray-200 text-gray-600 font-bold uppercase tracking-widest text-[10px] hover:bg-white hover:shadow-md transition-all"
+                onClick={(e) => { e.stopPropagation(); scrollToContact(); }}
+                className="py-4 px-10 rounded-full border border-gray-100 text-gray-500 font-bold uppercase tracking-widest text-[10px] hover:border-[#008751]/20 hover:bg-[#008751]/5 transition-all"
               >
                 Me contacter
               </button>
@@ -138,7 +134,7 @@ export default function ReferentProfileEditorial({
           </div>
         </motion.section>
 
-        {/* 🖼️ LE MUR DE MÉDIAS (Grille 2x4 Damier) */}
+        {/* 🖼️ MUR DE MÉDIAS (Grille 2x4 Damier) */}
         <section className="w-full mb-32">
           <div className="grid grid-cols-2 gap-px bg-white overflow-hidden rounded-[2.5rem] shadow-2xl border border-white/50">
             {mediaGrid.map((item, index) => (
@@ -153,51 +149,59 @@ export default function ReferentProfileEditorial({
           </div>
         </section>
 
-        {/* 📩 FORMULAIRE DE CONTACT (Final Point) */}
+        {/* ✉️ BLOC CONTACT "CARTE DE VISITE" (Écrin Patriotique) */}
         <motion.section 
           ref={contactFormRef}
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mt-40 w-full pt-32 border-t border-gray-100"
+          className="mt-40 w-full flex justify-center"
         >
-          <div className="max-w-4xl mx-auto">
+          <div 
+            className="w-full max-w-2xl bg-stone-50/50 rounded-[2rem] shadow-md p-10 md:p-16 relative overflow-hidden"
+            onMouseDown={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Titre minimaliste */}
             <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-light text-[#1A1A1A] mb-6" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+              <h2 className="text-3xl md:text-4xl font-extralight text-[#1A1A1A] mb-4" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                 Me contacter
               </h2>
-              <div className="h-0.5 w-12 bg-[#a0412d]/20 mx-auto" />
+              <div className="h-px w-8 bg-[#FCD116] mx-auto" />
             </div>
 
-            <form className="grid grid-cols-1 md:grid-cols-2 gap-10" onSubmit={(e) => e.preventDefault()}>
-              <div className="space-y-6">
-                <div className="space-y-2">
-                  <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400 ml-1">Nom Complet</label>
+            <form className="space-y-12" onSubmit={(e) => e.preventDefault()}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-12">
+                <div className="flex flex-col gap-2">
+                  <label className="lowercase text-[9px] tracking-[0.2em] font-bold text-stone-400">nom complet</label>
                   <input 
                     type="text" 
-                    placeholder="Jean Dupont" 
-                    className="w-full py-4 px-6 bg-white rounded-2xl border border-gray-100 focus:border-[#a0412d]/50 outline-none transition-all text-gray-700 shadow-sm" 
+                    placeholder="jean dupont" 
+                    className="w-full py-2 bg-transparent border-b-2 border-[#008751] focus:border-[#FCD116] outline-none transition-all text-gray-700 placeholder:text-stone-200" 
                   />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400 ml-1">Email</label>
+                <div className="flex flex-col gap-2">
+                  <label className="lowercase text-[9px] tracking-[0.2em] font-bold text-stone-400">votre email</label>
                   <input 
                     type="email" 
                     placeholder="jean@example.com" 
-                    className="w-full py-4 px-6 bg-white rounded-2xl border border-gray-100 focus:border-[#a0412d]/50 outline-none transition-all text-gray-700 shadow-sm" 
+                    className="w-full py-2 bg-transparent border-b-2 border-[#008751] focus:border-[#FCD116] outline-none transition-all text-gray-700 placeholder:text-stone-200" 
                   />
                 </div>
               </div>
-              <div className="space-y-2 flex flex-col h-full">
-                <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400 ml-1">Message</label>
+              
+              <div className="flex flex-col gap-2">
+                <label className="lowercase text-[9px] tracking-[0.2em] font-bold text-stone-400">message</label>
                 <textarea 
-                  placeholder="Décrivez votre projet..." 
-                  className="w-full flex-1 py-4 px-6 bg-white rounded-2xl border border-gray-100 focus:border-[#a0412d]/50 outline-none transition-all text-gray-700 resize-none shadow-sm min-h-[160px]" 
+                  placeholder="votre projet ou question..." 
+                  rows={3}
+                  className="w-full py-2 bg-transparent border-b-2 border-[#008751] focus:border-[#FCD116] outline-none transition-all text-gray-700 resize-none placeholder:text-stone-200" 
                 />
               </div>
-              <div className="md:col-span-2 flex justify-center mt-4">
+
+              <div className="flex justify-center pt-8">
                 <button
-                  className="py-5 px-20 bg-[#a0412d] text-white rounded-full font-bold uppercase tracking-widest text-[11px] shadow-lg shadow-orange-900/10 hover:bg-[#8b3827] transition-all"
+                  className="py-4 px-20 bg-[#008751] border border-[#FCD116]/20 text-white rounded-full font-light uppercase tracking-widest text-[11px] transition-all hover:bg-[#007043] shadow-none"
                 >
                   Envoyer le message
                 </button>
