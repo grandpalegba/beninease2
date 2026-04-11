@@ -7,8 +7,9 @@ import { cn } from "@/lib/utils";
 interface PremiumImageProps {
   src: string | null;
   alt: string;
-  aspectRatio?: "16/9" | "4/5" | "square" | "portrait" | "video";
+  aspectRatio?: "16/9" | "4/5" | "4/3" | "square" | "portrait" | "video";
   className?: string;
+  onClick?: () => void;
 }
 
 const FALLBACK_SRC =
@@ -103,6 +104,7 @@ export default function PremiumImage({
     square: "aspect-square",
     portrait: "aspect-[2/3]",
     video: "aspect-video",
+    "4/3": "aspect-[4/3]",
   };
 
   const handleLoad = () => {
@@ -122,9 +124,11 @@ export default function PremiumImage({
       ref={containerRef}
       className={cn(
         "relative w-full overflow-hidden rounded-2xl shadow-xl bg-[#f3f3f3] group",
+        onClick && "cursor-zoom-in",
         ratioClasses[aspectRatio],
         className
       )}
+      onClick={onClick}
     >
       {/* Skeleton — visible uniquement avant le chargement */}
       {!isLoaded && (
@@ -148,7 +152,7 @@ export default function PremiumImage({
         }}
         transition={{ duration: 0.65, ease: [0.25, 0.46, 0.45, 0.94] }}
         className={cn(
-          "absolute inset-0 w-full h-full object-cover pointer-events-none",
+          "absolute inset-0 w-full h-full object-cover",
           "md:group-hover:scale-[1.03] md:group-hover:brightness-[1.04] transition-[transform,filter] duration-700"
         )}
         onLoad={handleLoad}

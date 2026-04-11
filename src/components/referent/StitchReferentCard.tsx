@@ -4,15 +4,15 @@ import React from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-interface StitchAmbassadeurCardProps {
+interface StitchReferentCardProps {
   ambassadeur: any;
 }
 
 /**
- * StitchAmbassadeurCard - Design "Stitch" optimisé pour Mobile & Protection Desktop.
+ * StitchReferentCard - Design "Stitch" optimisé pour Mobile & Protection Desktop.
  * Améliorations : Textes "levés" sur le dégradé (fog) et protection anti-extraction.
  */
-export default function StitchAmbassadeurCard({ ambassadeur }: StitchAmbassadeurCardProps) {
+export default function StitchReferentCard({ ambassadeur }: StitchReferentCardProps) {
   const router = useRouter();
 
   // Mapping des données Supabase
@@ -24,7 +24,7 @@ export default function StitchAmbassadeurCard({ ambassadeur }: StitchAmbassadeur
 
   return (
     <div
-      onClick={() => router.push(`/ambassadeurs/${ambassadeur.slug}`)}
+      onClick={() => router.push(`/referent/${ambassadeur.slug}`)}
       onContextMenu={(e) => e.preventDefault()}
       className="w-full h-full max-h-[90vh] mx-auto touch-none select-none cursor-pointer group flex flex-col overflow-hidden bg-white rounded-2xl"
     >

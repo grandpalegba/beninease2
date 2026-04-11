@@ -4,12 +4,12 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/utils/supabase/client';
 import { Loader2 } from 'lucide-react';
 
-interface AmbassadeurAuthGuardProps {
+interface ReferentAuthGuardProps {
   children: React.ReactNode;
   fallback?: React.ReactNode;
 }
 
-export default function AmbassadeurAuthGuard({ children, fallback }: AmbassadeurAuthGuardProps) {
+export default function ReferentAuthGuard({ children, fallback }: ReferentAuthGuardProps) {
   const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
   
@@ -20,7 +20,7 @@ export default function AmbassadeurAuthGuard({ children, fallback }: Ambassadeur
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
         if (sessionError || !session) {
-          window.location.href = '/ambassadeurs/login';
+          window.location.href = '/referent/login';
           return;
         }
 
@@ -34,14 +34,14 @@ export default function AmbassadeurAuthGuard({ children, fallback }: Ambassadeur
         if (ambassadeurError || !ambassadeur) {
           // Sign out invalid user
           await supabase.auth.signOut();
-          window.location.href = '/ambassadeurs/login';
+          window.location.href = '/referent/login';
           return;
         }
 
         setAuthenticated(true);
       } catch (error) {
         console.error('Auth guard error:', error);
-        window.location.href = '/ambassadeurs/login';
+        window.location.href = '/referent/login';
       } finally {
         setLoading(false);
       }

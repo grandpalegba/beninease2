@@ -33,7 +33,7 @@ type UserProfile = {
 
 const Header = () => {
   const pathname = usePathname();
-  const isBottomNav = pathname === "/ambassadeurs" || pathname === "/tresors" || pathname === "/duel" || pathname === "/talents" || pathname === "/mysteres" || pathname?.startsWith("/ambassadeurs/");
+  const isBottomNav = pathname === "/referent" || pathname === "/tresors" || pathname === "/duel" || pathname === "/talents" || pathname === "/mysteres" || pathname?.startsWith("/referent/");
 
   const [scrolled, setScrolled] = useState(false);
   const [user, setUser] = useState<User | null>(null);
@@ -126,7 +126,7 @@ const Header = () => {
         <div className="flex items-center gap-4 md:gap-8">
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-6">
-            <Link href="/ambassadeurs" className={cn(navLinkClasses, pathname === "/ambassadeurs" && "text-[#FFD700]")}>Référents</Link>
+            <Link href="/referent" className={cn(navLinkClasses, pathname === "/referent" && "text-[#FFD700]")}>Référents</Link>
             <Link href="/mysteres" className={cn(navLinkClasses, pathname === "/mysteres" && "text-[#FFD700]")}>Mystères</Link>
             <Link href="/talents" className={cn(navLinkClasses, pathname === "/talents" && "text-[#FFD700]")}>Talents</Link>
             <Link href="/tresors" className={cn(navLinkClasses, pathname === "/tresors" && "text-[#FFD700]")}>Trésors</Link>
@@ -221,7 +221,7 @@ const Header = () => {
           <div className="p-8 flex flex-col gap-6">
 
             <Link 
-              href="/ambassadeurs" 
+              href="/referent" 
               onClick={() => setIsMobileMenuOpen(false)}
               className="text-3xl font-display font-black text-white flex items-center justify-between"
             >

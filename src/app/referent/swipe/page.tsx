@@ -9,8 +9,8 @@ export default async function AmbassadeurSwipePage({
   const slug = resolvedParams.slug;
   
   if (slug) {
-    redirect(`/ambassadeurs`); // In the new architecture, swipe is on the main page
+    redirect(`/referent`); // In the new architecture, swipe is on the main page
   }
   
-  redirect("/ambassadeurs");
+  redirect("/referent");
 }

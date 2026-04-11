@@ -6,25 +6,25 @@ import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase } from "@/utils/supabase/client";
-import AmbassadeurProfileEditorial from "./AmbassadeurProfileEditorial";
+import ReferentProfileEditorial from "./ReferentProfileEditorial";
 
-interface AmbassadeurProfileStitchClientProps {
+interface ReferentProfileStitchClientProps {
   ambassadeur: any;
   nextSlug: string | null;
   prevSlug: string | null;
 }
 
 /**
- * AmbassadeurProfileStitchClient - Orchestrateur du Profil Éditorial.
+ * ReferentProfileStitchClient - Orchestrateur du Profil Éditorial.
  * - Gère le vote (RPC) et le partage.
  * - Restauration du Swipe horizontal subtil (drag="x").
  * - Maintien des flèches de navigation pour l'accessibilité desktop.
  */
-export default function AmbassadeurProfileStitchClient({
+export default function ReferentProfileStitchClient({
   ambassadeur,
   nextSlug,
   prevSlug,
-}: AmbassadeurProfileStitchClientProps) {
+}: ReferentProfileStitchClientProps) {
   const router = useRouter();
   const [isVoting, setIsVoting] = useState(false);
   const [votesCount, setVotesCount] = useState(ambassadeur.weighted_votes_total || 0);
@@ -34,8 +34,8 @@ export default function AmbassadeurProfileStitchClient({
 
   // 1. Prefetch des profils adjacents
   useEffect(() => {
-    if (nextSlug) router.prefetch(`/ambassadeurs/${nextSlug}`);
-    if (prevSlug) router.prefetch(`/ambassadeurs/${prevSlug}`);
+    if (nextSlug) router.prefetch(`/referent/${nextSlug}`);
+    if (prevSlug) router.prefetch(`/referent/${prevSlug}`);
   }, [nextSlug, prevSlug, router]);
 
   // 2. Supabase Realtime — Refresh instantané des médias
@@ -124,7 +124,7 @@ export default function AmbassadeurProfileStitchClient({
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 0.3, x: 0 }}
             whileHover={{ opacity: 1, x: 5 }}
-            onClick={() => router.push(`/ambassadeurs/${prevSlug}`)}
+            onClick={() => router.push(`/referent/${prevSlug}`)}
             className="p-4 rounded-full bg-white/50 backdrop-blur-sm shadow-sm pointer-events-auto transition-all"
             aria-label="Précédent"
           >
@@ -136,7 +136,7 @@ export default function AmbassadeurProfileStitchClient({
             initial={{ opacity: 0, x: 10 }}
             animate={{ opacity: 0.3, x: 0 }}
             whileHover={{ opacity: 1, x: -5 }}
-            onClick={() => router.push(`/ambassadeurs/${nextSlug}`)}
+            onClick={() => router.push(`/referent/${nextSlug}`)}
             className="p-4 rounded-full bg-white/50 backdrop-blur-sm shadow-sm pointer-events-auto transition-all"
             aria-label="Suivant"
           >
@@ -160,14 +160,14 @@ export default function AmbassadeurProfileStitchClient({
           onDragEnd={(e, info) => {
             const threshold = 80; // Seuil de déclenchement
             if (info.offset.x < -threshold && nextSlug) {
-              router.push(`/ambassadeurs/${nextSlug}`);
+              router.push(`/referent/${nextSlug}`);
             } else if (info.offset.x > threshold && prevSlug) {
-              router.push(`/ambassadeurs/${prevSlug}`);
+              router.push(`/referent/${prevSlug}`);
             }
           }}
           className="w-full cursor-grab active:cursor-grabbing"
         >
-          <AmbassadeurProfileEditorial
+          <ReferentProfileEditorial
             ambassadeur={ambassadeurData}
             votes={votesCount}
             onVote={handleVote}

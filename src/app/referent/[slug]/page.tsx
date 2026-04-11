@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import AmbassadeurProfileStitchClient from "@/components/ambassadeurs/AmbassadeurProfileStitchClient";
+import ReferentProfileStitchClient from "@/components/referent/ReferentProfileStitchClient";
 
 // Désactive le cache statique Next.js — chaque requête déclenche un fetch Supabase frais
 export const revalidate = 0;
@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default async function AmbassadeurProfilePage({ params }: { params: { slug: string } }) {
+export default async function ReferentProfilePage({ params }: { params: { slug: string } }) {
   const slug = params.slug;
   if (!slug) return notFound();
 
@@ -73,7 +73,7 @@ export default async function AmbassadeurProfilePage({ params }: { params: { slu
 
   return (
     <div className="bg-white min-h-screen pt-20">
-      <AmbassadeurProfileStitchClient 
+      <ReferentProfileStitchClient 
         ambassadeur={ambassadeur} 
         nextSlug={nextSlug} 
         prevSlug={prevSlug} 

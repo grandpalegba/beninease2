@@ -5,11 +5,11 @@ import { supabase } from "@/utils/supabase/client";
 import type { Ambassadeur } from "@/types";
 import { Loader2, AlertCircle } from "lucide-react";
 import CardDeck from "@/components/ui/CardDeck";
-import StitchAmbassadeurCard from "@/components/ambassadeurs/StitchAmbassadeurCard";
+import StitchReferentCard from "@/components/referent/StitchReferentCard";
 import Link from "next/link";
 import { toast } from "sonner";
 
-export default function AmbassadeursPage() {
+export default function ReferentsPage() {
   const [ambassadeurs, setAmbassadeurs] = useState<Ambassadeur[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -119,7 +119,7 @@ export default function AmbassadeursPage() {
       <CardDeck
         items={ambassadeurs}
         renderItem={(ambassadeur) => (
-          <StitchAmbassadeurCard 
+          <StitchReferentCard 
             key={ambassadeur.id} 
             ambassadeur={ambassadeur} 
           />
