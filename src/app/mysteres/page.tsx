@@ -250,7 +250,7 @@ function ChoiceButton({
             : { x: 0 }
         }
         transition={state === "wrong" ? { duration: 0.35 } : {}}
-        className="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-4 p-2 md:p-3 rounded-xl md:rounded-2xl text-center md:text-left w-full transition-all duration-200 relative z-20 shadow-sm"
+        className="flex items-center justify-start gap-3 md:gap-4 p-2 md:p-3 rounded-xl md:rounded-2xl text-left w-full transition-all duration-200 relative z-20 shadow-sm"
         style={{
           backgroundColor: c.bg,
           border: `1.5px solid ${c.border === "transparent" ? "transparent" : c.border}`,
@@ -263,7 +263,7 @@ function ChoiceButton({
       >
         {letter}
       </span>
-      <span className="text-[10px] md:text-sm font-medium leading-tight md:leading-snug" style={{ color: c.text }}>
+      <span className="text-[11px] md:text-sm font-medium leading-tight md:leading-snug" style={{ color: c.text }}>
         {text}
       </span>
       </motion.button>
@@ -760,11 +760,6 @@ export default function MystereDetailPage() {
             >
               {currentMystere.titre}
             </h1>
-            <div className="max-h-24 md:max-h-none overflow-y-auto px-2">
-              <p className="text-sm md:text-base text-gray-500 max-w-md mx-auto leading-relaxed">
-                {currentMystere.description}
-              </p>
-            </div>
           </div>
 
           {/* ── Dashboard & Jar ──────────────────────────────────────────── */}
