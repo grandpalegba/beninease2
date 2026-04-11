@@ -144,35 +144,34 @@ function LifeBar({ lives, shake }: { lives: number; shake: boolean }) {
     <motion.div
       animate={shake ? { x: [-6, 6, -5, 5, -3, 3, 0] } : { x: 0 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className="flex justify-center w-full mb-10"
+      className="flex justify-center"
     >
       <div
-        className="px-6 py-3 rounded-full flex items-center gap-4 border border-black/10 shadow-lg"
+        className="p-3 rounded-2xl flex items-center border border-black/10 shadow-lg"
         style={{ background: "#5c3c35" }}
       >
-        <div className="flex gap-3">
+        <div className="grid grid-cols-2 gap-2 md:gap-3">
           {Array.from({ length: 6 }).map((_, i) => (
-            <motion.div
+            <div
               key={i}
-              initial={false}
-              animate={
-                i < lives
-                  ? { scale: 1, opacity: 1 }
-                  : { scale: 0.7, opacity: 0.35 }
-              }
-              transition={{ duration: 0.3 }}
-              className="rounded-full"
-              style={{
-                width: "12px",
-                height: "16px",
-                borderRadius: "50%",
-                backgroundColor: i < lives ? "#fdb813" : "#2a100a",
-                boxShadow:
+              className="w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center shadow-inner"
+              style={{ backgroundColor: "#2a100a", boxShadow: "inset 0 2px 4px rgba(0,0,0,0.6)" }}
+            >
+              <motion.div
+                initial={false}
+                animate={
                   i < lives
-                    ? "0 0 10px rgba(253,184,19,0.8), 0 0 4px rgba(253,184,19,0.4)"
-                    : "inset 0 2px 4px rgba(0,0,0,0.6)",
-              }}
-            />
+                    ? { scale: 1, opacity: 1 }
+                    : { scale: 0, opacity: 0 }
+                }
+                transition={{ duration: 0.3 }}
+                className="rounded-full w-2.5 h-3 md:w-3 md:h-4"
+                style={{
+                  backgroundColor: "#fdb813",
+                  boxShadow: "0 0 10px rgba(253,184,19,0.8), 0 0 4px rgba(253,184,19,0.4)",
+                }}
+              />
+            </div>
           ))}
         </div>
       </div>
@@ -239,7 +238,7 @@ function ChoiceButton({
             : { x: 0 }
         }
         transition={state === "wrong" ? { duration: 0.35 } : {}}
-        className="flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-xl md:rounded-2xl text-left w-full transition-all duration-200 relative z-20"
+        className="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-4 p-2 md:p-4 rounded-xl md:rounded-2xl text-center md:text-left w-full transition-all duration-200 relative z-20"
         style={{
           backgroundColor: c.bg,
           border: `1.5px solid ${c.border === "transparent" ? "transparent" : c.border}`,
@@ -247,12 +246,12 @@ function ChoiceButton({
         }}
       >
       <span
-        className="w-8 h-8 md:w-10 md:h-10 flex-shrink-0 flex items-center justify-center rounded-lg md:rounded-xl font-bold text-xs md:text-sm"
+        className="w-6 h-6 md:w-10 md:h-10 flex-shrink-0 flex items-center justify-center rounded-md md:rounded-xl font-bold text-[10px] md:text-sm"
         style={{ backgroundColor: c.label, color: state === "idle" ? "#303333" : "#fff" }}
       >
         {letter}
       </span>
-      <span className="text-xs md:text-sm font-medium leading-snug" style={{ color: c.text }}>
+      <span className="text-[10px] md:text-sm font-medium leading-tight md:leading-snug" style={{ color: c.text }}>
         {text}
       </span>
       </motion.button>
@@ -712,21 +711,7 @@ export default function MystereDetailPage() {
         </div>
       </div>
 
-      {/* ── Points badge (top right) ─────────────────────────────────────── */}
-      <div className="fixed top-20 right-4 z-40">
-        <motion.div
-          key={points}
-          initial={{ scale: 1.2 }}
-          animate={{ scale: 1 }}
-          className="px-4 py-2 rounded-full text-xs font-bold shadow-md"
-          style={{ background: "#5c3c35", color: "#fdb813", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-        >
-          ⭐ {points} pts
-        </motion.div>
-      </div>
-
-      {/* ── Life bar ────────────────────────────────────────────────────── */}
-      <LifeBar lives={lives} shake={shakeLives} />
+      {/* Navigation and layout are handled differently below */}
 
       {/* ── Main swipeable area ──────────────────────────────────────────── */}
       <AnimatePresence mode="wait">
@@ -765,9 +750,26 @@ export default function MystereDetailPage() {
             </div>
           </div>
 
-          {/* ── Jar ──────────────────────────────────────────────────────── */}
-          <div className="relative mb-6 md:mb-10 scale-[0.75] md:scale-100 origin-top h-[190px] md:h-[280px]">
-            <SacredJar filledHoles={filledHoles} />
+          {/* ── Dashboard & Jar ──────────────────────────────────────────── */}
+          <div className="flex items-center justify-center gap-4 md:gap-12 w-full mb-6 md:mb-10 px-2">
+            {/* Left side: LifeBar & Points */}
+            <div className="flex flex-col items-center justify-center gap-3 w-1/3">
+              <LifeBar lives={lives} shake={shakeLives} />
+              <motion.div
+                key={points}
+                initial={{ scale: 1.2 }}
+                animate={{ scale: 1 }}
+                className="px-3 py-1.5 rounded-full text-[10px] md:text-xs font-bold shadow-md whitespace-nowrap"
+                style={{ background: "#5c3c35", color: "#fdb813", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+              >
+                ⭐ {points} pts
+              </motion.div>
+            </div>
+
+            {/* Right side: Jar */}
+            <div className="relative scale-[0.70] md:scale-100 origin-center h-[180px] md:h-[280px] w-40 md:w-52">
+              <SacredJar filledHoles={filledHoles} />
+            </div>
           </div>
 
           {/* ── Locked ───────────────────────────────────────────────────── */}
@@ -817,7 +819,7 @@ export default function MystereDetailPage() {
                 ) : (
                   /* Choices grid */
                   currentQuestion && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full">
+                    <div className="grid grid-cols-2 gap-2 md:gap-3 w-full">
                       {choices.map(({ letter, text }) => {
                         if (!text) return null;
                         const state = choiceState[letter] || "idle";
