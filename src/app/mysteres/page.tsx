@@ -116,10 +116,13 @@ export default function MysterePage() {
               className="w-full max-w-[320px] h-[550px] bg-white rounded-[45px] shadow-2xl border-[10px] border-white overflow-hidden cursor-pointer flex flex-col"
             >
               <img 
-                src={currentM.cover_image_url} 
+                src={currentM.cover_image_url || `https://via.placeholder.com/320x240/3d1810/ffffff?text=Mystère+${currentM.mystere_number}`} 
                 className="h-1/2 w-full object-cover bg-orange-50" 
                 alt={currentM.title}
-                onError={(e) => { e.currentTarget.src = "https://via.placeholder.com/320x240?text=Image+en+chargement"; }}
+                onError={(e) => { 
+                  console.log('Image error:', currentM.cover_image_url);
+                  e.currentTarget.src = `https://via.placeholder.com/320x240/3d1810/ffffff?text=Mystère+${currentM.mystere_number}`;
+                }}
               />
               <div className="p-7 flex-1 flex flex-col justify-between">
                 <div>
