@@ -51,7 +51,17 @@ export default function MysterePage() {
   // Préchargement
   useEffect(() => {
     if (mysteres.length > 0) {
-      const preload = (url: string) => { if (url) { const img = new Image(); img.src = url; } };
+      const preload = (url: string) => { 
+        if (url && url.startsWith('https://wtjhkqkqmexddroqwawk.supabase.co')) {
+          console.log('🔍 Tentative preload:', url);
+          const img = new Image();
+          img.onload = () => console.log('✅ Image chargée:', url);
+          img.onerror = () => console.log('❌ Erreur image:', url);
+          img.src = url;
+        }
+      };
+      
+      // Preload images avec debug
       preload(mysteres[currentIndex]?.cover_image_url);
       preload(mysteres[(currentIndex + 1) % mysteres.length]?.cover_image_url);
     }
@@ -132,7 +142,16 @@ export default function MysterePage() {
               }}
               className="w-full max-w-[320px] h-[550px] bg-white rounded-[45px] shadow-2xl border-[10px] border-white overflow-hidden cursor-pointer flex flex-col"
             >
-              <img src={currentM.cover_image_url} className="h-1/2 w-full object-cover bg-orange-50 pointer-events-none" alt={currentM.title}/>
+              <img 
+                src={currentM.cover_image_url || `https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/mysteres-assets/cover${currentM.mystere_number}.jpg`} 
+                className="h-1/2 w-full object-cover bg-orange-50 pointer-events-none" 
+                alt={currentM.title}
+                onError={(e) => { 
+                  console.log('❌ Cover image error:', currentM.cover_image_url);
+                  console.log('🔄 Fallback vers:', `cover${currentM.mystere_number}.jpg`);
+                  e.currentTarget.src = `https://via.placeholder.com/320x240/3d1810/ffffff?text=Mystère+${currentM.mystere_number}`;
+                }}
+              />
               <div className="p-7 flex-1 flex flex-col justify-between pointer-events-none">
                 <div>
                   <h2 className="text-2xl font-black text-[#3d1810] uppercase leading-tight">{currentM.title}</h2>
@@ -215,7 +234,16 @@ export default function MysterePage() {
         {view === "tresor" && (
           <motion.div key="tresor" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="absolute inset-0 bg-[#1a0f0a] z-[60] flex flex-col items-center justify-center p-8 text-center text-white">
             <h2 className="text-[#fdb813] font-black tracking-[0.4em] uppercase mb-8 text-xs">Trésor Découvert</h2>
-            <img src={currentM.tresor_image_url} className="w-72 h-72 object-contain mb-8" alt="Trésor" />
+            <img 
+              src={currentM.treasure_image_url || `https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/mysteres-assets/treasure${currentM.mystere_number}.jpg`} 
+              className="w-72 h-72 object-contain mb-8" 
+              alt="Trésor" 
+              onError={(e) => { 
+                console.log('❌ Treasure image error:', currentM.treasure_image_url);
+                console.log('🔄 Fallback vers:', `treasure${currentM.mystere_number}.jpg`);
+                e.currentTarget.src = `https://via.placeholder.com/288x288/fdb813/ffffff?text=Trésor+${currentM.mystere_number}`;
+              }}
+            />
             <h3 className="text-3xl font-black mb-2 uppercase">{currentM.title}</h3>
             <div className="bg-white/5 p-6 rounded-3xl text-sm leading-relaxed max-w-sm mb-8 italic">
               {currentM.inspiration || "Félicitations, initié."}
