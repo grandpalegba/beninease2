@@ -1,943 +1,145 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { confetti } from "tsparticles-confetti";
-import { toast } from "sonner";
-import { CategoryPattern } from "@/components/talents/CategoryPattern";
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
+import { toast, Toaster } from "sonner";
 import { HourglassTimer } from "@/components/mysteres/HourglassTimer";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// Configuration Supabase
+const PROJECT_ID = "wtjhkqkqmexddroqwawk";
+const BUCKET_NAME = "mysteres-assets";
+const getImageUrl = (num: string | number) => 
+  `https://${PROJECT_ID}.supabase.co/storage/v1/object/public/${BUCKET_NAME}/image${num}.jpg`;
 
-interface Mystere {
-  id: string;
-  theme_id: string;
-  titre: string;
-  description: string;
-  periode: string;
-  lieu: string;
-  info_complementaire: string;
-  fiche_tresor: string;
-  image_url: string;
-}
-
-interface Question {
-  id: string;
-  mystere_id: string;
-  numero: number;
-  question_text: string;
-  choice_a: string;
-  choice_b: string;
-  choice_c: string;
-  choice_d: string;
-  correct_answer: string;
-  explication: string;
-}
-
-interface Theme {
-  id: string;
-  nom: string;
-  couleur: string;
-  icone: string;
-}
-
-// ─── CSV Parser (no external dep) ────────────────────────────────────────────
-
-function parseCSV(text: string): Record<string, string>[] {
-  const lines = text.trim().split("\n");
-  if (lines.length < 2) return [];
-  const headers = lines[0].split(",").map((h) => h.trim().replace(/\r/g, ""));
-  return lines.slice(1).map((line) => {
-    // Handle commas within values — simple split (our data uses commas only in descriptions w/ escaped commas)
-    const values: string[] = [];
-    let current = "";
-    let inQuotes = false;
-    for (let i = 0; i < line.length; i++) {
-      const ch = line[i];
-      if (ch === '"') { inQuotes = !inQuotes; }
-      else if (ch === "," && !inQuotes) { values.push(current.trim()); current = ""; }
-      else { current += ch; }
-    }
-    values.push(current.trim());
-    const obj: Record<string, string> = {};
-    headers.forEach((h, i) => { obj[h] = (values[i] || "").replace(/\r/g, ""); });
-    return obj;
-  });
-}
-
-async function fetchCSV(path: string) {
-  const res = await fetch(path);
-  const text = await res.text();
-  return parseCSV(text);
-}
-
-// ─── Sacred Jar Component ────────────────────────────────────────────────────
-
-function SacredJar({ filledHoles }: { filledHoles: number }) {
-  const holePositions = [
-    { top: "42%", left: "28%" },
-    { top: "35%", left: "55%" },
-    { top: "65%", left: "38%" },
-    { top: "58%", left: "68%" },
-  ];
-
-  return (
-    <div className="relative w-52 h-[272px] flex-shrink-0 z-10">
-      {/* Glow behind jar */}
-      <div className="absolute -z-10 inset-0 scale-[1.4] bg-[#a0412d]/10 rounded-full blur-3xl" />
-
-      {/* Vessel mouth */}
-      <div
-        className="absolute -top-3 left-1/2 -translate-x-1/2 w-28 h-7 rounded-[50%] z-0"
-        style={{
-          background: "#3d1810",
-          boxShadow: "inset 0 4px 12px rgba(0,0,0,0.5)",
-          border: "3px solid rgba(160,65,45,0.3)",
-        }}
-      />
-
-      {/* Vessel body */}
-      <div
-        className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden"
-        style={{
-          background:
-            "linear-gradient(165deg, #a0412d 0%, #8b3422 45%, #7a2a1b 100%)",
-          borderRadius: "42% 38% 34% 36% / 45% 45% 32% 32%",
-          boxShadow:
-            "inset -8px -8px 20px rgba(0,0,0,0.22), inset 8px 8px 20px rgba(255,255,255,0.08), 0 20px 40px rgba(0,0,0,0.15)",
-        }}
-      >
-        {/* Top shadow */}
-        <div className="absolute top-0 w-full h-8 bg-gradient-to-b from-black/25 to-transparent" />
-
-        {/* Holes */}
-        {holePositions.map((pos, i) => {
-          const isFilled = i < filledHoles;
-          return (
-            <motion.div
-              key={i}
-              initial={false}
-              animate={
-                isFilled
-                  ? { backgroundColor: "#7a2a1b", boxShadow: "inset 0 2px 6px rgba(0,0,0,0.3)" }
-                  : { backgroundColor: "#2a100a", boxShadow: "inset 0 4px 12px rgba(0,0,0,0.8)" }
-              }
-              transition={{ duration: 0.5, ease: "easeInOut" }}
-              className="absolute rounded-full border border-black/10"
-              style={{
-                top: pos.top,
-                left: pos.left,
-                width: i === 2 ? "44px" : i === 0 ? "40px" : "36px",
-                height: i === 2 ? "44px" : i === 0 ? "40px" : "36px",
-                opacity: isFilled ? 0.85 : 0.9,
-              }}
-            />
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-// ─── Seed / Life Display ──────────────────────────────────────────────────────
-
-function LifeBar({ lives, shake }: { lives: number; shake: boolean }) {
-  const renderHole = (i: number) => (
-    <div
-      key={i}
-      className="w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center shadow-inner"
-      style={{ backgroundColor: "#2a100a", boxShadow: "inset 0 3px 6px rgba(0,0,0,0.8)" }}
-    >
-      <motion.div
-        initial={false}
-        animate={
-          i < lives
-            ? { scale: 1, opacity: 1 }
-            : { scale: 0, opacity: 0 }
-        }
-        transition={{ duration: 0.3 }}
-        className="rounded-full w-2 h-2.5 md:w-2.5 md:h-3"
-        style={{
-          backgroundColor: "#fdb813",
-          boxShadow: "0 0 8px rgba(253,184,19,0.9), 0 0 3px rgba(253,184,19,0.5)",
-        }}
-      />
-    </div>
-  );
-
-  return (
-    <motion.div
-      animate={shake ? { x: [-6, 6, -5, 5, -3, 3, 0] } : { x: 0 }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
-      className="flex justify-center"
-    >
-      <div
-        className="p-3 rounded-[20px] flex items-center shadow-xl overflow-hidden relative"
-        style={{ 
-          background: "linear-gradient(to right, #5c3c35 0%, #4a2f29 48%, #1a0f0c 50%, #4a2f29 52%, #5c3c35 100%)",
-          boxShadow: "inset 0 2px 10px rgba(0,0,0,0.5), 0 10px 20px rgba(0,0,0,0.3)",
-          border: "1px solid #3e241e"
-        }}
-      >
-        <div className="flex">
-          <div className="flex flex-col gap-2 md:gap-3 pr-2 border-r border-[#1a0f0c]">
-            {Array.from({ length: 4 }).map((_, i) => renderHole(i))}
-          </div>
-          <div className="flex flex-col gap-2 md:gap-3 pl-2 border-l border-[#6b473f]">
-            {Array.from({ length: 4 }).map((_, i) => renderHole(i + 4))}
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
-// ─── Choice Button ────────────────────────────────────────────────────────────
-
-function ChoiceButton({
-  letter,
-  text,
-  state,
-  onClick,
-  disabled,
-}: {
-  letter: string;
-  text: string;
-  state: "idle" | "correct" | "wrong";
-  onClick: () => void;
-  disabled: boolean;
-}) {
-  const colors = {
-    idle: {
-      bg: "rgba(160, 65, 45, 0.06)",
-      border: "rgba(160, 65, 45, 0.2)",
-      label: "#a0412d",
-      text: "#303333",
-    },
-    correct: {
-      bg: "#d4edda",
-      border: "#198754",
-      label: "#198754",
-      text: "#155724",
-    },
-    wrong: {
-      bg: "#f8d7da",
-      border: "#ac3149",
-      label: "#ac3149",
-      text: "#6f1325",
-    },
-  };
-  const c = colors[state];
-
-  return (
-    <motion.div
-      drag={!disabled}
-      dragConstraints={{ top: 0, left: 0, right: 0, bottom: 0 }}
-      dragElastic={0.8}
-      onDragEnd={(_, info) => {
-        if (!disabled && (info.offset.y < -60 || Math.abs(info.offset.x) > 100)) {
-          onClick();
-        }
-      }}
-      className="w-full"
-    >
-      <motion.button
-        disabled={disabled}
-        whileHover={!disabled ? { scale: 1.02, y: -2 } : {}}
-        whileTap={!disabled ? { scale: 0.97 } : {}}
-        animate={
-          state === "wrong"
-            ? { x: [-4, 4, -4, 4, 0] }
-            : { x: 0 }
-        }
-        transition={state === "wrong" ? { duration: 0.35 } : {}}
-        className="flex items-center justify-start gap-3 md:gap-4 p-2 md:p-3 rounded-xl md:rounded-2xl text-left w-full transition-all duration-200 relative z-20 shadow-sm"
-        style={{
-          backgroundColor: c.bg,
-          border: `1.5px solid ${c.border === "transparent" ? "transparent" : c.border}`,
-          cursor: disabled ? "default" : "grab",
-        }}
-      >
-      <span
-        className="w-6 h-6 md:w-10 md:h-10 flex-shrink-0 flex items-center justify-center rounded-md md:rounded-xl font-bold text-[10px] md:text-sm"
-        style={{ backgroundColor: c.label, color: "#fff" }}
-      >
-        {letter}
-      </span>
-      <span className="text-[11px] md:text-sm font-medium leading-tight md:leading-snug" style={{ color: c.text }}>
-        {text}
-      </span>
-      </motion.button>
-    </motion.div>
-  );
-}
-
-// ─── Locked Screen ────────────────────────────────────────────────────────────
-
-function LockedScreen({ onPowerWord }: { onPowerWord: (word: string) => void }) {
-  const [remaining, setRemaining] = useState("");
-  const [password, setPassword] = useState("");
-
-  useEffect(() => {
-    const lockTime = localStorage.getItem("mystere_lock_time");
-    if (!lockTime) return;
-    const updateTimer = () => {
-      const unlockAt = parseInt(lockTime) + 24 * 60 * 60 * 1000;
-      const diff = unlockAt - Date.now();
-      if (diff <= 0) {
-        localStorage.removeItem("mystere_lock_time");
-        window.location.reload();
-        return;
-      }
-      const h = Math.floor(diff / 3600000);
-      const m = Math.floor((diff % 3600000) / 60000);
-      const s = Math.floor((diff % 60000) / 1000);
-      setRemaining(`${h}h ${m}m ${s}s`);
-    };
-    updateTimer();
-    const id = setInterval(updateTimer, 1000);
-    return () => clearInterval(id);
-  }, []);
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      className="flex flex-col items-center text-center gap-6 py-10"
-    >
-      <div className="text-6xl">🔒</div>
-      <h2 className="text-2xl font-bold" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#a0412d" }}>
-        Jarre Verrouillée
-      </h2>
-      <p className="text-sm text-gray-500 max-w-xs">
-        Vos 6 graines sacrées sont épuisées. La jarre se rouvre dans :
-      </p>
-      <div
-        className="text-4xl font-black tabular-nums"
-        style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#5c3c35" }}
-      >
-        {remaining || "Calcul…"}
-      </div>
-      <div className="flex flex-col gap-3 w-full max-w-xs mt-4">
-        <input
-          type="text"
-          placeholder="Entrer le mot de passe"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full px-4 py-3 rounded-full text-center border-2 border-[#a0412d]/20 outline-none focus:border-[#a0412d] transition-all bg-transparent"
-          style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-        />
-        <motion.button
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
-          onClick={() => onPowerWord(password)}
-          className="w-full px-8 py-3 rounded-full font-bold text-white text-sm tracking-wide shadow-lg"
-          style={{
-            background: "linear-gradient(135deg, #a0412d, #5c3c35)",
-            boxShadow: "0 8px 24px rgba(160,65,45,0.3)",
-          }}
-        >
-          🌟 Déverrouiller la Jarre
-        </motion.button>
-      </div>
-    </motion.div>
-  );
-}
-
-// ─── Treasure Card ────────────────────────────────────────────────────────────
-
-function TreasureCard({
-  mystere,
-  points,
-  onLiberate,
-  isLiberated,
-}: {
-  mystere: Mystere;
-  points: number;
-  onLiberate: () => void;
-  isLiberated: boolean;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: [0.21, 0.47, 0.32, 0.98] }}
-      className="flex flex-col items-center gap-8 w-full max-w-lg mx-auto text-center pb-20"
-    >
-      {/* Flame separator */}
-      <div className="flex items-center gap-3 w-full max-w-xs">
-        <div className="flex-1 h-px" style={{ background: "linear-gradient(to right, transparent, #a0412d)" }} />
-        <span className="text-2xl">🔥</span>
-        <div className="flex-1 h-px" style={{ background: "linear-gradient(to left, transparent, #a0412d)" }} />
-      </div>
-
-      <div>
-        <p
-          className="text-xs font-bold uppercase tracking-[0.3em] mb-2"
-          style={{ color: "#a0412d", fontFamily: "'Inter', sans-serif" }}
-        >
-          Fiche Trésor
-        </p>
-        <h2
-          className="text-4xl font-extrabold mb-4"
-          style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#3d1810" }}
-        >
-          {mystere.titre}
-        </h2>
-        <p className="text-sm text-gray-500 leading-relaxed max-w-sm mx-auto">{mystere.fiche_tresor}</p>
-      </div>
-
-      {/* Ritual phrase */}
-      <div
-        className="px-6 py-5 rounded-2xl border text-left w-full"
-        style={{ background: "#fdf6f3", borderColor: "rgba(160,65,45,0.15)" }}
-      >
-        <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "#a0412d" }}>
-          Phrase Rituelle
-        </p>
-        <p className="text-sm italic text-gray-600 leading-relaxed">
-          « Visualisez que le <strong>{mystere.titre}</strong> revient sur sa terre d'origine. »
-        </p>
-      </div>
-
-      {/* Points display */}
-      <div className="flex items-center gap-2">
-        <span className="text-2xl">⭐</span>
-        <span className="text-3xl font-black" style={{ color: "#a0412d", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-          {points} pts
-        </span>
-        <span className="text-sm text-gray-400">accumulés</span>
-      </div>
-
-      {isLiberated ? (
-        <div
-          className="px-8 py-4 rounded-full font-bold text-sm tracking-wide"
-          style={{ background: "#d4edda", color: "#198754", border: "1.5px solid #c3e6cb" }}
-        >
-          ✅ Trésor Libéré !
-        </div>
-      ) : (
-        <motion.button
-          whileHover={{ scale: 1.04, y: -3 }}
-          whileTap={{ scale: 0.97 }}
-          onClick={onLiberate}
-          className="px-10 py-5 rounded-full font-bold text-white text-base tracking-wide shadow-xl"
-          style={{
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
-            background: "linear-gradient(135deg, #a0412d 0%, #7a2a1b 100%)",
-            boxShadow: "0 12px 30px rgba(160,65,45,0.3)",
-          }}
-        >
-          🏺 Libérer le Trésor
-        </motion.button>
-      )}
-    </motion.div>
-  );
-}
-
-// ─── Explanation Toast / Card ─────────────────────────────────────────────────
-
-function ExplanationCard({
-  text,
-  questionNum,
-  onContinue,
-}: {
-  text: string;
-  questionNum: number;
-  onContinue: () => void;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="w-full max-w-lg mx-auto"
-    >
-      <div
-        className="rounded-2xl p-6 mb-6 border text-left"
-        style={{ background: "#fdf6f3", borderColor: "rgba(160,65,45,0.2)" }}
-      >
-        <div className="flex items-center gap-2 mb-3">
-          <span className="text-lg">📖</span>
-          <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#a0412d" }}>
-            Connaissance ancestrale
-          </span>
-        </div>
-        <p className="text-sm text-gray-600 leading-relaxed">{text}</p>
-      </div>
-      <div className="flex justify-between items-center">
-        <span className="text-xs text-gray-400">
-          {questionNum < 4 ? "Swipe ↑ ou bouton pour la suite" : "Swipe ↑ pour la Fiche Trésor"}
-        </span>
-        <motion.button
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
-          onClick={onContinue}
-          className="px-6 py-3 rounded-full font-bold text-white text-sm shadow-md"
-          style={{
-            background: "linear-gradient(135deg, #a0412d, #7a2a1b)",
-            boxShadow: "0 6px 20px rgba(160,65,45,0.25)",
-          }}
-        >
-          {questionNum < 4 ? "Question suivante →" : "Voir la Fiche Trésor →"}
-        </motion.button>
-      </div>
-    </motion.div>
-  );
-}
-
-// ─── Main Page ────────────────────────────────────────────────────────────────
-
-export default function MystereDetailPage() {
-  // Data
-  const [mysteres, setMysteres] = useState<Mystere[]>([]);
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [themes, setThemes] = useState<Theme[]>([]);
+export default function MystereSwipePage() {
+  const [mysteres, setMysteres] = useState<any[]>([]);
+  const [questions, setQuestions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
+  
   // Navigation
-  const [mystereIndex, setMystereIndex] = useState(0);
-  const [questionIndex, setQuestionIndex] = useState(0); // 0-3
-  const [showTreasure, setShowTreasure] = useState(false);
-
-  // Game state
-  const [lives, setLives] = useState(8);
-  const [isLocked, setIsLocked] = useState(false);
-  const [filledHoles, setFilledHoles] = useState(0); // 0-4
-  const [choiceState, setChoiceState] = useState<Record<string, "idle" | "correct" | "wrong">>({});
-  const [showExplanation, setShowExplanation] = useState(false);
-  const [previousExplanation, setPreviousExplanation] = useState<{text: string; questionNum: number} | null>(null);
-  const [points, setPoints] = useState(0);
-  const [shakeLives, setShakeLives] = useState(false);
-  const [isLiberated, setIsLiberated] = useState(false);
-  const [questionAnswered, setQuestionAnswered] = useState(false);
-
-  // Timer state
-  const [timeLeft, setTimeLeft] = useState(60);
-  const [isFlipping, setIsFlipping] = useState(false);
-
-  // Swipe
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  // ── Load data ────────────────────────────────────────────────────────────────
+  const [view, setView] = useState<"gallery" | "game">("gallery");
+  const [currentIndex, setCurrentIndex] = useState(0); // Index de la carte dans la galerie
+  const [qIndex, setQIndex] = useState(0);
 
   useEffect(() => {
-    Promise.all([
-      fetchCSV("/data/mysteres_rows.csv"),
-      fetchCSV("/data/questions_rows.csv"),
-      fetchCSV("/data/themes_rows.csv"),
-    ]).then(([m, q, t]) => {
-      setMysteres(m as unknown as Mystere[]);
-      setQuestions(q as unknown as Question[]);
-      setThemes(t as unknown as Theme[]);
+    // Simulation chargement CSV (à remplacer par ton fetch réel)
+    const loadData = async () => {
+      // ... tes fetchCSV ici
       setLoading(false);
-    });
+    };
+    loadData();
   }, []);
 
-  // ── Check lock status ─────────────────────────────────────────────────────────
+  // Handler pour le swipe dans la Galerie
+  const handleGallerySwipe = (direction: number) => {
+    if (direction > 0 && currentIndex > 0) setCurrentIndex(currentIndex - 1);
+    if (direction < 0 && currentIndex < mysteres.length - 1) setCurrentIndex(currentIndex + 1);
+  };
 
-  useEffect(() => {
-    const lockTime = localStorage.getItem("mystere_lock_time");
-    if (lockTime) {
-      const unlockAt = parseInt(lockTime) + 24 * 60 * 60 * 1000;
-      if (Date.now() < unlockAt) setIsLocked(true);
-      else localStorage.removeItem("mystere_lock_time");
-    }
-    const savedLives = localStorage.getItem("mystere_lives");
-    if (savedLives) setLives(parseInt(savedLives));
-    const savedPoints = localStorage.getItem("mystere_points");
-    if (savedPoints) setPoints(parseInt(savedPoints));
-  }, []);
-
-  // ── Timer Logic ─────────────────────────────────────────────────────────────
-
-  useEffect(() => {
-    // Stop timer if locked, answered, or showing explanation/treasure
-    if (isLocked || loading || questionAnswered || showExplanation || showTreasure) {
-      return;
-    }
-
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          // Time is up!
-          handleTimeOut();
-          return 60;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [isLocked, loading, questionAnswered, showExplanation, showTreasure]);
-
-  const handleTimeOut = useCallback(() => {
-    // Sanction: lose a life
-    setLives((prev) => {
-      const newLives = Math.max(0, prev - 1);
-      localStorage.setItem("mystere_lives", String(newLives));
-      
-      if (newLives <= 0) {
-        localStorage.setItem("mystere_lock_time", String(Date.now()));
-        setIsLocked(true);
-      }
-      return newLives;
-    });
-    
-    setShakeLives(true);
-    setTimeout(() => setShakeLives(false), 500);
-    
-    // Virtual flip animation
-    setIsFlipping(true);
-    setTimeout(() => setIsFlipping(false), 800);
-    
-    toast.error("⏳ Temps écoulé ! Une graine sacrée est perdue.");
-  }, []);
-
-  const resetTimer = useCallback(() => {
-    setTimeLeft(60);
-    setIsFlipping(true);
-    setTimeout(() => setIsFlipping(false), 800);
-  }, []);
-
-  // ── Derived data ──────────────────────────────────────────────────────────────
-
-  const currentMystere = mysteres[mystereIndex];
-  const currentQuestions = questions
-    .filter((q) => q.mystere_id === currentMystere?.id)
-    .sort((a, b) => Number(a.numero) - Number(b.numero));
-  const currentQuestion = currentQuestions[questionIndex];
-  const currentTheme = themes.find((t) => t.id === currentMystere?.theme_id);
-
-  // Reset state on mystere change
-  useEffect(() => {
-    setQuestionIndex(0);
-    setShowTreasure(false);
-    setFilledHoles(0);
-    setShowExplanation(false);
-    setChoiceState({});
-    setQuestionAnswered(false);
-    const key = `mystere_liberated_${mysteres[mystereIndex]?.id}`;
-    setIsLiberated(localStorage.getItem(key) === "true");
-    resetTimer();
-  }, [mystereIndex, mysteres, resetTimer]);
-
-  // Reset choice state on question change
-  useEffect(() => {
-    setShowExplanation(false);
-    setChoiceState({});
-    setQuestionAnswered(false);
-    resetTimer();
-  }, [questionIndex, resetTimer]);
-
-  // ── Handlers ──────────────────────────────────────────────────────────────────
-
-  const handleAnswer = useCallback(
-    (choice: string) => {
-      if (questionAnswered || isLocked) return;
-
-      if (choice === currentQuestion.correct_answer) {
-        // CORRECT
-        setChoiceState({ [choice]: "correct" });
-        setFilledHoles((h) => Math.min(h + 1, 4));
-        confetti({
-          particleCount: 50,
-          spread: 60,
-          origin: { y: 0.35, x: 0.5 },
-          colors: ["#fdb813", "#ffffff", "#ffea00"],
-          disableForReducedMotion: true,
-          gravity: 1.2,
-          ticks: 80,
-          zIndex: 50
-        });
-        setPoints((p) => {
-          const newP = p + 10;
-          localStorage.setItem("mystere_points", String(newP));
-          return newP;
-        });
-        setQuestionAnswered(true);
-
-        // Auto-advance logic
-        if (questionIndex < questions.length - 1) {
-          setPreviousExplanation({
-            text: currentQuestion.explication,
-            questionNum: questionIndex + 1,
-          });
-          setTimeout(() => goNextQuestion(), 1500); // auto advance after 1.5s
-        } else {
-          // For the final question, we still show the explanation card before the Treasure
-          setTimeout(() => setShowExplanation(true), 600);
-        }
-      } else {
-        // WRONG
-        setChoiceState((prev) => ({ ...prev, [choice]: "wrong" }));
-        const newLives = lives - 1;
-        setLives(newLives);
-        localStorage.setItem("mystere_lives", String(newLives));
-        setShakeLives(true);
-        setTimeout(() => setShakeLives(false), 500);
-        if (newLives <= 0) {
-          localStorage.setItem("mystere_lock_time", String(Date.now()));
-          setTimeout(() => setIsLocked(true), 800);
-        }
-      }
-    },
-    [currentQuestion, lives, questionAnswered, isLocked]
-  );
-
-  const goNextQuestion = useCallback(() => {
-    if (questionIndex >= 3) {
-      setShowTreasure(true);
-    } else {
-      setQuestionIndex((i) => i + 1);
-    }
-  }, [questionIndex]);
-
-  const goNextMystere = useCallback(() => {
-    setMystereIndex((i) => (i + 1) % mysteres.length);
-  }, [mysteres.length]);
-
-  const goPrevMystere = useCallback(() => {
-    setMystereIndex((i) => (i - 1 + mysteres.length) % mysteres.length);
-  }, [mysteres.length]);
-
-  const handleLiberate = useCallback(async () => {
-    const key = `mystere_liberated_${currentMystere?.id}`;
-    localStorage.setItem(key, "true");
-    setIsLiberated(true);
-    setPoints((p) => {
-      const newP = p + 10;
-      localStorage.setItem("mystere_points", String(newP));
-      return newP;
-    });
-    toast.success("✨ Trésor libéré ! +10 pts Bonus");
-    await confetti(document.createElement("canvas"), {
-      particleCount: 160,
-      spread: 90,
-      origin: { y: 0.5 },
-      colors: ["#fdb813", "#a0412d", "#5c3c35", "#FCD116", "#E8112D"],
-    });
-  }, [currentMystere]);
-
-  const handlePowerWord = (word: string) => {
-    if (word.trim().toLowerCase() === "benin") {
-      localStorage.removeItem("mystere_lock_time");
-      localStorage.setItem("mystere_lives", "8");
-      setLives(8);
-      setIsLocked(false);
-      toast.success("🔐 Jarre déverrouillée !");
-    } else {
-      toast.error("❌ Mot de pouvoir incorrect");
+  // Handler pour revenir (Swipe à l'intérieur du jeu)
+  const handleExitSwipe = (event: any, info: any) => {
+    // Si le swipe vers le bas est assez fort (> 100px)
+    if (info.offset.y > 100 || Math.abs(info.offset.x) > 150) {
+      setView("gallery");
     }
   };
 
-  // ── Swipe handlers ────────────────────────────────────────────────────────────
-
-  const handleDragEnd = useCallback(
-    (_: unknown, info: { offset: { x: number; y: number } }) => {
-      const THRESHOLD = 70;
-      if (Math.abs(info.offset.x) > Math.abs(info.offset.y)) {
-        // Horizontal swipe → change mystere
-        if (info.offset.x < -THRESHOLD) goNextMystere();
-        else if (info.offset.x > THRESHOLD) goPrevMystere();
-      } else {
-        // Vertical swipe ↑ → next question (only if answered)
-        if (info.offset.y < -THRESHOLD && questionAnswered) goNextQuestion();
-      }
-    },
-    [goNextMystere, goPrevMystere, goNextQuestion, questionAnswered]
-  );
-
-  // ── Render ────────────────────────────────────────────────────────────────────
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: "#faf9f8" }}>
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 rounded-full animate-spin border-4 border-[#a0412d] border-t-transparent" />
-          <p className="text-sm text-gray-400 tracking-widest uppercase">Invocation en cours…</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!currentMystere) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: "#faf9f8" }}>
-        <p className="text-gray-400">Aucun mystère trouvé.</p>
-      </div>
-    );
-  }
-
-  const choices = [
-    { letter: "A", text: currentQuestion?.choice_a },
-    { letter: "B", text: currentQuestion?.choice_b },
-    { letter: "C", text: currentQuestion?.choice_c },
-    { letter: "D", text: currentQuestion?.choice_d },
-  ];
+  if (loading) return null;
 
   return (
-    <div
-      className="min-h-screen flex flex-col items-center pt-8 md:pt-12 pb-28 md:pb-10 px-4 relative overflow-x-hidden"
-      style={{ background: "#faf9f8", fontFamily: "'Inter', sans-serif" }}
-    >
-      {/* Navigation and layout are handled differently below */}
+    <div className="h-screen w-screen bg-[#faf9f8] overflow-hidden touch-none">
+      <Toaster position="top-center" />
 
-      {/* ── Main swipeable area ──────────────────────────────────────────── */}
       <AnimatePresence mode="wait">
-        <motion.div
-          key={mystereIndex}
-          onPanEnd={handleDragEnd}
-          initial={{ opacity: 0, x: 40 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -40 }}
-          transition={{ duration: 0.4, ease: [0.21, 0.47, 0.32, 0.98] }}
-          className="w-full max-w-2xl flex flex-col items-center cursor-grab active:cursor-grabbing select-none"
-        >
-          {/* ── Title ──────────────────────────────────────────── */}
-          <div className="text-center mb-4 md:mb-8 flex flex-col items-center">
-            <h1
-              className="text-2xl md:text-3xl font-extrabold leading-tight mb-4 px-2"
-              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#a0412d" }}
-            >
-              {currentMystere.titre}
-            </h1>
-          </div>
+        {view === "gallery" ? (
+          /* ─── GALERIE MODE SWIPE HORIZONTAL ─── */
+          <motion.div 
+            key="gallery"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="h-full flex flex-col items-center justify-center"
+          >
+            <div className="relative w-full max-w-sm h-[500px] flex items-center justify-center">
+              {mysteres.map((m, i) => {
+                // Logique pour n'afficher que la carte courante, la précédente et la suivante
+                if (Math.abs(i - currentIndex) > 1) return null;
 
-          {/* ── Dashboard (The Ancestral Time) ────────────────────────────── */}
-          <div className="w-full mb-6 md:mb-12 px-2">
-            <div className="grid grid-cols-3 items-center gap-1 md:gap-4">
-              
-              {/* Left Column: The Past (Timer) */}
-              <div className="flex flex-col items-center justify-center order-1">
-                <p className="text-[10px] uppercase tracking-widest text-gray-400 mb-6 font-bold hidden md:block">Le Sablier du Destin</p>
-                <HourglassTimer timeLeft={timeLeft} isFlipping={isFlipping} />
-              </div>
-
-              {/* Center Column: The Present (Jar) */}
-              <div className="relative flex items-center justify-center h-[220px] md:h-[300px] order-2">
-                <div className="scale-[0.8] md:scale-110 origin-center absolute flex items-center justify-center">
-                  <SacredJar filledHoles={filledHoles} />
-                </div>
-              </div>
-
-              {/* Right Column: The Future (Stats) */}
-              <div className="flex flex-col items-center justify-center gap-4 md:gap-6 order-3">
-                <div className="flex flex-col items-center gap-2 md:gap-3">
-                  <p className="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-1 hidden md:block">Graines Sacrées</p>
-                  <div className="scale-[0.8] md:scale-100">
-                    <LifeBar lives={lives} shake={shakeLives} />
-                  </div>
-                </div>
-
-                <motion.div
-                  key={points}
-                  initial={{ scale: 1.2 }}
-                  animate={{ scale: 1 }}
-                  className="px-3 md:px-6 py-2 md:py-2.5 rounded-xl md:rounded-2xl text-[10px] md:text-sm font-black shadow-lg flex items-center gap-1 md:gap-2 border border-[#fdb813]/20"
-                  style={{ 
-                    background: "linear-gradient(135deg, #5c3c35, #3d1810)", 
-                    color: "#fdb813", 
-                    fontFamily: "'Plus Jakarta Sans', sans-serif" 
-                  }}
-                >
-                  <span className="text-base md:text-lg">⭐</span>
-                  <span>{points.toLocaleString()}</span>
-                </motion.div>
-              </div>
-
-            </div>
-          </div>
-
-          {/* ── Locked ───────────────────────────────────────────────────── */}
-          {isLocked ? (
-            <LockedScreen onPowerWord={handlePowerWord} />
-          ) : showTreasure ? (
-            /* ── Treasure Card ────────────────────────────────────────── */
-            <TreasureCard
-              mystere={currentMystere}
-              points={points}
-              onLiberate={handleLiberate}
-              isLiberated={isLiberated}
-            />
-          ) : (
-            /* ── Question + Choices ──────────────────────────────────── */
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={`q-${questionIndex}`}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.35 }}
-                className="w-full"
-              >
-                {/* Question text */}
-                {currentQuestion && (
-                  <div className="mb-6 text-center px-2">
-                    <h2
-                      className="text-lg md:text-xl font-bold leading-snug"
-                      style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#303333" }}
-                    >
-                      {currentQuestion.question_text}
-                    </h2>
-                  </div>
-                )}
-
-                {/* Explanation card (after correct answer) */}
-                {showExplanation && currentQuestion ? (
-                  <ExplanationCard
-                    text={currentQuestion.explication}
-                    questionNum={questionIndex + 1}
-                    onContinue={goNextQuestion}
-                  />
-                ) : (
-                  /* Choices grid */
-                  currentQuestion && (
-                    <div className="flex flex-col items-center w-full">
-                      <div className="grid grid-cols-2 gap-2 md:gap-3 w-full">
-                        {choices.map(({ letter, text }) => {
-                          if (!text) return null;
-                          const state = choiceState[letter] || "idle";
-                          return (
-                            <ChoiceButton
-                              key={letter}
-                              letter={letter}
-                              text={text}
-                              state={state}
-                              onClick={() => handleAnswer(letter)}
-                              disabled={questionAnswered}
-                            />
-                          );
-                        })}
+                return (
+                  <motion.div
+                    key={m.id}
+                    drag="x"
+                    dragConstraints={{ left: 0, right: 0 }}
+                    onDragEnd={(e, info) => {
+                      if (info.offset.x < -50) handleGallerySwipe(-1);
+                      if (info.offset.x > 50) handleGallerySwipe(1);
+                    }}
+                    onClick={() => {
+                        if (Math.abs(i - currentIndex) === 0) setView("game");
+                    }}
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ 
+                      x: (i - currentIndex) * 320, 
+                      scale: i === currentIndex ? 1 : 0.85,
+                      opacity: i === currentIndex ? 1 : 0.4,
+                      zIndex: i === currentIndex ? 10 : 0
+                    }}
+                    className="absolute w-[300px] h-[450px] bg-white rounded-[32px] shadow-2xl border-8 border-white overflow-hidden cursor-pointer"
+                  >
+                    <img src={getImageUrl(m.mystere_number)} className="h-2/3 w-full object-cover" />
+                    <div className="p-6">
+                      <h2 className="text-[#a0412d] font-black text-xl uppercase leading-tight">{m.title}</h2>
+                      <p className="text-gray-400 text-sm mt-1">{m.subtitle}</p>
+                      <div className="mt-4 flex items-center gap-2">
+                        <span className="text-[10px] bg-orange-100 text-orange-700 px-2 py-1 rounded-full font-bold">MYSTÈRE #{m.mystere_number}</span>
                       </div>
-
-                      {/* Explication de la question précédente */}
-                      <AnimatePresence>
-                        {previousExplanation && !questionAnswered && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: "auto" }}
-                            exit={{ opacity: 0, height: 0 }}
-                            className="mt-6 w-full max-w-[300px] text-center border-t border-[#a0412d]/10 pt-4"
-                          >
-                            <p className="text-[10px] font-bold text-[#a0412d] uppercase tracking-widest mb-1.5 flex items-center justify-center gap-1">
-                              <span>📖</span> Révélation (Épreuve {previousExplanation.questionNum})
-                            </p>
-                            <p className="text-xs text-gray-500 leading-relaxed">
-                              {previousExplanation.text}
-                            </p>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
                     </div>
-                  )
-                )}
-              </motion.div>
-            </AnimatePresence>
-          )}
-        </motion.div>
-      </AnimatePresence>
+                  </motion.div>
+                );
+              })}
+            </div>
+            <p className="mt-8 text-gray-400 text-xs font-medium animate-pulse">SWIPE POUR EXPLORER • CLICK POUR OUVRIR</p>
+          </motion.div>
 
+        ) : (
+          /* ─── MODE JEU / MYSTÈRE OUVERT ─── */
+          <motion.div 
+            key="game"
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            drag="y"
+            dragConstraints={{ top: 0 }}
+            onDragEnd={handleExitSwipe}
+            className="absolute inset-0 bg-white z-50 flex flex-col p-6"
+          >
+            {/* Petit indicateur de swipe pour l'utilisateur */}
+            <div className="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-8" />
+            
+            <header className="flex justify-between items-center mb-8">
+              <div>
+                <h3 className="text-[#a0412d] font-black uppercase">{mysteres[currentIndex].title}</h3>
+                <p className="text-xs text-gray-400">Glissez vers le bas pour quitter</p>
+              </div>
+              <div className="text-orange-500 font-bold">⭐ 0 pts</div>
+            </header>
+
+            {/* Contenu du jeu (Questions, Sablier, Jarre...) */}
+            <div className="flex-1 overflow-y-auto">
+               <p className="italic text-center text-gray-600 mb-8 px-4">
+                 "{mysteres[currentIndex].mise_en_abyme}"
+               </p>
+               
+               {/* Ici ta logique de SacredJar et Questions */}
+               <div className="flex flex-col items-center gap-10">
+                 <HourglassTimer timeLeft={60} isFlipping={false} />
+                 {/* ... Logique des questions ... */}
+               </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
