@@ -36,7 +36,8 @@ export default function SatoChallengePage() {
   };
 
   return (
-    <main className="w-full max-w-screen-lg px-6 flex flex-col items-center justify-center min-h-screen bg-[#faf9f8] text-[#303333]">
+    <>
+      <main className="w-full max-w-screen-lg px-6 flex flex-col items-center justify-center min-h-screen bg-[#faf9f8] text-[#303333]">
       {/* Immersive Visual Section */}
       <div className="relative w-full flex justify-center items-center mb-16 h-80">
         {/* Background Bloom */}
@@ -106,25 +107,28 @@ export default function SatoChallengePage() {
       </div>
 
       {/* Question Section */}
-      <div className="text-center mb-16 max-w-2xl px-8">
+      <div className="text-center mb-20 max-w-2xl px-12">
         <h2 className="text-xl md:text-2xl font-bold" style={{fontFamily: 'Plus Jakarta Sans, sans-serif', lineHeight: '2.2'}}>
           Quelle est la fonction principale du tambour Sato lors des rites agraires ?
         </h2>
       </div>
 
       {/* Answer Buttons Grid */}
-      <div className="w-full max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
+      <div className="w-full max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
         {['A', 'B', 'C', 'D'].map((answer) => (
           <motion.button
             key={answer}
             data-answer={answer}
             onClick={() => handleAnswer(answer)}
-            className="bg-white py-6 px-8 rounded-lg shadow-sm hover:shadow-md hover:bg-[#a0412d] hover:text-white transition-all duration-300"
+            className="bg-[#f4f3f2] py-8 px-10 rounded-xl shadow-sm hover:shadow-lg hover:bg-[#ffac9b] hover:text-white transition-all duration-300 border-0"
             style={{fontFamily: 'Inter, sans-serif', lineHeight: '2.2', color: '#303333'}}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            {answer}
+            <span className="flex items-center justify-center gap-3">
+              <span className="w-8 h-8 rounded-full bg-[#ffac9b] text-white flex items-center justify-center font-bold text-sm" style={{fontFamily: 'Plus Jakarta Sans, sans-serif'}}>{answer}</span>
+              <span className="text-lg">Réponse {answer}</span>
+            </span>
           </motion.button>
         ))}
       </div>
@@ -201,6 +205,24 @@ export default function SatoChallengePage() {
           </motion.div>
         )}
       </AnimatePresence>
-    </main>
+      </main>
+      
+      {/* Bottom Navigation - Glass Rule */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-[#faf9f8]/80 backdrop-blur-xl shadow-lg" style={{boxShadow: '0 4px 20px rgba(160, 65, 45, 0.08)'}}>
+        <div className="max-w-screen-lg mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-8">
+              <a href="/referents" className="text-[#303333] hover:text-[#a0412d] transition-colors" style={{fontFamily: 'Inter, sans-serif', fontWeight: '500'}}>Référents</a>
+              <a href="/mysteres" className="text-[#303333] hover:text-[#a0412d] transition-colors" style={{fontFamily: 'Inter, sans-serif', fontWeight: '500'}}>Mystères</a>
+              <a href="/talents" className="text-[#303333] hover:text-[#a0412d] transition-colors" style={{fontFamily: 'Inter, sans-serif', fontWeight: '500'}}>Talents</a>
+              <a href="/tresors" className="text-[#303333] hover:text-[#a0412d] transition-colors" style={{fontFamily: 'Inter, sans-serif', fontWeight: '500'}}>Trésors</a>
+            </div>
+            <a href="/connexion" className="bg-white py-2 px-6 rounded-full shadow-sm hover:shadow-md hover:bg-[#a0412d] hover:text-white transition-all duration-300" style={{fontFamily: 'Inter, sans-serif', fontWeight: '500', color: '#303333'}}>
+              Connexion
+            </a>
+          </div>
+        </div>
+      </nav>
+    </>
   );
 }
