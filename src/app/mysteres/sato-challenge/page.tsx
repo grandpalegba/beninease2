@@ -48,9 +48,9 @@ export default function SatoChallengePage() {
         {/* SECTION INSTRUMENTS : Centrage vertical par rapport à la Jarre */}
         <div className="w-full flex justify-between items-center mb-20 px-10 h-[400px]">
           
-          {/* 1. OKPELE (Taille Parfaite) */}
+          {/* 1. OKPELE (Taille Parfaite - Inchangée) */}
           <div className="relative w-36 flex flex-col items-center scale-[0.85] origin-center">
-            {/* Chaîne arquée au-dessus du trait d'alignement */}
+            {/* Chaîne arquée */}
             <svg className="absolute -top-12 w-28 h-16 z-0" viewBox="0 0 100 60">
               <path 
                 d="M 15 60 Q 50 5 85 60" 
@@ -88,7 +88,7 @@ export default function SatoChallengePage() {
             </div>
           </div>
 
-          {/* 2. JARRE SATO (Pivot de centrage) */}
+          {/* 2. JARRE SATO (Pivot de centrage - Inchangée) */}
           <div className="relative w-72 h-[360px] z-10">
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-40 h-10 bg-[#3d1810] rounded-[50%] shadow-inner border-4 border-[#a0412d]/20 z-0"></div>
             <div className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden"
@@ -107,23 +107,26 @@ export default function SatoChallengePage() {
             </div>
           </div>
 
-          {/* 3. AWALE VERTICAL : Alignement strict sur l'Okpele */}
-          <div className="relative flex bg-[#3d1810] p-3 rounded-2xl shadow-xl border-2 border-[#2a100a] scale-[0.85] origin-center h-[178px]">
-            <div className="flex flex-col justify-between">
+          {/* 3. AWALE VERTICAL : Dimensions parfaites restaurées, position verticale centrée */}
+          <div className="relative flex bg-[#3d1810] p-3 rounded-2xl shadow-xl border-2 border-[#2a100a] scale-[0.85] origin-center">
+            {/* Trou G (Dimensions restaurées) */}
+            <div className="flex flex-col gap-3">
               {[0, 1, 2, 3].map(i => (
                 <div key={i} className="w-10 h-10 bg-black/60 rounded-full shadow-inner border border-black/30 flex items-center justify-center gap-1">
                   {[...Array(awaleBoard[i])].map((_, s) => (
-                    <div key={s} className="w-2 h-2 rounded-full bg-[#FFD700] shadow-[0_0_8px_#FFD700]" />
+                    <div key={s} className="w-2.5 h-2.5 rounded-full bg-[#FFD700] shadow-[0_0_8px_#FFD700]" />
                   ))}
                 </div>
               ))}
             </div>
+            {/* Séparation */}
             <div className="mx-2.5 w-[1.5px] bg-gradient-to-b from-transparent via-[#2a100a] to-transparent"></div>
-            <div className="flex flex-col justify-between">
+            {/* Trou D (Dimensions restaurées) */}
+            <div className="flex flex-col gap-3">
               {[4, 5, 6, 7].map(i => (
                 <div key={i} className="w-10 h-10 bg-black/60 rounded-full shadow-inner border border-black/30 flex items-center justify-center gap-1">
                   {[...Array(awaleBoard[i])].map((_, s) => (
-                    <div key={s} className="w-2 h-2 rounded-full bg-[#FFD700] shadow-[0_0_8px_#FFD700]" />
+                    <div key={s} className="w-2.5 h-2.5 rounded-full bg-[#FFD700] shadow-[0_0_8px_#FFD700]" />
                   ))}
                 </div>
               ))}
@@ -158,4 +161,5 @@ export default function SatoChallengePage() {
       </main>
     </div>
   );
+}
 }
