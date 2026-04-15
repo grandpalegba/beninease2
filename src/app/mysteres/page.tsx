@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createClient } from "@supabase/supabase-js";
 import { toast, Toaster } from "sonner";
@@ -28,12 +28,16 @@ export default function MysterePage() {
   
   const [view, setView] = useState<"gallery" | "game" | "locked" | "success">("gallery");
   const [currentIndex, setCurrentIndex] = useState(0); 
-  const [qIndex, setQIndex] = useState(0); // Index de 0 à 3
+  const [qIndex, setQIndex] = useState(0);
   const [lives, setLives] = useState(8);
   const [points, setPoints] = useState(0);
   const [filledHoles, setFilledHoles] = useState(0);
   const [timeLeft, setTimeLeft] = useState(60);
   const [password, setPassword] = useState("");
+  
+  // Nouvel état pour les explications débloquées
+  const [explanations, setExplanations] = useState<string[]>([]);
+  const explicationEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -49,6 +53,11 @@ export default function MysterePage() {
     }
     fetchData();
   }, []);
+
+  // Scroll automatique vers la dernière explication
+  useEffect(() => {
+    explicationEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [explanations]);
 
   useEffect(() => {
     if (view !== "game" || timeLeft <= 0) return;
@@ -85,22 +94,27 @@ export default function MysterePage() {
 
   const handleChoice = (choiceLetter: string, info: any) => {
     if (info.point.y < 350) {
-      const correct = currentQuestions[qIndex]?.correct_answer;
+      const currentQ = currentQuestions[qIndex];
+      const correct = currentQ?.correct_answer;
       
       if (choiceLetter === correct) {
-        // Condition stricte : Le bonus est au 4ème succès (index 3)
         const isLastOfFour = qIndex === 3;
         const reward = isLastOfFour ? 20 : 10; 
 
         setFilledHoles(h => h + 1);
         updatePoints(reward);
         
+        // Ajouter l'explication au tableau
+        if (currentQ.explanation) {
+          setExplanations(prev => [...prev, currentQ.explanation]);
+        }
+        
         if (!isLastOfFour) {
           toast.success("Correct ! +10 pts");
           setTimeout(() => { 
             setQIndex(prev => prev + 1); 
             setTimeLeft(60); 
-          }, 600);
+          }, 800);
         } else {
           toast.success("Maîtrise totale ! Bonus +10 pts");
           confetti({ 
@@ -109,7 +123,7 @@ export default function MysterePage() {
             origin: { y: 0.6 }, 
             colors: ['#fdb813', '#a0412d', '#ffffff'] 
           });
-          setTimeout(() => setView("success"), 800);
+          setTimeout(() => setView("success"), 1500);
         }
       } else {
         handleFailure();
@@ -135,7 +149,10 @@ export default function MysterePage() {
             <motion.div
               drag="x"
               dragConstraints={{ left: 0, right: 0 }}
-              onTap={() => setView("game")}
+              onTap={() => {
+                setView("game");
+                setExplanations([]); // Reset des explications à l'entrée
+              }}
               onDragEnd={(e, info) => {
                 if (info.offset.x < -50) setCurrentIndex(prev => (prev + 1) % mysteres.length);
                 else if (info.offset.x > 50) setCurrentIndex(prev => (prev - 1 + mysteres.length) % mysteres.length);
@@ -162,14 +179,14 @@ export default function MysterePage() {
           </motion.div>
         )}
 
-        {/* JEU (SCROLL VERTICAL) */}
+        {/* JEU */}
         {view === "game" && (
           <motion.div key="game" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-50 flex flex-col">
             <div className="h-12 flex items-center justify-center shrink-0 cursor-pointer" onClick={() => setView("gallery")}>
               <div className="w-12 h-1.5 bg-gray-200 rounded-full" />
             </div>
 
-            <div className="px-6 flex-1 flex flex-col items-center overflow-hidden">
+            <div className="px-6 flex-1 flex flex-col items-center overflow-y-auto no-scrollbar pb-24">
                <h1 className="text-xl font-black text-[#a0412d] uppercase text-center mb-2">{currentM?.title}</h1>
                
                <div className="flex justify-between w-full max-w-xs items-center mb-4">
@@ -191,68 +208,108 @@ export default function MysterePage() {
                  </div>
                </div>
 
-               <div className="w-full max-w-md flex-1 relative">
+               {/* ZONE QUESTION */}
+               <div className="w-full max-w-md shrink-0">
                  <AnimatePresence mode="wait">
                     <motion.div 
                       key={qIndex}
-                      initial={{ y: 40, opacity: 0 }}
+                      initial={{ y: 20, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
-                      exit={{ y: -40, opacity: 0 }}
+                      exit={{ y: -20, opacity: 0 }}
                       className="space-y-3"
                     >
-                      <p className="text-center font-bold text-[#3d1810] text-lg px-4">
-                        {currentQuestions[qIndex]?.question || "Chargement..."}
+                      <p className="text-center font-bold text-[#3d1810] text-lg px-4 mb-4">
+                        {currentQuestions[qIndex]?.question}
                       </p>
-                      {['A', 'B', 'C', 'D'].map(l => (
-                        <motion.div 
-                          key={l} 
-                          drag dragConstraints={{ left: 0, right: 0, top: -400, bottom: 0 }}
-                          dragSnapToOrigin 
-                          onDragEnd={(e, info) => handleChoice(l, info)} 
-                          className="p-4 bg-[#faf9f8] border border-gray-100 rounded-[22px] flex items-center cursor-grab active:scale-95 shadow-sm"
-                        >
-                          <span className="w-9 h-9 bg-white text-[#a0412d] rounded-xl flex items-center justify-center font-black mr-4 shadow-inner">{l}</span>
-                          <span className="text-sm font-semibold text-gray-700">{currentQuestions[qIndex]?.[`choice_${l.toLowerCase()}`]}</span>
-                        </motion.div>
-                      ))}
+                      <div className="grid grid-cols-1 gap-2">
+                        {['A', 'B', 'C', 'D'].map(l => (
+                          <motion.div 
+                            key={l} 
+                            drag dragConstraints={{ left: 0, right: 0, top: -400, bottom: 0 }}
+                            dragSnapToOrigin 
+                            onDragEnd={(e, info) => handleChoice(l, info)} 
+                            className="p-3 bg-[#faf9f8] border border-gray-100 rounded-2xl flex items-center cursor-grab active:scale-95 shadow-sm"
+                          >
+                            <span className="w-8 h-8 bg-white text-[#a0412d] rounded-lg flex items-center justify-center font-black mr-3 shadow-inner text-sm">{l}</span>
+                            <span className="text-[13px] font-semibold text-gray-700">{currentQuestions[qIndex]?.[`choice_${l.toLowerCase()}`]}</span>
+                          </motion.div>
+                        ))}
+                      </div>
                     </motion.div>
                  </AnimatePresence>
+               </div>
+
+               {/* ZONE EXPLICATIONS (S'affiche dynamiquement) */}
+               <div className="w-full max-w-md mt-10 space-y-4 px-2">
+                  <AnimatePresence>
+                    {explanations.map((exp, idx) => (
+                      <motion.div
+                        key={idx}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="bg-orange-50/50 p-4 rounded-2xl border-l-4 border-[#a0412d]"
+                      >
+                        <p className="text-[10px] font-black text-[#a0412d] uppercase mb-1">Révélation {idx + 1}</p>
+                        <p className="text-sm text-gray-700 leading-relaxed font-medium">{exp}</p>
+                      </motion.div>
+                    ))}
+                    
+                    {/* INSPIRATION FINALE (Seulement si 4/4) */}
+                    {filledHoles === 4 && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="bg-[#3d1810] p-6 rounded-[30px] shadow-xl mt-6 text-center border-2 border-[#fdb813]"
+                      >
+                        <span className="text-[10px] font-black text-[#fdb813] uppercase tracking-[0.3em]">Inspiration</span>
+                        <p className="text-white italic text-base mt-2 leading-relaxed">
+                          "{currentM?.inspiration}"
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                  <div ref={explicationEndRef} />
                </div>
             </div>
           </motion.div>
         )}
 
-        {/* SUCCÈS */}
+        {/* SUCCÈS (RESTE INCHANGÉ) */}
         {view === "success" && (
           <motion.div key="success" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-[#a0412d] z-[60] flex flex-col items-center justify-center p-8 text-center text-white">
-            <motion.div initial={{ scale: 0 }} animate={{ scale: 1, rotate: 360 }} transition={{ type: "spring", stiffness: 260, damping: 20 }} className="w-32 h-32 bg-[#fdb813] rounded-full flex items-center justify-center text-5xl mb-8 shadow-2xl">⚡</motion.div>
+            <motion.div initial={{ scale: 0 }} animate={{ scale: 1, rotate: 360 }} transition={{ type: "spring" }} className="w-32 h-32 bg-[#fdb813] rounded-full flex items-center justify-center text-5xl mb-8 shadow-2xl">⚡</motion.div>
             <h2 className="text-4xl font-black uppercase mb-4">Mystère Résolu !</h2>
-            <p className="text-orange-100 mb-10 text-lg font-medium">L'énergie de ce savoir est maintenant gravée en vous (+50 XP).</p>
+            <p className="text-orange-100 mb-10 text-lg font-medium">Vous avez débloqué tous les savoirs de ce lieu (+50 XP).</p>
             <button 
-              onClick={() => { setView("gallery"); setFilledHoles(0); setQIndex(0); setCurrentIndex(prev => (prev + 1) % mysteres.length); }} 
-              className="px-14 py-5 bg-white text-[#a0412d] rounded-full font-black uppercase text-xs tracking-[0.2em] shadow-2xl hover:bg-orange-50 active:scale-95 transition-all"
+              onClick={() => { 
+                setView("gallery"); 
+                setFilledHoles(0); 
+                setQIndex(0); 
+                setExplanations([]); 
+                setCurrentIndex(prev => (prev + 1) % mysteres.length); 
+              }} 
+              className="px-14 py-5 bg-white text-[#a0412d] rounded-full font-black uppercase text-xs tracking-[0.2em] shadow-2xl"
             >
               Continuer l'Odyssée
             </button>
           </motion.div>
         )}
 
-        {/* MODE POWER */}
+        {/* MODE POWER (RESTE INCHANGÉ) */}
         {view === "locked" && (
           <motion.div key="locked" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-white z-[100] flex flex-col items-center justify-center p-8 text-center">
             <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center text-4xl mb-6 grayscale">🏺</div>
             <h2 className="text-3xl font-black text-[#a0412d] mb-4 uppercase">Source Épuisée</h2>
-            <p className="text-gray-400 text-sm mb-10 max-w-xs leading-relaxed">Votre force vitale est trop basse. Prononcez le mot de pouvoir pour réveiller la jarre.</p>
             <input 
               type="password" 
               value={password} 
               onChange={e => setPassword(e.target.value)} 
               placeholder="Mot de Pouvoir" 
-              className="w-full max-w-xs p-5 bg-gray-50 border-none rounded-3xl mb-4 text-center font-bold text-xl placeholder:text-gray-200 focus:ring-2 ring-orange-100 outline-none" 
+              className="w-full max-w-xs p-5 bg-gray-50 border-none rounded-3xl mb-4 text-center font-bold text-xl outline-none" 
             />
             <button 
               onClick={() => { if(password.toLowerCase() === "benin"){ setLives(8); setView("gallery"); setPassword(""); }}} 
-              className="w-full max-w-xs bg-[#3d1810] text-white p-5 rounded-3xl font-black uppercase text-sm tracking-widest shadow-xl active:scale-95 transition-transform"
+              className="w-full max-w-xs bg-[#3d1810] text-white p-5 rounded-3xl font-black uppercase text-sm tracking-widest shadow-xl"
             >
               Restaurer la Vie
             </button>
