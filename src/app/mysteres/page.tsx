@@ -28,7 +28,7 @@ export default function MysterePage() {
   
   const [view, setView] = useState<"gallery" | "game" | "locked" | "success">("gallery");
   const [currentIndex, setCurrentIndex] = useState(0); 
-  const [qIndex, setQIndex] = useState(0);
+  const [qIndex, setQIndex] = useState(0); // Index de 0 à 3
   const [lives, setLives] = useState(8);
   const [points, setPoints] = useState(0);
   const [filledHoles, setFilledHoles] = useState(0);
@@ -76,7 +76,7 @@ export default function MysterePage() {
   };
 
   const handleFailure = () => {
-    toast.error("Énergie dissipée...");
+    toast.error("L'esprit s'assombrit...");
     setLives(l => {
       if (l <= 1) { setView("locked"); return 0; }
       return l - 1;
@@ -88,27 +88,26 @@ export default function MysterePage() {
       const correct = currentQuestions[qIndex]?.correct_answer;
       
       if (choiceLetter === correct) {
-        setFilledHoles(h => h + 1);
-        
-        // Logique de points corrigée
-        const isLast = qIndex === currentQuestions.length - 1;
-        const pointsToGains = isLast ? 20 : 10; // 10 points normaux + 10 bonus si c'est la fin
+        // Condition stricte : Le bonus est au 4ème succès (index 3)
+        const isLastOfFour = qIndex === 3;
+        const reward = isLastOfFour ? 20 : 10; 
 
-        updatePoints(pointsToGains);
+        setFilledHoles(h => h + 1);
+        updatePoints(reward);
         
-        if (!isLast) {
+        if (!isLastOfFour) {
           toast.success("Correct ! +10 pts");
           setTimeout(() => { 
-            setQIndex(i => i + 1); 
+            setQIndex(prev => prev + 1); 
             setTimeLeft(60); 
           }, 600);
         } else {
-          toast.success("Mystère résolu ! Bonus +10 pts");
+          toast.success("Maîtrise totale ! Bonus +10 pts");
           confetti({ 
-            particleCount: 150, 
-            spread: 70, 
+            particleCount: 200, 
+            spread: 90, 
             origin: { y: 0.6 }, 
-            colors: ['#fdb813', '#a0412d'] 
+            colors: ['#fdb813', '#a0412d', '#ffffff'] 
           });
           setTimeout(() => setView("success"), 800);
         }
@@ -130,7 +129,7 @@ export default function MysterePage() {
 
       <AnimatePresence mode="wait">
         
-        {/* --- GALERIE DES MYSTÈRES --- */}
+        {/* GALERIE */}
         {view === "gallery" && (
           <motion.div key="gallery" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full flex flex-col items-center justify-center p-6">
             <motion.div
@@ -146,63 +145,63 @@ export default function MysterePage() {
               <img src={currentM?.cover_image_url} className="h-1/2 w-full object-cover pointer-events-none" alt={currentM?.title}/>
               <div className="p-6 flex flex-col justify-between h-1/2 pointer-events-none">
                 <div>
-                  <h2 className="text-xl font-black text-[#3d1810] uppercase">{currentM?.title}</h2>
-                  <p className="text-[10px] font-bold text-[#a0412d] mt-1 italic uppercase">{currentM?.subtitle}</p>
+                  <h2 className="text-xl font-black text-[#3d1810] uppercase leading-tight">{currentM?.title}</h2>
+                  <p className="text-[10px] font-bold text-[#a0412d] mt-1 italic uppercase tracking-wider">{currentM?.subtitle}</p>
                 </div>
                 <p className="text-[12px] text-gray-500 italic leading-relaxed line-clamp-4">"{currentM?.mise_en_abyme}"</p>
                 <div className="pt-4 border-t border-gray-100 flex justify-between items-center">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase">Mystère n°{currentIndex + 1}</span>
-                  <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center">✨</div>
+                  <span className="text-[9px] font-black text-gray-300 uppercase">Mystère n°{currentIndex + 1}</span>
+                  <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center">🏺</div>
                 </div>
               </div>
             </motion.div>
             <div className="mt-8 text-center">
-                <span className="text-lg font-black text-[#a0412d]">⭐ {points} XP</span>
-                <p className="text-[9px] text-gray-400 uppercase tracking-widest mt-2">Cliquez pour explorer le mystère</p>
+                <span className="text-xl font-black text-[#a0412d]">⭐ {points} XP</span>
+                <p className="text-[9px] text-gray-400 uppercase tracking-[0.2em] mt-2 animate-pulse">Swipe pour naviguer • Tap pour entrer</p>
             </div>
           </motion.div>
         )}
 
-        {/* --- PHASE DE JEU --- */}
+        {/* JEU (SCROLL VERTICAL) */}
         {view === "game" && (
           <motion.div key="game" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-50 flex flex-col">
-            <div className="h-12 flex items-center justify-center shrink-0" onClick={() => setView("gallery")}>
+            <div className="h-12 flex items-center justify-center shrink-0 cursor-pointer" onClick={() => setView("gallery")}>
               <div className="w-12 h-1.5 bg-gray-200 rounded-full" />
             </div>
 
             <div className="px-6 flex-1 flex flex-col items-center overflow-hidden">
-               <h1 className="text-xl font-black text-[#a0412d] uppercase text-center">{currentM?.title}</h1>
+               <h1 className="text-xl font-black text-[#a0412d] uppercase text-center mb-2">{currentM?.title}</h1>
                
-               <div className="mt-4 flex justify-between w-full max-w-xs items-center">
+               <div className="flex justify-between w-full max-w-xs items-center mb-4">
                   <HourglassTimer timeLeft={timeLeft} isFlipping={false} />
                   <div className="flex gap-1">
                     {Array.from({length: 8}).map((_, i) => (
-                      <motion.div key={i} animate={{ scale: i < lives ? 1 : 0.8 }} className={`w-3 h-3 rounded-full ${i < lives ? 'bg-[#fdb813]' : 'bg-gray-100'}`} />
+                      <motion.div key={i} animate={{ scale: i < lives ? 1 : 0.7 }} className={`w-3 h-3 rounded-full ${i < lives ? 'bg-[#fdb813]' : 'bg-gray-100'}`} />
                     ))}
                   </div>
                </div>
                
-               <div className="relative my-6">
-                 <div className="w-32 h-40 bg-[#a0412d] rounded-t-[50px] rounded-b-[20px] shadow-xl flex items-center justify-center border-b-4 border-[#7a2a1b]">
+               <div className="relative mb-6">
+                 <div className="w-28 h-36 bg-[#a0412d] rounded-t-[45px] rounded-b-[15px] shadow-2xl flex items-center justify-center border-b-4 border-[#7a2a1b]">
                     <div className="grid grid-cols-2 gap-3">
                         {[1,2,3,4].map(h => (
-                          <motion.div key={h} animate={h <= filledHoles ? { scale: 1.2, opacity: 1 } : { opacity: 0.2 }} className={`w-3 h-3 rounded-full ${h <= filledHoles ? 'bg-[#fdb813]' : 'bg-black'}`} />
+                          <motion.div key={h} animate={h <= filledHoles ? { scale: 1.3, opacity: 1 } : { opacity: 0.1 }} className={`w-3 h-3 rounded-full ${h <= filledHoles ? 'bg-[#fdb813] shadow-[0_0_10px_#fdb813]' : 'bg-black'}`} />
                         ))}
                     </div>
                  </div>
                </div>
 
-               <div className="w-full max-w-md flex-1 relative overflow-hidden">
+               <div className="w-full max-w-md flex-1 relative">
                  <AnimatePresence mode="wait">
                     <motion.div 
                       key={qIndex}
-                      initial={{ y: 50, opacity: 0 }}
+                      initial={{ y: 40, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
-                      exit={{ y: -50, opacity: 0 }}
+                      exit={{ y: -40, opacity: 0 }}
                       className="space-y-3"
                     >
-                      <p className="text-center font-bold text-[#3d1810] mb-4">
-                        {currentQuestions[qIndex]?.question}
+                      <p className="text-center font-bold text-[#3d1810] text-lg px-4">
+                        {currentQuestions[qIndex]?.question || "Chargement..."}
                       </p>
                       {['A', 'B', 'C', 'D'].map(l => (
                         <motion.div 
@@ -210,10 +209,10 @@ export default function MysterePage() {
                           drag dragConstraints={{ left: 0, right: 0, top: -400, bottom: 0 }}
                           dragSnapToOrigin 
                           onDragEnd={(e, info) => handleChoice(l, info)} 
-                          className="p-4 bg-[#faf9f8] border border-gray-100 rounded-[20px] flex items-center cursor-grab active:scale-95 transition-transform"
+                          className="p-4 bg-[#faf9f8] border border-gray-100 rounded-[22px] flex items-center cursor-grab active:scale-95 shadow-sm"
                         >
-                          <span className="w-8 h-8 bg-white text-[#a0412d] rounded-lg flex items-center justify-center font-black mr-4 shadow-sm">{l}</span>
-                          <span className="text-sm font-medium text-gray-700">{currentQuestions[qIndex]?.[`choice_${l.toLowerCase()}`]}</span>
+                          <span className="w-9 h-9 bg-white text-[#a0412d] rounded-xl flex items-center justify-center font-black mr-4 shadow-inner">{l}</span>
+                          <span className="text-sm font-semibold text-gray-700">{currentQuestions[qIndex]?.[`choice_${l.toLowerCase()}`]}</span>
                         </motion.div>
                       ))}
                     </motion.div>
@@ -223,38 +222,39 @@ export default function MysterePage() {
           </motion.div>
         )}
 
-        {/* --- RÉCOMPENSE --- */}
+        {/* SUCCÈS */}
         {view === "success" && (
           <motion.div key="success" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-[#a0412d] z-[60] flex flex-col items-center justify-center p-8 text-center text-white">
-            <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-32 h-32 bg-[#fdb813] rounded-full flex items-center justify-center text-5xl mb-6">🎉</motion.div>
-            <h2 className="text-3xl font-black uppercase mb-2">Mystère Résolu !</h2>
-            <p className="text-orange-200 mb-8 font-medium">Félicitations, vous avez maîtrisé ce savoir.</p>
+            <motion.div initial={{ scale: 0 }} animate={{ scale: 1, rotate: 360 }} transition={{ type: "spring", stiffness: 260, damping: 20 }} className="w-32 h-32 bg-[#fdb813] rounded-full flex items-center justify-center text-5xl mb-8 shadow-2xl">⚡</motion.div>
+            <h2 className="text-4xl font-black uppercase mb-4">Mystère Résolu !</h2>
+            <p className="text-orange-100 mb-10 text-lg font-medium">L'énergie de ce savoir est maintenant gravée en vous (+50 XP).</p>
             <button 
               onClick={() => { setView("gallery"); setFilledHoles(0); setQIndex(0); setCurrentIndex(prev => (prev + 1) % mysteres.length); }} 
-              className="px-12 py-4 bg-white text-[#a0412d] rounded-full font-black uppercase text-xs tracking-widest shadow-xl"
+              className="px-14 py-5 bg-white text-[#a0412d] rounded-full font-black uppercase text-xs tracking-[0.2em] shadow-2xl hover:bg-orange-50 active:scale-95 transition-all"
             >
-              Continuer
+              Continuer l'Odyssée
             </button>
           </motion.div>
         )}
 
-        {/* --- MODE POWER --- */}
+        {/* MODE POWER */}
         {view === "locked" && (
           <motion.div key="locked" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-white z-[100] flex flex-col items-center justify-center p-8 text-center">
-            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center text-3xl mb-6">🔒</div>
-            <h2 className="text-2xl font-black text-[#a0412d] mb-4 uppercase">Énergie Épuisée</h2>
+            <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center text-4xl mb-6 grayscale">🏺</div>
+            <h2 className="text-3xl font-black text-[#a0412d] mb-4 uppercase">Source Épuisée</h2>
+            <p className="text-gray-400 text-sm mb-10 max-w-xs leading-relaxed">Votre force vitale est trop basse. Prononcez le mot de pouvoir pour réveiller la jarre.</p>
             <input 
               type="password" 
               value={password} 
               onChange={e => setPassword(e.target.value)} 
               placeholder="Mot de Pouvoir" 
-              className="w-full max-w-xs p-4 bg-gray-50 border-none rounded-2xl mb-4 text-center font-bold" 
+              className="w-full max-w-xs p-5 bg-gray-50 border-none rounded-3xl mb-4 text-center font-bold text-xl placeholder:text-gray-200 focus:ring-2 ring-orange-100 outline-none" 
             />
             <button 
               onClick={() => { if(password.toLowerCase() === "benin"){ setLives(8); setView("gallery"); setPassword(""); }}} 
-              className="w-full max-w-xs bg-[#3d1810] text-white p-4 rounded-2xl font-black uppercase text-sm"
+              className="w-full max-w-xs bg-[#3d1810] text-white p-5 rounded-3xl font-black uppercase text-sm tracking-widest shadow-xl active:scale-95 transition-transform"
             >
-              Activer le Pouvoir
+              Restaurer la Vie
             </button>
           </motion.div>
         )}
