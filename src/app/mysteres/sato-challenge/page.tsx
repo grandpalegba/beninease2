@@ -31,6 +31,7 @@ export default function SatoChallengePage() {
       setHoles(newHoles); 
       setShowExplanation(true);
       if (newHoles.length === 0) {
+        // On laisse l'explication 3s avant l'écran final
         setTimeout(() => {
             setShowExplanation(false);
             setIsFinished(true);
@@ -41,6 +42,11 @@ export default function SatoChallengePage() {
       setAwaleSeeds(prev => Math.max(0, prev - 1));
       setTimeout(() => setIsWrong(false), 500);
     }
+  };
+
+  const nextQuestion = () => {
+    setShowExplanation(false);
+    setTimeLeft(TOTAL_TIME);
   };
 
   const handleShare = async () => {
@@ -68,7 +74,7 @@ export default function SatoChallengePage() {
         
         {/* DESIGN SANCTUARISÉ */}
         <div className="w-full flex justify-between items-center mb-12 px-10 h-[380px]">
-          {/* OKPELE (Base large restaurée) */}
+          {/* OKPELE */}
           <div className="relative w-32 flex flex-col items-center scale-[0.85]">
             <svg className="absolute -top-12 w-28 h-16 z-0" viewBox="0 0 100 60">
               <path d="M 15 60 Q 50 5 85 60" stroke="#FFD700" strokeWidth="2.5" fill="none" strokeDasharray="1 3" />
@@ -79,10 +85,7 @@ export default function SatoChallengePage() {
                   {[0, 1, 2, 3].map((row) => (
                     <div key={row} 
                       className="relative w-8 h-11 bg-[#5d3a1a] shadow-md flex justify-center overflow-hidden"
-                      style={{ 
-                        borderRadius: '50% 50% 30% 30% / 80% 80% 20% 20%', // Base plus large et carrée en bas
-                        borderBottom: '3px solid rgba(0,0,0,0.5)'
-                      }}
+                      style={{ borderRadius: '50% 50% 30% 30% / 80% 80% 20% 20%', borderBottom: '3px solid rgba(0,0,0,0.5)' }}
                     >
                       <div className="w-[1px] h-full bg-black/20" />
                       {isNoixActive(col, row) && (
@@ -135,7 +138,7 @@ export default function SatoChallengePage() {
         </div>
 
         {/* CONTENU FINAL OU QUIZ */}
-        <div className="w-full max-w-2xl">
+        <div className="w-full max-w-2xl min-h-[350px]">
           {!isFinished ? (
             !showExplanation ? (
               <div className="flex flex-col items-center">
@@ -152,15 +155,22 @@ export default function SatoChallengePage() {
                 </div>
               </div>
             ) : (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-8 bg-[#faf9f8] rounded-2xl border border-[#a0412d]/20 text-center">
+              /* RÉVÉLATION (CORRECTE AVEC CLIC FONCTIONNEL) */
+              <motion.div 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                onClick={nextQuestion}
+                className="p-8 bg-[#faf9f8] rounded-2xl border border-[#a0412d]/20 text-center cursor-pointer hover:shadow-md transition-shadow"
+              >
                 <h3 className="text-[#a0412d] font-bold mb-3 uppercase tracking-widest text-xs">Révélation</h3>
-                <p className="text-gray-700">Le Sato est un tambour sacré dont les vibrations purifient les récoltes.</p>
+                <p className="text-gray-700 mb-4">Le Sato est un tambour sacré dont les vibrations purifient les récoltes.</p>
+                <div className="text-[10px] text-[#a0412d]/50 font-bold animate-pulse">CLIQUER POUR CONTINUER ↓</div>
               </motion.div>
             )
           ) : (
-            /* ÉCRAN FINAL CORRIGÉ */
+            /* ÉCRAN FINAL */
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center text-center">
-              <h2 className="text-3xl font-black mb-2 uppercase tracking-tighter">Félicitations !</h2>
+              <h2 className="text-3xl font-black mb-2 uppercase tracking-tighter text-[#303333]">Félicitations !</h2>
               <p className="text-[#a0412d] font-medium mb-6 px-4">
                 La jarre retient désormais toute l'eau nécessaire à la soif de connaissance du monde.
               </p>
@@ -184,7 +194,7 @@ export default function SatoChallengePage() {
                 onClick={handleShare}
                 className="px-12 py-4 bg-[#7a2a1b] text-white rounded-full font-bold text-sm hover:bg-[#a0412d] transition-all shadow-xl flex items-center gap-3"
               >
-                <span>PARTAGER MA QUÊTE</span>
+                PARTAGER MA QUÊTE
               </button>
             </motion.div>
           )}
