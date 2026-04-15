@@ -49,12 +49,12 @@ export default function SatoChallengePage() {
         {/* SECTION INSTRUMENTS */}
         <div className="w-full flex justify-between items-center mb-20 px-10">
           
-          {/* 1. OKPELE (Corrigé : Base large en bas, chaîne allongée) */}
-          <div className="relative w-40 flex flex-col items-center scale-95">
+          {/* 1. OKPELE (Ajusté : Plus petit et moins haut) */}
+          <div className="relative w-36 flex flex-col items-center scale-[0.85] origin-center">
             {/* Chaîne dorée allongée et arquée */}
-            <svg className="w-32 h-20 mb-[-25px] z-0" viewBox="0 0 100 60">
+            <svg className="w-28 h-16 mb-[-20px] z-0" viewBox="0 0 100 60">
               <path 
-                d="M 10 50 Q 50 -10 90 50" 
+                d="M 15 50 Q 50 -5 85 50" 
                 stroke="#FFD700" 
                 strokeWidth="2.5" 
                 fill="none" 
@@ -63,12 +63,12 @@ export default function SatoChallengePage() {
               />
             </svg>
             
-            <div className="flex gap-10 relative z-10">
+            <div className="flex gap-8 relative z-10">
               {[0, 1].map((col) => (
-                <div key={col} className="flex flex-col gap-4 items-center">
+                <div key={col} className="flex flex-col gap-3 items-center">
                   {[0, 1, 2, 3].map((row) => (
                     <div key={row} 
-                      className="relative w-10 h-14 bg-[#5d3a1a] shadow-md flex justify-center overflow-hidden"
+                      className="relative w-8 h-11 bg-[#5d3a1a] shadow-md flex justify-center overflow-hidden"
                       // Forme de noix : Base plus large que le haut
                       style={{ 
                         borderRadius: '50% 50% 35% 35% / 85% 85% 15% 15%', 
@@ -80,7 +80,7 @@ export default function SatoChallengePage() {
                         {isNoixActive(col, row) && (
                           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 flex justify-center items-center">
                             {/* Lumière jaune dorée */}
-                            <div className="w-[3px] h-[70%] bg-[#FFD700] shadow-[0_0_12px_#FFD700] rounded-full"></div>
+                            <div className="w-[2.5px] h-[70%] bg-[#FFD700] shadow-[0_0_10px_#FFD700] rounded-full"></div>
                           </motion.div>
                         )}
                       </AnimatePresence>
