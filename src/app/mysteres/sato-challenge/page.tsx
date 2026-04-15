@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GameLogic } from '@/components/mysteres/gameLogic';
+import Header from '@/components/Header';
 
 export default function SatoChallengePage() {
   const gameLogicRef = useRef<GameLogic | null>(null);
@@ -37,32 +38,32 @@ export default function SatoChallengePage() {
 
   return (
     <>
-      <main className="w-full max-w-screen-lg px-6 flex flex-col items-center justify-center min-h-screen bg-[#faf9f8] text-[#303333]">
+      <main className="w-full max-w-screen-lg px-6 flex flex-col items-center justify-center min-h-screen bg-[#faf9f8] text-[#303333] pb-24">
       {/* Immersive Visual Section */}
       <div className="relative w-full flex justify-center items-center mb-16 h-80">
         {/* Background Bloom */}
         <div className="absolute w-[400px] h-[400px] bg-primary/5 rounded-full blur-[80px] -z-10"></div>
         
         {/* Left: Okpele Divination Chain */}
-        <div className="absolute right-[calc(50%+200px)] flex gap-8 pointer-events-none scale-90">
+        <div className="absolute left-[calc(50%-280px)] flex gap-8 pointer-events-none scale-90">
           <div className="relative flex gap-8">
             {/* Refined Detailed Chain Connector */}
-            <div className="okpele-connector"></div>
+            <div className="okpele-connector" style={{width: '56px', height: '24px', border: '2px solid #9ca3af', borderBottom: '0', borderRadius: '40px 40px 0 0', position: 'absolute', top: '-26px', left: '50%', transform: 'translateX(-50%)', boxShadow: '0 -1px 4px rgba(255,255,255,0.3)'}}></div>
             <div className="relative flex flex-col items-center">
-              <div className="husk-shape husk-active"></div>
-              <div className="silver-link"></div>
-              <div className="husk-shape husk-active"></div>
-              <div className="silver-link"></div>
-              <div className="husk-shape husk-active"></div>
-              <div className="silver-link"></div>
-              <div className="husk-shape husk-active"></div>
+              <div className="husk-shape husk-active" style={{width: '24px', height: '34px', borderRadius: '50% 50% 50% / 70% 70% 30% 30%', position: 'relative', transform: 'rotate(-5deg)', background: 'radial-gradient(circle at 30% 30%, #a67c52 0%, #734a26 60%, #4d3118 100%)', boxShadow: 'inset 2px 2px 5px rgba(255,255,255,0.2), inset -2px -2px 8px rgba(0,0,0,0.4), 0 4px 10px rgba(0,0,0,0.3)', border: '1px solid rgba(0,0,0,0.2)'}}></div>
+              <div className="silver-link" style={{width: '2px', height: '10px', background: 'linear-gradient(90deg, #d1d5db 0%, #9ca3af 50%, #d1d5db 100%)', margin: '0 auto'}}></div>
+              <div className="husk-shape husk-active" style={{width: '24px', height: '34px', borderRadius: '50% 50% 50% / 70% 70% 30% 30%', position: 'relative', transform: 'rotate(-5deg)', background: 'radial-gradient(circle at 30% 30%, #a67c52 0%, #734a26 60%, #4d3118 100%)', boxShadow: 'inset 2px 2px 5px rgba(255,255,255,0.2), inset -2px -2px 8px rgba(0,0,0,0.4), 0 4px 10px rgba(0,0,0,0.3)', border: '1px solid rgba(0,0,0,0.2)'}}></div>
+              <div className="silver-link" style={{width: '2px', height: '10px', background: 'linear-gradient(90deg, #d1d5db 0%, #9ca3af 50%, #d1d5db 100%)', margin: '0 auto'}}></div>
+              <div className="husk-shape husk-active" style={{width: '24px', height: '34px', borderRadius: '50% 50% 50% / 70% 70% 30% 30%', position: 'relative', transform: 'rotate(-5deg)', background: 'radial-gradient(circle at 30% 30%, #a67c52 0%, #734a26 60%, #4d3118 100%)', boxShadow: 'inset 2px 2px 5px rgba(255,255,255,0.2), inset -2px -2px 8px rgba(0,0,0,0.4), 0 4px 10px rgba(0,0,0,0.3)', border: '1px solid rgba(0,0,0,0.2)'}}></div>
+              <div className="silver-link" style={{width: '2px', height: '10px', background: 'linear-gradient(90deg, #d1d5db 0%, #9ca3af 50%, #d1d5db 100%)', margin: '0 auto'}}></div>
+              <div className="husk-shape husk-active" style={{width: '24px', height: '34px', borderRadius: '50% 50% 50% / 70% 70% 30% 30%', position: 'relative', transform: 'rotate(-5deg)', background: 'radial-gradient(circle at 30% 30%, #a67c52 0%, #734a26 60%, #4d3118 100%)', boxShadow: 'inset 2px 2px 5px rgba(255,255,255,0.2), inset -2px -2px 8px rgba(0,0,0,0.4), 0 4px 10px rgba(0,0,0,0.3)', border: '1px solid rgba(0,0,0,0.2)'}}></div>
             </div>
             <div className="relative flex flex-col items-center">
-              <div className="husk-shape husk-inactive"></div>
-              <div className="silver-link"></div>
-              <div className="husk-shape husk-inactive"></div>
-              <div className="silver-link"></div>
-              <div className="husk-shape husk-inactive"></div>
+              <div className="husk-shape husk-inactive" style={{width: '24px', height: '34px', borderRadius: '50% 50% 50% / 70% 70% 30% 30%', position: 'relative', transform: 'rotate(-5deg)', background: 'radial-gradient(circle at 30% 30%, #5d5d5d 0%, #3a3a3a 70%, #1a1a1a 100%)', boxShadow: 'inset 2px 2px 4px rgba(255,255,255,0.1), 0 2px 5px rgba(0,0,0,0.4)', opacity: '0.65'}}></div>
+              <div className="silver-link" style={{width: '2px', height: '10px', background: 'linear-gradient(90deg, #d1d5db 0%, #9ca3af 50%, #d1d5db 100%)', margin: '0 auto'}}></div>
+              <div className="husk-shape husk-inactive" style={{width: '24px', height: '34px', borderRadius: '50% 50% 50% / 70% 70% 30% 30%', position: 'relative', transform: 'rotate(-5deg)', background: 'radial-gradient(circle at 30% 30%, #5d5d5d 0%, #3a3a3a 70%, #1a1a1a 100%)', boxShadow: 'inset 2px 2px 4px rgba(255,255,255,0.1), 0 2px 5px rgba(0,0,0,0.4)', opacity: '0.65'}}></div>
+              <div className="silver-link" style={{width: '2px', height: '10px', background: 'linear-gradient(90deg, #d1d5db 0%, #9ca3af 50%, #d1d5db 100%)', margin: '0 auto'}}></div>
+              <div className="husk-shape husk-inactive" style={{width: '24px', height: '34px', borderRadius: '50% 50% 50% / 70% 70% 30% 30%', position: 'relative', transform: 'rotate(-5deg)', background: 'radial-gradient(circle at 30% 30%, #5d5d5d 0%, #3a3a3a 70%, #1a1a1a 100%)', boxShadow: 'inset 2px 2px 4px rgba(255,255,255,0.1), 0 2px 5px rgba(0,0,0,0.4)', opacity: '0.65'}}></div>
             </div>
           </div>
         </div>
@@ -120,7 +121,7 @@ export default function SatoChallengePage() {
             key={answer}
             data-answer={answer}
             onClick={() => handleAnswer(answer)}
-            className="bg-[#f4f3f2] py-8 px-10 rounded-xl shadow-sm hover:shadow-lg hover:bg-[#ffac9b] hover:text-white transition-all duration-300 border-0"
+            className="bg-[#f4f3f2] py-8 px-10 rounded-xl shadow-sm hover:shadow-lg hover:bg-[#ffac9b] hover:text-white transition-all duration-300"
             style={{fontFamily: 'Inter, sans-serif', lineHeight: '2.2', color: '#303333'}}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -207,22 +208,10 @@ export default function SatoChallengePage() {
       </AnimatePresence>
       </main>
       
-      {/* Bottom Navigation - Glass Rule */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-[#faf9f8]/80 backdrop-blur-xl shadow-lg" style={{boxShadow: '0 4px 20px rgba(160, 65, 45, 0.08)'}}>
-        <div className="max-w-screen-lg mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-8">
-              <a href="/referents" className="text-[#303333] hover:text-[#a0412d] transition-colors" style={{fontFamily: 'Inter, sans-serif', fontWeight: '500'}}>Référents</a>
-              <a href="/mysteres" className="text-[#303333] hover:text-[#a0412d] transition-colors" style={{fontFamily: 'Inter, sans-serif', fontWeight: '500'}}>Mystères</a>
-              <a href="/talents" className="text-[#303333] hover:text-[#a0412d] transition-colors" style={{fontFamily: 'Inter, sans-serif', fontWeight: '500'}}>Talents</a>
-              <a href="/tresors" className="text-[#303333] hover:text-[#a0412d] transition-colors" style={{fontFamily: 'Inter, sans-serif', fontWeight: '500'}}>Trésors</a>
-            </div>
-            <a href="/connexion" className="bg-white py-2 px-6 rounded-full shadow-sm hover:shadow-md hover:bg-[#a0412d] hover:text-white transition-all duration-300" style={{fontFamily: 'Inter, sans-serif', fontWeight: '500', color: '#303333'}}>
-              Connexion
-            </a>
-          </div>
-        </div>
-      </nav>
+      {/* Header avec Glass Rule */}
+      <div className="fixed bottom-0 left-0 right-0 bg-[#faf9f8]/80 backdrop-blur-xl" style={{boxShadow: '0 4px 30px rgba(160, 65, 45, 0.08)'}}>
+        <Header />
+      </div>
     </>
   );
 }
