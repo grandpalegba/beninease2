@@ -90,6 +90,8 @@ export default function MysterePage() {
       if (choiceLetter === correct) {
         setFilledHoles(h => h + 1);
         
+        console.log(`Question ${qIndex + 1}/${currentQuestions.length} - Trou: ${filledHoles + 1}/4`);
+        
         // Points seulement après les 4 questions complétées
         if (qIndex < currentQuestions.length - 1) {
           toast.success("Correct !");
@@ -99,6 +101,7 @@ export default function MysterePage() {
           }, 600);
         } else {
           // Succès final du mystère - attribution du bonus
+          console.log("Bonus de 50 points attribué !");
           updatePoints(50); // +50 points pour avoir complété les 4 questions
           confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#fdb813', '#a0412d'] });
           setTimeout(() => setView("success"), 600);
