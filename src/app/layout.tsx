@@ -1,12 +1,9 @@
-"use client";
-
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "@/app/globals.css";
-import Header from "@/components/Header";
+import ConditionalHeader from "@/components/ConditionalHeader";
 import BodyWrapper from "@/components/BodyWrapper";
 import { Toaster } from "sonner";
-import { usePathname } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "BeninEase - Les Trésors du Bénin",
@@ -28,13 +25,10 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  const pathname = usePathname();
-  const isSatoChallenge = pathname?.includes('/mysteres/sato-challenge');
-
   return (
     <html lang="fr" className="scroll-smooth">
       <body className="min-h-screen antialiased bg-[#F9F9F7]">
-        {!isSatoChallenge && <Header />}
+        <ConditionalHeader />
         <BodyWrapper>
           {children}
         </BodyWrapper>
