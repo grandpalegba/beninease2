@@ -41,7 +41,7 @@ export default function SatoChallengePage() {
   return (
     <div className="min-h-screen bg-white text-[#303333] flex flex-col items-center justify-center font-sans p-6 overflow-hidden">
       
-      {/* Background Bloom (Stitch style) */}
+      {/* Background Bloom */}
       <div className="absolute w-[500px] h-[500px] bg-[#a0412d]/5 rounded-full blur-[100px] -z-20"></div>
 
       <main className="w-full max-w-5xl flex flex-col items-center">
@@ -49,9 +49,8 @@ export default function SatoChallengePage() {
         {/* SECTION INSTRUMENTS */}
         <div className="w-full flex justify-between items-center mb-20 px-10">
           
-          {/* 1. OKPELE (Ajusté : Plus petit et moins haut) */}
+          {/* 1. OKPELE (Taille Parfaite) */}
           <div className="relative w-36 flex flex-col items-center scale-[0.85] origin-center">
-            {/* Chaîne dorée allongée et arquée */}
             <svg className="w-28 h-16 mb-[-20px] z-0" viewBox="0 0 100 60">
               <path 
                 d="M 15 50 Q 50 -5 85 50" 
@@ -69,7 +68,6 @@ export default function SatoChallengePage() {
                   {[0, 1, 2, 3].map((row) => (
                     <div key={row} 
                       className="relative w-8 h-11 bg-[#5d3a1a] shadow-md flex justify-center overflow-hidden"
-                      // Forme de noix : Base plus large que le haut
                       style={{ 
                         borderRadius: '50% 50% 35% 35% / 85% 85% 15% 15%', 
                         borderBottom: '2px solid rgba(0,0,0,0.4)'
@@ -79,7 +77,6 @@ export default function SatoChallengePage() {
                       <AnimatePresence>
                         {isNoixActive(col, row) && (
                           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 flex justify-center items-center">
-                            {/* Lumière jaune dorée */}
                             <div className="w-[2.5px] h-[70%] bg-[#FFD700] shadow-[0_0_10px_#FFD700] rounded-full"></div>
                           </motion.div>
                         )}
@@ -91,7 +88,7 @@ export default function SatoChallengePage() {
             </div>
           </div>
 
-          {/* 2. JARRE SATO (Stitch - Inchangée) */}
+          {/* 2. JARRE SATO (Inchangée) */}
           <div className="relative w-72 h-[360px] z-10">
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-40 h-10 bg-[#3d1810] rounded-[50%] shadow-inner border-4 border-[#a0412d]/20 z-0"></div>
             <div className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden"
@@ -110,23 +107,23 @@ export default function SatoChallengePage() {
             </div>
           </div>
 
-          {/* 3. AWALE VERTICAL (Inchangé) */}
-          <div className="relative flex bg-[#3d1810] p-4 rounded-2xl shadow-xl border-2 border-[#2a100a] scale-95">
-            <div className="flex flex-col gap-4">
+          {/* 3. AWALÉ VERTICAL (Réduit pour se caler sur l'Okpele) */}
+          <div className="relative flex bg-[#3d1810] p-3 rounded-2xl shadow-xl border-2 border-[#2a100a] scale-[0.85] origin-center">
+            <div className="flex flex-col gap-3">
               {[0, 1, 2, 3].map(i => (
-                <div key={i} className="w-11 h-11 bg-black/60 rounded-full shadow-inner border border-black/30 flex items-center justify-center gap-1">
+                <div key={i} className="w-10 h-10 bg-black/60 rounded-full shadow-inner border border-black/30 flex items-center justify-center gap-1">
                   {[...Array(awaleBoard[i])].map((_, s) => (
-                    <div key={s} className="w-2.5 h-2.5 rounded-full bg-[#FFD700] shadow-[0_0_8px_#FFD700]" />
+                    <div key={s} className="w-2 h-2 rounded-full bg-[#FFD700] shadow-[0_0_8px_#FFD700]" />
                   ))}
                 </div>
               ))}
             </div>
-            <div className="mx-3 w-[2px] bg-gradient-to-b from-transparent via-[#2a100a] to-transparent"></div>
-            <div className="flex flex-col gap-4">
+            <div className="mx-2.5 w-[1.5px] bg-gradient-to-b from-transparent via-[#2a100a] to-transparent"></div>
+            <div className="flex flex-col gap-3">
               {[4, 5, 6, 7].map(i => (
-                <div key={i} className="w-11 h-11 bg-black/60 rounded-full shadow-inner border border-black/30 flex items-center justify-center gap-1">
+                <div key={i} className="w-10 h-10 bg-black/60 rounded-full shadow-inner border border-black/30 flex items-center justify-center gap-1">
                   {[...Array(awaleBoard[i])].map((_, s) => (
-                    <div key={s} className="w-2.5 h-2.5 rounded-full bg-[#FFD700] shadow-[0_0_8px_#FFD700]" />
+                    <div key={s} className="w-2 h-2 rounded-full bg-[#FFD700] shadow-[0_0_8px_#FFD700]" />
                   ))}
                 </div>
               ))}
