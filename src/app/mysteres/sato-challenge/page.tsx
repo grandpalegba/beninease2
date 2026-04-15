@@ -2,255 +2,119 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { GameLogic } from '@/components/mysteres/gameLogic';
 
 export default function SatoChallengePage() {
-  const gameLogicRef = useRef<GameLogic | null>(null);
   const [gameState, setGameState] = useState<'menu' | 'playing' | 'gameover' | 'completed'>('menu');
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [score, setScore] = useState(0);
-
-  useEffect(() => {
-    // Initialiser le jeu
-    gameLogicRef.current = new GameLogic();
-    
-    return () => {
-      gameLogicRef.current?.stopTimer();
-    };
-  }, []);
-
-  const startGame = () => {
-    setGameState('playing');
-    gameLogicRef.current?.reset();
-    gameLogicRef.current?.startTimer();
-  };
-
-  const handleAnswer = (answer: string) => {
-    if (!gameLogicRef.current) return;
-    
-    const isCorrect = gameLogicRef.current.checkAnswer(answer);
-    
-    if (isCorrect) {
-      setScore(prev => prev + 10);
-    }
-  };
-
+  const [filledHoles, setFilledHoles] = useState(4); // Représente les graines d'Awalé
+  
   return (
-    <>
-      <main className="w-full max-w-screen-lg px-6 flex flex-col items-center justify-center min-h-screen bg-[#faf9f8] text-[#303333]">
-      {/* Immersive Visual Section */}
-      <div className="relative w-full flex justify-center items-center mb-16 h-80">
-        {/* Background Bloom */}
-        <div className="absolute w-[400px] h-[400px] bg-primary/5 rounded-full blur-[80px] -z-10"></div>
-        
-        {/* Left: Okpele Divination Chain - 8 Noix */}
-        <div className="absolute left-[calc(50%-320px)] flex gap-6 pointer-events-none scale-100">
-          {/* Chain Connector */}
-          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-6" style={{width: '80px', height: '20px', border: '2px solid #9ca3af', borderBottom: '0', borderRadius: '40px 40px 0 0', boxShadow: '0 -1px 4px rgba(255,255,255,0.3)'}}></div>
-          
-          {/* First Column - 4 Noix */}
-          <div className="flex flex-col gap-3">
-            <div className="relative">
-              <div className="husk-full" style={{width: '28px', height: '40px', position: 'relative', transform: 'rotate(-8deg)'}}>
-                <div className="absolute inset-0 rounded-full" style={{background: 'linear-gradient(135deg, #d4a574 0%, #b8935f 50%, #9b7653 100%)', boxShadow: 'inset 2px 2px 4px rgba(255,255,255,0.3), inset -2px -2px 6px rgba(0,0,0,0.4), 0 3px 8px rgba(0,0,0,0.2)'}}></div>
-                <div className="absolute left-1/2 top-0 bottom-0 w-1 transform -translate-x-1/2" style={{background: 'linear-gradient(90deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.3) 100%)', borderRadius: '2px'}}></div>
-              </div>
-              <div className="silver-link" style={{width: '2px', height: '8px', background: 'linear-gradient(90deg, #d1d5db 0%, #9ca3af 50%, #d1d5db 100%)', margin: '2px auto'}}></div>
-            </div>
-            <div className="relative">
-              <div className="husk-full" style={{width: '28px', height: '40px', position: 'relative', transform: 'rotate(-8deg)'}}>
-                <div className="absolute inset-0 rounded-full" style={{background: 'linear-gradient(135deg, #d4a574 0%, #b8935f 50%, #9b7653 100%)', boxShadow: 'inset 2px 2px 4px rgba(255,255,255,0.3), inset -2px -2px 6px rgba(0,0,0,0.4), 0 3px 8px rgba(0,0,0,0.2)'}}></div>
-                <div className="absolute left-1/2 top-0 bottom-0 w-1 transform -translate-x-1/2" style={{background: 'linear-gradient(90deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.3) 100%)', borderRadius: '2px'}}></div>
-              </div>
-              <div className="silver-link" style={{width: '2px', height: '8px', background: 'linear-gradient(90deg, #d1d5db 0%, #9ca3af 50%, #d1d5db 100%)', margin: '2px auto'}}></div>
-            </div>
-            <div className="relative">
-              <div className="husk-full" style={{width: '28px', height: '40px', position: 'relative', transform: 'rotate(-8deg)'}}>
-                <div className="absolute inset-0 rounded-full" style={{background: 'linear-gradient(135deg, #d4a574 0%, #b8935f 50%, #9b7653 100%)', boxShadow: 'inset 2px 2px 4px rgba(255,255,255,0.3), inset -2px -2px 6px rgba(0,0,0,0.4), 0 3px 8px rgba(0,0,0,0.2)'}}></div>
-                <div className="absolute left-1/2 top-0 bottom-0 w-1 transform -translate-x-1/2" style={{background: 'linear-gradient(90deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.3) 100%)', borderRadius: '2px'}}></div>
-              </div>
-              <div className="silver-link" style={{width: '2px', height: '8px', background: 'linear-gradient(90deg, #d1d5db 0%, #9ca3af 50%, #d1d5db 100%)', margin: '2px auto'}}></div>
-            </div>
-            <div className="relative">
-              <div className="husk-full" style={{width: '28px', height: '40px', position: 'relative', transform: 'rotate(-8deg)'}}>
-                <div className="absolute inset-0 rounded-full" style={{background: 'linear-gradient(135deg, #d4a574 0%, #b8935f 50%, #9b7653 100%)', boxShadow: 'inset 2px 2px 4px rgba(255,255,255,0.3), inset -2px -2px 6px rgba(0,0,0,0.4), 0 3px 8px rgba(0,0,0,0.2)'}}></div>
-                <div className="absolute left-1/2 top-0 bottom-0 w-1 transform -translate-x-1/2" style={{background: 'linear-gradient(90deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.3) 100%)', borderRadius: '2px'}}></div>
-              </div>
-            </div>
-          </div>
-          
-          {/* Second Column - 4 Noix */}
-          <div className="flex flex-col gap-3">
-            <div className="relative">
-              <div className="husk-empty" style={{width: '28px', height: '40px', position: 'relative', transform: 'rotate(-8deg)', opacity: '0.4'}}>
-                <div className="absolute inset-0 rounded-full" style={{background: 'linear-gradient(135deg, #6b6b6b 0%, #4a4a4a 50%, #2a2a2a 100%)', boxShadow: 'inset 1px 1px 2px rgba(255,255,255,0.1), inset -1px -1px 4px rgba(0,0,0,0.6), 0 2px 4px rgba(0,0,0,0.3)'}}></div>
-                <div className="absolute left-1/2 top-0 bottom-0 w-1 transform -translate-x-1/2" style={{background: 'linear-gradient(90deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.5) 100%)', borderRadius: '2px'}}></div>
-              </div>
-              <div className="silver-link" style={{width: '2px', height: '8px', background: 'linear-gradient(90deg, #d1d5db 0%, #9ca3af 50%, #d1d5db 100%)', margin: '2px auto'}}></div>
-            </div>
-            <div className="relative">
-              <div className="husk-empty" style={{width: '28px', height: '40px', position: 'relative', transform: 'rotate(-8deg)', opacity: '0.4'}}>
-                <div className="absolute inset-0 rounded-full" style={{background: 'linear-gradient(135deg, #6b6b6b 0%, #4a4a4a 50%, #2a2a2a 100%)', boxShadow: 'inset 1px 1px 2px rgba(255,255,255,0.1), inset -1px -1px 4px rgba(0,0,0,0.6), 0 2px 4px rgba(0,0,0,0.3)'}}></div>
-                <div className="absolute left-1/2 top-0 bottom-0 w-1 transform -translate-x-1/2" style={{background: 'linear-gradient(90deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.5) 100%)', borderRadius: '2px'}}></div>
-              </div>
-              <div className="silver-link" style={{width: '2px', height: '8px', background: 'linear-gradient(90deg, #d1d5db 0%, #9ca3af 50%, #d1d5db 100%)', margin: '2px auto'}}></div>
-            </div>
-            <div className="relative">
-              <div className="husk-empty" style={{width: '28px', height: '40px', position: 'relative', transform: 'rotate(-8deg)', opacity: '0.4'}}>
-                <div className="absolute inset-0 rounded-full" style={{background: 'linear-gradient(135deg, #6b6b6b 0%, #4a4a4a 50%, #2a2a2a 100%)', boxShadow: 'inset 1px 1px 2px rgba(255,255,255,0.1), inset -1px -1px 4px rgba(0,0,0,0.6), 0 2px 4px rgba(0,0,0,0.3)'}}></div>
-                <div className="absolute left-1/2 top-0 bottom-0 w-1 transform -translate-x-1/2" style={{background: 'linear-gradient(90deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.5) 100%)', borderRadius: '2px'}}></div>
-              </div>
-              <div className="silver-link" style={{width: '2px', height: '8px', background: 'linear-gradient(90deg, #d1d5db 0%, #9ca3af 50%, #d1d5db 100%)', margin: '2px auto'}}></div>
-            </div>
-            <div className="relative">
-              <div className="husk-empty" style={{width: '28px', height: '40px', position: 'relative', transform: 'rotate(-8deg)', opacity: '0.4'}}>
-                <div className="absolute inset-0 rounded-full" style={{background: 'linear-gradient(135deg, #6b6b6b 0%, #4a4a4a 50%, #2a2a2a 100%)', boxShadow: 'inset 1px 1px 2px rgba(255,255,255,0.1), inset -1px -1px 4px rgba(0,0,0,0.6), 0 2px 4px rgba(0,0,0,0.3)'}}></div>
-                <div className="absolute left-1/2 top-0 bottom-0 w-1 transform -translate-x-1/2" style={{background: 'linear-gradient(90deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.5) 100%)', borderRadius: '2px'}}></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Center: The Sato Jar */}
-        <div className="relative w-64 h-80 z-10 transition-transform duration-700 hover:scale-105">
-          <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-36 h-10 bg-[#3d1810] rounded-[50%] shadow-inner z-0"></div>
-          <div className="absolute inset-0 clay-texture organic-shape flex flex-col items-center justify-center overflow-hidden" style={{background: 'linear-gradient(165deg, #a0412d 0%, #8b3422 45%, #7a2a1b 100%)'}}>
-            <div className="absolute top-0 w-full h-12 bg-gradient-to-b from-black/20 to-transparent"></div>
-            <div className="relative w-full h-full">
-              <div className="absolute top-[40%] left-[25%] w-12 h-12 rounded-full bg-[#2a100a] shadow-inner opacity-95"></div>
-              <div className="absolute top-[32%] left-[58%] w-10 h-10 rounded-full bg-[#2a100a] shadow-inner opacity-95"></div>
-              <div className="absolute top-[62%] left-[40%] w-14 h-14 rounded-full bg-[#2a100a] shadow-inner opacity-95"></div>
-              <div className="absolute top-[55%] left-[72%] w-9 h-9 rounded-full bg-[#2a100a] shadow-inner opacity-95"></div>
-            </div>
-          </div>
-        </div>
-
-        {/* Right: Vertical Awalé Board */}
-        <div className="absolute left-[calc(50%+200px)] pointer-events-none">
-          <div className="p-3 flex gap-3 flex-row items-center" style={{background: 'linear-gradient(135deg, #5d3a1a 0%, #3d2410 100%)', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.1)'}}>
-            {/* Left row (4 holes) */}
-            <div className="gap-4 flex-col flex">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{background: 'radial-gradient(circle at 50% 20%, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.7) 100%)', boxShadow: 'inset 0 4px 8px rgba(0,0,0,0.6)'}}><div className="w-3 h-3 rounded-full" style={{background: 'radial-gradient(circle at 30% 30%, #ffd700 0%, #b8860b 70%, #8b6508 100%)', boxShadow: '0 2px 4px rgba(0,0,0,0.3), inset 1px 1px 2px rgba(255,255,255,0.4)'}}></div></div>
-              <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{background: 'radial-gradient(circle at 50% 20%, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.7) 100%)', boxShadow: 'inset 0 4px 8px rgba(0,0,0,0.6)'}}><div className="w-3 h-3 rounded-full" style={{background: 'radial-gradient(circle at 30% 30%, #ffd700 0%, #b8860b 70%, #8b6508 100%)', boxShadow: '0 2px 4px rgba(0,0,0,0.3), inset 1px 1px 2px rgba(255,255,255,0.4)'}}></div></div>
-              <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{background: 'radial-gradient(circle at 50% 20%, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.7) 100%)', boxShadow: 'inset 0 4px 8px rgba(0,0,0,0.6)'}}><div className="w-3 h-3 rounded-full" style={{background: 'radial-gradient(circle at 30% 30%, #ffd700 0%, #b8860b 70%, #8b6508 100%)', boxShadow: '0 2px 4px rgba(0,0,0,0.3), inset 1px 1px 2px rgba(255,255,255,0.4)'}}></div></div>
-              <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{background: 'radial-gradient(circle at 50% 20%, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.7) 100%)', boxShadow: 'inset 0 4px 8px rgba(0,0,0,0.6)'}}><div className="w-3 h-3 rounded-full" style={{background: 'radial-gradient(circle at 30% 30%, #ffd700 0%, #b8860b 70%, #8b6508 100%)', boxShadow: '0 2px 4px rgba(0,0,0,0.3), inset 1px 1px 2px rgba(255,255,255,0.4)'}}></div></div>
-            </div>
-            
-            {/* Vertical Separator */}
-            <div className="w-px h-36 bg-white/10 mx-1"></div>
-            
-            {/* Right row (4 holes) */}
-            <div className="gap-4 flex-col flex">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{background: 'radial-gradient(circle at 50% 20%, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.7) 100%)', boxShadow: 'inset 0 4px 8px rgba(0,0,0,0.6)'}}><div className="w-3 h-3 rounded-full" style={{background: 'radial-gradient(circle at 30% 30%, #ffd700 0%, #b8860b 70%, #8b6508 100%)', boxShadow: '0 2px 4px rgba(0,0,0,0.3), inset 1px 1px 2px rgba(255,255,255,0.4)'}}></div></div>
-              <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{background: 'radial-gradient(circle at 50% 20%, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.7) 100%)', boxShadow: 'inset 0 4px 8px rgba(0,0,0,0.6)'}}><div className="w-3 h-3 rounded-full" style={{background: 'radial-gradient(circle at 30% 30%, #ffd700 0%, #b8860b 70%, #8b6508 100%)', boxShadow: '0 2px 4px rgba(0,0,0,0.3), inset 1px 1px 2px rgba(255,255,255,0.4)'}}></div></div>
-              <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{background: 'radial-gradient(circle at 50% 20%, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.7) 100%)', boxShadow: 'inset 0 4px 8px rgba(0,0,0,0.6)'}}><div className="w-3 h-3 rounded-full" style={{background: 'radial-gradient(circle at 30% 30%, #ffd700 0%, #b8860b 70%, #8b6508 100%)', boxShadow: '0 2px 4px rgba(0,0,0,0.3), inset 1px 1px 2px rgba(255,255,255,0.4)'}}></div></div>
-              <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{background: 'radial-gradient(circle at 50% 20%, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.7) 100%)', boxShadow: 'inset 0 4px 8px rgba(0,0,0,0.6)'}}><div className="w-3 h-3 rounded-full" style={{background: 'radial-gradient(circle at 30% 30%, #ffd700 0%, #b8860b 70%, #8b6508 100%)', boxShadow: '0 2px 4px rgba(0,0,0,0.3), inset 1px 1px 2px rgba(255,255,255,0.4)'}}></div></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Question Section */}
-      <div className="text-center mb-20 max-w-2xl px-12">
-        <h2 className="text-xl md:text-2xl font-bold" style={{fontFamily: 'Plus Jakarta Sans, sans-serif', lineHeight: '2.2'}}>
-          Quelle est la fonction principale du tambour Sato lors des rites agraires ?
-        </h2>
-      </div>
-
-      {/* Answer Buttons Grid */}
-      <div className="w-full max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
-        {['A', 'B', 'C', 'D'].map((answer) => (
-          <motion.button
-            key={answer}
-            data-answer={answer}
-            onClick={() => handleAnswer(answer)}
-            className="bg-[#f4f3f2] py-8 px-10 rounded-xl shadow-sm hover:shadow-lg hover:bg-[#ffac9b] hover:text-white transition-all duration-300"
-            style={{fontFamily: 'Inter, sans-serif', lineHeight: '2.2', color: '#303333'}}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <span className="flex items-center justify-center gap-3">
-              <span className="w-8 h-8 rounded-full bg-[#ffac9b] text-white flex items-center justify-center font-bold text-sm" style={{fontFamily: 'Plus Jakarta Sans, sans-serif'}}>{answer}</span>
-              <span className="text-lg">Réponse {answer}</span>
-            </span>
-          </motion.button>
-        ))}
-      </div>
-
-      {/* Explanation Card */}
-      <div className="w-full max-w-3xl mb-12 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-        <div className="bg-[#faf9f8] rounded-3xl p-8 md:p-10 shadow-sm text-center">
-          <div className="flex flex-col items-center gap-4">
-            <span className="font-bold block mb-2" style={{color: '#a0412d', fontFamily: 'Plus Jakarta Sans, sans-serif'}}>Bonne réponse !</span>
-            <p className="text-lg md:text-xl" style={{fontFamily: 'Lato, sans-serif', lineHeight: '2.2', color: '#303333'}}>
-              Le Sato est un tambour sacré dont les vibrations sont censées purifier les récoltes et appeler la protection des ancêtres avant la saison des pluies. Il ne peut être fabriqué que par des initiés.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Start Button */}
-      {gameState === 'menu' && (
-        <motion.button
-          onClick={startGame}
-          className="bg-white py-4 px-8 rounded-full font-bold text-lg shadow-sm hover:shadow-md hover:bg-[#a0412d] hover:text-white transition-all duration-300"
-          style={{fontFamily: 'Inter, sans-serif', lineHeight: '2.2', color: '#303333'}}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          Commencer le Défi
-        </motion.button>
-      )}
-
-      {/* Game Over Screen */}
-      <AnimatePresence>
-        {gameState === 'gameover' && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center"
-          >
-            <div className="bg-[#faf9f8] rounded-2xl p-8 max-w-md mx-4 text-center shadow-lg">
-              <h3 className="text-2xl font-bold mb-4" style={{color: '#ac3149', fontFamily: 'Plus Jakarta Sans, sans-serif'}}>Source Épuisée</h3>
-              <p className="mb-6" style={{fontFamily: 'Inter, sans-serif', lineHeight: '2.2', color: '#303333'}}>Les forces vitales ont été épuisées. Retournez au menu pour réessayer.</p>
-              <motion.button
-                onClick={() => setGameState('menu')}
-                className="bg-white py-3 px-6 rounded-lg font-semibold shadow-sm hover:shadow-md hover:bg-[#a0412d] hover:text-white transition-all duration-300"
-                style={{fontFamily: 'Inter, sans-serif', lineHeight: '2.2', color: '#303333'}}
-              >
-                Retour au Menu
-              </motion.button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Completion Screen */}
-      <AnimatePresence>
-        {gameState === 'completed' && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center"
-          >
-            <div className="bg-[#faf9f8] rounded-2xl p-8 max-w-md mx-4 text-center shadow-lg">
-              <h3 className="text-2xl font-bold mb-4" style={{color: '#a0412d', fontFamily: 'Plus Jakarta Sans, sans-serif'}}>Défi Accompli !</h3>
-              <p className="mb-6" style={{fontFamily: 'Inter, sans-serif', lineHeight: '2.2', color: '#303333'}}>Vous avez maîtrisé tous les savoirs de ce défi.</p>
-              <motion.button
-                onClick={() => setGameState('menu')}
-                className="bg-white py-3 px-6 rounded-lg font-semibold shadow-sm hover:shadow-md hover:bg-[#a0412d] hover:text-white transition-all duration-300"
-                style={{fontFamily: 'Inter, sans-serif', lineHeight: '2.2', color: '#303333'}}
-              >
-                Nouveau Défi
-              </motion.button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-      </main>
+    <div className="min-h-screen bg-[#faf9f8] text-[#303333] flex flex-col items-center">
       
-    </>
+      {/* SECTION JEU : Centrée verticalement */}
+      <main className="flex-1 w-full max-w-5xl px-6 flex flex-col items-center justify-center pb-32">
+        
+        {/* Artefacts Visuels */}
+        <div className="relative w-full flex justify-center items-center mb-16 h-80">
+          
+          {/* OKPELE : 8 Noix (2 colonnes de 4) avec Septum */}
+          <div className="absolute left-[calc(50%-300px)] flex gap-6 pointer-events-none">
+            {[0, 1].map((col) => (
+              <div key={col} className="flex flex-col gap-3">
+                {[0, 1, 2, 3].map((row) => (
+                  <div key={row} className="relative w-10 h-14 bg-[#a0412d] rounded-full shadow-md flex justify-center overflow-hidden">
+                    {/* Le Septum (séparation centrale de la noix) */}
+                    <div className="w-[2px] h-full bg-[#540900]/40 shadow-inner"></div>
+                    {/* Reflet organique */}
+                    <div className="absolute top-2 left-2 w-2 h-4 bg-white/10 rounded-full blur-[1px]"></div>
+                  </div>
+                ))}
+              </div>
+            ))}
+            {/* Cordon de liaison en haut */}
+            <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-24 h-6 border-t-2 border-x-2 border-gray-400/30 rounded-t-full"></div>
+          </div>
+
+          {/* JARRE SATO */}
+          <div className="relative w-60 h-72 z-10">
+            <div className="absolute inset-0 bg-[#a0412d] rounded-[40%_40%_45%_45%] shadow-2xl flex items-center justify-center overflow-hidden">
+              <div className="absolute top-0 w-full h-16 bg-gradient-to-b from-black/20 to-transparent"></div>
+              {/* Ouvertures de la jarre */}
+              <div className="relative w-full h-full">
+                <div className="absolute top-[35%] left-[25%] w-10 h-10 rounded-full bg-[#2a100a] shadow-inner"></div>
+                <div className="absolute top-[28%] left-[55%] w-8 h-8 rounded-full bg-[#2a100a] shadow-inner"></div>
+                <div className="absolute top-[55%] left-[40%] w-12 h-12 rounded-full bg-[#2a100a] shadow-inner"></div>
+                <div className="absolute top-[48%] left-[68%] w-7 h-7 rounded-full bg-[#2a100a] shadow-inner"></div>
+              </div>
+            </div>
+          </div>
+
+          {/* AWALÉ (Score/Vies) */}
+          <div className="absolute left-[calc(50%+200px)] p-4 bg-[#4a3728] rounded-2xl shadow-xl flex gap-4">
+            <div className="flex flex-col gap-4">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="w-8 h-8 rounded-full bg-black/40 shadow-inner flex items-center justify-center">
+                  <div className="w-3 h-3 rounded-full bg-[#ffd700] shadow-[0_0_8px_#ffd700]"></div>
+                </div>
+              ))}
+            </div>
+            <div className="w-[1px] h-32 bg-white/10"></div>
+            <div className="flex flex-col gap-4">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="w-8 h-8 rounded-full bg-black/40 shadow-inner"></div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* QUESTION SECTION */}
+        <div className="text-center mb-12 max-w-2xl px-6">
+          <h2 className="text-2xl font-bold font-headline leading-relaxed">
+            Quelle est la fonction principale du tambour Sato lors des rites agraires ?
+          </h2>
+        </div>
+
+        {/* GRILLE DE RÉPONSES (No-Line Rule) */}
+        <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-4">
+          {['Purifier les récoltes', 'Appeler la pluie', 'Célébrer les mariages', 'Guérir les malades'].map((answer, i) => (
+            <motion.button
+              key={i}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="group flex items-center p-6 bg-[#f4f3f2] rounded-2xl transition-all hover:bg-[#ffac9b]/20 text-left"
+            >
+              <span className="w-10 h-10 rounded-full bg-white flex items-center justify-center font-bold text-[#a0412d] shadow-sm mr-4 group-hover:bg-[#a0412d] group-hover:text-white transition-colors">
+                {String.fromCharCode(65 + i)}
+              </span>
+              <span className="text-lg font-medium">{answer}</span>
+            </motion.button>
+          ))}
+        </div>
+      </main>
+
+      {/* HEADER EN BAS (Comme sur la page Référents) */}
+      <footer className="fixed bottom-0 left-0 w-full z-50 p-6">
+        <div className="max-w-7xl mx-auto bg-[#faf9f8]/80 backdrop-blur-xl rounded-full px-8 py-4 flex items-center justify-between shadow-[rgba(160,65,45,0.08)_0px_-12px_30px]">
+          {/* Logo */}
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-green-600 via-yellow-400 to-red-600"></div>
+            <span className="font-headline font-black text-xl tracking-tighter">Beninease</span>
+          </div>
+
+          {/* Navigation centrale */}
+          <nav className="hidden md:flex items-center gap-8 font-headline text-xs font-bold uppercase tracking-[0.2em]">
+            <a href="/referents" className="hover:text-[#a0412d] transition-colors">Référents</a>
+            <a href="/mysteres" className="text-[#a0412d]">Mystères</a>
+            <a href="/talents" className="hover:text-[#a0412d] transition-colors">Talents</a>
+            <a href="/tresors" className="hover:text-[#a0412d] transition-colors">Trésors</a>
+          </nav>
+
+          {/* Bouton Connexion */}
+          <button className="bg-[#006b60] text-white px-6 py-2 rounded-full font-bold text-sm shadow-lg hover:scale-105 transition-transform">
+            Connexion
+          </button>
+        </div>
+      </footer>
+
+    </div>
   );
 }
