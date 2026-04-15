@@ -7,6 +7,7 @@ import { toast, Toaster } from "sonner";
 import { confetti } from "tsparticles-confetti";
 import { HourglassTimer } from "@/components/mysteres/HourglassTimer";
 
+// ─── CONFIGURATION SUPABASE ─────────────────────────────────────────────────
 const SUPABASE_URL = "https://wtjhkqkqmexddroqwawk.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0amhrcWtxbWV4ZGRyb3F3YXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDU3NzQsImV4cCI6MjA4OTg4MTc3NH0.TdaWEVQxKF6s2j-7QStHZaFbOqs4e3UHVUN7iGQL_vc";
 
@@ -48,20 +49,16 @@ export default function MysterePage() {
     fetchData();
   }, []);
 
-  // Préchargement
+  // ─── PRÉCHARGEMENT DES IMAGES (ZÉRO DÉCALAGE) ───
   useEffect(() => {
     if (mysteres.length > 0) {
       const preload = (url: string) => { 
-        if (url && url.startsWith('https://wtjhkqkqmexddroqwawk.supabase.co')) {
-          console.log('🔍 Tentative preload:', url);
+        if (url) {
           const img = new Image();
-          img.onload = () => console.log('✅ Image chargée:', url);
-          img.onerror = () => console.log('❌ Erreur image:', url);
-          img.src = url;
+          img.src = `${url}?v=${currentIndex}`; // Force rafraîchissement cache
         }
       };
-      
-      // Preload images avec debug
+      // Preload actuel et suivant
       preload(mysteres[currentIndex]?.cover_image_url);
       preload(mysteres[(currentIndex + 1) % mysteres.length]?.cover_image_url);
     }
@@ -91,7 +88,7 @@ export default function MysterePage() {
   };
 
   const handleDrop = (choiceLetter: string, info: any) => {
-    if (info.point.y < 300) { // Seuil ajusté pour la jarre
+    if (info.point.y < 300) { 
       const correct = currentQuestions[qIndex].correct_answer;
       if (choiceLetter === correct) {
         setFilledHoles(h => h + 1);
@@ -123,34 +120,33 @@ export default function MysterePage() {
         
         {/* --- VUE GALERIE --- */}
         {view === "gallery" && (
-          <motion.div key="gallery" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full flex flex-col items-center justify-center p-6">
+          <motion.div 
+            key={`gallery-${currentM?.id}`}
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            exit={{ opacity: 0 }} 
+            className="h-full flex flex-col items-center justify-center p-6"
+          >
             <motion.div
               drag="x"
               dragConstraints={{ left: 0, right: 0 }}
               dragElastic={0.2}
+              // Gestion intelligente Clic vs Swipe
+              onTap={() => setView("game")}
               onDragEnd={(e, info) => {
-                // Si le mouvement est significatif (> 50px), on change de carte
-                if (info.offset.x < -50) {
+                if (info.offset.x < -60) {
                   setCurrentIndex(prev => (prev + 1) % mysteres.length);
-                } else if (info.offset.x > 50) {
+                } else if (info.offset.x > 60) {
                   setCurrentIndex(prev => (prev - 1 + mysteres.length) % mysteres.length);
-                } 
-                // Si le mouvement est très faible (< 10px), on considère que c'est un clic
-                else if (Math.abs(info.offset.x) < 10) {
-                  setView("game");
                 }
               }}
               className="w-full max-w-[320px] h-[550px] bg-white rounded-[45px] shadow-2xl border-[10px] border-white overflow-hidden cursor-pointer flex flex-col"
             >
               <img 
-                src={currentM.cover_image_url || `https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/mysteres-assets/cover${currentM.mystere_number}.jpg`} 
+                src={`${currentM.cover_image_url}?v=${currentM.id}`} 
                 className="h-1/2 w-full object-cover bg-orange-50 pointer-events-none" 
                 alt={currentM.title}
-                onError={(e) => { 
-                  console.log('❌ Cover image error:', currentM.cover_image_url);
-                  console.log('🔄 Fallback vers:', `cover${currentM.mystere_number}.jpg`);
-                  e.currentTarget.src = `https://via.placeholder.com/320x240/3d1810/ffffff?text=Mystère+${currentM.mystere_number}`;
-                }}
+                fetchPriority="high"
               />
               <div className="p-7 flex-1 flex flex-col justify-between pointer-events-none">
                 <div>
@@ -164,7 +160,7 @@ export default function MysterePage() {
             </motion.div>
             <div className="mt-8 flex flex-col items-center gap-2">
                 <span className="text-[14px] font-black text-[#a0412d]">⭐ {points} pts</span>
-                <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest animate-pulse">Swipe pour naviguer</p>
+                <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest animate-pulse">Swipe pour naviguer • Tap pour ouvrir</p>
             </div>
           </motion.div>
         )}
@@ -215,7 +211,8 @@ export default function MysterePage() {
                     <motion.div 
                       key={l} 
                       drag 
-                      dragConstraints={{ left: 0, right: 0, top: -400, bottom: 0 }}
+                      // Bloque l'image dans le cadre verticalement
+                      dragConstraints={{ left: 0, right: 0, top: -450, bottom: 0 }}
                       dragSnapToOrigin 
                       onDragEnd={(e, info) => handleDrop(l, info)} 
                       whileDrag={{ scale: 1.05, zIndex: 100 }} 
@@ -235,20 +232,25 @@ export default function MysterePage() {
           <motion.div key="tresor" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="absolute inset-0 bg-[#1a0f0a] z-[60] flex flex-col items-center justify-center p-8 text-center text-white">
             <h2 className="text-[#fdb813] font-black tracking-[0.4em] uppercase mb-8 text-xs">Trésor Découvert</h2>
             <img 
-              src={currentM.treasure_image_url || `https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/mysteres-assets/treasure${currentM.mystere_number}.jpg`} 
-              className="w-72 h-72 object-contain mb-8" 
+              src={`${currentM.tresor_image_url}?v=${currentM.id}`} 
+              className="w-72 h-72 object-contain mb-8 drop-shadow-[0_0_30px_rgba(253,184,19,0.3)]" 
               alt="Trésor" 
-              onError={(e) => { 
-                console.log('❌ Treasure image error:', currentM.treasure_image_url);
-                console.log('🔄 Fallback vers:', `treasure${currentM.mystere_number}.jpg`);
-                e.currentTarget.src = `https://via.placeholder.com/288x288/fdb813/ffffff?text=Trésor+${currentM.mystere_number}`;
-              }}
             />
             <h3 className="text-3xl font-black mb-2 uppercase">{currentM.title}</h3>
             <div className="bg-white/5 p-6 rounded-3xl text-sm leading-relaxed max-w-sm mb-8 italic">
               {currentM.inspiration || "Félicitations, initié."}
             </div>
-            <button onClick={() => { setView("gallery"); setFilledHoles(0); setQIndex(0); setCurrentIndex(prev => (prev + 1) % mysteres.length); }} className="px-10 py-4 bg-[#fdb813] text-[#3d1810] rounded-full font-black uppercase text-xs tracking-widest">Retourner à l'Oracle</button>
+            <button 
+              onClick={() => { 
+                setView("gallery"); 
+                setFilledHoles(0); 
+                setQIndex(0); 
+                setCurrentIndex(prev => (prev + 1) % mysteres.length); 
+              }} 
+              className="px-10 py-4 bg-[#fdb813] text-[#3d1810] rounded-full font-black uppercase text-xs tracking-widest"
+            >
+              Retourner à l'Oracle
+            </button>
           </motion.div>
         )}
 
@@ -257,7 +259,7 @@ export default function MysterePage() {
           <div className="absolute inset-0 bg-white z-[100] flex flex-col items-center justify-center p-8 text-center">
             <h2 className="text-2xl font-black text-[#a0412d] mb-8 uppercase">La Jarre est scellée</h2>
             <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Mot de Pouvoir" className="w-full max-w-xs p-4 border rounded-full mb-4 text-center outline-none focus:border-[#a0412d]" />
-            <button onClick={() => { if(password.toLowerCase() === "benin"){ setLives(8); setView("gallery"); }}} className="w-full max-w-xs bg-[#a0412d] text-white p-4 rounded-full font-black">Invoquer</button>
+            <button onClick={() => { if(password.toLowerCase() === "benin"){ setLives(8); setView("gallery"); toast.success("Libéré !"); }}} className="w-full max-w-xs bg-[#a0412d] text-white p-4 rounded-full font-black">Invoquer</button>
           </div>
         )}
       </AnimatePresence>
