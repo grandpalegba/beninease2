@@ -1,120 +1,123 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 
 export default function SatoChallengePage() {
-  const [gameState, setGameState] = useState<'menu' | 'playing' | 'gameover' | 'completed'>('menu');
-  const [filledHoles, setFilledHoles] = useState(4); // Représente les graines d'Awalé
-  
+  const [gameState, setGameState] = useState<'playing' | 'completed'>('playing');
+
   return (
-    <div className="min-h-screen bg-[#faf9f8] text-[#303333] flex flex-col items-center">
+    <div className="min-h-screen bg-[#faf9f8] text-[#303333] flex flex-col items-center overflow-x-hidden">
       
-      {/* SECTION JEU : Centrée verticalement */}
-      <main className="flex-1 w-full max-w-5xl px-6 flex flex-col items-center justify-center pb-32">
+      <main className="flex-1 w-full max-w-5xl px-6 flex flex-col items-center justify-center pb-32 pt-12">
         
-        {/* Artefacts Visuels */}
+        {/* SECTION VISUELLE : Artefacts culturels */}
         <div className="relative w-full flex justify-center items-center mb-16 h-80">
           
-          {/* OKPELE : 8 Noix (2 colonnes de 4) avec Septum */}
-          <div className="absolute left-[calc(50%-300px)] flex gap-6 pointer-events-none">
+          {/* OKPELE : Noix brunes affinées (inspiré de la réalité) */}
+          <div className="absolute left-[calc(50%-320px)] flex gap-4 pointer-events-none scale-90">
             {[0, 1].map((col) => (
-              <div key={col} className="flex flex-col gap-3">
+              <div key={col} className="flex flex-col gap-2 pt-4">
                 {[0, 1, 2, 3].map((row) => (
-                  <div key={row} className="relative w-10 h-14 bg-[#a0412d] rounded-full shadow-md flex justify-center overflow-hidden">
-                    {/* Le Septum (séparation centrale de la noix) */}
-                    <div className="w-[2px] h-full bg-[#540900]/40 shadow-inner"></div>
-                    {/* Reflet organique */}
-                    <div className="absolute top-2 left-2 w-2 h-4 bg-white/10 rounded-full blur-[1px]"></div>
+                  <div key={row} className="relative w-8 h-12 bg-[#5d3a1a] rounded-[45%_45%_50%_50%] shadow-md flex justify-center overflow-hidden border-b-2 border-black/20">
+                    {/* Le Septum (Séparation centrale réaliste) */}
+                    <div className="w-[1.5px] h-full bg-[#2a1a0d]/60 shadow-inner"></div>
+                    {/* Texture/Reflet */}
+                    <div className="absolute top-1 left-1 w-1 h-3 bg-white/5 rounded-full blur-[0.5px]"></div>
                   </div>
                 ))}
               </div>
             ))}
-            {/* Cordon de liaison en haut */}
-            <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-24 h-6 border-t-2 border-x-2 border-gray-400/30 rounded-t-full"></div>
+            {/* Cordon de liaison fin */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-8 border-t-[1.5px] border-x-[1.5px] border-gray-400/40 rounded-t-2xl"></div>
           </div>
 
-          {/* JARRE SATO */}
-          <div className="relative w-60 h-72 z-10">
-            <div className="absolute inset-0 bg-[#a0412d] rounded-[40%_40%_45%_45%] shadow-2xl flex items-center justify-center overflow-hidden">
-              <div className="absolute top-0 w-full h-16 bg-gradient-to-b from-black/20 to-transparent"></div>
-              {/* Ouvertures de la jarre */}
+          {/* JARRE SATO : Ajout du col et de la texture terre cuite */}
+          <div className="relative w-64 h-72 z-10 flex flex-col items-center">
+            {/* Haut de la jarre (Col) */}
+            <div className="w-24 h-6 bg-[#8b3422] rounded-t-lg border-b border-black/10 shadow-sm mb-[-2px] z-20"></div>
+            {/* Corps de la jarre */}
+            <div className="w-full h-full bg-[#a0412d] rounded-[42%_42%_48%_48%] shadow-2xl flex items-center justify-center overflow-hidden relative">
+              <div className="absolute top-0 w-full h-20 bg-gradient-to-b from-black/25 to-transparent"></div>
+              {/* Orifices sacrés */}
               <div className="relative w-full h-full">
-                <div className="absolute top-[35%] left-[25%] w-10 h-10 rounded-full bg-[#2a100a] shadow-inner"></div>
-                <div className="absolute top-[28%] left-[55%] w-8 h-8 rounded-full bg-[#2a100a] shadow-inner"></div>
-                <div className="absolute top-[55%] left-[40%] w-12 h-12 rounded-full bg-[#2a100a] shadow-inner"></div>
-                <div className="absolute top-[48%] left-[68%] w-7 h-7 rounded-full bg-[#2a100a] shadow-inner"></div>
+                <div className="absolute top-[30%] left-[28%] w-11 h-11 rounded-full bg-[#2a100a] shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]"></div>
+                <div className="absolute top-[22%] left-[58%] w-9 h-9 rounded-full bg-[#2a100a] shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]"></div>
+                <div className="absolute top-[52%] left-[42%] w-14 h-14 rounded-full bg-[#2a100a] shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]"></div>
+                <div className="absolute top-[45%] left-[72%] w-8 h-8 rounded-full bg-[#2a100a] shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]"></div>
               </div>
             </div>
           </div>
 
-          {/* AWALÉ (Score/Vies) */}
-          <div className="absolute left-[calc(50%+200px)] p-4 bg-[#4a3728] rounded-2xl shadow-xl flex gap-4">
+          {/* AWALÉ (Indicateur de progression) */}
+          <div className="absolute left-[calc(50%+220px)] p-3 bg-[#3d2410] rounded-xl shadow-xl flex gap-3 scale-95">
             <div className="flex flex-col gap-4">
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="w-8 h-8 rounded-full bg-black/40 shadow-inner flex items-center justify-center">
-                  <div className="w-3 h-3 rounded-full bg-[#ffd700] shadow-[0_0_8px_#ffd700]"></div>
+                <div key={i} className="w-7 h-7 rounded-full bg-black/50 shadow-inner flex items-center justify-center">
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#ffd700] shadow-[0_0_10px_#ffd700]"></div>
                 </div>
               ))}
             </div>
-            <div className="w-[1px] h-32 bg-white/10"></div>
+            <div className="w-[1px] h-36 bg-white/5"></div>
             <div className="flex flex-col gap-4">
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="w-8 h-8 rounded-full bg-black/40 shadow-inner"></div>
+                <div key={i} className="w-7 h-7 rounded-full bg-black/50 shadow-inner"></div>
               ))}
             </div>
           </div>
         </div>
 
-        {/* QUESTION SECTION */}
+        {/* QUESTION : Editorial Typography (Plus Jakarta Sans) */}
         <div className="text-center mb-12 max-w-2xl px-6">
-          <h2 className="text-2xl font-bold font-headline leading-relaxed">
+          <h2 className="text-3xl font-extrabold font-headline leading-snug tracking-tight text-on-surface">
             Quelle est la fonction principale du tambour Sato lors des rites agraires ?
           </h2>
         </div>
 
-        {/* GRILLE DE RÉPONSES (No-Line Rule) */}
+        {/* RÉPONSES : No-Divider Rule & Surface Hierarchy */}
         <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-4">
-          {['Purifier les récoltes', 'Appeler la pluie', 'Célébrer les mariages', 'Guérir les malades'].map((answer, i) => (
+          {[
+            { id: 'A', text: 'Purifier les récoltes' },
+            { id: 'B', text: 'Appeler la pluie' },
+            { id: 'C', text: 'Célébrer les mariages' },
+            { id: 'D', text: 'Guérir les malades' }
+          ].map((item) => (
             <motion.button
-              key={i}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="group flex items-center p-6 bg-[#f4f3f2] rounded-2xl transition-all hover:bg-[#ffac9b]/20 text-left"
+              key={item.id}
+              whileHover={{ scale: 1.01, backgroundColor: '#fdfcfb' }}
+              whileTap={{ scale: 0.99 }}
+              className="group flex items-center p-6 bg-surface-container-low rounded-2xl transition-all shadow-sm hover:shadow-md text-left"
             >
-              <span className="w-10 h-10 rounded-full bg-white flex items-center justify-center font-bold text-[#a0412d] shadow-sm mr-4 group-hover:bg-[#a0412d] group-hover:text-white transition-colors">
-                {String.fromCharCode(65 + i)}
+              <span className="w-10 h-10 rounded-full bg-white flex items-center justify-center font-bold text-primary shadow-sm mr-5 group-hover:bg-primary group-hover:text-white transition-colors font-headline">
+                {item.id}
               </span>
-              <span className="text-lg font-medium">{answer}</span>
+              <span className="text-lg font-medium font-body text-on-surface">{item.text}</span>
             </motion.button>
           ))}
         </div>
       </main>
 
-      {/* HEADER EN BAS (Comme sur la page Référents) */}
-      <footer className="fixed bottom-0 left-0 w-full z-50 p-6">
-        <div className="max-w-7xl mx-auto bg-[#faf9f8]/80 backdrop-blur-xl rounded-full px-8 py-4 flex items-center justify-between shadow-[rgba(160,65,45,0.08)_0px_-12px_30px]">
-          {/* Logo */}
-          <div className="flex items-center gap-2">
+      {/* FOOTER NAVIGATION (Comme sur la page Référents) */}
+      <footer className="fixed bottom-8 left-0 w-full z-50 px-6 pointer-events-none">
+        <div className="max-w-4xl mx-auto bg-[#faf9f8]/85 backdrop-blur-xl rounded-full px-8 py-3 flex items-center justify-between shadow-[rgba(160,65,45,0.12)_0px_-15px_40px] pointer-events-auto border border-white/20">
+          <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-green-600 via-yellow-400 to-red-600"></div>
-            <span className="font-headline font-black text-xl tracking-tighter">Beninease</span>
+            <span className="font-headline font-black text-lg tracking-tighter">Beninease</span>
           </div>
 
-          {/* Navigation centrale */}
-          <nav className="hidden md:flex items-center gap-8 font-headline text-xs font-bold uppercase tracking-[0.2em]">
-            <a href="/referents" className="hover:text-[#a0412d] transition-colors">Référents</a>
-            <a href="/mysteres" className="text-[#a0412d]">Mystères</a>
-            <a href="/talents" className="hover:text-[#a0412d] transition-colors">Talents</a>
-            <a href="/tresors" className="hover:text-[#a0412d] transition-colors">Trésors</a>
+          <nav className="hidden md:flex items-center gap-8 font-headline text-[10px] font-black uppercase tracking-[0.25em]">
+            <a href="/referents" className="text-on-surface/60 hover:text-primary transition-colors">Référents</a>
+            <a href="/mysteres" className="text-primary underline underline-offset-8 decoration-2">Mystères</a>
+            <a href="/talents" className="text-on-surface/60 hover:text-primary transition-colors">Talents</a>
+            <a href="/tresors" className="text-on-surface/60 hover:text-primary transition-colors">Trésors</a>
           </nav>
 
-          {/* Bouton Connexion */}
-          <button className="bg-[#006b60] text-white px-6 py-2 rounded-full font-bold text-sm shadow-lg hover:scale-105 transition-transform">
-            Connexion
+          <button className="bg-secondary text-white px-6 py-2 rounded-full font-bold text-xs shadow-lg hover:scale-105 transition-all">
+            CONNEXION
           </button>
         </div>
       </footer>
-
+      
     </div>
   );
 }
