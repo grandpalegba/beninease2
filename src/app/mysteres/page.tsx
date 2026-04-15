@@ -92,17 +92,19 @@ export default function MysterePage() {
         
         console.log(`Question ${qIndex + 1}/${currentQuestions.length} - Trou: ${filledHoles + 1}/4`);
         
-        // Points seulement après les 4 questions complétées
+        // +10 points pour chaque bonne réponse
+        updatePoints(10);
+        toast.success("Correct ! +10 pts");
+        
         if (qIndex < currentQuestions.length - 1) {
-          toast.success("Correct !");
           setTimeout(() => { 
             setQIndex(i => i + 1); 
             setTimeLeft(60); 
           }, 600);
         } else {
-          // Succès final du mystère - attribution du bonus
-          console.log("Bonus de 50 points attribué !");
-          updatePoints(50); // +50 points pour avoir complété les 4 questions
+          // Bonus de 10 points pour avoir complété les 4 questions
+          console.log("Bonus final de 10 points attribué !");
+          updatePoints(10); // +10 points bonus
           confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#fdb813', '#a0412d'] });
           setTimeout(() => setView("success"), 600);
         }
