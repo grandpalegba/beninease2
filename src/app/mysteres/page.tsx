@@ -64,7 +64,7 @@ export default function MysterePage() {
     return allQuestions
       .filter(q => q.mystere_id === currentM.id)
       .sort((a, b) => (a.question_number || 0) - (b.question_number || 0))
-      .slice(0, 4); // On s'assure d'avoir 4 questions
+      .slice(0, 4); 
   }, [allQuestions, currentM]);
 
   const updatePoints = (amount: number) => {
@@ -84,29 +84,33 @@ export default function MysterePage() {
   };
 
   const handleChoice = (choiceLetter: string, info: any) => {
-    // Détection du drop dans la jarre (zone haute de l'écran)
     if (info.point.y < 350) {
       const correct = currentQuestions[qIndex]?.correct_answer;
+      
       if (choiceLetter === correct) {
         setFilledHoles(h => h + 1);
         
-        console.log(`Question ${qIndex + 1}/${currentQuestions.length} - Trou: ${filledHoles + 1}/4`);
+        // Logique de points corrigée
+        const isLast = qIndex === currentQuestions.length - 1;
+        const pointsToGains = isLast ? 20 : 10; // 10 points normaux + 10 bonus si c'est la fin
+
+        updatePoints(pointsToGains);
         
-        // +10 points pour chaque bonne réponse
-        updatePoints(10);
-        toast.success("Correct ! +10 pts");
-        
-        if (qIndex < currentQuestions.length - 1) {
+        if (!isLast) {
+          toast.success("Correct ! +10 pts");
           setTimeout(() => { 
             setQIndex(i => i + 1); 
             setTimeLeft(60); 
           }, 600);
         } else {
-          // Bonus de 10 points pour avoir complété les 4 questions
-          console.log("Bonus final de 10 points attribué !");
-          updatePoints(10); // +10 points bonus
-          confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#fdb813', '#a0412d'] });
-          setTimeout(() => setView("success"), 600);
+          toast.success("Mystère résolu ! Bonus +10 pts");
+          confetti({ 
+            particleCount: 150, 
+            spread: 70, 
+            origin: { y: 0.6 }, 
+            colors: ['#fdb813', '#a0412d'] 
+          });
+          setTimeout(() => setView("success"), 800);
         }
       } else {
         handleFailure();
@@ -114,7 +118,11 @@ export default function MysterePage() {
     }
   };
 
-  if (loading) return <div className="h-screen flex items-center justify-center bg-[#faf9f8]"><div className="w-12 h-12 border-4 border-[#a0412d] border-t-transparent rounded-full animate-spin" /></div>;
+  if (loading) return (
+    <div className="h-screen flex items-center justify-center bg-[#faf9f8]">
+      <div className="w-12 h-12 border-4 border-[#a0412d] border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
 
   return (
     <div className="h-screen w-screen bg-[#faf9f8] overflow-hidden touch-none relative">
@@ -135,13 +143,13 @@ export default function MysterePage() {
               }}
               className="w-full max-w-[320px] h-[520px] bg-white rounded-[40px] shadow-2xl border-[8px] border-white overflow-hidden cursor-pointer"
             >
-              <img src={currentM.cover_image_url} className="h-1/2 w-full object-cover pointer-events-none" alt={currentM.title}/>
+              <img src={currentM?.cover_image_url} className="h-1/2 w-full object-cover pointer-events-none" alt={currentM?.title}/>
               <div className="p-6 flex flex-col justify-between h-1/2 pointer-events-none">
                 <div>
-                  <h2 className="text-xl font-black text-[#3d1810] uppercase">{currentM.title}</h2>
-                  <p className="text-[10px] font-bold text-[#a0412d] mt-1 italic uppercase">{currentM.subtitle}</p>
+                  <h2 className="text-xl font-black text-[#3d1810] uppercase">{currentM?.title}</h2>
+                  <p className="text-[10px] font-bold text-[#a0412d] mt-1 italic uppercase">{currentM?.subtitle}</p>
                 </div>
-                <p className="text-[12px] text-gray-500 italic leading-relaxed line-clamp-4">"{currentM.mise_en_abyme}"</p>
+                <p className="text-[12px] text-gray-500 italic leading-relaxed line-clamp-4">"{currentM?.mise_en_abyme}"</p>
                 <div className="pt-4 border-t border-gray-100 flex justify-between items-center">
                   <span className="text-[10px] font-bold text-gray-400 uppercase">Mystère n°{currentIndex + 1}</span>
                   <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center">✨</div>
@@ -155,7 +163,7 @@ export default function MysterePage() {
           </motion.div>
         )}
 
-        {/* --- PHASE DE JEU (SCROLL VERTICAL) --- */}
+        {/* --- PHASE DE JEU --- */}
         {view === "game" && (
           <motion.div key="game" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-50 flex flex-col">
             <div className="h-12 flex items-center justify-center shrink-0" onClick={() => setView("gallery")}>
@@ -163,7 +171,7 @@ export default function MysterePage() {
             </div>
 
             <div className="px-6 flex-1 flex flex-col items-center overflow-hidden">
-               <h1 className="text-xl font-black text-[#a0412d] uppercase text-center">{currentM.title}</h1>
+               <h1 className="text-xl font-black text-[#a0412d] uppercase text-center">{currentM?.title}</h1>
                
                <div className="mt-4 flex justify-between w-full max-w-xs items-center">
                   <HourglassTimer timeLeft={timeLeft} isFlipping={false} />
@@ -174,7 +182,6 @@ export default function MysterePage() {
                   </div>
                </div>
                
-               {/* LA JARRE D'ÉNERGIE */}
                <div className="relative my-6">
                  <div className="w-32 h-40 bg-[#a0412d] rounded-t-[50px] rounded-b-[20px] shadow-xl flex items-center justify-center border-b-4 border-[#7a2a1b]">
                     <div className="grid grid-cols-2 gap-3">
@@ -185,7 +192,6 @@ export default function MysterePage() {
                  </div>
                </div>
 
-               {/* QUESTIONS AVEC ANIMATION DE SCROLL */}
                <div className="w-full max-w-md flex-1 relative overflow-hidden">
                  <AnimatePresence mode="wait">
                     <motion.div 
@@ -217,27 +223,26 @@ export default function MysterePage() {
           </motion.div>
         )}
 
-        {/* --- RÉCOMPENSE / FIN DE MYSTÈRE --- */}
+        {/* --- RÉCOMPENSE --- */}
         {view === "success" && (
           <motion.div key="success" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-[#a0412d] z-[60] flex flex-col items-center justify-center p-8 text-center text-white">
             <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-32 h-32 bg-[#fdb813] rounded-full flex items-center justify-center text-5xl mb-6">🎉</motion.div>
             <h2 className="text-3xl font-black uppercase mb-2">Mystère Résolu !</h2>
-            <p className="text-orange-200 mb-8 font-medium">Vous avez gagné 50 points d'expérience.</p>
+            <p className="text-orange-200 mb-8 font-medium">Félicitations, vous avez maîtrisé ce savoir.</p>
             <button 
               onClick={() => { setView("gallery"); setFilledHoles(0); setQIndex(0); setCurrentIndex(prev => (prev + 1) % mysteres.length); }} 
               className="px-12 py-4 bg-white text-[#a0412d] rounded-full font-black uppercase text-xs tracking-widest shadow-xl"
             >
-              Continuer l'Odyssée
+              Continuer
             </button>
           </motion.div>
         )}
 
-        {/* --- MODE POWER (LOCKED) --- */}
+        {/* --- MODE POWER --- */}
         {view === "locked" && (
           <motion.div key="locked" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-white z-[100] flex flex-col items-center justify-center p-8 text-center">
             <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center text-3xl mb-6">🔒</div>
             <h2 className="text-2xl font-black text-[#a0412d] mb-4 uppercase">Énergie Épuisée</h2>
-            <p className="text-gray-400 text-sm mb-8">Entrez le mot de pouvoir ou accomplissez des actions dans les autres pages pour revenir.</p>
             <input 
               type="password" 
               value={password} 
