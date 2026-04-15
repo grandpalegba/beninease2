@@ -49,12 +49,12 @@ export default function SatoChallengePage() {
         {/* SECTION INSTRUMENTS */}
         <div className="w-full flex justify-between items-center mb-20 px-10">
           
-          {/* 1. OKPELE (Corrigé : base fine en haut, chaîne passante) */}
-          <div className="relative w-32 flex flex-col items-center scale-95">
-            {/* Chaîne dorée passante entre les noix */}
-            <svg className="w-24 h-12 mb-[-15px] z-0" viewBox="0 0 100 40">
+          {/* 1. OKPELE (Corrigé : Base large en bas, chaîne allongée) */}
+          <div className="relative w-40 flex flex-col items-center scale-95">
+            {/* Chaîne dorée allongée et arquée */}
+            <svg className="w-32 h-20 mb-[-25px] z-0" viewBox="0 0 100 60">
               <path 
-                d="M 20 40 Q 50 10 80 40" 
+                d="M 10 50 Q 50 -10 90 50" 
                 stroke="#FFD700" 
                 strokeWidth="2.5" 
                 fill="none" 
@@ -63,14 +63,15 @@ export default function SatoChallengePage() {
               />
             </svg>
             
-            <div className="flex gap-8 relative z-10">
+            <div className="flex gap-10 relative z-10">
               {[0, 1].map((col) => (
                 <div key={col} className="flex flex-col gap-4 items-center">
                   {[0, 1, 2, 3].map((row) => (
                     <div key={row} 
-                      className="relative w-9 h-12 bg-[#5d3a1a] shadow-md flex justify-center overflow-hidden"
+                      className="relative w-10 h-14 bg-[#5d3a1a] shadow-md flex justify-center overflow-hidden"
+                      // Forme de noix : Base plus large que le haut
                       style={{ 
-                        borderRadius: '35% 35% 50% 50% / 15% 15% 85% 85%', // Base fine en haut
+                        borderRadius: '50% 50% 35% 35% / 85% 85% 15% 15%', 
                         borderBottom: '2px solid rgba(0,0,0,0.4)'
                       }}
                     >
@@ -78,7 +79,7 @@ export default function SatoChallengePage() {
                       <AnimatePresence>
                         {isNoixActive(col, row) && (
                           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 flex justify-center items-center">
-                            {/* Jaune doré */}
+                            {/* Lumière jaune dorée */}
                             <div className="w-[3px] h-[70%] bg-[#FFD700] shadow-[0_0_12px_#FFD700] rounded-full"></div>
                           </motion.div>
                         )}
@@ -90,12 +91,9 @@ export default function SatoChallengePage() {
             </div>
           </div>
 
-          {/* 2. JARRE SATO (Modèle Stitch à la lettre) */}
+          {/* 2. JARRE SATO (Stitch - Inchangée) */}
           <div className="relative w-72 h-[360px] z-10">
-            {/* Lip / Haut fin de la jarre */}
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-40 h-10 bg-[#3d1810] rounded-[50%] shadow-inner border-4 border-[#a0412d]/20 z-0"></div>
-            
-            {/* Body of the jar (Clay Texture & Organic Shape) */}
             <div className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden"
               style={{
                 background: 'linear-gradient(165deg, #a0412d 0%, #8b3422 45%, #7a2a1b 100%)',
@@ -103,8 +101,6 @@ export default function SatoChallengePage() {
                 boxShadow: 'inset -8px -8px 20px rgba(0,0,0,0.2), inset 8px 8px 20px rgba(255,255,255,0.1), 0 20px 40px rgba(0,0,0,0.15)'
               }}>
               <div className="absolute top-0 w-full h-16 bg-gradient-to-b from-black/25 to-transparent"></div>
-              
-              {/* Decorative Circles / Holes */}
               <div className="relative w-full h-full">
                 <div className="absolute top-[40%] left-[25%] w-14 h-14 rounded-full bg-[#2a100a] shadow-inner opacity-95 border border-black/10"></div>
                 <div className="absolute top-[32%] left-[58%] w-12 h-12 rounded-full bg-[#2a100a] shadow-inner opacity-95 border border-black/10"></div>
@@ -114,7 +110,7 @@ export default function SatoChallengePage() {
             </div>
           </div>
 
-          {/* 3. AWALE VERTICAL (Graines Jaune Doré) */}
+          {/* 3. AWALE VERTICAL (Inchangé) */}
           <div className="relative flex bg-[#3d1810] p-4 rounded-2xl shadow-xl border-2 border-[#2a100a] scale-95">
             <div className="flex flex-col gap-4">
               {[0, 1, 2, 3].map(i => (
