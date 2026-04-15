@@ -47,10 +47,10 @@ export default function SatoChallengePage() {
       <main className="w-full max-w-5xl flex flex-col items-center">
         
         {/* SECTION INSTRUMENTS */}
-        <div className="w-full flex justify-between items-center mb-20 px-10">
+        <div className="w-full flex justify-between items-end mb-20 px-10">
           
           {/* 1. OKPELE (Taille Parfaite) */}
-          <div className="relative w-36 flex flex-col items-center scale-[0.85] origin-center">
+          <div className="relative w-36 flex flex-col items-center scale-[0.85] origin-bottom">
             <svg className="w-28 h-16 mb-[-20px] z-0" viewBox="0 0 100 60">
               <path 
                 d="M 15 50 Q 50 -5 85 50" 
@@ -107,8 +107,8 @@ export default function SatoChallengePage() {
             </div>
           </div>
 
-          {/* 3. AWALÉ VERTICAL (Réduit pour se caler sur l'Okpele) */}
-          <div className="relative flex bg-[#3d1810] p-3 rounded-2xl shadow-xl border-2 border-[#2a100a] scale-[0.85] origin-center">
+          {/* 3. AWALÉ VERTICAL (Ajusté : Aligné sur le bas des noix) */}
+          <div className="relative flex bg-[#3d1810] p-3 rounded-2xl shadow-xl border-2 border-[#2a100a] scale-[0.85] origin-bottom translate-y-[10px]">
             <div className="flex flex-col gap-3">
               {[0, 1, 2, 3].map(i => (
                 <div key={i} className="w-10 h-10 bg-black/60 rounded-full shadow-inner border border-black/30 flex items-center justify-center gap-1">
