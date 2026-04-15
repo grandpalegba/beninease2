@@ -35,18 +35,15 @@ export default function MysterePage() {
   const [timeLeft, setTimeLeft] = useState(60);
   const [password, setPassword] = useState("");
   
-  // Nouvel état pour les explications débloquées
   const [explanations, setExplanations] = useState<string[]>([]);
-  const explicationEndRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     async function fetchData() {
       const { data: mData } = await supabase.from('mysteres').select('*');
       const { data: qData } = await supabase.from('questions').select('*');
-      
       if (mData) setMysteres(shuffleArray(mData));
       if (qData) setAllQuestions(qData);
-      
       const savedPoints = localStorage.getItem("beninease_points");
       if (savedPoints) setPoints(parseInt(savedPoints));
       setLoading(false);
@@ -54,17 +51,12 @@ export default function MysterePage() {
     fetchData();
   }, []);
 
-  // Scroll automatique vers la dernière explication
   useEffect(() => {
-    explicationEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [explanations]);
-
-  useEffect(() => {
-    if (view !== "game" || timeLeft <= 0) return;
+    if (view !== "game" || timeLeft <= 0 || filledHoles === 4) return;
     const timer = setInterval(() => setTimeLeft(t => t - 1), 1000);
     if (timeLeft === 1) handleFailure();
     return () => clearInterval(timer);
-  }, [view, timeLeft]);
+  }, [view, timeLeft, filledHoles]);
 
   const currentM = mysteres[currentIndex];
 
@@ -85,7 +77,7 @@ export default function MysterePage() {
   };
 
   const handleFailure = () => {
-    toast.error("L'esprit s'assombrit...");
+    toast.error("L'énergie s'échappe...");
     setLives(l => {
       if (l <= 1) { setView("locked"); return 0; }
       return l - 1;
@@ -95,35 +87,31 @@ export default function MysterePage() {
   const handleChoice = (choiceLetter: string, info: any) => {
     if (info.point.y < 350) {
       const currentQ = currentQuestions[qIndex];
-      const correct = currentQ?.correct_answer;
-      
-      if (choiceLetter === correct) {
-        const isLastOfFour = qIndex === 3;
-        const reward = isLastOfFour ? 20 : 10; 
-
-        setFilledHoles(h => h + 1);
-        updatePoints(reward);
+      if (choiceLetter === currentQ?.correct_answer) {
+        const isLast = qIndex === 3;
         
-        // Ajouter l'explication au tableau
+        setFilledHoles(h => h + 1);
+        updatePoints(isLast ? 20 : 10);
+        
         if (currentQ.explanation) {
           setExplanations(prev => [...prev, currentQ.explanation]);
         }
-        
-        if (!isLastOfFour) {
-          toast.success("Correct ! +10 pts");
+
+        if (!isLast) {
+          toast.success("Correct !");
           setTimeout(() => { 
             setQIndex(prev => prev + 1); 
             setTimeLeft(60); 
-          }, 800);
+          }, 600);
         } else {
-          toast.success("Maîtrise totale ! Bonus +10 pts");
+          toast.success("Mystère résolu ! Bonus +10 pts");
           confetti({ 
             particleCount: 200, 
             spread: 90, 
             origin: { y: 0.6 }, 
             colors: ['#fdb813', '#a0412d', '#ffffff'] 
           });
-          setTimeout(() => setView("success"), 1500);
+          // On reste dans la vue game pour le récapitulatif final
         }
       } else {
         handleFailure();
@@ -143,7 +131,7 @@ export default function MysterePage() {
 
       <AnimatePresence mode="wait">
         
-        {/* GALERIE */}
+        {/* GALERIE : Navigation entre les 256 mystères */}
         {view === "gallery" && (
           <motion.div key="gallery" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full flex flex-col items-center justify-center p-6">
             <motion.div
@@ -151,24 +139,26 @@ export default function MysterePage() {
               dragConstraints={{ left: 0, right: 0 }}
               onTap={() => {
                 setView("game");
-                setExplanations([]); // Reset des explications à l'entrée
+                setExplanations([]);
+                setFilledHoles(0);
+                setQIndex(0);
               }}
               onDragEnd={(e, info) => {
-                if (info.offset.x < -50) setCurrentIndex(prev => (prev + 1) % mysteres.length);
-                else if (info.offset.x > 50) setCurrentIndex(prev => (prev - 1 + mysteres.length) % mysteres.length);
+                if (info.offset.x < -60) setCurrentIndex(prev => (prev + 1) % mysteres.length);
+                else if (info.offset.x > 60) setCurrentIndex(prev => (prev - 1 + mysteres.length) % mysteres.length);
               }}
-              className="w-full max-w-[320px] h-[520px] bg-white rounded-[40px] shadow-2xl border-[8px] border-white overflow-hidden cursor-pointer"
+              className="w-full max-w-[320px] h-[520px] bg-white rounded-[45px] shadow-2xl border-[10px] border-white overflow-hidden cursor-pointer flex flex-col"
             >
               <img src={currentM?.cover_image_url} className="h-1/2 w-full object-cover pointer-events-none" alt={currentM?.title}/>
-              <div className="p-6 flex flex-col justify-between h-1/2 pointer-events-none">
+              <div className="p-7 flex flex-col justify-between h-1/2 pointer-events-none">
                 <div>
-                  <h2 className="text-xl font-black text-[#3d1810] uppercase leading-tight">{currentM?.title}</h2>
-                  <p className="text-[10px] font-bold text-[#a0412d] mt-1 italic uppercase tracking-wider">{currentM?.subtitle}</p>
+                  <h2 className="text-2xl font-black text-[#3d1810] uppercase leading-tight">{currentM?.title}</h2>
+                  <p className="text-[11px] font-bold text-[#a0412d] mt-1 italic uppercase tracking-wider">{currentM?.subtitle}</p>
                 </div>
-                <p className="text-[12px] text-gray-500 italic leading-relaxed line-clamp-4">"{currentM?.mise_en_abyme}"</p>
+                <p className="text-[13px] text-gray-500 italic leading-relaxed line-clamp-4">"{currentM?.mise_en_abyme}"</p>
                 <div className="pt-4 border-t border-gray-100 flex justify-between items-center">
-                  <span className="text-[9px] font-black text-gray-300 uppercase">Mystère n°{currentIndex + 1}</span>
-                  <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center">🏺</div>
+                  <span className="text-[10px] font-black text-gray-300 uppercase">Mystère</span>
+                  <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center text-[10px]">🏺</div>
                 </div>
               </div>
             </motion.div>
@@ -179,27 +169,31 @@ export default function MysterePage() {
           </motion.div>
         )}
 
-        {/* JEU */}
+        {/* JEU ET RÉVÉLATIONS FINALES */}
         {view === "game" && (
-          <motion.div key="game" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-50 flex flex-col">
-            <div className="h-12 flex items-center justify-center shrink-0 cursor-pointer" onClick={() => setView("gallery")}>
+          <motion.div key="game" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-50 flex flex-col overflow-hidden">
+            <div className="h-14 flex items-center justify-center shrink-0 cursor-pointer" onClick={() => setView("gallery")}>
               <div className="w-12 h-1.5 bg-gray-200 rounded-full" />
             </div>
 
-            <div className="px-6 flex-1 flex flex-col items-center overflow-y-auto no-scrollbar pb-24">
-               <h1 className="text-xl font-black text-[#a0412d] uppercase text-center mb-2">{currentM?.title}</h1>
+            <div ref={scrollContainerRef} className="px-6 flex-1 overflow-y-auto no-scrollbar pb-24">
+               <h1 className="text-xl font-black text-[#a0412d] uppercase text-center mb-6">{currentM?.title}</h1>
                
-               <div className="flex justify-between w-full max-w-xs items-center mb-4">
-                  <HourglassTimer timeLeft={timeLeft} isFlipping={false} />
-                  <div className="flex gap-1">
-                    {Array.from({length: 8}).map((_, i) => (
-                      <motion.div key={i} animate={{ scale: i < lives ? 1 : 0.7 }} className={`w-3 h-3 rounded-full ${i < lives ? 'bg-[#fdb813]' : 'bg-gray-100'}`} />
-                    ))}
-                  </div>
-               </div>
-               
-               <div className="relative mb-6">
-                 <div className="w-28 h-36 bg-[#a0412d] rounded-t-[45px] rounded-b-[15px] shadow-2xl flex items-center justify-center border-b-4 border-[#7a2a1b]">
+               {/* UI STATS : Masquées une fois le quiz fini */}
+               {filledHoles < 4 && (
+                 <div className="flex justify-between w-full max-w-xs mx-auto items-center mb-8">
+                    <HourglassTimer timeLeft={timeLeft} isFlipping={false} />
+                    <div className="flex gap-1">
+                      {Array.from({length: 8}).map((_, i) => (
+                        <div key={i} className={`w-2.5 h-2.5 rounded-full ${i < lives ? 'bg-[#fdb813]' : 'bg-gray-100'}`} />
+                      ))}
+                    </div>
+                 </div>
+               )}
+
+               {/* LA JARRE */}
+               <div className="flex justify-center mb-10">
+                 <div className="w-28 h-36 bg-[#a0412d] rounded-t-[45px] rounded-b-[20px] shadow-2xl flex items-center justify-center border-b-4 border-[#7a2a1b]">
                     <div className="grid grid-cols-2 gap-3">
                         {[1,2,3,4].map(h => (
                           <motion.div key={h} animate={h <= filledHoles ? { scale: 1.3, opacity: 1 } : { opacity: 0.1 }} className={`w-3 h-3 rounded-full ${h <= filledHoles ? 'bg-[#fdb813] shadow-[0_0_10px_#fdb813]' : 'bg-black'}`} />
@@ -208,98 +202,78 @@ export default function MysterePage() {
                  </div>
                </div>
 
-               {/* ZONE QUESTION */}
-               <div className="w-full max-w-md shrink-0">
-                 <AnimatePresence mode="wait">
-                    <motion.div 
-                      key={qIndex}
-                      initial={{ y: 20, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      exit={{ y: -20, opacity: 0 }}
-                      className="space-y-3"
-                    >
-                      <p className="text-center font-bold text-[#3d1810] text-lg px-4 mb-4">
+               {/* PHASE 1 : LE QUIZ */}
+               <AnimatePresence mode="wait">
+                 {filledHoles < 4 ? (
+                    <motion.div key="quiz" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="w-full max-w-md mx-auto">
+                      <p className="text-center font-bold text-[#3d1810] text-lg px-4 mb-8 leading-snug">
                         {currentQuestions[qIndex]?.question}
                       </p>
-                      <div className="grid grid-cols-1 gap-2">
+                      <div className="space-y-3">
                         {['A', 'B', 'C', 'D'].map(l => (
                           <motion.div 
                             key={l} 
                             drag dragConstraints={{ left: 0, right: 0, top: -400, bottom: 0 }}
                             dragSnapToOrigin 
                             onDragEnd={(e, info) => handleChoice(l, info)} 
-                            className="p-3 bg-[#faf9f8] border border-gray-100 rounded-2xl flex items-center cursor-grab active:scale-95 shadow-sm"
+                            className="p-4 bg-[#faf9f8] border border-gray-100 rounded-2xl flex items-center cursor-grab active:scale-95 shadow-sm"
                           >
-                            <span className="w-8 h-8 bg-white text-[#a0412d] rounded-lg flex items-center justify-center font-black mr-3 shadow-inner text-sm">{l}</span>
-                            <span className="text-[13px] font-semibold text-gray-700">{currentQuestions[qIndex]?.[`choice_${l.toLowerCase()}`]}</span>
+                            <span className="w-9 h-9 bg-white text-[#a0412d] rounded-xl flex items-center justify-center font-black mr-4 shadow-inner">{l}</span>
+                            <span className="text-sm font-semibold text-gray-700 leading-snug">
+                              {currentQuestions[qIndex]?.[`choice_${l.toLowerCase()}`]}
+                            </span>
                           </motion.div>
                         ))}
                       </div>
                     </motion.div>
-                 </AnimatePresence>
-               </div>
-
-               {/* ZONE EXPLICATIONS (S'affiche dynamiquement) */}
-               <div className="w-full max-w-md mt-10 space-y-4 px-2">
-                  <AnimatePresence>
-                    {explanations.map((exp, idx) => (
-                      <motion.div
-                        key={idx}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className="bg-orange-50/50 p-4 rounded-2xl border-l-4 border-[#a0412d]"
-                      >
-                        <p className="text-[10px] font-black text-[#a0412d] uppercase mb-1">Révélation {idx + 1}</p>
-                        <p className="text-sm text-gray-700 leading-relaxed font-medium">{exp}</p>
-                      </motion.div>
-                    ))}
-                    
-                    {/* INSPIRATION FINALE (Seulement si 4/4) */}
-                    {filledHoles === 4 && (
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="bg-[#3d1810] p-6 rounded-[30px] shadow-xl mt-6 text-center border-2 border-[#fdb813]"
-                      >
-                        <span className="text-[10px] font-black text-[#fdb813] uppercase tracking-[0.3em]">Inspiration</span>
-                        <p className="text-white italic text-base mt-2 leading-relaxed">
+                 ) : (
+                    /* PHASE 2 : LE PARCHEMIN DES RÉVÉLATIONS */
+                    <motion.div key="recap" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-md mx-auto space-y-8">
+                      <div className="bg-[#3d1810] p-6 rounded-[35px] shadow-2xl border-2 border-[#fdb813] text-center">
+                        <span className="text-[10px] font-black text-[#fdb813] uppercase tracking-[0.3em]">Inspiration Sacrée</span>
+                        <p className="text-white italic text-base mt-3 leading-relaxed">
                           "{currentM?.inspiration}"
                         </p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                  <div ref={explicationEndRef} />
-               </div>
+                      </div>
+
+                      <div className="space-y-4 pb-8">
+                        <h3 className="text-[#a0412d] font-black text-xs uppercase tracking-widest text-center mb-4">Les 4 Savoirs Débloqués</h3>
+                        {explanations.map((exp, i) => (
+                          <motion.div 
+                            initial={{ x: -20, opacity: 0 }} 
+                            animate={{ x: 0, opacity: 1 }} 
+                            transition={{ delay: i * 0.15 }} 
+                            key={i} 
+                            className="bg-orange-50/50 p-5 rounded-2xl border-l-4 border-[#a0412d]"
+                          >
+                            <p className="text-[9px] font-black text-[#a0412d] uppercase mb-1">Révélation #{i+1}</p>
+                            <p className="text-[13px] text-gray-700 leading-relaxed font-medium">{exp}</p>
+                          </motion.div>
+                        ))}
+                      </div>
+
+                      <button 
+                        onClick={() => {
+                          setView("gallery");
+                          setCurrentIndex(prev => (prev + 1) % mysteres.length);
+                        }}
+                        className="w-full py-5 bg-[#a0412d] text-white rounded-full font-black uppercase text-xs tracking-widest shadow-xl active:scale-95 transition-all"
+                      >
+                        Passer au Mystère Suivant
+                      </button>
+                    </motion.div>
+                 )}
+               </AnimatePresence>
             </div>
           </motion.div>
         )}
 
-        {/* SUCCÈS (RESTE INCHANGÉ) */}
-        {view === "success" && (
-          <motion.div key="success" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-[#a0412d] z-[60] flex flex-col items-center justify-center p-8 text-center text-white">
-            <motion.div initial={{ scale: 0 }} animate={{ scale: 1, rotate: 360 }} transition={{ type: "spring" }} className="w-32 h-32 bg-[#fdb813] rounded-full flex items-center justify-center text-5xl mb-8 shadow-2xl">⚡</motion.div>
-            <h2 className="text-4xl font-black uppercase mb-4">Mystère Résolu !</h2>
-            <p className="text-orange-100 mb-10 text-lg font-medium">Vous avez débloqué tous les savoirs de ce lieu (+50 XP).</p>
-            <button 
-              onClick={() => { 
-                setView("gallery"); 
-                setFilledHoles(0); 
-                setQIndex(0); 
-                setExplanations([]); 
-                setCurrentIndex(prev => (prev + 1) % mysteres.length); 
-              }} 
-              className="px-14 py-5 bg-white text-[#a0412d] rounded-full font-black uppercase text-xs tracking-[0.2em] shadow-2xl"
-            >
-              Continuer l'Odyssée
-            </button>
-          </motion.div>
-        )}
-
-        {/* MODE POWER (RESTE INCHANGÉ) */}
+        {/* MODE POWER (BLOQUÉ) */}
         {view === "locked" && (
           <motion.div key="locked" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-white z-[100] flex flex-col items-center justify-center p-8 text-center">
-            <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center text-4xl mb-6 grayscale">🏺</div>
+            <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center text-4xl mb-6">🏺</div>
             <h2 className="text-3xl font-black text-[#a0412d] mb-4 uppercase">Source Épuisée</h2>
+            <p className="text-gray-400 text-sm mb-10 max-w-xs">Votre force vitale est vide. Prononcez le mot de pouvoir pour restaurer la jarre.</p>
             <input 
               type="password" 
               value={password} 
