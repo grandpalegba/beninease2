@@ -48,9 +48,8 @@ export default function SatoChallengePage() {
         {/* SECTION INSTRUMENTS : Centrage vertical par rapport à la Jarre */}
         <div className="w-full flex justify-between items-center mb-20 px-10 h-[400px]">
           
-          {/* 1. OKPELE (Taille Parfaite - Inchangée) */}
+          {/* 1. OKPELE */}
           <div className="relative w-36 flex flex-col items-center scale-[0.85] origin-center">
-            {/* Chaîne arquée */}
             <svg className="absolute -top-12 w-28 h-16 z-0" viewBox="0 0 100 60">
               <path 
                 d="M 15 60 Q 50 5 85 60" 
@@ -88,7 +87,7 @@ export default function SatoChallengePage() {
             </div>
           </div>
 
-          {/* 2. JARRE SATO (Pivot de centrage - Inchangée) */}
+          {/* 2. JARRE SATO */}
           <div className="relative w-72 h-[360px] z-10">
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-40 h-10 bg-[#3d1810] rounded-[50%] shadow-inner border-4 border-[#a0412d]/20 z-0"></div>
             <div className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden"
@@ -107,9 +106,8 @@ export default function SatoChallengePage() {
             </div>
           </div>
 
-          {/* 3. AWALE VERTICAL : Dimensions parfaites restaurées, position verticale centrée */}
+          {/* 3. AWALÉ VERTICAL */}
           <div className="relative flex bg-[#3d1810] p-3 rounded-2xl shadow-xl border-2 border-[#2a100a] scale-[0.85] origin-center">
-            {/* Trou G (Dimensions restaurées) */}
             <div className="flex flex-col gap-3">
               {[0, 1, 2, 3].map(i => (
                 <div key={i} className="w-10 h-10 bg-black/60 rounded-full shadow-inner border border-black/30 flex items-center justify-center gap-1">
@@ -119,9 +117,7 @@ export default function SatoChallengePage() {
                 </div>
               ))}
             </div>
-            {/* Séparation */}
             <div className="mx-2.5 w-[1.5px] bg-gradient-to-b from-transparent via-[#2a100a] to-transparent"></div>
-            {/* Trou D (Dimensions restaurées) */}
             <div className="flex flex-col gap-3">
               {[4, 5, 6, 7].map(i => (
                 <div key={i} className="w-10 h-10 bg-black/60 rounded-full shadow-inner border border-black/30 flex items-center justify-center gap-1">
@@ -148,18 +144,5 @@ export default function SatoChallengePage() {
           {['Purifier les récoltes', 'Appeler la pluie', 'Célébrer les mariages', 'Guérir les malades'].map((text, i) => (
             <button
               key={i}
-              onClick={() => handleAnswer(String.fromCharCode(65 + i))}
-              className={`p-6 bg-white border rounded-xl shadow-sm flex items-center text-left hover:border-[#a0412d]/30 transition-all ${selectedAnswer === String.fromCharCode(65 + i) ? 'bg-[#faf9f8] border-[#a0412d]/40 ring-1 ring-[#a0412d]/10' : 'border-gray-100'}`}
-            >
-              <span className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center font-bold text-[#a0412d] text-xs mr-4 border border-[#a0412d]/5">
-                {String.fromCharCode(65 + i)}
-              </span>
-              <span className="text-sm font-semibold">{text}</span>
-            </button>
-          ))}
-        </div>
-      </main>
-    </div>
-  );
-}
+              onClick={() => handleAnswer(
 }
