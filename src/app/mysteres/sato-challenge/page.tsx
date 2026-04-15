@@ -43,10 +43,9 @@ export default function SatoChallengePage() {
     }
   };
 
-  // Réinitialisation du timer pour chaque nouvelle question
   const nextQuestion = () => {
     setShowExplanation(false);
-    setTimeLeft(TOTAL_TIME); // Le timer reprend à 64s
+    setTimeLeft(TOTAL_TIME);
   };
 
   const handleShare = async () => {
@@ -75,10 +74,18 @@ export default function SatoChallengePage() {
         
         {/* DESIGN INSTRUMENTS */}
         <div className="w-full flex justify-between items-center mb-12 px-10 h-[380px]">
-          {/* OKPELE */}
+          
+          {/* OKPELE AVEC CHAÎNE RENFORCÉE */}
           <div className="relative w-32 flex flex-col items-center scale-[0.85]">
-            <svg className="absolute -top-12 w-28 h-16 z-0" viewBox="0 0 100 60">
-              <path d="M 15 60 Q 50 5 85 60" stroke="#FFD700" strokeWidth="2.5" fill="none" strokeDasharray="1 3" />
+            <svg className="absolute -top-14 w-32 h-20 z-0" viewBox="0 0 100 60">
+              <path 
+                d="M 10 60 Q 50 0 90 60" 
+                stroke="#B8860B" // Or plus sombre pour plus de visibilité
+                strokeWidth="4"   // Épaisseur augmentée
+                fill="none" 
+                strokeLinecap="round"
+                strokeDasharray="2 4" // Maillons plus marqués
+              />
             </svg>
             <div className="flex gap-8 relative z-10">
               {[0, 1].map((col) => (
@@ -145,7 +152,6 @@ export default function SatoChallengePage() {
               <div className="flex flex-col items-center">
                 <h2 className="text-2xl font-bold mb-4 text-center">Quelle est la fonction principale du tambour Sato ?</h2>
                 
-                {/* HUD SOUS LA QUESTION */}
                 <div className="flex gap-6 mb-8 items-center bg-gray-50/50 px-6 py-2 rounded-full border border-gray-100">
                   <div className="flex items-center gap-2">
                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Temps</span>
