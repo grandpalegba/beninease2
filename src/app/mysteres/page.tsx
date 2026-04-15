@@ -23,10 +23,10 @@ const shuffleArray = (array: any[]) => {
 
 export default function MysterePage() {
   const [mysteres, setMysteres] = useState<any[]>([]);
-  const [allQuestions, setAllQuestions] = useState<any[]>([]); // Table questions liée
+  const [allQuestions, setAllQuestions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   
-  const [view, setView] = useState<"gallery" | "game" | "locked" | "tresor">("gallery");
+  const [view, setView] = useState<"gallery" | "game" | "locked" | "success">("gallery");
   const [currentIndex, setCurrentIndex] = useState(0); 
   const [qIndex, setQIndex] = useState(0);
   const [lives, setLives] = useState(8);
@@ -37,9 +37,7 @@ export default function MysterePage() {
 
   useEffect(() => {
     async function fetchData() {
-      // On récupère tout de la table mysteres
       const { data: mData } = await supabase.from('mysteres').select('*');
-      // On récupère les questions liées (si elles sont dans une table séparée)
       const { data: qData } = await supabase.from('questions').select('*');
       
       if (mData) setMysteres(shuffleArray(mData));
@@ -52,15 +50,6 @@ export default function MysterePage() {
     fetchData();
   }, []);
 
-  // Préchargement des images
-  useEffect(() => {
-    if (mysteres.length > 0) {
-      const preload = (url: string) => { if (url) { const img = new Image(); img.src = url; } };
-      preload(mysteres[currentIndex]?.cover_image_url);
-      preload(mysteres[(currentIndex + 1) % mysteres.length]?.cover_image_url);
-    }
-  }, [currentIndex, mysteres]);
-
   useEffect(() => {
     if (view !== "game" || timeLeft <= 0) return;
     const timer = setInterval(() => setTimeLeft(t => t - 1), 1000);
@@ -70,38 +59,49 @@ export default function MysterePage() {
 
   const currentM = mysteres[currentIndex];
 
-  // FILTRAGE DES QUESTIONS TIRÉES DE SUPABASE POUR LE MYSTÈRE ACTUEL
   const currentQuestions = useMemo(() => {
     if (!currentM || !allQuestions.length) return [];
     return allQuestions
       .filter(q => q.mystere_id === currentM.id)
-      .sort((a, b) => (a.question_number || 0) - (b.question_number || 0));
+      .sort((a, b) => (a.question_number || 0) - (b.question_number || 0))
+      .slice(0, 4); // On s'assure d'avoir 4 questions
   }, [allQuestions, currentM]);
 
+  const updatePoints = (amount: number) => {
+    setPoints(prev => {
+      const total = prev + amount;
+      localStorage.setItem("beninease_points", String(total));
+      return total;
+    });
+  };
+
   const handleFailure = () => {
-    toast.error("La jarre rejette votre offrande...");
+    toast.error("Énergie dissipée...");
     setLives(l => {
       if (l <= 1) { setView("locked"); return 0; }
       return l - 1;
     });
   };
 
-  const handleDrop = (choiceLetter: string, info: any) => {
+  const handleChoice = (choiceLetter: string, info: any) => {
+    // Détection du drop dans la jarre (zone haute de l'écran)
     if (info.point.y < 350) {
       const correct = currentQuestions[qIndex]?.correct_answer;
       if (choiceLetter === correct) {
         setFilledHoles(h => h + 1);
-        setPoints(p => {
-          const np = p + 10;
-          localStorage.setItem("beninease_points", String(np));
-          return np;
-        });
+        updatePoints(10); // +10 points par bonne réponse
+
         if (qIndex < currentQuestions.length - 1) {
-          toast.success("L'esprit est satisfait.");
-          setTimeout(() => { setQIndex(i => i + 1); setTimeLeft(60); }, 800);
+          toast.success("Correct ! +10 pts");
+          setTimeout(() => { 
+            setQIndex(i => i + 1); 
+            setTimeLeft(60); 
+          }, 600);
         } else {
-          confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
-          setTimeout(() => setView("tresor"), 600);
+          // Succès final du mystère
+          updatePoints(10); // +10 points de bonus final
+          confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#fdb813', '#a0412d'] });
+          setTimeout(() => setView("success"), 600);
         }
       } else {
         handleFailure();
@@ -112,124 +112,141 @@ export default function MysterePage() {
   if (loading) return <div className="h-screen flex items-center justify-center bg-[#faf9f8]"><div className="w-12 h-12 border-4 border-[#a0412d] border-t-transparent rounded-full animate-spin" /></div>;
 
   return (
-    <div className="h-screen w-screen bg-[#faf9f8] overflow-hidden touch-none relative font-sans">
+    <div className="h-screen w-screen bg-[#faf9f8] overflow-hidden touch-none relative">
       <Toaster position="top-center" richColors />
 
       <AnimatePresence mode="wait">
         
-        {/* --- VUE GALERIE --- */}
+        {/* --- GALERIE DES MYSTÈRES --- */}
         {view === "gallery" && (
           <motion.div key="gallery" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full flex flex-col items-center justify-center p-6">
             <motion.div
               drag="x"
               dragConstraints={{ left: 0, right: 0 }}
-              dragElastic={0.1}
-              // SOLUTION ANTI-CLIC : On sépare onTap et onDragEnd
               onTap={() => setView("game")}
               onDragEnd={(e, info) => {
-                // On ne change de carte que si le mouvement dépasse 50px
-                if (info.offset.x < -50) {
-                  setCurrentIndex(prev => (prev + 1) % mysteres.length);
-                } else if (info.offset.x > 50) {
-                  setCurrentIndex(prev => (prev - 1 + mysteres.length) % mysteres.length);
-                }
+                if (info.offset.x < -50) setCurrentIndex(prev => (prev + 1) % mysteres.length);
+                else if (info.offset.x > 50) setCurrentIndex(prev => (prev - 1 + mysteres.length) % mysteres.length);
               }}
-              className="w-full max-w-[320px] h-[550px] bg-white rounded-[45px] shadow-2xl border-[10px] border-white overflow-hidden cursor-pointer flex flex-col"
+              className="w-full max-w-[320px] h-[520px] bg-white rounded-[40px] shadow-2xl border-[8px] border-white overflow-hidden cursor-pointer"
             >
-              <img src={currentM.cover_image_url} className="h-1/2 w-full object-cover bg-orange-50 pointer-events-none" alt={currentM.title}/>
-              <div className="p-7 flex-1 flex flex-col justify-between pointer-events-none">
+              <img src={currentM.cover_image_url} className="h-1/2 w-full object-cover pointer-events-none" alt={currentM.title}/>
+              <div className="p-6 flex flex-col justify-between h-1/2 pointer-events-none">
                 <div>
-                  <h2 className="text-2xl font-black text-[#3d1810] uppercase leading-tight">{currentM.title}</h2>
-                  <p className="text-[11px] font-bold text-[#a0412d] mt-1 italic">{currentM.subtitle}</p>
+                  <h2 className="text-xl font-black text-[#3d1810] uppercase">{currentM.title}</h2>
+                  <p className="text-[10px] font-bold text-[#a0412d] mt-1 italic uppercase">{currentM.subtitle}</p>
                 </div>
-                <div className="mt-4 pt-5 border-t border-orange-50">
-                  <p className="text-[13px] text-gray-500 leading-relaxed italic line-clamp-6">"{currentM.mise_en_abyme}"</p>
+                <p className="text-[12px] text-gray-500 italic leading-relaxed line-clamp-4">"{currentM.mise_en_abyme}"</p>
+                <div className="pt-4 border-t border-gray-100 flex justify-between items-center">
+                  <span className="text-[10px] font-bold text-gray-400 uppercase">Mystère n°{currentIndex + 1}</span>
+                  <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center">✨</div>
                 </div>
               </div>
             </motion.div>
-            <div className="mt-8 flex flex-col items-center gap-2">
-                <span className="text-[14px] font-black text-[#a0412d]">⭐ {points} pts</span>
-                <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest animate-pulse italic">Swipe pour naviguer • Tap pour entrer</p>
+            <div className="mt-8 text-center">
+                <span className="text-lg font-black text-[#a0412d]">⭐ {points} XP</span>
+                <p className="text-[9px] text-gray-400 uppercase tracking-widest mt-2">Cliquez pour explorer le mystère</p>
             </div>
           </motion.div>
         )}
 
-        {/* --- VUE JEU --- */}
+        {/* --- PHASE DE JEU (SCROLL VERTICAL) --- */}
         {view === "game" && (
-          <motion.div key="game" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-50 flex flex-col overflow-hidden">
-            {/* Zone de Swipe vers le bas pour sortir */}
-            <motion.div 
-              drag="y"
-              dragConstraints={{ top: 0, bottom: 0 }}
-              onDragEnd={(e, info) => { if (info.offset.y > 100) setView("gallery"); }}
-              className="w-full h-12 flex items-center justify-center shrink-0 cursor-grab"
-            >
+          <motion.div key="game" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-50 flex flex-col">
+            <div className="h-12 flex items-center justify-center shrink-0" onClick={() => setView("gallery")}>
               <div className="w-12 h-1.5 bg-gray-200 rounded-full" />
-            </motion.div>
+            </div>
 
-            <div className="px-6 flex-1 flex flex-col items-center overflow-y-auto pb-10 no-scrollbar">
-               <h1 className="text-2xl font-black text-[#a0412d] uppercase text-center shrink-0">{currentM.title}</h1>
-               <div className="mt-6 flex justify-between w-full max-w-sm px-4 shrink-0">
+            <div className="px-6 flex-1 flex flex-col items-center overflow-hidden">
+               <h1 className="text-xl font-black text-[#a0412d] uppercase text-center">{currentM.title}</h1>
+               
+               <div className="mt-4 flex justify-between w-full max-w-xs items-center">
                   <HourglassTimer timeLeft={timeLeft} isFlipping={false} />
-                  <div className="flex flex-col items-end">
-                    <div className="flex gap-1">{Array.from({length: 8}).map((_, i) => (<div key={i} className={`w-2.5 h-2.5 rounded-full ${i < lives ? 'bg-[#fdb813]' : 'bg-gray-100'}`} />))}</div>
-                    <span className="text-[9px] font-black text-gray-300 uppercase mt-1">Graines de Vie</span>
+                  <div className="flex gap-1">
+                    {Array.from({length: 8}).map((_, i) => (
+                      <motion.div key={i} animate={{ scale: i < lives ? 1 : 0.8 }} className={`w-3 h-3 rounded-full ${i < lives ? 'bg-[#fdb813]' : 'bg-gray-100'}`} />
+                    ))}
                   </div>
                </div>
                
-               <div className="relative my-8 shrink-0">
-                 <div className="w-36 h-48 bg-[#a0412d] rounded-t-[55px] rounded-b-[30px] shadow-2xl flex flex-col items-center justify-center border-b-8 border-[#7a2a1b]">
-                    <div className="mt-10 grid grid-cols-2 gap-4">
-                        {[1,2,3,4].map(h => (<motion.div key={h} animate={h <= filledHoles ? { scale: [1, 1.3, 1], opacity: 1 } : { opacity: 0.1 }} className={`w-4 h-4 rounded-full ${h <= filledHoles ? 'bg-[#fdb813] shadow-[0_0_15px_#fdb813]' : 'bg-black'}`} />))}
+               {/* LA JARRE D'ÉNERGIE */}
+               <div className="relative my-6">
+                 <div className="w-32 h-40 bg-[#a0412d] rounded-t-[50px] rounded-b-[20px] shadow-xl flex items-center justify-center border-b-4 border-[#7a2a1b]">
+                    <div className="grid grid-cols-2 gap-3">
+                        {[1,2,3,4].map(h => (
+                          <motion.div key={h} animate={h <= filledHoles ? { scale: 1.2, opacity: 1 } : { opacity: 0.2 }} className={`w-3 h-3 rounded-full ${h <= filledHoles ? 'bg-[#fdb813]' : 'bg-black'}`} />
+                        ))}
                     </div>
                  </div>
                </div>
 
-               <div className="w-full max-w-md space-y-3 px-2">
-                  <p className="text-center font-bold text-[#3d1810] text-lg mb-4">
-                    {currentQuestions[qIndex]?.question || "Chargement de la question..."}
-                  </p>
-                  {['A', 'B', 'C', 'D'].map(l => (
+               {/* QUESTIONS AVEC ANIMATION DE SCROLL */}
+               <div className="w-full max-w-md flex-1 relative overflow-hidden">
+                 <AnimatePresence mode="wait">
                     <motion.div 
-                      key={l} 
-                      drag 
-                      dragConstraints={{ left: 0, right: 0, top: -450, bottom: 0 }}
-                      dragSnapToOrigin 
-                      onDragEnd={(e, info) => handleDrop(l, info)} 
-                      whileDrag={{ scale: 1.05, zIndex: 100 }} 
-                      className="p-4 bg-[#faf9f8] border-2 border-gray-50 rounded-[25px] flex items-center cursor-grab active:cursor-grabbing group touch-none shadow-sm"
+                      key={qIndex}
+                      initial={{ y: 50, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      exit={{ y: -50, opacity: 0 }}
+                      className="space-y-3"
                     >
-                      <span className="w-10 h-10 bg-white text-[#a0412d] shadow-sm rounded-xl flex items-center justify-center font-black mr-4">{l}</span>
-                      <span className="text-sm font-bold text-gray-700 leading-snug">
-                        {currentQuestions[qIndex]?.[`choice_${l.toLowerCase()}`]}
-                      </span>
+                      <p className="text-center font-bold text-[#3d1810] mb-4">
+                        {currentQuestions[qIndex]?.question}
+                      </p>
+                      {['A', 'B', 'C', 'D'].map(l => (
+                        <motion.div 
+                          key={l} 
+                          drag dragConstraints={{ left: 0, right: 0, top: -400, bottom: 0 }}
+                          dragSnapToOrigin 
+                          onDragEnd={(e, info) => handleChoice(l, info)} 
+                          className="p-4 bg-[#faf9f8] border border-gray-100 rounded-[20px] flex items-center cursor-grab active:scale-95 transition-transform"
+                        >
+                          <span className="w-8 h-8 bg-white text-[#a0412d] rounded-lg flex items-center justify-center font-black mr-4 shadow-sm">{l}</span>
+                          <span className="text-sm font-medium text-gray-700">{currentQuestions[qIndex]?.[`choice_${l.toLowerCase()}`]}</span>
+                        </motion.div>
+                      ))}
                     </motion.div>
-                  ))}
+                 </AnimatePresence>
                </div>
             </div>
           </motion.div>
         )}
 
-        {/* --- TRESOR --- */}
-        {view === "tresor" && (
-          <motion.div key="tresor" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="absolute inset-0 bg-[#1a0f0a] z-[60] flex flex-col items-center justify-center p-8 text-center text-white">
-            <h2 className="text-[#fdb813] font-black tracking-[0.4em] uppercase mb-8 text-xs">Trésor Découvert</h2>
-            <img src={currentM.tresor_image_url} className="w-64 h-64 object-contain mb-8" alt="Trésor" />
-            <h3 className="text-3xl font-black mb-2 uppercase">{currentM.title}</h3>
-            <div className="bg-white/5 p-6 rounded-3xl text-sm leading-relaxed max-w-sm mb-8 italic">
-              {currentM.inspiration || "La sagesse ancestrale est vôtre."}
-            </div>
-            <button onClick={() => { setView("gallery"); setFilledHoles(0); setQIndex(0); setCurrentIndex(prev => (prev + 1) % mysteres.length); }} className="px-10 py-4 bg-[#fdb813] text-[#3d1810] rounded-full font-black uppercase text-xs tracking-widest">Retourner à l'Oracle</button>
+        {/* --- RÉCOMPENSE / FIN DE MYSTÈRE --- */}
+        {view === "success" && (
+          <motion.div key="success" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-[#a0412d] z-[60] flex flex-col items-center justify-center p-8 text-center text-white">
+            <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-32 h-32 bg-[#fdb813] rounded-full flex items-center justify-center text-5xl mb-6">🎉</motion.div>
+            <h2 className="text-3xl font-black uppercase mb-2">Mystère Résolu !</h2>
+            <p className="text-orange-200 mb-8 font-medium">Vous avez gagné 50 points d'expérience.</p>
+            <button 
+              onClick={() => { setView("gallery"); setFilledHoles(0); setQIndex(0); setCurrentIndex(prev => (prev + 1) % mysteres.length); }} 
+              className="px-12 py-4 bg-white text-[#a0412d] rounded-full font-black uppercase text-xs tracking-widest shadow-xl"
+            >
+              Continuer l'Odyssée
+            </button>
           </motion.div>
         )}
 
-        {/* --- VERROUILLÉ --- */}
+        {/* --- MODE POWER (LOCKED) --- */}
         {view === "locked" && (
-          <div className="absolute inset-0 bg-white z-[100] flex flex-col items-center justify-center p-8 text-center">
-            <h2 className="text-2xl font-black text-[#a0412d] mb-8 uppercase">La Jarre est scellée</h2>
-            <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Mot de Pouvoir" className="w-full max-w-xs p-4 border rounded-full mb-4 text-center" />
-            <button onClick={() => { if(password.toLowerCase() === "benin"){ setLives(8); setView("gallery"); }}} className="w-full max-w-xs bg-[#a0412d] text-white p-4 rounded-full font-black">Invoquer</button>
-          </div>
+          <motion.div key="locked" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-white z-[100] flex flex-col items-center justify-center p-8 text-center">
+            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center text-3xl mb-6">🔒</div>
+            <h2 className="text-2xl font-black text-[#a0412d] mb-4 uppercase">Énergie Épuisée</h2>
+            <p className="text-gray-400 text-sm mb-8">Entrez le mot de pouvoir ou accomplissez des actions dans les autres pages pour revenir.</p>
+            <input 
+              type="password" 
+              value={password} 
+              onChange={e => setPassword(e.target.value)} 
+              placeholder="Mot de Pouvoir" 
+              className="w-full max-w-xs p-4 bg-gray-50 border-none rounded-2xl mb-4 text-center font-bold" 
+            />
+            <button 
+              onClick={() => { if(password.toLowerCase() === "benin"){ setLives(8); setView("gallery"); setPassword(""); }}} 
+              className="w-full max-w-xs bg-[#3d1810] text-white p-4 rounded-2xl font-black uppercase text-sm"
+            >
+              Activer le Pouvoir
+            </button>
+          </motion.div>
         )}
 
       </AnimatePresence>
