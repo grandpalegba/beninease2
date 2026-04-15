@@ -31,7 +31,6 @@ export default function SatoChallengePage() {
       setHoles(newHoles); 
       setShowExplanation(true);
       if (newHoles.length === 0) {
-        // On laisse l'explication 3s avant l'écran final
         setTimeout(() => {
             setShowExplanation(false);
             setIsFinished(true);
@@ -46,7 +45,6 @@ export default function SatoChallengePage() {
 
   const nextQuestion = () => {
     setShowExplanation(false);
-    setTimeLeft(TOTAL_TIME);
   };
 
   const handleShare = async () => {
@@ -70,11 +68,12 @@ export default function SatoChallengePage() {
 
   return (
     <div className="min-h-screen bg-white text-[#303333] flex flex-col items-center justify-center font-sans p-6 overflow-hidden">
+      
       <main className="w-full max-w-5xl flex flex-col items-center">
         
-        {/* DESIGN SANCTUARISÉ */}
+        {/* DESIGN INSTRUMENTS */}
         <div className="w-full flex justify-between items-center mb-12 px-10 h-[380px]">
-          {/* OKPELE */}
+          {/* OKPELE (Base large) */}
           <div className="relative w-32 flex flex-col items-center scale-[0.85]">
             <svg className="absolute -top-12 w-28 h-16 z-0" viewBox="0 0 100 60">
               <path d="M 15 60 Q 50 5 85 60" stroke="#FFD700" strokeWidth="2.5" fill="none" strokeDasharray="1 3" />
@@ -137,12 +136,29 @@ export default function SatoChallengePage() {
           </motion.div>
         </div>
 
-        {/* CONTENU FINAL OU QUIZ */}
+        {/* CONTENU VARIABLE */}
         <div className="w-full max-w-2xl min-h-[350px]">
           {!isFinished ? (
             !showExplanation ? (
               <div className="flex flex-col items-center">
-                <h2 className="text-2xl font-bold mb-6 text-center">Quelle est la fonction principale du tambour Sato ?</h2>
+                <h2 className="text-2xl font-bold mb-4 text-center">Quelle est la fonction principale du tambour Sato ?</h2>
+                
+                {/* HUD REPLACÉ ICI (Sous la question) */}
+                <div className="flex gap-6 mb-8 items-center bg-gray-50/50 px-6 py-2 rounded-full border border-gray-100">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Temps</span>
+                    <span className={`font-mono font-bold ${timeLeft < 10 ? 'text-red-500 animate-pulse' : 'text-[#303333]'}`}>
+                      {timeLeft}s
+                    </span>
+                  </div>
+                  <div className="w-[1px] h-4 bg-gray-200" />
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Points</span>
+                    <span className="font-bold text-[#7a2a1b]">{awaleSeeds}</span>
+                    <div className="w-2 h-2 rounded-full bg-[#FFD700]" />
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-2 gap-4 w-full">
                   {['A', 'B', 'C', 'D'].map((id) => (
                     <motion.div key={id} drag dragSnapToOrigin onDragEnd={(_, info) => { if (Math.abs(info.point.y - 300) < 200) handleDrop(id); }}
@@ -155,30 +171,20 @@ export default function SatoChallengePage() {
                 </div>
               </div>
             ) : (
-              /* RÉVÉLATION (CORRECTE AVEC CLIC FONCTIONNEL) */
-              <motion.div 
-                initial={{ opacity: 0 }} 
-                animate={{ opacity: 1 }} 
-                onClick={nextQuestion}
-                className="p-8 bg-[#faf9f8] rounded-2xl border border-[#a0412d]/20 text-center cursor-pointer hover:shadow-md transition-shadow"
-              >
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} onClick={nextQuestion} className="p-8 bg-[#faf9f8] rounded-2xl border border-[#a0412d]/20 text-center cursor-pointer">
                 <h3 className="text-[#a0412d] font-bold mb-3 uppercase tracking-widest text-xs">Révélation</h3>
-                <p className="text-gray-700 mb-4">Le Sato est un tambour sacré dont les vibrations purifient les récoltes.</p>
-                <div className="text-[10px] text-[#a0412d]/50 font-bold animate-pulse">CLIQUER POUR CONTINUER ↓</div>
+                <p className="text-gray-700 mb-4 font-medium">Le Sato est un tambour sacré dont les vibrations purifient les récoltes.</p>
+                <div className="text-[10px] text-[#a0412d]/50 font-bold animate-pulse uppercase">Cliquer pour continuer ↓</div>
               </motion.div>
             )
           ) : (
             /* ÉCRAN FINAL */
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center text-center">
               <h2 className="text-3xl font-black mb-2 uppercase tracking-tighter text-[#303333]">Félicitations !</h2>
-              <p className="text-[#a0412d] font-medium mb-6 px-4">
+              <p className="text-[#a0412d] font-medium mb-6 px-4 italic">
                 La jarre retient désormais toute l'eau nécessaire à la soif de connaissance du monde.
               </p>
               
-              <div className="mb-8 italic text-gray-500 text-sm max-w-md">
-                Inspiration pour aller plus loin : "L'unité est la force qui transforme une jarre percée en un trésor inépuisable."
-              </div>
-
               <div className="w-full bg-[#faf9f8] p-6 rounded-2xl border border-[#a0412d]/10 mb-8 text-left">
                 <h4 className="text-[10px] font-bold text-[#a0412d] uppercase tracking-[0.2em] mb-4 text-center">Synthèse des révélations</h4>
                 <ul className="space-y-3">
@@ -190,10 +196,7 @@ export default function SatoChallengePage() {
                 </ul>
               </div>
 
-              <button 
-                onClick={handleShare}
-                className="px-12 py-4 bg-[#7a2a1b] text-white rounded-full font-bold text-sm hover:bg-[#a0412d] transition-all shadow-xl flex items-center gap-3"
-              >
+              <button onClick={handleShare} className="px-12 py-4 bg-[#7a2a1b] text-white rounded-full font-bold text-sm hover:bg-[#a0412d] transition-all shadow-xl flex items-center gap-3">
                 PARTAGER MA QUÊTE
               </button>
             </motion.div>
