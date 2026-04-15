@@ -8,29 +8,41 @@ export default function SatoChallengePage() {
   const [timeLeft, setTimeLeft] = useState(TOTAL_TIME);
   const [showExplanation, setShowExplanation] = useState(false);
   const [holes, setHoles] = useState([0, 1, 2, 3]); 
-  const [awaleSeeds, setAwaleSeeds] = useState(16); // PASSAGE À 16 GRAINES
+  const [awaleSeeds, setAwaleSeeds] = useState(16); 
   const [isWrong, setIsWrong] = useState(false);
+  const [isFinished, setIsFinished] = useState(false);
+
+  // Les 4 révélations à rappeler à la fin
+  const revelations = [
+    "Le Sato purifie les récoltes par ses vibrations sacrées.",
+    "L'Okpele guide le choix des semences selon les signes d'Ifa.",
+    "L'Awalé simule la gestion des réserves du village.",
+    "La Jarre Sato protège l'esprit des ancêtres initiés."
+  ];
 
   useEffect(() => {
-    if (timeLeft <= 0 || showExplanation) return;
+    if (timeLeft <= 0 || showExplanation || isFinished) return;
     const timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
     return () => clearInterval(timer);
-  }, [timeLeft, showExplanation]);
+  }, [timeLeft, showExplanation, isFinished]);
 
   const handleDrop = (answerId: string) => {
     if (answerId === 'B') {
-      setHoles(prev => prev.slice(1)); 
+      const newHoles = holes.slice(1);
+      setHoles(newHoles); 
       setShowExplanation(true);
+      // Si c'était le dernier trou
+      if (newHoles.length === 0) {
+        setTimeout(() => {
+            setShowExplanation(false);
+            setIsFinished(true);
+        }, 2500);
+      }
     } else {
       setIsWrong(true);
-      setAwaleSeeds(prev => Math.max(0, prev - 1)); // Perd 1 graine sur 16
+      setAwaleSeeds(prev => Math.max(0, prev - 1));
       setTimeout(() => setIsWrong(false), 500);
     }
-  };
-
-  const nextQuestion = () => {
-    setShowExplanation(false);
-    setTimeLeft(TOTAL_TIME);
   };
 
   const isNoixActive = (col: number, row: number) => {
@@ -44,30 +56,20 @@ export default function SatoChallengePage() {
 
       <main className="w-full max-w-5xl flex flex-col items-center">
         
-        {/* SECTION INSTRUMENTS */}
-        <div className="w-full flex justify-between items-center mb-20 px-10 h-[400px]">
-          
-          {/* 1. OKPELE */}
-          <div className="relative w-36 flex flex-col items-center scale-[0.85] origin-center">
+        {/* DESIGN FIGÉ (Okpele, Jarre, Awalé) */}
+        <div className="w-full flex justify-between items-center mb-12 px-10 h-[380px]">
+          {/* OKPELE */}
+          <div className="relative w-32 flex flex-col items-center scale-[0.8]">
             <svg className="absolute -top-12 w-28 h-16 z-0" viewBox="0 0 100 60">
-              <path d="M 15 60 Q 50 5 85 60" stroke="#FFD700" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeDasharray="1 3" />
+              <path d="M 15 60 Q 50 5 85 60" stroke="#FFD700" strokeWidth="2.5" fill="none" strokeDasharray="1 3" />
             </svg>
-            <div className="flex gap-8 relative z-10">
+            <div className="flex gap-6 relative z-10">
               {[0, 1].map((col) => (
-                <div key={col} className="flex flex-col gap-3 items-center">
+                <div key={col} className="flex flex-col gap-2">
                   {[0, 1, 2, 3].map((row) => (
-                    <div key={row} 
-                      className="relative w-8 h-11 bg-[#5d3a1a] shadow-md flex justify-center overflow-hidden"
-                      style={{ borderRadius: '50% 50% 35% 35% / 85% 85% 15% 15%', borderBottom: '2px solid rgba(0,0,0,0.4)' }}
-                    >
-                      <div className="w-[1px] h-full bg-black/20"></div>
-                      <AnimatePresence>
-                        {isNoixActive(col, row) && (
-                          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 flex justify-center items-center">
-                            <div className="w-[2.5px] h-[70%] bg-[#FFD700] shadow-[0_0_10px_#FFD700] rounded-full"></div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
+                    <div key={row} className="relative w-7 h-10 bg-[#5d3a1a] rounded-full border-b-2 border-black/40 overflow-hidden flex justify-center">
+                      <div className="w-[1px] h-full bg-black/20" />
+                      {isNoixActive(col, row) && <div className="absolute inset-0 flex justify-center items-center"><div className="w-[2px] h-[60%] bg-[#FFD700] shadow-[0_0_8px_#FFD700]" /></div>}
                     </div>
                   ))}
                 </div>
@@ -75,77 +77,95 @@ export default function SatoChallengePage() {
             </div>
           </div>
 
-          {/* 2. JARRE SATO */}
-          <div className="relative w-72 h-[360px] z-10">
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-40 h-10 bg-[#3d1810] rounded-[50%] shadow-inner border-4 border-[#a0412d]/20 z-0"></div>
+          {/* JARRE SATO */}
+          <div className="relative w-64 h-[320px] z-10">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-32 h-8 bg-[#3d1810] rounded-[50%] border-4 border-[#a0412d]/20" />
             <div className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden"
-              style={{
-                background: 'linear-gradient(165deg, #a0412d 0%, #8b3422 45%, #7a2a1b 100%)',
-                borderRadius: '42% 38% 34% 36% / 45% 45% 32% 32%',
-                boxShadow: 'inset -8px -8px 20px rgba(0,0,0,0.2), 0 20px 40px rgba(0,0,0,0.15)'
-              }}>
+              style={{ background: 'linear-gradient(165deg, #a0412d 0%, #7a2a1b 100%)', borderRadius: '42% 38% 34% 36% / 45% 45% 32% 32%' }}>
               <div className="relative w-full h-full">
                 <AnimatePresence>
-                  {holes.includes(0) && <motion.div key="h0" exit={{ opacity: 0, scale: 0 }} className="absolute top-[40%] left-[25%] w-14 h-14 rounded-full bg-[#2a100a] shadow-inner" />}
-                  {holes.includes(1) && <motion.div key="h1" exit={{ opacity: 0, scale: 0 }} className="absolute top-[32%] left-[58%] w-12 h-12 rounded-full bg-[#2a100a] shadow-inner" />}
-                  {holes.includes(2) && <motion.div key="h2" exit={{ opacity: 0, scale: 0 }} className="absolute top-[62%] left-[40%] w-16 h-16 rounded-full bg-[#2a100a] shadow-inner" />}
-                  {holes.includes(3) && <motion.div key="h3" exit={{ opacity: 0, scale: 0 }} className="absolute top-[55%] left-[72%] w-10 h-10 rounded-full bg-[#2a100a] shadow-inner" />}
+                  {holes.includes(0) && <motion.div key="h0" exit={{ opacity: 0, scale: 0 }} className="absolute top-[40%] left-[25%] w-12 h-12 rounded-full bg-[#2a100a] shadow-inner" />}
+                  {holes.includes(1) && <motion.div key="h1" exit={{ opacity: 0, scale: 0 }} className="absolute top-[32%] left-[55%] w-10 h-10 rounded-full bg-[#2a100a] shadow-inner" />}
+                  {holes.includes(2) && <motion.div key="h2" exit={{ opacity: 0, scale: 0 }} className="absolute top-[60%] left-[40%] w-14 h-14 rounded-full bg-[#2a100a] shadow-inner" />}
+                  {holes.includes(3) && <motion.div key="h3" exit={{ opacity: 0, scale: 0 }} className="absolute top-[52%] left-[70%] w-9 h-9 rounded-full bg-[#2a100a] shadow-inner" />}
                 </AnimatePresence>
               </div>
             </div>
           </div>
 
-          {/* 3. AWALÉ (16 GRAINES : 2 PAR TROU) */}
-          <motion.div 
-            animate={isWrong ? { x: [-10, 10, -10, 10, 0] } : {}}
-            transition={{ duration: 0.4 }}
-            className="relative flex bg-[#3d1810] p-3 rounded-2xl shadow-xl border-2 border-[#2a100a] scale-[0.85] origin-center"
-          >
+          {/* AWALÉ (16 Graines) */}
+          <motion.div animate={isWrong ? { x: [-10, 10, -10, 10, 0] } : {}} className="relative flex bg-[#3d1810] p-3 rounded-2xl border-2 border-[#2a100a] scale-[0.8]">
             {[0, 1].map((col) => (
               <React.Fragment key={col}>
                 <div className="flex flex-col gap-3">
                   {[0, 1, 2, 3].map(row => {
-                    // Calcul de l'index de départ pour chaque trou (0, 2, 4, 6, 8, 10, 12, 14)
                     const baseIdx = (col === 0 ? row : row + 4) * 2;
                     return (
-                      <div key={row} className="w-10 h-10 bg-black/60 rounded-full shadow-inner flex items-center justify-center gap-1">
-                        {/* Affichage de deux graines par trou */}
+                      <div key={row} className="w-10 h-10 bg-black/60 rounded-full flex items-center justify-center gap-1">
                         {awaleSeeds > baseIdx && <div className="w-2.5 h-2.5 rounded-full bg-[#FFD700] shadow-[0_0_8px_#FFD700]" />}
                         {awaleSeeds > baseIdx + 1 && <div className="w-2.5 h-2.5 rounded-full bg-[#FFD700] shadow-[0_0_8px_#FFD700]" />}
                       </div>
                     );
                   })}
                 </div>
-                {col === 0 && <div className="mx-2.5 w-[1.5px] bg-gradient-to-b from-transparent via-[#2a100a] to-transparent" />}
+                {col === 0 && <div className="mx-2 w-[1px] bg-[#2a100a]" />}
               </React.Fragment>
             ))}
           </motion.div>
         </div>
 
-        {/* INTERACTION */}
-        <div className="w-full max-w-3xl flex flex-col items-center min-h-[300px]">
-          {!showExplanation ? (
-            <div className="w-full flex flex-col items-center">
-              <h2 className="text-2xl font-bold mb-8 text-center leading-tight">Quelle est la fonction principale du tambour Sato lors des rites agraires ?</h2>
-              <div className="mb-8 px-6 py-2 rounded-full border border-[#a0412d]/10 font-mono text-xs text-[#a0412d]">TEMPS RESTANT : {timeLeft}S</div>
-              <div className="grid grid-cols-2 gap-4 w-full">
-                {['A', 'B', 'C', 'D'].map((id) => (
-                  <motion.div key={id} drag dragSnapToOrigin onDragEnd={(_, info) => { if (Math.abs(info.point.y - 300) < 200) handleDrop(id); }}
-                    className="p-6 bg-white border border-gray-100 rounded-xl shadow-sm cursor-grab active:cursor-grabbing hover:border-[#a0412d]/30 flex items-center select-none"
-                  >
-                    <span className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center font-bold text-[#a0412d] text-xs mr-4">{id}</span>
-                    <span className="text-sm font-semibold">{id === 'B' ? 'Purifier les récoltes' : 'Réponse ' + id}</span>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
+        {/* CONTENU VARIABLE (Quiz / Explication / Final) */}
+        <div className="w-full max-w-2xl min-h-[400px]">
+          {!isFinished ? (
+            !showExplanation ? (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center">
+                <h2 className="text-2xl font-bold mb-6 text-center">Quelle est la fonction principale du tambour Sato ?</h2>
+                <div className="grid grid-cols-2 gap-4 w-full">
+                  {['A', 'B', 'C', 'D'].map((id) => (
+                    <motion.div key={id} drag dragSnapToOrigin onDragEnd={(_, info) => { if (Math.abs(info.point.y - 300) < 200) handleDrop(id); }}
+                      className="p-5 bg-white border border-gray-100 rounded-xl shadow-sm cursor-grab active:cursor-grabbing hover:border-[#a0412d]/30 flex items-center"
+                    >
+                      <span className="w-7 h-7 rounded-full bg-gray-50 flex items-center justify-center font-bold text-[#a0412d] text-[10px] mr-3">{id}</span>
+                      <span className="text-sm font-semibold">{id === 'B' ? 'Purifier les récoltes' : 'Réponse ' + id}</span>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} onClick={() => setShowExplanation(false)}
+                className="p-8 bg-[#faf9f8] rounded-2xl border border-[#a0412d]/20 text-center cursor-pointer"
+              >
+                <h3 className="text-[#a0412d] font-bold text-lg mb-3">Bonne réponse !</h3>
+                <p className="text-gray-700 text-sm leading-relaxed">Le Sato est un tambour sacré dont les vibrations purifient les récoltes et appellent la protection des ancêtres.</p>
+              </motion.div>
+            )
           ) : (
-            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} onClick={nextQuestion}
-              className="w-full p-8 bg-[#faf9f8] rounded-2xl border border-[#a0412d]/20 cursor-pointer hover:shadow-lg text-center"
-            >
-              <h3 className="text-[#a0412d] font-bold text-lg mb-4">Bonne réponse !</h3>
-              <p className="text-gray-700 leading-relaxed max-w-xl mx-auto mb-6">Le Sato est un tambour sacré dont les vibrations sont censées purifier les récoltes et appeler la protection des ancêtres avant la saison des pluies.</p>
-              <div className="text-[#a0412d]/50 text-xs animate-pulse font-bold uppercase">Cliquer pour continuer ↓</div>
+            /* ÉCRAN DE FÉLICITATIONS FINAL */
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center text-center">
+              <div className="mb-4 text-[#a0412d] text-4xl">✨</div>
+              <h2 className="text-3xl font-black mb-4 uppercase tracking-tighter">Félicitations, Initié !</h2>
+              
+              <p className="italic text-gray-500 mb-8 max-w-md">
+                "La jarre percée ne retient l'eau que si chaque main vient boucher un trou. Ta connaissance est le ciment de notre héritage."
+              </p>
+
+              <div className="w-full bg-[#faf9f8] p-6 rounded-2xl border border-[#a0412d]/10 mb-8">
+                <h4 className="text-[10px] font-bold text-[#a0412d] uppercase tracking-[0.2em] mb-4">Vos Révélations</h4>
+                <ul className="text-left space-y-3">
+                  {revelations.map((text, i) => (
+                    <li key={i} className="flex items-start text-xs font-medium text-gray-700">
+                      <span className="text-[#a0412d] mr-2">•</span> {text}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <button 
+                onClick={() => alert("Lien de partage copié !")}
+                className="px-10 py-4 bg-[#303333] text-white rounded-full font-bold text-sm hover:bg-black transition-all shadow-lg shadow-black/10 flex items-center gap-2"
+              >
+                PARTAGER MA QUÊTE
+              </button>
             </motion.div>
           )}
         </div>
