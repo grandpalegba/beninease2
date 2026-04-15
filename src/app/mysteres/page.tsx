@@ -7,7 +7,6 @@ import { toast, Toaster } from "sonner";
 import { confetti } from "tsparticles-confetti";
 import { HourglassTimer } from "@/components/mysteres/HourglassTimer";
 
-// ─── CONFIGURATION SUPABASE ─────────────────────────────────────────────────
 const SUPABASE_URL = "https://wtjhkqkqmexddroqwawk.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0amhrcWtxbWV4ZGRyb3F3YXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDU3NzQsImV4cCI6MjA4OTg4MTc3NH0.TdaWEVQxKF6s2j-7QStHZaFbOqs4e3UHVUN7iGQL_vc";
 
@@ -24,7 +23,7 @@ const shuffleArray = (array: any[]) => {
 
 export default function MysterePage() {
   const [mysteres, setMysteres] = useState<any[]>([]);
-  const [questions, setQuestions] = useState<any[]>([]);
+  const [allQuestions, setAllQuestions] = useState<any[]>([]); // Table questions liée
   const [loading, setLoading] = useState(true);
   
   const [view, setView] = useState<"gallery" | "game" | "locked" | "tresor">("gallery");
@@ -38,10 +37,14 @@ export default function MysterePage() {
 
   useEffect(() => {
     async function fetchData() {
+      // On récupère tout de la table mysteres
       const { data: mData } = await supabase.from('mysteres').select('*');
+      // On récupère les questions liées (si elles sont dans une table séparée)
       const { data: qData } = await supabase.from('questions').select('*');
+      
       if (mData) setMysteres(shuffleArray(mData));
-      if (qData) setQuestions(qData);
+      if (qData) setAllQuestions(qData);
+      
       const savedPoints = localStorage.getItem("beninease_points");
       if (savedPoints) setPoints(parseInt(savedPoints));
       setLoading(false);
@@ -49,16 +52,10 @@ export default function MysterePage() {
     fetchData();
   }, []);
 
-  // ─── PRÉCHARGEMENT DES IMAGES (ZÉRO DÉCALAGE) ───
+  // Préchargement des images
   useEffect(() => {
     if (mysteres.length > 0) {
-      const preload = (url: string) => { 
-        if (url) {
-          const img = new Image();
-          img.src = `${url}?v=${currentIndex}`; // Force rafraîchissement cache
-        }
-      };
-      // Preload actuel et suivant
+      const preload = (url: string) => { if (url) { const img = new Image(); img.src = url; } };
       preload(mysteres[currentIndex]?.cover_image_url);
       preload(mysteres[(currentIndex + 1) % mysteres.length]?.cover_image_url);
     }
@@ -72,12 +69,14 @@ export default function MysterePage() {
   }, [view, timeLeft]);
 
   const currentM = mysteres[currentIndex];
+
+  // FILTRAGE DES QUESTIONS TIRÉES DE SUPABASE POUR LE MYSTÈRE ACTUEL
   const currentQuestions = useMemo(() => {
-    if (!currentM) return [];
-    return questions
+    if (!currentM || !allQuestions.length) return [];
+    return allQuestions
       .filter(q => q.mystere_id === currentM.id)
-      .sort((a, b) => parseInt(a.question_number) - parseInt(b.question_number));
-  }, [questions, currentIndex, mysteres]);
+      .sort((a, b) => (a.question_number || 0) - (b.question_number || 0));
+  }, [allQuestions, currentM]);
 
   const handleFailure = () => {
     toast.error("La jarre rejette votre offrande...");
@@ -88,8 +87,8 @@ export default function MysterePage() {
   };
 
   const handleDrop = (choiceLetter: string, info: any) => {
-    if (info.point.y < 300) { 
-      const correct = currentQuestions[qIndex].correct_answer;
+    if (info.point.y < 350) {
+      const correct = currentQuestions[qIndex]?.correct_answer;
       if (choiceLetter === correct) {
         setFilledHoles(h => h + 1);
         setPoints(p => {
@@ -97,7 +96,7 @@ export default function MysterePage() {
           localStorage.setItem("beninease_points", String(np));
           return np;
         });
-        if (qIndex < 3) {
+        if (qIndex < currentQuestions.length - 1) {
           toast.success("L'esprit est satisfait.");
           setTimeout(() => { setQIndex(i => i + 1); setTimeLeft(60); }, 800);
         } else {
@@ -116,38 +115,28 @@ export default function MysterePage() {
     <div className="h-screen w-screen bg-[#faf9f8] overflow-hidden touch-none relative font-sans">
       <Toaster position="top-center" richColors />
 
-      <AnimatePresence mode="wait" initial={false}>
+      <AnimatePresence mode="wait">
         
         {/* --- VUE GALERIE --- */}
         {view === "gallery" && (
-          <motion.div 
-            key={`gallery-${currentM?.id}`}
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }} 
-            exit={{ opacity: 0 }} 
-            className="h-full flex flex-col items-center justify-center p-6"
-          >
+          <motion.div key="gallery" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full flex flex-col items-center justify-center p-6">
             <motion.div
               drag="x"
               dragConstraints={{ left: 0, right: 0 }}
-              dragElastic={0.2}
-              // Gestion intelligente Clic vs Swipe
+              dragElastic={0.1}
+              // SOLUTION ANTI-CLIC : On sépare onTap et onDragEnd
               onTap={() => setView("game")}
               onDragEnd={(e, info) => {
-                if (info.offset.x < -60) {
+                // On ne change de carte que si le mouvement dépasse 50px
+                if (info.offset.x < -50) {
                   setCurrentIndex(prev => (prev + 1) % mysteres.length);
-                } else if (info.offset.x > 60) {
+                } else if (info.offset.x > 50) {
                   setCurrentIndex(prev => (prev - 1 + mysteres.length) % mysteres.length);
                 }
               }}
               className="w-full max-w-[320px] h-[550px] bg-white rounded-[45px] shadow-2xl border-[10px] border-white overflow-hidden cursor-pointer flex flex-col"
             >
-              <img 
-                src={`${currentM.cover_image_url}?v=${currentM.id}`} 
-                className="h-1/2 w-full object-cover bg-orange-50 pointer-events-none" 
-                alt={currentM.title}
-                fetchPriority="high"
-              />
+              <img src={currentM.cover_image_url} className="h-1/2 w-full object-cover bg-orange-50 pointer-events-none" alt={currentM.title}/>
               <div className="p-7 flex-1 flex flex-col justify-between pointer-events-none">
                 <div>
                   <h2 className="text-2xl font-black text-[#3d1810] uppercase leading-tight">{currentM.title}</h2>
@@ -160,35 +149,26 @@ export default function MysterePage() {
             </motion.div>
             <div className="mt-8 flex flex-col items-center gap-2">
                 <span className="text-[14px] font-black text-[#a0412d]">⭐ {points} pts</span>
-                <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest animate-pulse">Swipe pour naviguer • Tap pour ouvrir</p>
+                <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest animate-pulse italic">Swipe pour naviguer • Tap pour entrer</p>
             </div>
           </motion.div>
         )}
 
         {/* --- VUE JEU --- */}
         {view === "game" && (
-          <motion.div 
-            key="game" 
-            initial={{ y: "100%" }} 
-            animate={{ y: 0 }} 
-            exit={{ y: "100%" }} 
-            className="absolute inset-0 bg-white z-50 flex flex-col overflow-hidden"
-          >
-            {/* Zone de Swipe vers le bas pour sortir du jeu */}
+          <motion.div key="game" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-50 flex flex-col overflow-hidden">
+            {/* Zone de Swipe vers le bas pour sortir */}
             <motion.div 
               drag="y"
               dragConstraints={{ top: 0, bottom: 0 }}
-              onDragEnd={(e, info) => {
-                if (info.offset.y > 100) setView("gallery");
-              }}
-              className="w-full h-12 flex items-center justify-center shrink-0 cursor-grab active:cursor-grabbing"
+              onDragEnd={(e, info) => { if (info.offset.y > 100) setView("gallery"); }}
+              className="w-full h-12 flex items-center justify-center shrink-0 cursor-grab"
             >
               <div className="w-12 h-1.5 bg-gray-200 rounded-full" />
             </motion.div>
 
             <div className="px-6 flex-1 flex flex-col items-center overflow-y-auto pb-10 no-scrollbar">
                <h1 className="text-2xl font-black text-[#a0412d] uppercase text-center shrink-0">{currentM.title}</h1>
-               
                <div className="mt-6 flex justify-between w-full max-w-sm px-4 shrink-0">
                   <HourglassTimer timeLeft={timeLeft} isFlipping={false} />
                   <div className="flex flex-col items-end">
@@ -196,7 +176,7 @@ export default function MysterePage() {
                     <span className="text-[9px] font-black text-gray-300 uppercase mt-1">Graines de Vie</span>
                   </div>
                </div>
-
+               
                <div className="relative my-8 shrink-0">
                  <div className="w-36 h-48 bg-[#a0412d] rounded-t-[55px] rounded-b-[30px] shadow-2xl flex flex-col items-center justify-center border-b-8 border-[#7a2a1b]">
                     <div className="mt-10 grid grid-cols-2 gap-4">
@@ -206,12 +186,13 @@ export default function MysterePage() {
                </div>
 
                <div className="w-full max-w-md space-y-3 px-2">
-                  <p className="text-center font-bold text-[#3d1810] text-lg mb-4">{currentQuestions[qIndex]?.question}</p>
+                  <p className="text-center font-bold text-[#3d1810] text-lg mb-4">
+                    {currentQuestions[qIndex]?.question || "Chargement de la question..."}
+                  </p>
                   {['A', 'B', 'C', 'D'].map(l => (
                     <motion.div 
                       key={l} 
                       drag 
-                      // Bloque l'image dans le cadre verticalement
                       dragConstraints={{ left: 0, right: 0, top: -450, bottom: 0 }}
                       dragSnapToOrigin 
                       onDragEnd={(e, info) => handleDrop(l, info)} 
@@ -219,7 +200,9 @@ export default function MysterePage() {
                       className="p-4 bg-[#faf9f8] border-2 border-gray-50 rounded-[25px] flex items-center cursor-grab active:cursor-grabbing group touch-none shadow-sm"
                     >
                       <span className="w-10 h-10 bg-white text-[#a0412d] shadow-sm rounded-xl flex items-center justify-center font-black mr-4">{l}</span>
-                      <span className="text-sm font-bold text-gray-700 leading-snug">{currentQuestions[qIndex]?.[`choice_${l.toLowerCase()}`]}</span>
+                      <span className="text-sm font-bold text-gray-700 leading-snug">
+                        {currentQuestions[qIndex]?.[`choice_${l.toLowerCase()}`]}
+                      </span>
                     </motion.div>
                   ))}
                </div>
@@ -231,26 +214,12 @@ export default function MysterePage() {
         {view === "tresor" && (
           <motion.div key="tresor" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="absolute inset-0 bg-[#1a0f0a] z-[60] flex flex-col items-center justify-center p-8 text-center text-white">
             <h2 className="text-[#fdb813] font-black tracking-[0.4em] uppercase mb-8 text-xs">Trésor Découvert</h2>
-            <img 
-              src={`${currentM.tresor_image_url}?v=${currentM.id}`} 
-              className="w-72 h-72 object-contain mb-8 drop-shadow-[0_0_30px_rgba(253,184,19,0.3)]" 
-              alt="Trésor" 
-            />
+            <img src={currentM.tresor_image_url} className="w-64 h-64 object-contain mb-8" alt="Trésor" />
             <h3 className="text-3xl font-black mb-2 uppercase">{currentM.title}</h3>
             <div className="bg-white/5 p-6 rounded-3xl text-sm leading-relaxed max-w-sm mb-8 italic">
-              {currentM.inspiration || "Félicitations, initié."}
+              {currentM.inspiration || "La sagesse ancestrale est vôtre."}
             </div>
-            <button 
-              onClick={() => { 
-                setView("gallery"); 
-                setFilledHoles(0); 
-                setQIndex(0); 
-                setCurrentIndex(prev => (prev + 1) % mysteres.length); 
-              }} 
-              className="px-10 py-4 bg-[#fdb813] text-[#3d1810] rounded-full font-black uppercase text-xs tracking-widest"
-            >
-              Retourner à l'Oracle
-            </button>
+            <button onClick={() => { setView("gallery"); setFilledHoles(0); setQIndex(0); setCurrentIndex(prev => (prev + 1) % mysteres.length); }} className="px-10 py-4 bg-[#fdb813] text-[#3d1810] rounded-full font-black uppercase text-xs tracking-widest">Retourner à l'Oracle</button>
           </motion.div>
         )}
 
@@ -258,10 +227,11 @@ export default function MysterePage() {
         {view === "locked" && (
           <div className="absolute inset-0 bg-white z-[100] flex flex-col items-center justify-center p-8 text-center">
             <h2 className="text-2xl font-black text-[#a0412d] mb-8 uppercase">La Jarre est scellée</h2>
-            <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Mot de Pouvoir" className="w-full max-w-xs p-4 border rounded-full mb-4 text-center outline-none focus:border-[#a0412d]" />
-            <button onClick={() => { if(password.toLowerCase() === "benin"){ setLives(8); setView("gallery"); toast.success("Libéré !"); }}} className="w-full max-w-xs bg-[#a0412d] text-white p-4 rounded-full font-black">Invoquer</button>
+            <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Mot de Pouvoir" className="w-full max-w-xs p-4 border rounded-full mb-4 text-center" />
+            <button onClick={() => { if(password.toLowerCase() === "benin"){ setLives(8); setView("gallery"); }}} className="w-full max-w-xs bg-[#a0412d] text-white p-4 rounded-full font-black">Invoquer</button>
           </div>
         )}
+
       </AnimatePresence>
     </div>
   );
