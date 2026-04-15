@@ -35,7 +35,7 @@ export default function SatoChallengePage() {
   const isNoixActive = (col: number, row: number) => {
     const index = col === 0 ? row + 1 : row + 5;
     return timeLeft > (TOTAL_TIME - (8 - index + 1) * 8);
-  };
+  }; // <--- L'accolade manquante était ici
 
   return (
     <div className="min-h-screen bg-white text-[#303333] flex flex-col items-center justify-center font-sans p-6 overflow-hidden">
@@ -45,7 +45,7 @@ export default function SatoChallengePage() {
 
       <main className="w-full max-w-5xl flex flex-col items-center">
         
-        {/* SECTION INSTRUMENTS : Centrage vertical par rapport à la Jarre */}
+        {/* SECTION INSTRUMENTS */}
         <div className="w-full flex justify-between items-center mb-20 px-10 h-[400px]">
           
           {/* 1. OKPELE */}
@@ -144,5 +144,17 @@ export default function SatoChallengePage() {
           {['Purifier les récoltes', 'Appeler la pluie', 'Célébrer les mariages', 'Guérir les malades'].map((text, i) => (
             <button
               key={i}
-              onClick={() => handleAnswer(
+              onClick={() => handleAnswer(String.fromCharCode(65 + i))}
+              className={`p-6 bg-white border rounded-xl shadow-sm flex items-center text-left hover:border-[#a0412d]/30 transition-all ${selectedAnswer === String.fromCharCode(65 + i) ? 'bg-[#faf9f8] border-[#a0412d]/40 ring-1 ring-[#a0412d]/10' : 'border-gray-100'}`}
+            >
+              <span className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center font-bold text-[#a0412d] text-xs mr-4 border border-[#a0412d]/5">
+                {String.fromCharCode(65 + i)}
+              </span>
+              <span className="text-sm font-semibold">{text}</span>
+            </button>
+          ))}
+        </div>
+      </main>
+    </div>
+  );
 }
