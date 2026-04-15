@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GameLogic } from '@/components/mysteres/gameLogic';
-import Header from '@/components/Header';
 
 export default function SatoChallengePage() {
   const gameLogicRef = useRef<GameLogic | null>(null);
@@ -38,32 +37,76 @@ export default function SatoChallengePage() {
 
   return (
     <>
-      <main className="w-full max-w-screen-lg px-6 flex flex-col items-center justify-center min-h-screen bg-[#faf9f8] text-[#303333] pb-24">
+      <main className="w-full max-w-screen-lg px-6 flex flex-col items-center justify-center min-h-screen bg-[#faf9f8] text-[#303333]">
       {/* Immersive Visual Section */}
       <div className="relative w-full flex justify-center items-center mb-16 h-80">
         {/* Background Bloom */}
         <div className="absolute w-[400px] h-[400px] bg-primary/5 rounded-full blur-[80px] -z-10"></div>
         
-        {/* Left: Okpele Divination Chain */}
-        <div className="absolute left-[calc(50%-280px)] flex gap-8 pointer-events-none scale-90">
-          <div className="relative flex gap-8">
-            {/* Refined Detailed Chain Connector */}
-            <div className="okpele-connector" style={{width: '56px', height: '24px', border: '2px solid #9ca3af', borderBottom: '0', borderRadius: '40px 40px 0 0', position: 'absolute', top: '-26px', left: '50%', transform: 'translateX(-50%)', boxShadow: '0 -1px 4px rgba(255,255,255,0.3)'}}></div>
-            <div className="relative flex flex-col items-center">
-              <div className="husk-shape husk-active" style={{width: '24px', height: '34px', borderRadius: '50% 50% 50% / 70% 70% 30% 30%', position: 'relative', transform: 'rotate(-5deg)', background: 'radial-gradient(circle at 30% 30%, #a67c52 0%, #734a26 60%, #4d3118 100%)', boxShadow: 'inset 2px 2px 5px rgba(255,255,255,0.2), inset -2px -2px 8px rgba(0,0,0,0.4), 0 4px 10px rgba(0,0,0,0.3)', border: '1px solid rgba(0,0,0,0.2)'}}></div>
-              <div className="silver-link" style={{width: '2px', height: '10px', background: 'linear-gradient(90deg, #d1d5db 0%, #9ca3af 50%, #d1d5db 100%)', margin: '0 auto'}}></div>
-              <div className="husk-shape husk-active" style={{width: '24px', height: '34px', borderRadius: '50% 50% 50% / 70% 70% 30% 30%', position: 'relative', transform: 'rotate(-5deg)', background: 'radial-gradient(circle at 30% 30%, #a67c52 0%, #734a26 60%, #4d3118 100%)', boxShadow: 'inset 2px 2px 5px rgba(255,255,255,0.2), inset -2px -2px 8px rgba(0,0,0,0.4), 0 4px 10px rgba(0,0,0,0.3)', border: '1px solid rgba(0,0,0,0.2)'}}></div>
-              <div className="silver-link" style={{width: '2px', height: '10px', background: 'linear-gradient(90deg, #d1d5db 0%, #9ca3af 50%, #d1d5db 100%)', margin: '0 auto'}}></div>
-              <div className="husk-shape husk-active" style={{width: '24px', height: '34px', borderRadius: '50% 50% 50% / 70% 70% 30% 30%', position: 'relative', transform: 'rotate(-5deg)', background: 'radial-gradient(circle at 30% 30%, #a67c52 0%, #734a26 60%, #4d3118 100%)', boxShadow: 'inset 2px 2px 5px rgba(255,255,255,0.2), inset -2px -2px 8px rgba(0,0,0,0.4), 0 4px 10px rgba(0,0,0,0.3)', border: '1px solid rgba(0,0,0,0.2)'}}></div>
-              <div className="silver-link" style={{width: '2px', height: '10px', background: 'linear-gradient(90deg, #d1d5db 0%, #9ca3af 50%, #d1d5db 100%)', margin: '0 auto'}}></div>
-              <div className="husk-shape husk-active" style={{width: '24px', height: '34px', borderRadius: '50% 50% 50% / 70% 70% 30% 30%', position: 'relative', transform: 'rotate(-5deg)', background: 'radial-gradient(circle at 30% 30%, #a67c52 0%, #734a26 60%, #4d3118 100%)', boxShadow: 'inset 2px 2px 5px rgba(255,255,255,0.2), inset -2px -2px 8px rgba(0,0,0,0.4), 0 4px 10px rgba(0,0,0,0.3)', border: '1px solid rgba(0,0,0,0.2)'}}></div>
+        {/* Left: Okpele Divination Chain - 8 Noix */}
+        <div className="absolute left-[calc(50%-320px)] flex gap-6 pointer-events-none scale-100">
+          {/* Chain Connector */}
+          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-6" style={{width: '80px', height: '20px', border: '2px solid #9ca3af', borderBottom: '0', borderRadius: '40px 40px 0 0', boxShadow: '0 -1px 4px rgba(255,255,255,0.3)'}}></div>
+          
+          {/* First Column - 4 Noix */}
+          <div className="flex flex-col gap-3">
+            <div className="relative">
+              <div className="husk-full" style={{width: '28px', height: '40px', position: 'relative', transform: 'rotate(-8deg)'}}>
+                <div className="absolute inset-0 rounded-full" style={{background: 'linear-gradient(135deg, #d4a574 0%, #b8935f 50%, #9b7653 100%)', boxShadow: 'inset 2px 2px 4px rgba(255,255,255,0.3), inset -2px -2px 6px rgba(0,0,0,0.4), 0 3px 8px rgba(0,0,0,0.2)'}}></div>
+                <div className="absolute left-1/2 top-0 bottom-0 w-1 transform -translate-x-1/2" style={{background: 'linear-gradient(90deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.3) 100%)', borderRadius: '2px'}}></div>
+              </div>
+              <div className="silver-link" style={{width: '2px', height: '8px', background: 'linear-gradient(90deg, #d1d5db 0%, #9ca3af 50%, #d1d5db 100%)', margin: '2px auto'}}></div>
             </div>
-            <div className="relative flex flex-col items-center">
-              <div className="husk-shape husk-inactive" style={{width: '24px', height: '34px', borderRadius: '50% 50% 50% / 70% 70% 30% 30%', position: 'relative', transform: 'rotate(-5deg)', background: 'radial-gradient(circle at 30% 30%, #5d5d5d 0%, #3a3a3a 70%, #1a1a1a 100%)', boxShadow: 'inset 2px 2px 4px rgba(255,255,255,0.1), 0 2px 5px rgba(0,0,0,0.4)', opacity: '0.65'}}></div>
-              <div className="silver-link" style={{width: '2px', height: '10px', background: 'linear-gradient(90deg, #d1d5db 0%, #9ca3af 50%, #d1d5db 100%)', margin: '0 auto'}}></div>
-              <div className="husk-shape husk-inactive" style={{width: '24px', height: '34px', borderRadius: '50% 50% 50% / 70% 70% 30% 30%', position: 'relative', transform: 'rotate(-5deg)', background: 'radial-gradient(circle at 30% 30%, #5d5d5d 0%, #3a3a3a 70%, #1a1a1a 100%)', boxShadow: 'inset 2px 2px 4px rgba(255,255,255,0.1), 0 2px 5px rgba(0,0,0,0.4)', opacity: '0.65'}}></div>
-              <div className="silver-link" style={{width: '2px', height: '10px', background: 'linear-gradient(90deg, #d1d5db 0%, #9ca3af 50%, #d1d5db 100%)', margin: '0 auto'}}></div>
-              <div className="husk-shape husk-inactive" style={{width: '24px', height: '34px', borderRadius: '50% 50% 50% / 70% 70% 30% 30%', position: 'relative', transform: 'rotate(-5deg)', background: 'radial-gradient(circle at 30% 30%, #5d5d5d 0%, #3a3a3a 70%, #1a1a1a 100%)', boxShadow: 'inset 2px 2px 4px rgba(255,255,255,0.1), 0 2px 5px rgba(0,0,0,0.4)', opacity: '0.65'}}></div>
+            <div className="relative">
+              <div className="husk-full" style={{width: '28px', height: '40px', position: 'relative', transform: 'rotate(-8deg)'}}>
+                <div className="absolute inset-0 rounded-full" style={{background: 'linear-gradient(135deg, #d4a574 0%, #b8935f 50%, #9b7653 100%)', boxShadow: 'inset 2px 2px 4px rgba(255,255,255,0.3), inset -2px -2px 6px rgba(0,0,0,0.4), 0 3px 8px rgba(0,0,0,0.2)'}}></div>
+                <div className="absolute left-1/2 top-0 bottom-0 w-1 transform -translate-x-1/2" style={{background: 'linear-gradient(90deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.3) 100%)', borderRadius: '2px'}}></div>
+              </div>
+              <div className="silver-link" style={{width: '2px', height: '8px', background: 'linear-gradient(90deg, #d1d5db 0%, #9ca3af 50%, #d1d5db 100%)', margin: '2px auto'}}></div>
+            </div>
+            <div className="relative">
+              <div className="husk-full" style={{width: '28px', height: '40px', position: 'relative', transform: 'rotate(-8deg)'}}>
+                <div className="absolute inset-0 rounded-full" style={{background: 'linear-gradient(135deg, #d4a574 0%, #b8935f 50%, #9b7653 100%)', boxShadow: 'inset 2px 2px 4px rgba(255,255,255,0.3), inset -2px -2px 6px rgba(0,0,0,0.4), 0 3px 8px rgba(0,0,0,0.2)'}}></div>
+                <div className="absolute left-1/2 top-0 bottom-0 w-1 transform -translate-x-1/2" style={{background: 'linear-gradient(90deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.3) 100%)', borderRadius: '2px'}}></div>
+              </div>
+              <div className="silver-link" style={{width: '2px', height: '8px', background: 'linear-gradient(90deg, #d1d5db 0%, #9ca3af 50%, #d1d5db 100%)', margin: '2px auto'}}></div>
+            </div>
+            <div className="relative">
+              <div className="husk-full" style={{width: '28px', height: '40px', position: 'relative', transform: 'rotate(-8deg)'}}>
+                <div className="absolute inset-0 rounded-full" style={{background: 'linear-gradient(135deg, #d4a574 0%, #b8935f 50%, #9b7653 100%)', boxShadow: 'inset 2px 2px 4px rgba(255,255,255,0.3), inset -2px -2px 6px rgba(0,0,0,0.4), 0 3px 8px rgba(0,0,0,0.2)'}}></div>
+                <div className="absolute left-1/2 top-0 bottom-0 w-1 transform -translate-x-1/2" style={{background: 'linear-gradient(90deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.3) 100%)', borderRadius: '2px'}}></div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Second Column - 4 Noix */}
+          <div className="flex flex-col gap-3">
+            <div className="relative">
+              <div className="husk-empty" style={{width: '28px', height: '40px', position: 'relative', transform: 'rotate(-8deg)', opacity: '0.4'}}>
+                <div className="absolute inset-0 rounded-full" style={{background: 'linear-gradient(135deg, #6b6b6b 0%, #4a4a4a 50%, #2a2a2a 100%)', boxShadow: 'inset 1px 1px 2px rgba(255,255,255,0.1), inset -1px -1px 4px rgba(0,0,0,0.6), 0 2px 4px rgba(0,0,0,0.3)'}}></div>
+                <div className="absolute left-1/2 top-0 bottom-0 w-1 transform -translate-x-1/2" style={{background: 'linear-gradient(90deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.5) 100%)', borderRadius: '2px'}}></div>
+              </div>
+              <div className="silver-link" style={{width: '2px', height: '8px', background: 'linear-gradient(90deg, #d1d5db 0%, #9ca3af 50%, #d1d5db 100%)', margin: '2px auto'}}></div>
+            </div>
+            <div className="relative">
+              <div className="husk-empty" style={{width: '28px', height: '40px', position: 'relative', transform: 'rotate(-8deg)', opacity: '0.4'}}>
+                <div className="absolute inset-0 rounded-full" style={{background: 'linear-gradient(135deg, #6b6b6b 0%, #4a4a4a 50%, #2a2a2a 100%)', boxShadow: 'inset 1px 1px 2px rgba(255,255,255,0.1), inset -1px -1px 4px rgba(0,0,0,0.6), 0 2px 4px rgba(0,0,0,0.3)'}}></div>
+                <div className="absolute left-1/2 top-0 bottom-0 w-1 transform -translate-x-1/2" style={{background: 'linear-gradient(90deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.5) 100%)', borderRadius: '2px'}}></div>
+              </div>
+              <div className="silver-link" style={{width: '2px', height: '8px', background: 'linear-gradient(90deg, #d1d5db 0%, #9ca3af 50%, #d1d5db 100%)', margin: '2px auto'}}></div>
+            </div>
+            <div className="relative">
+              <div className="husk-empty" style={{width: '28px', height: '40px', position: 'relative', transform: 'rotate(-8deg)', opacity: '0.4'}}>
+                <div className="absolute inset-0 rounded-full" style={{background: 'linear-gradient(135deg, #6b6b6b 0%, #4a4a4a 50%, #2a2a2a 100%)', boxShadow: 'inset 1px 1px 2px rgba(255,255,255,0.1), inset -1px -1px 4px rgba(0,0,0,0.6), 0 2px 4px rgba(0,0,0,0.3)'}}></div>
+                <div className="absolute left-1/2 top-0 bottom-0 w-1 transform -translate-x-1/2" style={{background: 'linear-gradient(90deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.5) 100%)', borderRadius: '2px'}}></div>
+              </div>
+              <div className="silver-link" style={{width: '2px', height: '8px', background: 'linear-gradient(90deg, #d1d5db 0%, #9ca3af 50%, #d1d5db 100%)', margin: '2px auto'}}></div>
+            </div>
+            <div className="relative">
+              <div className="husk-empty" style={{width: '28px', height: '40px', position: 'relative', transform: 'rotate(-8deg)', opacity: '0.4'}}>
+                <div className="absolute inset-0 rounded-full" style={{background: 'linear-gradient(135deg, #6b6b6b 0%, #4a4a4a 50%, #2a2a2a 100%)', boxShadow: 'inset 1px 1px 2px rgba(255,255,255,0.1), inset -1px -1px 4px rgba(0,0,0,0.6), 0 2px 4px rgba(0,0,0,0.3)'}}></div>
+                <div className="absolute left-1/2 top-0 bottom-0 w-1 transform -translate-x-1/2" style={{background: 'linear-gradient(90deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.5) 100%)', borderRadius: '2px'}}></div>
+              </div>
             </div>
           </div>
         </div>
@@ -208,10 +251,6 @@ export default function SatoChallengePage() {
       </AnimatePresence>
       </main>
       
-      {/* Header avec Glass Rule */}
-      <div className="fixed bottom-0 left-0 right-0 bg-[#faf9f8]/80 backdrop-blur-xl" style={{boxShadow: '0 4px 30px rgba(160, 65, 45, 0.08)'}}>
-        <Header />
-      </div>
     </>
   );
 }
