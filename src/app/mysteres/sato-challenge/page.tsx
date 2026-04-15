@@ -8,7 +8,7 @@ export default function SatoChallengePage() {
   const [timeLeft, setTimeLeft] = useState(TOTAL_TIME);
   const [showExplanation, setShowExplanation] = useState(false);
   const [holes, setHoles] = useState([0, 1, 2, 3]); 
-  const [awaleSeeds, setAwaleSeeds] = useState(8); 
+  const [awaleSeeds, setAwaleSeeds] = useState(16); // PASSAGE À 16 GRAINES
   const [isWrong, setIsWrong] = useState(false);
 
   useEffect(() => {
@@ -23,7 +23,7 @@ export default function SatoChallengePage() {
       setShowExplanation(true);
     } else {
       setIsWrong(true);
-      setAwaleSeeds(prev => Math.max(0, prev - 1));
+      setAwaleSeeds(prev => Math.max(0, prev - 1)); // Perd 1 graine sur 16
       setTimeout(() => setIsWrong(false), 500);
     }
   };
@@ -95,7 +95,7 @@ export default function SatoChallengePage() {
             </div>
           </div>
 
-          {/* 3. AWALÉ */}
+          {/* 3. AWALÉ (16 GRAINES : 2 PAR TROU) */}
           <motion.div 
             animate={isWrong ? { x: [-10, 10, -10, 10, 0] } : {}}
             transition={{ duration: 0.4 }}
@@ -105,10 +105,13 @@ export default function SatoChallengePage() {
               <React.Fragment key={col}>
                 <div className="flex flex-col gap-3">
                   {[0, 1, 2, 3].map(row => {
-                    const idx = col === 0 ? row : row + 4;
+                    // Calcul de l'index de départ pour chaque trou (0, 2, 4, 6, 8, 10, 12, 14)
+                    const baseIdx = (col === 0 ? row : row + 4) * 2;
                     return (
-                      <div key={row} className="w-10 h-10 bg-black/60 rounded-full shadow-inner flex items-center justify-center">
-                        {awaleSeeds > idx && <div className="w-2.5 h-2.5 rounded-full bg-[#FFD700] shadow-[0_0_8px_#FFD700]" />}
+                      <div key={row} className="w-10 h-10 bg-black/60 rounded-full shadow-inner flex items-center justify-center gap-1">
+                        {/* Affichage de deux graines par trou */}
+                        {awaleSeeds > baseIdx && <div className="w-2.5 h-2.5 rounded-full bg-[#FFD700] shadow-[0_0_8px_#FFD700]" />}
+                        {awaleSeeds > baseIdx + 1 && <div className="w-2.5 h-2.5 rounded-full bg-[#FFD700] shadow-[0_0_8px_#FFD700]" />}
                       </div>
                     );
                   })}
