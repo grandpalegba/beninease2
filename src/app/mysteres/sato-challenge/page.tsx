@@ -28,8 +28,11 @@ const OkpeleSeed = ({ active }: { active: boolean }) => (
 
 const SatoJar = ({ holesCount, isOver }: { holesCount: number[], isOver: boolean }) => (
   <div className={`relative w-56 h-72 md:w-64 md:h-80 shrink-0 transition-transform ${isOver ? 'scale-105' : 'scale-100'}`}>
-    <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-32 h-7 bg-[#3d1810] rounded-[50%] shadow-inner border-2 border-[#a0412d]/20 z-10" />
-    <div className="absolute inset-0 overflow-hidden" 
+    {/* COL DE LA JARRE - Style authentique bois foncé */}
+    <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-32 md:w-40 h-8 bg-[#3d1810] rounded-[50%] shadow-2xl border-2 border-[#a0412d]/20 z-10" />
+    
+    {/* CORPS DE LA JARRE */}
+    <div className="absolute inset-0 mt-2 overflow-hidden" 
          style={{ 
            background: isOver ? 'linear-gradient(165deg, #b34a35 0%, #8b3422 45%, #7a2a1b 100%)' : 'linear-gradient(165deg, #a0412d 0%, #8b3422 45%, #7a2a1b 100%)',
            borderRadius: '42% 38% 34% 36% / 45% 45% 32% 32%',
@@ -54,14 +57,27 @@ const SatoJar = ({ holesCount, isOver }: { holesCount: number[], isOver: boolean
 
 const AwaleMini = ({ seedsCount, isWrong }: { seedsCount: number, isWrong: boolean }) => (
   <motion.div animate={isWrong ? { x: [-1, 1, -1, 1, 0] } : {}}
-    className="relative w-32 bg-[#833321] rounded-[1.5rem] p-3 shadow-xl flex flex-col items-center gap-2 border-[3px] border-[#652719] shrink-0"
+    className="relative w-36 bg-[#833321] rounded-[1.5rem] p-4 shadow-xl flex flex-row justify-center gap-4 border-[3px] border-[#652719] shrink-0"
   >
-    <div className="grid grid-cols-2 gap-2 z-10">
-      {[...Array(8)].map((_, i) => (
-        <div key={i} className="w-10 h-10 bg-[#652719] rounded-full shadow-inner flex items-center justify-center relative overflow-hidden">
+    {/* COLONNE GAUCHE */}
+    <div className="grid grid-cols-1 gap-2 z-10">
+      {[...Array(4)].map((_, i) => (
+        <div key={`left-${i}`} className="w-10 h-10 bg-[#652719] rounded-full shadow-inner flex items-center justify-center relative overflow-hidden">
           <div className="flex gap-0.5 flex-wrap justify-center p-1">
              {seedsCount > i * 2 && <div className="w-2.5 h-2.5 rounded-full bg-yellow-400 shadow-[0_0_4px_rgba(255,235,59,0.4)]" />}
              {seedsCount > i * 2 + 1 && <div className="w-2.5 h-2.5 rounded-full bg-yellow-400 shadow-[0_0_4px_rgba(255,235,59,0.4)]" />}
+          </div>
+        </div>
+      ))}
+    </div>
+
+    {/* COLONNE DROITE - Séparée pour la ressemblance au jeu original */}
+    <div className="grid grid-cols-1 gap-2 z-10">
+      {[...Array(4)].map((_, i) => (
+        <div key={`right-${i}`} className="w-10 h-10 bg-[#652719] rounded-full shadow-inner flex items-center justify-center relative overflow-hidden">
+          <div className="flex gap-0.5 flex-wrap justify-center p-1">
+             {seedsCount > (i + 4) * 2 && <div className="w-2.5 h-2.5 rounded-full bg-yellow-400 shadow-[0_0_4px_rgba(255,235,59,0.4)]" />}
+             {seedsCount > (i + 4) * 2 + 1 && <div className="w-2.5 h-2.5 rounded-full bg-yellow-400 shadow-[0_0_4px_rgba(255,235,59,0.4)]" />}
           </div>
         </div>
       ))}
@@ -126,7 +142,7 @@ export default function SatoRitualPage() {
     <div className="min-h-screen bg-white text-[#303333] flex flex-col items-center justify-center p-6 select-none overflow-hidden">
       <div className="w-full max-w-6xl flex flex-row items-center justify-center gap-6 md:gap-16 mb-8 h-[350px]">
         
-        {/* OKPÈLÈ */}
+        {/* OKPÈLÈ (Sanctuaire : Inchangé) */}
         <div className="flex flex-col items-center relative pt-10 scale-75 origin-center shrink-0"> 
           <div className="w-[56px] h-10 border-t-[2.5px] border-x-[2.5px] border-yellow-600/60 rounded-t-full absolute top-0 left-1/2 -translate-x-1/2 z-0" />
           <div className="flex gap-4 relative z-10">
@@ -149,16 +165,15 @@ export default function SatoRitualPage() {
           </div>
         </div>
 
-        {/* JARRE SATO */}
+        {/* JARRE SATO (Ajustée selon visuel) */}
         <div ref={jarRef}>
           <SatoJar holesCount={holes} isOver={isOverJar} />
         </div>
 
-        {/* AWALÉ MINIATURE */}
+        {/* AWALÉ MINIATURE (Ajusté selon visuel) */}
         <AwaleMini seedsCount={seeds} isWrong={isWrong} />
       </div>
 
-      {/* INTERFACE DE QUIZ */}
       <div className="w-full max-w-2xl flex flex-col items-center">
         {!isFinished ? (
           !showExplanation ? (
@@ -226,4 +241,4 @@ export default function SatoRitualPage() {
       </div>
     </div>
   );
-}-
+}
