@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// --- COMPOSANTS DE DESIGN (INCHANGÉS) ---
+// --- COMPOSANTS DE DESIGN ---
 
 const OkpeleSeed = ({ active }: { active: boolean }) => (
   <div className="flex flex-col items-center relative">
@@ -124,15 +124,15 @@ export default function SatoRitualPage() {
 
   return (
     <div className="min-h-screen bg-white text-[#303333] flex flex-col items-center justify-center p-6 select-none overflow-hidden">
-      
       <div className="w-full max-w-6xl flex flex-row items-center justify-center gap-6 md:gap-16 mb-8 h-[350px]">
-        {/* OKPÈLÈ (DESIGN INCHANGÉ) */}
+        
+        {/* OKPÈLÈ */}
         <div className="flex flex-col items-center relative pt-10 scale-75 origin-center shrink-0"> 
           <div className="w-[56px] h-10 border-t-[2.5px] border-x-[2.5px] border-yellow-600/60 rounded-t-full absolute top-0 left-1/2 -translate-x-1/2 z-0" />
           <div className="flex gap-4 relative z-10">
             <div className="flex flex-col items-center">
               {[...Array(4)].map((_, i) => (
-                <React.Fragment key={i}>
+                <React.Fragment key={`left-${i}`}>
                   <OkpeleSeed active={activeOkpeleSeeds > i} />
                   {i < 3 && <div className="w-[2px] h-3 bg-yellow-600/50 shadow-sm" />}
                 </React.Fragment>
@@ -140,7 +140,7 @@ export default function SatoRitualPage() {
             </div>
             <div className="flex flex-col items-center">
               {[...Array(4)].map((_, i) => (
-                <React.Fragment key={i}>
+                <React.Fragment key={`right-${i}`}>
                   <OkpeleSeed active={activeOkpeleSeeds > i + 4} />
                   {i < 3 && <div className="w-[2px] h-3 bg-yellow-600/50 shadow-sm" />}
                 </React.Fragment>
@@ -149,7 +149,7 @@ export default function SatoRitualPage() {
           </div>
         </div>
 
-        {/* JARRE SATO (ZONE DE DROP) */}
+        {/* JARRE SATO */}
         <div ref={jarRef}>
           <SatoJar holesCount={holes} isOver={isOverJar} />
         </div>
@@ -164,13 +164,10 @@ export default function SatoRitualPage() {
           !showExplanation ? (
             <div className="text-center w-full">
               <h2 className="text-2xl font-bold mb-4">Glissez la bonne réponse dans la jarre :</h2>
-              
-              {/* STATS SOUS LA QUESTION */}
               <div className="flex gap-8 justify-center mb-8 text-[11px] font-bold uppercase tracking-widest text-gray-400">
                 <p>Temps : <span className="text-[#a0412d]">{timeLeft}s</span></p>
                 <p>Graines : <span className="text-[#a0412d]">{seeds}/16</span></p>
               </div>
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {[
                   { id: 'A', t: "Appeler la pluie", c: false }, 
@@ -183,10 +180,10 @@ export default function SatoRitualPage() {
                     drag
                     dragSnapToOrigin
                     onDrag={(e, info) => {
-                        const jar = jarRef.current?.getBoundingClientRect();
-                        if(jar) {
-                            setIsOverJar(info.point.x > jar.left && info.point.x < jar.right && info.point.y > jar.top && info.point.y < jar.bottom);
-                        }
+                      const jar = jarRef.current?.getBoundingClientRect();
+                      if(jar) {
+                        setIsOverJar(info.point.x > jar.left && info.point.x < jar.right && info.point.y > jar.top && info.point.y < jar.bottom);
+                      }
                     }}
                     onDragEnd={(e, info) => handleDragEnd(e, info, opt.c)}
                     className="p-5 bg-white border border-gray-100 rounded-2xl shadow-sm cursor-grab active:cursor-grabbing flex items-center group touch-none z-50"
@@ -198,5 +195,35 @@ export default function SatoRitualPage() {
               </div>
             </div>
           ) : (
-            <div onClick={() => setShowExplanation(false)} className="p-8 bg-gray-50 rounded-[2rem] border border-gray-100 text-center cursor-pointer shadow-xl animate-in fade-in zoom-in">
-              <p className="text-lg italic font-
+            <div onClick={() => setShowExplanation(false)} className="p-8 bg-gray-50 rounded-[2rem] border border-gray-100 text-center cursor-pointer shadow-xl">
+              <p className="text-lg italic font-medium">"Correct. Les vibrations du Sato purifient la terre."</p>
+              <p className="text-[10px] mt-4 uppercase tracking-tighter text-gray-400">Cliquez pour continuer</p>
+            </div>
+          )
+        ) : (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center py-4 w-full">
+            <h2 className="text-3xl font-black mb-6 uppercase italic tracking-tighter text-[#303333]">Initiation Terminée</h2>
+            <div className="bg-gray-50 p-6 rounded-[2rem] text-left mb-8 border border-gray-100">
+              <div className="grid grid-cols-1 gap-3">
+                {explanations.map((exp, i) => (
+                  <p key={i} className="text-sm text-gray-600 flex items-start">
+                    <span className="text-[#a0412d] mr-2">✦</span> {exp}
+                  </p>
+                ))}
+              </div>
+            </div>
+            <div className="mb-10 p-5 border-l-4 border-[#a0412d] bg-[#a0412d]/5 text-left">
+              <p className="text-xs font-bold uppercase text-[#a0412d] mb-1">Inspiration</p>
+              <p className="text-sm italic text-gray-700">
+                "Doguicimi" de **Paul Hazoumé** (Premier grand romancier béninois, explorant les rituels et l'histoire du Dahomey).
+              </p>
+            </div>
+            <button className="w-full py-4 bg-[#a0412d] text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg">
+              Partager mon score
+            </button>
+          </motion.div>
+        )}
+      </div>
+    </div>
+  );
+}-
