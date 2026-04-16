@@ -25,7 +25,6 @@ export default function SatoChallengePage() {
     return () => clearInterval(timer);
   }, [timeLeft, showExplanation, isFinished]);
 
-  // Logique de validation par Drag ou Click
   const validateAnswer = (answerId: string) => {
     if (answerId === 'B') {
       const newHoles = holes.slice(1);
@@ -39,15 +38,14 @@ export default function SatoChallengePage() {
       }
     } else {
       setIsWrong(true);
-      setAwaleSeeds(prev => Math.max(0, prev - 1));
+      // Correction ici : On s'assure que prevSeeds est bien utilisé
+      setAwaleSeeds((prevSeeds) => Math.max(0, prevSeeds - 1));
       setTimeout(() => setIsWrong(false), 500);
     }
   };
 
-  // Détection du Drop sur la Jarre
   const handleDragEnd = (event: any, info: any, id: string) => {
-    // Calcul de la zone de la jarre (approximatif pour mobile/desktop)
-    const thresholdY = window.innerHeight * 0.4;
+    const thresholdY = typeof window !== 'undefined' ? window.innerHeight * 0.4 : 300;
     if (info.point.y < thresholdY) {
       validateAnswer(id);
     }
@@ -61,7 +59,6 @@ export default function SatoChallengePage() {
   return (
     <div className="min-h-screen bg-white text-[#303333] flex flex-col items-center font-sans p-4 overflow-x-hidden">
       
-      {/* CSS CUSTOM POUR LA JARRE (Injected for React) */}
       <style dangerouslySetInnerHTML={{ __html: `
         .clay-texture {
           background: linear-gradient(165deg, #a0412d 0%, #8b3422 45%, #7a2a1b 100%);
@@ -74,10 +71,10 @@ export default function SatoChallengePage() {
 
       <main className="w-full max-w-5xl flex flex-col items-center">
         
-        {/* SECTION INSTRUMENTS - EQUIDISTANCE FIXE */}
+        {/* SECTION INSTRUMENTS */}
         <div className="w-full flex flex-row items-end justify-center gap-6 md:gap-20 mt-10 mb-12 h-[380px]">
           
-          {/* 1. OKPELE (SOUDÉ) */}
+          {/* OKPELE */}
           <div className="relative w-24 md:w-32 flex flex-col items-center shrink-0">
             <svg className="w-full h-12 mb-[-8px] opacity-60" viewBox="0 0 100 40">
               <path d="M 15 40 Q 50 0 85 40" stroke="#B8860B" strokeWidth="3" fill="none" strokeDasharray="4 4" />
@@ -100,7 +97,7 @@ export default function SatoChallengePage() {
             </div>
           </div>
 
-          {/* 2. JARRE SATO (REPRODUCTION EXACTE) */}
+          {/* JARRE SATO */}
           <div className="relative w-48 h-[280px] md:w-72 md:h-[360px] shrink-0 z-10">
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-40 h-10 bg-[#3d1810] rounded-[50%] shadow-inner border-4 border-[#a0412d]/20 z-0" />
             <div className="absolute inset-0 clay-texture organic-shape flex flex-col items-center justify-center overflow-hidden">
@@ -124,7 +121,7 @@ export default function SatoChallengePage() {
             </div>
           </div>
 
-          {/* 3. AWALE (VERTICAL ET STABLE) */}
+          {/* AWALE */}
           <motion.div animate={isWrong ? { x: [-5, 5, -5, 5, 0] } : {}} 
                       className="bg-[#3d1810] p-3 md:p-5 rounded-3xl border-b-8 border-[#2a100a] shadow-2xl flex shrink-0">
             {[0, 1].map((col) => (
@@ -146,7 +143,7 @@ export default function SatoChallengePage() {
           </motion.div>
         </div>
 
-        {/* SECTION QUIZ AVEC DRAG AND DROP */}
+        {/* SECTION QUIZ */}
         <div className="w-full max-w-2xl px-4">
           {!isFinished ? (
             !showExplanation ? (
@@ -155,7 +152,6 @@ export default function SatoChallengePage() {
                   Quelle est la fonction principale du tambour Sato ?
                 </h2>
                 
-                {/* HUD COMPACT */}
                 <div className="flex gap-8 mb-10 items-center bg-gray-50/80 backdrop-blur px-8 py-3 rounded-full border border-gray-100 shadow-sm">
                   <div className="flex items-center gap-3">
                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Temps</span>
@@ -176,7 +172,7 @@ export default function SatoChallengePage() {
                       dragSnapToOrigin
                       onDragEnd={(e, info) => handleDragEnd(e, info, id)}
                       whileDrag={{ scale: 1.05, zIndex: 50 }}
-                      className="cursor-grab active:cursor-grabbing p-6 bg-white border border-gray-100 rounded-[2rem] shadow-sm flex items-center hover:border-primary/20 hover:shadow-md transition-all group"
+                      className="cursor-grab active:cursor-grabbing p-6 bg-white border border-gray-100 rounded-[2rem] shadow-sm flex items-center hover:border-[#a0412d]/20 hover:shadow-md transition-all group"
                     >
                       <span className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center font-bold text-[#a0412d] mr-4 border border-gray-100 group-hover:bg-[#a0412d] group-hover:text-white transition-colors">
                         {id}
@@ -185,9 +181,6 @@ export default function SatoChallengePage() {
                     </motion.div>
                   ))}
                 </div>
-                <p className="mt-6 text-[10px] text-gray-300 font-bold uppercase tracking-[0.2em] animate-bounce">
-                  ↑ Glissez la réponse vers la jarre ↑
-                </p>
               </div>
             ) : (
               <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} 
@@ -201,8 +194,8 @@ export default function SatoChallengePage() {
               </motion.div>
             )
           ) : (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center py-6">
-              <h2 className="text-4xl font-black mb-4 uppercase text-[#303333] tracking-tighter italic">Félicitations !</h2>
+            <div className="flex flex-col items-center py-6">
+              <h2 className="text-4xl font-black mb-4 uppercase text-[#303333] tracking-tighter italic text-center">Félicitations !</h2>
               <div className="w-full bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-xl mb-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {revelations.map((text, i) => (
@@ -212,13 +205,13 @@ export default function SatoChallengePage() {
                   ))}
                 </div>
               </div>
-              <button className="px-12 py-5 bg-[#7a2a1b] text-white rounded-full font-bold shadow-lg uppercase tracking-widest text-xs hover:bg-[#a0412d] transition-all transform active:scale-95">
+              <button className="px-12 py-5 bg-[#7a2a1b] text-white rounded-full font-bold shadow-lg uppercase tracking-widest text-xs hover:bg-[#a0412d] transition-all">
                 Partager mon initiation
               </button>
-            </motion.div>
+            </div>
           )}
         </div>
       </main>
     </div>
   );
-}s
+}
