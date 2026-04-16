@@ -28,19 +28,20 @@ const OkpeleSeed = ({ active }: { active: boolean }) => (
 
 const SatoJar = ({ holesCount, isOver }: { holesCount: number[], isOver: boolean }) => (
   <div className={`relative w-64 h-80 md:w-72 md:h-96 shrink-0 transition-transform duration-500 ${isOver ? 'scale-105' : 'scale-100'}`}>
-    {/* COL ÉVASÉ */}
+    {/* COL ÉVASÉ (Réaliste) */}
     <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-44 md:w-52 h-12 z-20">
       <div className="absolute inset-0 bg-[#3d1810] rounded-[50%] border-b-4 border-[#5d251a] shadow-lg"></div>
       <div className="absolute top-1 left-1/2 -translate-x-1/2 w-[85%] h-[70%] bg-[#1a0a07] rounded-[50%] shadow-inner"></div>
     </div>
     
-    {/* CORPS DE LA JARRE */}
+    {/* CORPS DE LA JARRE (Base rectangulaire stable) */}
     <div className="absolute inset-0 mt-2 overflow-hidden" 
          style={{ 
            background: isOver 
             ? 'radial-gradient(circle at 30% 30%, #b34a35 0%, #8b3422 60%, #5a1d12 100%)' 
             : 'radial-gradient(circle at 30% 30%, #a0412d 0%, #8b3422 60%, #5a1d12 100%)',
-           borderRadius: '50% 50% 40% 40% / 40% 40% 60% 60%',
+           // Fusion : Haut courbé, bas rectangulaire (5%)
+           borderRadius: '40% 40% 5% 5% / 20% 20% 80% 80%',
            boxShadow: isOver 
             ? '0 0 40px rgba(160,65,45,0.5), inset -15px -15px 30px rgba(0,0,0,0.4)' 
             : 'inset -15px -15px 30px rgba(0,0,0,0.3), inset 10px 10px 20px rgba(255,255,255,0.1), 0 30px 50px rgba(0,0,0,0.2)'
@@ -67,8 +68,7 @@ const SatoJar = ({ holesCount, isOver }: { holesCount: number[], isOver: boolean
 
 const AwaleMini = ({ seedsCount, isWrong }: { seedsCount: number, isWrong: boolean }) => (
   <motion.div animate={isWrong ? { x: [-1, 1, -1, 1, 0] } : {}}
-    // scale-75 pour équilibrer avec l'Okpèlè, padding et largeur ajustés
-    className="relative w-36 bg-[#833321] rounded-[2rem] p-4 shadow-xl flex flex-row justify-center gap-5 border-[3px] border-[#652719] shrink-0 scale-75 md:scale-90"
+    className="relative w-36 bg-[#833321] rounded-[2rem] p-4 shadow-xl flex flex-row justify-center gap-5 border-[3px] border-[#652719] shrink-0"
   >
     <div className="absolute left-1/2 top-4 bottom-4 w-[1.5px] bg-[#652719] -translate-x-1/2 opacity-40"></div>
     <div className="grid grid-cols-1 gap-3 z-10">
@@ -149,8 +149,8 @@ export default function SatoRitualPage() {
     <div className="min-h-screen bg-white text-[#303333] flex flex-col items-center justify-center p-6 select-none overflow-hidden">
       <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-4 md:gap-16 mb-12 h-[450px]">
         
-        {/* OKPÈLÈ (Scale ajustée pour harmonie) */}
-        <div className="flex flex-col items-center relative pt-10 scale-75 md:scale-90 origin-center shrink-0"> 
+        {/* OKPÈLÈ (Scale 0.8 pour alignement hauteur parfait) */}
+        <div className="flex flex-col items-center relative pt-8 scale-[0.8] md:scale-[0.85] origin-center shrink-0"> 
           <div className="w-[56px] h-10 border-t-[2.5px] border-x-[2.5px] border-yellow-600/60 rounded-t-full absolute top-0 left-1/2 -translate-x-1/2 z-0" />
           <div className="flex gap-4 relative z-10">
             <div className="flex flex-col items-center">
@@ -173,12 +173,12 @@ export default function SatoRitualPage() {
         </div>
 
         {/* JARRE SATO CENTRALE */}
-        <div ref={jarRef} className="z-10">
+        <div ref={jarRef} className="z-10 flex items-center justify-center">
           <SatoJar holesCount={holes} isOver={isOverJar} />
         </div>
 
-        {/* AWALÉ (Scale diminuée pour correspondre à l'Okpèlè) */}
-        <div className="shrink-0 flex items-center justify-center">
+        {/* AWALÉ (Scale 0.8 pour symétrie totale) */}
+        <div className="shrink-0 flex items-center justify-center scale-[0.8] md:scale-[0.85]">
           <AwaleMini seedsCount={seeds} isWrong={isWrong} />
         </div>
       </div>
@@ -244,4 +244,4 @@ export default function SatoRitualPage() {
       </div>
     </div>
   );
-}
+}s
