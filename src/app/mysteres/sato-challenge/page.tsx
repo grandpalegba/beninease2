@@ -29,46 +29,47 @@ const OkpeleSeed = ({ active }: { active: boolean }) => (
 const SatoJar = ({ holesCount, isOver }: { holesCount: number[], isOver: boolean }) => (
   <div className={`relative w-64 h-80 md:w-72 md:h-96 shrink-0 transition-transform duration-500 ${isOver ? 'scale-105' : 'scale-100'}`}>
     
-    {/* OMBRE PORTÉE AU SOL (Assise visuelle) */}
-    <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-3/4 h-8 bg-black/20 blur-xl rounded-[50%] z-0" />
+    {/* OMBRE PORTÉE AU SOL */}
+    <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-3/4 h-8 bg-black/20 blur-xl rounded-[50%] z-0" />
 
-    {/* COL ÉVASÉ (Strictement inchangé) */}
+    {/* COL ÉVASÉ (Le haut qui est bien) */}
     <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-44 md:w-52 h-12 z-20">
       <div className="absolute inset-0 bg-[#3d1810] rounded-[50%] border-b-4 border-[#5d251a] shadow-lg"></div>
       <div className="absolute top-1 left-1/2 -translate-x-1/2 w-[85%] h-[70%] bg-[#1a0a07] rounded-[50%] shadow-inner"></div>
     </div>
     
-    {/* CORPS DE LA JARRE (Base modifiée pour conicité inversée) */}
+    {/* CORPS DE LA JARRE (Retour à la forme originale "organic-shape") */}
     <div className="absolute inset-0 mt-2 overflow-hidden" 
          style={{ 
-           background: isOver 
-            ? 'radial-gradient(circle at 30% 30%, #b34a35 0%, #8b3422 60%, #5a1d12 100%)' 
-            : 'radial-gradient(circle at 30% 30%, #a0412d 0%, #8b3422 60%, #5a1d12 100%)',
-           
-           // Géométrie : arrondis prononcés en haut, plus fermes en bas
-           borderRadius: '45% 45% 12% 12% / 25% 25% 75% 75%',
-           
-           boxShadow: isOver 
-            ? '0 0 40px rgba(160,65,45,0.5), inset -20px -20px 40px rgba(0,0,0,0.5)' 
-            : 'inset -15px -15px 30px rgba(0,0,0,0.4), inset 10px 10px 20px rgba(255,255,255,0.1), 0 20px 40px rgba(0,0,0,0.3)',
-
-           // Clip-path pour forcer le rétrécissement vers le bas (cible visuelle)
-           clipPath: 'polygon(0% 0%, 100% 0%, 92% 100%, 8% 100%)'
+            background: isOver 
+             ? 'linear-gradient(165deg, #b34a35 0%, #8b3422 45%, #6a2418 100%)' 
+             : 'linear-gradient(165deg, #a0412d 0%, #8b3422 45%, #7a2a1b 100%)',
+            
+            // Restauration de la forme organique du code original
+            borderRadius: '42% 38% 34% 36% / 45% 45% 32% 32%',
+            
+            boxShadow: isOver 
+             ? '0 0 40px rgba(160,65,45,0.4), inset -8px -8px 20px rgba(0,0,0,0.3)' 
+             : 'inset -8px -8px 20px rgba(0,0,0,0.2), inset 8px 8px 20px rgba(255,255,255,0.1), 0 20px 40px rgba(0,0,0,0.15)',
          }}>
       
+      {/* Texture argile subtile */}
       <div className="absolute inset-0 opacity-10 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/asfalt-dark.png')]"></div>
       
+      {/* Ombrage du haut pour la profondeur */}
+      <div className="absolute top-0 w-full h-16 bg-gradient-to-b from-black/30 to-transparent"></div>
+
       <div className="relative w-full h-full p-8">
         <AnimatePresence>
           {holesCount.map((hIdx) => (
             <motion.div key={hIdx} exit={{ opacity: 0, scale: 1.5 }}
-              className={`absolute rounded-full bg-[#1a0a07] shadow-inner border-b border-white/10
-                ${hIdx === 0 ? 'top-[30%] left-[22%] w-12 h-12' : ''}
-                ${hIdx === 1 ? 'top-[25%] left-[58%] w-10 h-10' : ''}
-                ${hIdx === 2 ? 'top-[55%] left-[35%] w-14 h-14' : ''}
-                ${hIdx === 3 ? 'top-[48%] left-[65%] w-9 h-9' : ''}
+              className={`absolute rounded-full bg-[#1a0a07] shadow-inner
+                ${hIdx === 0 ? 'top-[35%] left-[25%] w-10 h-10' : ''}
+                ${hIdx === 1 ? 'top-[28%] left-[55%] w-8 h-8' : ''}
+                ${hIdx === 2 ? 'top-[58%] left-[38%] w-12 h-12' : ''}
+                ${hIdx === 3 ? 'top-[52%] left-[68%] w-7 h-7' : ''}
               `}>
-                <div className="absolute inset-0 rounded-full border-t-2 border-black/40"></div>
+                <div className="absolute inset-0 rounded-full border-t border-black/50"></div>
               </motion.div>
           ))}
         </AnimatePresence>
