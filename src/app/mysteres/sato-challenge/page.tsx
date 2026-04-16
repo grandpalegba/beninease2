@@ -6,29 +6,31 @@ import { motion, AnimatePresence } from 'framer-motion';
 // --- COMPOSANTS DE DESIGN ---
 
 const OkpeleSeed = ({ active }: { active: boolean }) => (
-  <div className={`relative w-10 h-14 md:w-11 md:h-15 transition-all duration-700 ${active ? 'opacity-100' : 'opacity-20grayscale'}`}>
-    <div className="absolute inset-0 rounded-t-[50%] rounded-b-[40%]"
-         style={{ background: 'linear-gradient(145deg, #3d2410, #1a0f06)', boxShadow: 'inset -2px -2px 5px rgba(255,255,255,0.05), 0 5px 15px rgba(0,0,0,0.4)' }} />
-    <div className="absolute inset-2 rounded-t-[45%] rounded-b-[35%] bg-[#0f0803] shadow-inner flex justify-center">
-      <div className="w-[1px] h-full bg-white/5 opacity-50" />
+  <div className={`relative w-8 h-11 transition-all duration-700 ${active ? 'opacity-100' : 'opacity-20 grayscale'}`}>
+    {/* Forme de cosse organique inspirée du design final */}
+    <div className="absolute inset-0 rounded-t-[55%] rounded-b-[35%]"
+         style={{ background: 'linear-gradient(145deg, #a0412d, #5d2216)', boxShadow: 'inset -1px -1px 3px rgba(255,255,255,0.1), 0 4px 10px rgba(0,0,0,0.3)' }} />
+    <div className="absolute inset-1.5 rounded-t-[45%] rounded-b-[30%] bg-[#0f0803] shadow-inner flex justify-center overflow-hidden">
+      <div className="w-[1px] h-full bg-white/5 opacity-40" />
       {active && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: [0.4, 0.8, 0.4] }} 
-                    transition={{ repeat: Infinity, duration: 3 }}
-                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-[65%] bg-[#FFD700] blur-[2px] rounded-full" />
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: [0.3, 0.6, 0.3] }} 
+                    transition={{ repeat: Infinity, duration: 2.5 }}
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[1px] bg-[#FFD700] blur-[1px]" />
       )}
     </div>
   </div>
 );
 
 const AwaleSeed = ({ color = '#FFD700' }: { color?: string }) => (
-  <div className="w-3 md:w-4 h-3 md:h-4 rounded-full shadow-inner" style={{ background: color, boxShadow: 'inset -2px -2px 5px rgba(0,0,0,0.5), inset 2px 2px 5px rgba(255,255,255,0.2)' }} />
+  <div className="w-2 h-2 rounded-full shadow-inner" 
+       style={{ background: color, boxShadow: 'inset -1px -1px 2px rgba(0,0,0,0.8)' }} />
 );
 
 // --- COMPOSANT PRINCIPAL ---
 
 export default function SatoChallengePage() {
   const TOTAL_TIME = 64;
-  const jarColor = '#a0412d'; // Couleur de base unifiée
+  const jarColor = '#a0412d'; 
   
   const [timeLeft, setTimeLeft] = useState(TOTAL_TIME);
   const [showExplanation, setShowExplanation] = useState(false);
@@ -44,14 +46,12 @@ export default function SatoChallengePage() {
     "La Jarre Sato protège l'esprit des ancêtres initiés."
   ];
 
-  // Timer principal
   useEffect(() => {
     if (timeLeft <= 0 || showExplanation || isFinished) return;
     const timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
     return () => clearInterval(timer);
   }, [timeLeft, showExplanation, isFinished]);
 
-  // Validation des réponses
   const handleAnswer = (answerId: string) => {
     if (answerId === 'B') {
       const newHoles = holes.slice(1);
@@ -67,7 +67,6 @@ export default function SatoChallengePage() {
     }
   };
 
-  // Calcul des noix actives
   const activeSeedsCount = Math.ceil(timeLeft / 8);
 
   return (
@@ -75,43 +74,42 @@ export default function SatoChallengePage() {
       
       <main className="w-full max-w-6xl flex flex-col items-center mt-12">
         
-        {/* SECTION INSTRUMENTS - Unifiée et Trapue */}
-        <div className="w-full grid grid-cols-1 md:grid-cols-3 items-end justify-items-center gap-10 md:gap-4 min-h-[380px] md:min-h-[450px] relative mb-12">
+        {/* SECTION INSTRUMENTS - ALIGNEMENT HORIZONTAL STRICT (CENTRE) */}
+        <div className="w-full flex flex-row items-center justify-center gap-6 md:gap-20 h-[320px] md:h-[380px] relative mb-12 border-b border-gray-50 pb-8">
           
-          {/* OKPÈLÈ (VERTICAL) */}
-          <div className="relative flex flex-col items-center justify-center h-full pt-16 shrink-0">
-            <svg className="absolute top-[50px] md:top-[75px] w-full h-16 z-0" viewBox="0 0 100 40">
-              <path d="M 22 40 Q 50 10 78 40" stroke="#B8860B" strokeWidth="2" fill="none" strokeDasharray="3 3" opacity="0.6" />
-            </svg>
-            <div className="flex gap-4 md:gap-8 relative z-10">
-              <div className="flex flex-col gap-3">
+          {/* OKPÈLÈ (HAUTEUR 140PX) */}
+          <div className="relative flex items-center justify-center h-[140px] shrink-0">
+            <div className="flex gap-3 md:gap-5 relative z-10">
+              <div className="flex flex-col gap-2">
                 {[...Array(4)].map((_, i) => <OkpeleSeed key={`g-${i}`} active={activeSeedsCount > i} />)}
               </div>
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-2">
                 {[...Array(4)].map((_, i) => <OkpeleSeed key={`d-${i}`} active={activeSeedsCount > i + 4} />)}
               </div>
             </div>
           </div>
 
-          {/* LA JARRE SATO (FORME FIXE ET TRAPUE) */}
-          <div className="relative w-64 h-72 md:w-80 md:h-80 flex-shrink-0">
-            <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-32 md:w-48 h-10 md:h-14 bg-[#3d1810] rounded-[50%] shadow-2xl border-[6px] border-[#a0412d]/20 z-10"></div>
-            <div className="absolute inset-0 mt-4 overflow-hidden" 
+          {/* LA JARRE SATO (FORME TRAPUE - RESTAURÉE) */}
+          <div className="relative w-60 h-72 md:w-72 md:h-80 flex-shrink-0">
+            {/* Col de la jarre */}
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-32 md:w-40 h-8 md:h-10 bg-[#3d1810] rounded-[50%] border-4 border-[#a0412d]/20 z-10 shadow-lg"></div>
+            {/* Corps de la jarre - border-radius spécifique pour aspect "trapu" */}
+            <div className="absolute inset-0 mt-3 overflow-hidden" 
                  style={{ 
                    background: 'linear-gradient(165deg, #a0412d 0%, #7a2a1b 100%)',
-                   borderRadius: '45% 45% 40% 40% / 30% 30% 70% 70%',
-                   boxShadow: 'inset -20px -20px 40px rgba(0,0,0,0.5), inset 15px 15px 40px rgba(255,255,255,0.1), 0 40px 80px -20px rgba(0,0,0,0.4)'
+                   borderRadius: '45% 45% 35% 35% / 25% 25% 75% 75%',
+                   boxShadow: 'inset -15px -15px 30px rgba(0,0,0,0.4), inset 10px 10px 25px rgba(255,255,255,0.1), 0 25px 50px -12px rgba(0,0,0,0.2)'
                  }}>
-              <div className="absolute top-0 w-full h-32 bg-gradient-to-b from-black/40 to-transparent"></div>
+              <div className="absolute top-0 w-full h-32 bg-gradient-to-b from-black/30 to-transparent"></div>
               <div className="relative w-full h-full p-8">
                 <AnimatePresence>
                   {holes.map((hIdx) => (
                     <motion.div key={hIdx} exit={{ opacity: 0, scale: 0 }}
-                      className={`absolute rounded-full bg-[#120604] shadow-[inset_0_8px_20px_rgba(0,0,0,0.9)] border border-white/5
-                        ${hIdx === 0 ? 'top-[35%] left-[22%] w-10 h-10 md:w-16 md:h-16' : ''}
-                        ${hIdx === 1 ? 'top-[28%] left-[60%] w-8 h-8 md:w-14 md:h-14' : ''}
-                        ${hIdx === 2 ? 'top-[65%] left-[45%] w-12 h-12 md:w-24 md:h-24' : ''}
-                        ${hIdx === 3 ? 'top-[55%] left-[75%] w-7 h-7 md:w-14 md:h-14' : ''}
+                      className={`absolute rounded-full bg-[#120604] shadow-[inset_0_5px_12px_rgba(0,0,0,0.9)] border border-white/5
+                        ${hIdx === 0 ? 'top-[35%] left-[20%] w-12 h-12 md:w-16 md:h-16' : ''}
+                        ${hIdx === 1 ? 'top-[28%] left-[58%] w-10 h-10 md:w-14 md:h-14' : ''}
+                        ${hIdx === 2 ? 'top-[62%] left-[42%] w-14 h-14 md:w-20 md:h-20' : ''}
+                        ${hIdx === 3 ? 'top-[52%] left-[72%] w-8 h-8 md:w-12 md:h-12' : ''}
                       `} />
                   ))}
                 </AnimatePresence>
@@ -119,22 +117,22 @@ export default function SatoChallengePage() {
             </div>
           </div>
 
-          {/* AWALÉ (VERTICAL, RÉDUIT, COULEUR DE LA JARRE) */}
-          <motion.div animate={isWrong ? { x: [-5, 5, -5, 5, 0] } : {}} 
-                      className="mb-8 flex flex-col md:flex-row gap-2 p-4 rounded-[2.5rem] border-b-8 shadow-2xl relative shrink-0"
-                      style={{ background: jarColor, borderColor: '#2a1a0a' }}>
-            <div className="grid grid-cols-1 gap-3 pr-3 border-r-2 border-black/30 relative z-10">
+          {/* AWALÉ (MÊME HAUTEUR QUE OKPÈLÈ - SANS OMBRE PORTÉE) */}
+          <motion.div animate={isWrong ? { x: [-3, 3, -3, 3, 0] } : {}} 
+                      className="flex gap-2 p-3 rounded-[1.5rem] border-b-4 h-[140px] items-center shrink-0"
+                      style={{ background: jarColor, borderColor: '#3d1810' }}>
+            <div className="grid grid-cols-1 gap-1.5 pr-2 border-r border-black/10 relative z-10">
                 {[...Array(4)].map((_, idx) => (
-                    <div key={idx} className="w-10 h-10 md:w-16 md:h-16 bg-[#1a0f06] rounded-full shadow-[inset_0_4px_12px_rgba(0,0,0,0.8)] flex items-center justify-center gap-1.5 p-2">
+                    <div key={idx} className="w-8 h-8 md:w-10 md:h-10 bg-black/40 rounded-full flex items-center justify-center gap-0.5">
                         {awaleSeeds > idx * 2 && <AwaleSeed color="#FFD700" />}
-                        {awaleSeeds > idx * 2 + 1 && <AwaleSeed />}
+                        {awaleSeeds > idx * 2 + 1 && <AwaleSeed color="#3d1810" />}
                     </div>
                 ))}
             </div>
-            <div className="grid grid-cols-1 gap-3 pl-3 relative z-10">
+            <div className="grid grid-cols-1 gap-1.5 pl-2 relative z-10">
                 {[...Array(4)].map((_, idx) => (
-                    <div key={idx + 4} className="w-10 h-10 md:w-16 md:h-16 bg-[#1a0f06] rounded-full shadow-[inset_0_4px_12px_rgba(0,0,0,0.8)] flex items-center justify-center gap-1.5 p-2">
-                        {awaleSeeds > (idx + 4) * 2 && <AwaleSeed />}
+                    <div key={idx + 4} className="w-8 h-8 md:w-10 md:h-10 bg-black/40 rounded-full flex items-center justify-center gap-0.5">
+                        {awaleSeeds > (idx + 4) * 2 && <AwaleSeed color="#3d1810" />}
                         {awaleSeeds > (idx + 4) * 2 + 1 && <AwaleSeed color="#FFD700" />}
                     </div>
                 ))}
@@ -143,69 +141,49 @@ export default function SatoChallengePage() {
         </div>
 
         {/* SECTION QUIZ OU FÉLICITATIONS */}
-        <div className="w-full mt-12 px-4 max-w-3xl">
+        <div className="w-full mt-10 px-4 max-w-3xl">
           {!isFinished ? (
             !showExplanation ? (
               <div className="flex flex-col items-center">
-                <h2 className="text-2xl md:text-3xl font-bold mb-6 text-center text-[#1A1A1A] leading-tight tracking-tight">
+                <h2 className="text-xl md:text-2xl font-bold mb-8 text-center text-[#1A1A1A] leading-tight tracking-tight">
                   Quelle est la fonction principale du tambour Sato ?
                 </h2>
                 
                 {/* HUD COMPACT SOUS LA QUESTION */}
-                <div className="flex gap-10 mb-10 items-center justify-center bg-gray-50/50 py-3 px-10 rounded-full border border-gray-100 shadow-inner">
+                <div className="flex gap-10 mb-10 items-center justify-center bg-gray-50/50 py-2.5 px-10 rounded-full border border-gray-100 shadow-inner">
                   <div className="flex flex-col items-center">
-                    <span className="text-[10px] uppercase tracking-widest text-gray-400 font-bold">Temps Restant</span>
-                    <span className={`font-black text-lg md:text-xl ${timeLeft <= 8 ? 'text-red-600 animate-pulse' : 'text-[#a0412d]'}`}>{timeLeft}s</span>
+                    <span className="text-[9px] uppercase tracking-widest text-gray-400 font-bold">Temps</span>
+                    <span className={`font-black text-sm md:text-base ${timeLeft <= 8 ? 'text-red-600 animate-pulse' : 'text-[#a0412d]'}`}>{timeLeft}s</span>
                   </div>
                   <div className="w-[1px] h-6 bg-gray-200"></div>
                   <div className="flex flex-col items-center">
-                    <span className="text-[10px] uppercase tracking-widest text-gray-400 font-bold">Graines Sacrées</span>
-                    <span className="text-[#a0412d] font-black text-lg md:text-xl italic">{awaleSeeds}</span>
+                    <span className="text-[9px] uppercase tracking-widest text-gray-400 font-bold">Graines</span>
+                    <span className="text-[#a0412d] font-black text-sm md:text-base italic">{awaleSeeds}</span>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                   {['A', 'B', 'C', 'D'].map((id) => (
-                    <button key={id} onClick={() => handleAnswer(id)} className="p-6 bg-white border border-gray-100 rounded-[2rem] shadow-sm flex items-center hover:bg-gray-50 hover:shadow-lg transition-all active:scale-95 group">
-                      <span className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center font-bold text-[#a0412d] text-base mr-4 shrink-0 group-hover:bg-[#a0412d] group-hover:text-white transition-colors">{id}</span>
+                    <button key={id} onClick={() => handleAnswer(id)} className="p-5 bg-white border border-gray-100 rounded-2xl shadow-sm flex items-center hover:bg-gray-50 transition-all group">
+                      <span className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center font-bold text-[#a0412d] text-base mr-4 shrink-0 group-hover:bg-[#a0412d] group-hover:text-white transition-colors">{id}</span>
                       <span className="font-semibold text-gray-700 text-base">{id === 'B' ? 'Purifier les récoltes' : 'Réponse ' + id}</span>
                     </button>
                   ))}
                 </div>
               </div>
             ) : (
-              <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} onClick={() => setShowExplanation(false)} 
-                          className="p-12 bg-white border border-[#a0412d]/10 rounded-[3rem] text-center cursor-pointer shadow-2xl max-w-md mx-auto">
-                <h3 className="text-[#a0412d] font-bold mb-4 uppercase tracking-[0.4em] text-[10px]">Révélation</h3>
-                <p className="text-[#1A1A1A] text-xl md:text-2xl font-medium leading-relaxed italic">
+              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} onClick={() => setShowExplanation(false)} 
+                          className="p-10 bg-white border border-[#a0412d]/10 rounded-[2.5rem] text-center cursor-pointer shadow-2xl max-w-md mx-auto">
+                <p className="text-[#1A1A1A] text-lg font-medium italic italic">
                   "Le Sato est un tambour sacré dont les vibrations purifient les récoltes."
                 </p>
-                <div className="mt-10 text-[9px] text-gray-400 font-bold animate-pulse tracking-[0.2em] uppercase">Toucher pour continuer</div>
+                <div className="mt-8 text-[9px] text-gray-400 font-bold tracking-widest uppercase">Toucher pour continuer</div>
               </motion.div>
             )
           ) : (
-            <div className="flex flex-col items-center py-10">
-              <h2 className="text-4xl font-black mb-8 uppercase text-[#1A1A1A] italic tracking-tighter">Félicitations initié !</h2>
-              
-              {/* PANNEAU DE SYNTHÈSE DES RÉVÉLATIONS */}
-              <div className="w-full bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-xl mb-10">
-                <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-6 text-center">Synthèse de votre savoir</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {revelations.map((text, i) => (
-                    <div key={i} className="text-sm font-medium text-gray-700 flex items-start p-4 bg-gray-50 rounded-2xl">
-                      <span className="text-[#a0412d] mr-3 mt-1">✦</span> {text}
-                    </div>
-                  ))}
-                </div>
-                
-                {/* INSPIRATION POUR ALLER PLUS LOIN */}
-                <div className="mt-8 pt-6 border-t border-gray-100 text-center">
-                    <p className="text-lg font-semibold text-[#1A1A1A]">Le mystère ne fait que commencer.</p>
-                    <p className="text-sm text-gray-500 italic mt-1">Le Sato protège votre esprit, mais votre quête doit se poursuivre pour découvrir d'autres secrets d'Ifá.</p>
-                </div>
-              </div>
-              
-              <button className="px-16 py-5 bg-[#a0412d] text-white rounded-full font-bold shadow-2xl uppercase tracking-[0.2em] text-[11px] hover:bg-[#7a2a1b] transition-colors">
+            <div className="flex flex-col items-center py-6">
+              <h2 className="text-3xl font-black mb-8 uppercase text-[#1A1A1A] italic tracking-tighter">Initiation Réussie</h2>
+              <button className="px-12 py-4 bg-[#a0412d] text-white rounded-full font-bold shadow-lg uppercase tracking-widest text-[10px]">
                 Partager mon initiation
               </button>
             </div>
