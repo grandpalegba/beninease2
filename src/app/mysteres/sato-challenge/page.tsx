@@ -27,30 +27,45 @@ const OkpeleSeed = ({ active }: { active: boolean }) => (
 );
 
 const SatoJar = ({ holesCount, isOver }: { holesCount: number[], isOver: boolean }) => (
-  <div className={`relative w-56 h-72 md:w-64 md:h-80 shrink-0 transition-transform ${isOver ? 'scale-105' : 'scale-100'}`}>
-    {/* COL DE LA JARRE - Style authentique bois foncé issu du code d'inspiration */}
-    <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-32 h-7 bg-[#3d1810] rounded-[50%] shadow-inner border-2 border-[#a0412d]/20 z-10" />
+  <div className={`relative w-64 h-80 md:w-72 md:h-96 shrink-0 transition-transform duration-500 ${isOver ? 'scale-105' : 'scale-100'}`}>
     
-    {/* CORPS DE LA JARRE (Clay texture & organic shape issus du code d'inspiration) */}
-    <div className="absolute inset-0 overflow-hidden mt-1" 
+    {/* COL ÉVASÉ (The Lip) - Plus large et texturé */}
+    <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-44 md:w-52 h-12 z-20">
+      {/* Bord extérieur du col */}
+      <div className="absolute inset-0 bg-[#3d1810] rounded-[50%] border-b-4 border-[#5d251a] shadow-lg"></div>
+      {/* Ouverture sombre (profondeur) */}
+      <div className="absolute top-1 left-1/2 -translate-x-1/2 w-[85%] h-[70%] bg-[#1a0a07] rounded-[50%] shadow-inner"></div>
+    </div>
+    
+    {/* CORPS DE LA JARRE - Forme d'urne avec épaules larges */}
+    <div className="absolute inset-0 mt-2 overflow-hidden" 
          style={{ 
-           background: isOver ? 'linear-gradient(165deg, #b34a35 0%, #8b3422 45%, #7a2a1b 100%)' : 'linear-gradient(165deg, #a0412d 0%, #8b3422 45%, #7a2a1b 100%)',
-           borderRadius: '42% 38% 34% 36% / 45% 45% 32% 32%', // organic-shape
-           boxShadow: isOver ? '0 0 30px rgba(160,65,45,0.4)' : 'inset -8px -8px 20px rgba(0,0,0,0.2), inset 8px 8px 20px rgba(255,255,255,0.1), 0 20px 40px rgba(0,0,0,0.15)'
+           background: isOver 
+            ? 'radial-gradient(circle at 30% 30%, #b34a35 0%, #8b3422 60%, #5a1d12 100%)' 
+            : 'radial-gradient(circle at 30% 30%, #a0412d 0%, #8b3422 60%, #5a1d12 100%)',
+           // Forme spécifique : Épaules hautes et larges, base étroite
+           borderRadius: '50% 50% 40% 40% / 40% 40% 60% 60%',
+           boxShadow: isOver 
+            ? '0 0 40px rgba(160,65,45,0.5), inset -15px -15px 30px rgba(0,0,0,0.4)' 
+            : 'inset -15px -15px 30px rgba(0,0,0,0.3), inset 10px 10px 20px rgba(255,255,255,0.1), 0 30px 50px rgba(0,0,0,0.2)'
          }}>
-      {/* Top Shading */}
-      <div className="absolute top-0 w-full h-12 bg-gradient-to-b from-black/20 to-transparent"></div>
       
-      <div className="relative w-full h-full p-6">
+      {/* Texture d'argile / Grain */}
+      <div className="absolute inset-0 opacity-10 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/asfalt-dark.png')]"></div>
+      
+      <div className="relative w-full h-full p-8">
         <AnimatePresence>
           {holesCount.map((hIdx) => (
             <motion.div key={hIdx} exit={{ opacity: 0, scale: 1.5 }}
-              className={`absolute rounded-full bg-[#2a100a] shadow-inner
-                ${hIdx === 0 ? 'top-[35%] left-[25%] w-10 h-10' : ''}
-                ${hIdx === 1 ? 'top-[28%] left-[55%] w-8 h-8' : ''}
-                ${hIdx === 2 ? 'top-[58%] left-[38%] w-12 h-12' : ''}
-                ${hIdx === 3 ? 'top-[52%] left-[68%] w-7 h-7' : ''}
-              `} />
+              className={`absolute rounded-full bg-[#1a0a07] shadow-inner border-b border-white/10
+                ${hIdx === 0 ? 'top-[30%] left-[22%] w-12 h-12' : ''}
+                ${hIdx === 1 ? 'top-[25%] left-[58%] w-10 h-10' : ''}
+                ${hIdx === 2 ? 'top-[55%] left-[35%] w-14 h-14' : ''}
+                ${hIdx === 3 ? 'top-[48%] left-[65%] w-9 h-9' : ''}
+              `}>
+                {/* Effet d'épaisseur de la paroi du trou */}
+                <div className="absolute inset-0 rounded-full border-t-2 border-black/40"></div>
+              </motion.div>
           ))}
         </AnimatePresence>
       </div>
@@ -60,38 +75,37 @@ const SatoJar = ({ holesCount, isOver }: { holesCount: number[], isOver: boolean
 
 const AwaleMini = ({ seedsCount, isWrong }: { seedsCount: number, isWrong: boolean }) => (
   <motion.div animate={isWrong ? { x: [-1, 1, -1, 1, 0] } : {}}
-    // Modification: flex-row et gap pour séparer les colonnes
-    className="relative w-40 h-auto bg-[#833321] rounded-[2rem] p-5 shadow-xl flex flex-row justify-center gap-6 border-[3px] border-[#652719] shrink-0"
+    // Structure à 2 colonnes séparées par une ligne centrale
+    className="relative w-44 bg-[#833321] rounded-[2.5rem] p-6 shadow-2xl flex flex-row justify-center gap-8 border-[4px] border-[#652719] shrink-0"
   >
-    {/* COLONNE GAUCHE (Trous 1 à 4) */}
-    <div className="grid grid-cols-1 gap-3 z-10">
+    {/* LIGNE DE SÉPARATION CENTRALE */}
+    <div className="absolute left-1/2 top-6 bottom-6 w-[2px] bg-[#652719] -translate-x-1/2 opacity-50"></div>
+
+    {/* COLONNE GAUCHE */}
+    <div className="grid grid-cols-1 gap-4 z-10">
       {[...Array(4)].map((_, i) => (
-        <div key={`hole-left-${i}`} className="w-12 h-12 bg-[#652719] rounded-full shadow-inner flex items-center justify-center relative overflow-hidden group">
-          <div className="absolute inset-0 bg-black/10"></div>
-          <div className="flex gap-1 flex-wrap justify-center p-2 relative z-10">
-             {seedsCount > i * 2 && <div className="w-3.5 h-3.5 rounded-full bg-yellow-400 shadow-[0_0_6px_rgba(255,235,59,0.5)]" />}
-             {seedsCount > i * 2 + 1 && <div className="w-3.5 h-3.5 rounded-full bg-yellow-400 shadow-[0_0_6px_rgba(255,235,59,0.5)]" />}
+        <div key={`left-${i}`} className="w-12 h-12 bg-[#532015] rounded-full shadow-inner flex items-center justify-center relative overflow-hidden">
+          <div className="flex gap-1 flex-wrap justify-center p-2">
+             {seedsCount > i * 2 && <div className="w-3 h-3 rounded-full bg-yellow-400 shadow-[0_0_5px_#facc15]" />}
+             {seedsCount > i * 2 + 1 && <div className="w-3 h-3 rounded-full bg-yellow-400 shadow-[0_0_5px_#facc15]" />}
           </div>
         </div>
       ))}
     </div>
 
-    {/* COLONNE DROITE (Trous 5 à 8) */}
-    <div className="grid grid-cols-1 gap-3 z-10">
+    {/* COLONNE DROITE */}
+    <div className="grid grid-cols-1 gap-4 z-10">
       {[...Array(4)].map((_, i) => (
-        <div key={`hole-right-${i}`} className="w-12 h-12 bg-[#652719] rounded-full shadow-inner flex items-center justify-center relative overflow-hidden group">
-          <div className="absolute inset-0 bg-black/10"></div>
-          <div className="flex gap-1 flex-wrap justify-center p-2 relative z-10">
-             {seedsCount > (i + 4) * 2 && <div className="w-3.5 h-3.5 rounded-full bg-yellow-400 shadow-[0_0_6px_rgba(255,235,59,0.5)]" />}
-             {seedsCount > (i + 4) * 2 + 1 && <div className="w-3.5 h-3.5 rounded-full bg-yellow-400 shadow-[0_0_6px_rgba(255,235,59,0.5)]" />}
+        <div key={`right-${i}`} className="w-12 h-12 bg-[#532015] rounded-full shadow-inner flex items-center justify-center relative overflow-hidden">
+          <div className="flex gap-1 flex-wrap justify-center p-2">
+             {seedsCount > (i + 4) * 2 && <div className="w-3 h-3 rounded-full bg-yellow-400 shadow-[0_0_5px_#facc15]" />}
+             {seedsCount > (i + 4) * 2 + 1 && <div className="w-3 h-3 rounded-full bg-yellow-400 shadow-[0_0_5px_#facc15]" />}
           </div>
         </div>
       ))}
     </div>
   </motion.div>
 );
-
-// --- MAIN PAGE ---
 
 export default function SatoRitualPage() {
   const [timeLeft, setTimeLeft] = useState(64);
@@ -146,10 +160,10 @@ export default function SatoRitualPage() {
 
   return (
     <div className="min-h-screen bg-white text-[#303333] flex flex-col items-center justify-center p-6 select-none overflow-hidden">
-      <div className="w-full max-w-6xl flex flex-row items-center justify-center gap-6 md:gap-16 mb-8 h-[400px]">
+      <div className="w-full max-w-6xl flex flex-row items-center justify-center gap-8 md:gap-24 mb-12 h-[450px]">
         
-        {/* OKPÈLÈ (Inchangé) */}
-        <div className="flex flex-col items-center relative pt-10 scale-75 origin-center shrink-0"> 
+        {/* OKPÈLÈ */}
+        <div className="flex flex-col items-center relative pt-10 scale-90 origin-center shrink-0"> 
           <div className="w-[56px] h-10 border-t-[2.5px] border-x-[2.5px] border-yellow-600/60 rounded-t-full absolute top-0 left-1/2 -translate-x-1/2 z-0" />
           <div className="flex gap-4 relative z-10">
             <div className="flex flex-col items-center">
@@ -171,12 +185,12 @@ export default function SatoRitualPage() {
           </div>
         </div>
 
-        {/* JARRE SATO (Design mis à jour) */}
+        {/* JARRE SATO CENTRALE */}
         <div ref={jarRef}>
           <SatoJar holesCount={holes} isOver={isOverJar} />
         </div>
 
-        {/* AWALÉ MINIATURE (Design mis à jour) */}
+        {/* AWALÉ À 2 COLONNES */}
         <AwaleMini seedsCount={seeds} isWrong={isWrong} />
       </div>
 
@@ -236,7 +250,7 @@ export default function SatoRitualPage() {
             <div className="mb-10 p-5 border-l-4 border-[#a0412d] bg-[#a0412d]/5 text-left">
               <p className="text-xs font-bold uppercase text-[#a0412d] mb-1">Inspiration</p>
               <p className="text-sm italic text-gray-700">
-                "Doguicimi" de **Paul Hazoumé** (Premier grand romancier béninois, explorant les rituels et l'histoire du Dahomey).
+                "Doguicimi" de **Paul Hazoumé**.
               </p>
             </div>
             <button className="w-full py-4 bg-[#a0412d] text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg">
