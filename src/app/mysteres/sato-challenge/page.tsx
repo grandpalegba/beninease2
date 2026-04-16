@@ -61,7 +61,6 @@ const AwaleMini = ({ seedsCount, isWrong }: { seedsCount: number, isWrong: boole
       {[...Array(8)].map((_, i) => (
         <div key={i} className="w-10 h-10 bg-[#652719] rounded-full shadow-inner flex items-center justify-center relative overflow-hidden">
           <div className="flex gap-0.5 flex-wrap justify-center p-1">
-             {/* Chaque trou contient max 2 graines pour un total de 16 */}
              {seedsCount > i * 2 && (
                <div className="w-2.5 h-2.5 rounded-full" 
                     style={{ background: 'radial-gradient(circle, #FFEB3B, #FBC02D)', boxShadow: '0 0 4px rgba(255, 235, 59, 0.4)' }} />
@@ -82,7 +81,7 @@ const AwaleMini = ({ seedsCount, isWrong }: { seedsCount: number, isWrong: boole
 export default function SatoRitualPage() {
   const [timeLeft, setTimeLeft] = useState(64);
   const [holes, setHoles] = useState([0, 1, 2, 3]);
-  const [seeds, setSeeds] = useState(16); // 16 chances
+  const [seeds, setSeeds] = useState(16);
   const [showExplanation, setShowExplanation] = useState(false);
   const [isWrong, setIsWrong] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
@@ -105,7 +104,7 @@ export default function SatoRitualPage() {
       }
     } else {
       setIsWrong(true);
-      setSeeds(s => Math.max(0, s - 1)); // -1 graine par erreur
+      setSeeds(s => Math.max(0, s - 1));
       setTimeout(() => setIsWrong(false), 400);
     }
   };
@@ -115,13 +114,12 @@ export default function SatoRitualPage() {
       
       <div className="w-full max-w-6xl flex flex-row items-center justify-center gap-6 md:gap-16 mb-16 h-[400px]">
         
-        {/* OKPÈLÈ : CHAÎNE CONTINUE */}
-        <div className="flex flex-col items-center relative pt-14">
-          {/* L'arc arrive au MILIEU des noix du haut */}
-          <div className="w-[56px] h-14 border-t-[2.5px] border-x-[2.5px] border-yellow-600/60 rounded-t-full absolute top-0 left-1/2 -translate-x-1/2 z-0" />
+        {/* OKPÈLÈ : TAILLE RÉDUITE PAR TRANSFORMATION */}
+        <div className="flex flex-col items-center relative pt-10 scale-75 origin-center"> 
+          {/* L'arc supérieur ajusté à la nouvelle échelle */}
+          <div className="w-[56px] h-10 border-t-[2.5px] border-x-[2.5px] border-yellow-600/60 rounded-t-full absolute top-0 left-1/2 -translate-x-1/2 z-0" />
           
           <div className="flex gap-4 relative z-10">
-            {/* Colonne Gauche */}
             <div className="flex flex-col items-center">
               {[...Array(4)].map((_, i) => (
                 <React.Fragment key={i}>
@@ -130,7 +128,6 @@ export default function SatoRitualPage() {
                 </React.Fragment>
               ))}
             </div>
-            {/* Colonne Droite */}
             <div className="flex flex-col items-center">
               {[...Array(4)].map((_, i) => (
                 <React.Fragment key={i}>
@@ -145,7 +142,7 @@ export default function SatoRitualPage() {
         {/* JARRE SATO */}
         <SatoJar holesCount={holes} />
 
-        {/* AWALÉ MINIATURE (16 GRAINES) */}
+        {/* AWALÉ MINIATURE */}
         <AwaleMini seedsCount={seeds} isWrong={isWrong} />
       </div>
 
