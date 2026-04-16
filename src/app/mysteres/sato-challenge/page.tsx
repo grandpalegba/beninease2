@@ -28,19 +28,18 @@ const OkpeleSeed = ({ active }: { active: boolean }) => (
 
 const SatoJar = ({ holesCount, isOver }: { holesCount: number[], isOver: boolean }) => (
   <div className={`relative w-64 h-80 md:w-72 md:h-96 shrink-0 transition-transform duration-500 ${isOver ? 'scale-105' : 'scale-100'}`}>
-    {/* COL ÉVASÉ (Réaliste) */}
+    {/* COL ÉVASÉ (Design réaliste) */}
     <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-44 md:w-52 h-12 z-20">
       <div className="absolute inset-0 bg-[#3d1810] rounded-[50%] border-b-4 border-[#5d251a] shadow-lg"></div>
       <div className="absolute top-1 left-1/2 -translate-x-1/2 w-[85%] h-[70%] bg-[#1a0a07] rounded-[50%] shadow-inner"></div>
     </div>
     
-    {/* CORPS DE LA JARRE (Base rectangulaire stable) */}
+    {/* CORPS DE LA JARRE (Base rectangulaire stable + Haut courbé) */}
     <div className="absolute inset-0 mt-2 overflow-hidden" 
          style={{ 
            background: isOver 
             ? 'radial-gradient(circle at 30% 30%, #b34a35 0%, #8b3422 60%, #5a1d12 100%)' 
             : 'radial-gradient(circle at 30% 30%, #a0412d 0%, #8b3422 60%, #5a1d12 100%)',
-           // Fusion : Haut courbé, bas rectangulaire (5%)
            borderRadius: '40% 40% 5% 5% / 20% 20% 80% 80%',
            boxShadow: isOver 
             ? '0 0 40px rgba(160,65,45,0.5), inset -15px -15px 30px rgba(0,0,0,0.4)' 
@@ -113,7 +112,9 @@ export default function SatoRitualPage() {
 
   useEffect(() => {
     if (timeLeft <= 0 || isFinished || showExplanation) return;
-    const timer = setInterval(() => setTimeLeft(t => t - 1), 1000);
+    const timer = setInterval(() => {
+      setTimeLeft((prevTime) => prevTime - 1);
+    }, 1000);
     return () => clearInterval(timer);
   }, [timeLeft, isFinished, showExplanation]);
 
@@ -138,7 +139,11 @@ export default function SatoRitualPage() {
           }
         } else {
           setIsWrong(true);
-          setSeeds(s => Math.max(0, s - 1));
+          // Correction Build Vercel : Utilisation de variables explicites
+          setSeeds((currentSeedsCount) => {
+            const nextCount = currentSeedsCount - 1;
+            return nextCount < 0 ? 0 : nextCount;
+          });
           setTimeout(() => setIsWrong(false), 400);
         }
       }
@@ -149,7 +154,7 @@ export default function SatoRitualPage() {
     <div className="min-h-screen bg-white text-[#303333] flex flex-col items-center justify-center p-6 select-none overflow-hidden">
       <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-4 md:gap-16 mb-12 h-[450px]">
         
-        {/* OKPÈLÈ (Scale 0.8 pour alignement hauteur parfait) */}
+        {/* OKPÈLÈ (Scale 0.8 pour alignement parfait avec l'Awalé) */}
         <div className="flex flex-col items-center relative pt-8 scale-[0.8] md:scale-[0.85] origin-center shrink-0"> 
           <div className="w-[56px] h-10 border-t-[2.5px] border-x-[2.5px] border-yellow-600/60 rounded-t-full absolute top-0 left-1/2 -translate-x-1/2 z-0" />
           <div className="flex gap-4 relative z-10">
@@ -244,4 +249,4 @@ export default function SatoRitualPage() {
       </div>
     </div>
   );
-}s
+}
