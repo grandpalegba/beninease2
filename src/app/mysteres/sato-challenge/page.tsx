@@ -28,31 +28,24 @@ const OkpeleSeed = ({ active }: { active: boolean }) => (
 
 const SatoJar = ({ holesCount, isOver }: { holesCount: number[], isOver: boolean }) => (
   <div className={`relative w-64 h-80 md:w-72 md:h-96 shrink-0 transition-transform duration-500 ${isOver ? 'scale-105' : 'scale-100'}`}>
-    
-    {/* COL ÉVASÉ (The Lip) - Plus large et texturé */}
+    {/* COL ÉVASÉ */}
     <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-44 md:w-52 h-12 z-20">
-      {/* Bord extérieur du col */}
       <div className="absolute inset-0 bg-[#3d1810] rounded-[50%] border-b-4 border-[#5d251a] shadow-lg"></div>
-      {/* Ouverture sombre (profondeur) */}
       <div className="absolute top-1 left-1/2 -translate-x-1/2 w-[85%] h-[70%] bg-[#1a0a07] rounded-[50%] shadow-inner"></div>
     </div>
     
-    {/* CORPS DE LA JARRE - Forme d'urne avec épaules larges */}
+    {/* CORPS DE LA JARRE */}
     <div className="absolute inset-0 mt-2 overflow-hidden" 
          style={{ 
            background: isOver 
             ? 'radial-gradient(circle at 30% 30%, #b34a35 0%, #8b3422 60%, #5a1d12 100%)' 
             : 'radial-gradient(circle at 30% 30%, #a0412d 0%, #8b3422 60%, #5a1d12 100%)',
-           // Forme spécifique : Épaules hautes et larges, base étroite
            borderRadius: '50% 50% 40% 40% / 40% 40% 60% 60%',
            boxShadow: isOver 
             ? '0 0 40px rgba(160,65,45,0.5), inset -15px -15px 30px rgba(0,0,0,0.4)' 
             : 'inset -15px -15px 30px rgba(0,0,0,0.3), inset 10px 10px 20px rgba(255,255,255,0.1), 0 30px 50px rgba(0,0,0,0.2)'
          }}>
-      
-      {/* Texture d'argile / Grain */}
       <div className="absolute inset-0 opacity-10 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/asfalt-dark.png')]"></div>
-      
       <div className="relative w-full h-full p-8">
         <AnimatePresence>
           {holesCount.map((hIdx) => (
@@ -63,7 +56,6 @@ const SatoJar = ({ holesCount, isOver }: { holesCount: number[], isOver: boolean
                 ${hIdx === 2 ? 'top-[55%] left-[35%] w-14 h-14' : ''}
                 ${hIdx === 3 ? 'top-[48%] left-[65%] w-9 h-9' : ''}
               `}>
-                {/* Effet d'épaisseur de la paroi du trou */}
                 <div className="absolute inset-0 rounded-full border-t-2 border-black/40"></div>
               </motion.div>
           ))}
@@ -75,31 +67,26 @@ const SatoJar = ({ holesCount, isOver }: { holesCount: number[], isOver: boolean
 
 const AwaleMini = ({ seedsCount, isWrong }: { seedsCount: number, isWrong: boolean }) => (
   <motion.div animate={isWrong ? { x: [-1, 1, -1, 1, 0] } : {}}
-    // Structure à 2 colonnes séparées par une ligne centrale
-    className="relative w-44 bg-[#833321] rounded-[2.5rem] p-6 shadow-2xl flex flex-row justify-center gap-8 border-[4px] border-[#652719] shrink-0"
+    // scale-75 pour équilibrer avec l'Okpèlè, padding et largeur ajustés
+    className="relative w-36 bg-[#833321] rounded-[2rem] p-4 shadow-xl flex flex-row justify-center gap-5 border-[3px] border-[#652719] shrink-0 scale-75 md:scale-90"
   >
-    {/* LIGNE DE SÉPARATION CENTRALE */}
-    <div className="absolute left-1/2 top-6 bottom-6 w-[2px] bg-[#652719] -translate-x-1/2 opacity-50"></div>
-
-    {/* COLONNE GAUCHE */}
-    <div className="grid grid-cols-1 gap-4 z-10">
+    <div className="absolute left-1/2 top-4 bottom-4 w-[1.5px] bg-[#652719] -translate-x-1/2 opacity-40"></div>
+    <div className="grid grid-cols-1 gap-3 z-10">
       {[...Array(4)].map((_, i) => (
-        <div key={`left-${i}`} className="w-12 h-12 bg-[#532015] rounded-full shadow-inner flex items-center justify-center relative overflow-hidden">
-          <div className="flex gap-1 flex-wrap justify-center p-2">
-             {seedsCount > i * 2 && <div className="w-3 h-3 rounded-full bg-yellow-400 shadow-[0_0_5px_#facc15]" />}
-             {seedsCount > i * 2 + 1 && <div className="w-3 h-3 rounded-full bg-yellow-400 shadow-[0_0_5px_#facc15]" />}
+        <div key={`left-${i}`} className="w-10 h-10 bg-[#532015] rounded-full shadow-inner flex items-center justify-center relative">
+          <div className="flex gap-0.5 flex-wrap justify-center p-1">
+             {seedsCount > i * 2 && <div className="w-2.5 h-2.5 rounded-full bg-yellow-400 shadow-[0_0_4px_#facc15]" />}
+             {seedsCount > i * 2 + 1 && <div className="w-2.5 h-2.5 rounded-full bg-yellow-400 shadow-[0_0_4px_#facc15]" />}
           </div>
         </div>
       ))}
     </div>
-
-    {/* COLONNE DROITE */}
-    <div className="grid grid-cols-1 gap-4 z-10">
+    <div className="grid grid-cols-1 gap-3 z-10">
       {[...Array(4)].map((_, i) => (
-        <div key={`right-${i}`} className="w-12 h-12 bg-[#532015] rounded-full shadow-inner flex items-center justify-center relative overflow-hidden">
-          <div className="flex gap-1 flex-wrap justify-center p-2">
-             {seedsCount > (i + 4) * 2 && <div className="w-3 h-3 rounded-full bg-yellow-400 shadow-[0_0_5px_#facc15]" />}
-             {seedsCount > (i + 4) * 2 + 1 && <div className="w-3 h-3 rounded-full bg-yellow-400 shadow-[0_0_5px_#facc15]" />}
+        <div key={`right-${i}`} className="w-10 h-10 bg-[#532015] rounded-full shadow-inner flex items-center justify-center relative">
+          <div className="flex gap-0.5 flex-wrap justify-center p-1">
+             {seedsCount > (i + 4) * 2 && <div className="w-2.5 h-2.5 rounded-full bg-yellow-400 shadow-[0_0_4px_#facc15]" />}
+             {seedsCount > (i + 4) * 2 + 1 && <div className="w-2.5 h-2.5 rounded-full bg-yellow-400 shadow-[0_0_4px_#facc15]" />}
           </div>
         </div>
       ))}
@@ -160,17 +147,17 @@ export default function SatoRitualPage() {
 
   return (
     <div className="min-h-screen bg-white text-[#303333] flex flex-col items-center justify-center p-6 select-none overflow-hidden">
-      <div className="w-full max-w-6xl flex flex-row items-center justify-center gap-8 md:gap-24 mb-12 h-[450px]">
+      <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-4 md:gap-16 mb-12 h-[450px]">
         
-        {/* OKPÈLÈ */}
-        <div className="flex flex-col items-center relative pt-10 scale-90 origin-center shrink-0"> 
+        {/* OKPÈLÈ (Scale ajustée pour harmonie) */}
+        <div className="flex flex-col items-center relative pt-10 scale-75 md:scale-90 origin-center shrink-0"> 
           <div className="w-[56px] h-10 border-t-[2.5px] border-x-[2.5px] border-yellow-600/60 rounded-t-full absolute top-0 left-1/2 -translate-x-1/2 z-0" />
           <div className="flex gap-4 relative z-10">
             <div className="flex flex-col items-center">
               {[...Array(4)].map((_, i) => (
                 <React.Fragment key={`left-${i}`}>
                   <OkpeleSeed active={activeOkpeleSeeds > i} />
-                  {i < 3 && <div className="w-[2px] h-3 bg-yellow-600/50 shadow-sm" />}
+                  {i < 3 && <div className="w-[2px] h-3 bg-yellow-600/50" />}
                 </React.Fragment>
               ))}
             </div>
@@ -178,7 +165,7 @@ export default function SatoRitualPage() {
               {[...Array(4)].map((_, i) => (
                 <React.Fragment key={`right-${i}`}>
                   <OkpeleSeed active={activeOkpeleSeeds > i + 4} />
-                  {i < 3 && <div className="w-[2px] h-3 bg-yellow-600/50 shadow-sm" />}
+                  {i < 3 && <div className="w-[2px] h-3 bg-yellow-600/50" />}
                 </React.Fragment>
               ))}
             </div>
@@ -186,19 +173,21 @@ export default function SatoRitualPage() {
         </div>
 
         {/* JARRE SATO CENTRALE */}
-        <div ref={jarRef}>
+        <div ref={jarRef} className="z-10">
           <SatoJar holesCount={holes} isOver={isOverJar} />
         </div>
 
-        {/* AWALÉ À 2 COLONNES */}
-        <AwaleMini seedsCount={seeds} isWrong={isWrong} />
+        {/* AWALÉ (Scale diminuée pour correspondre à l'Okpèlè) */}
+        <div className="shrink-0 flex items-center justify-center">
+          <AwaleMini seedsCount={seeds} isWrong={isWrong} />
+        </div>
       </div>
 
       <div className="w-full max-w-2xl flex flex-col items-center">
         {!isFinished ? (
           !showExplanation ? (
             <div className="text-center w-full">
-              <h2 className="text-2xl font-bold mb-4">Glissez la bonne réponse dans la jarre :</h2>
+              <h2 className="text-2xl font-bold mb-4 tracking-tight">Glissez la réponse dans la jarre</h2>
               <div className="flex gap-8 justify-center mb-8 text-[11px] font-bold uppercase tracking-widest text-gray-400">
                 <p>Temps : <span className="text-[#a0412d]">{timeLeft}s</span></p>
                 <p>Graines : <span className="text-[#a0412d]">{seeds}/16</span></p>
@@ -230,7 +219,7 @@ export default function SatoRitualPage() {
               </div>
             </div>
           ) : (
-            <div onClick={() => setShowExplanation(false)} className="p-8 bg-gray-50 rounded-[2rem] border border-gray-100 text-center cursor-pointer shadow-xl">
+            <div onClick={() => setShowExplanation(false)} className="p-8 bg-gray-50 rounded-[2rem] border border-gray-100 text-center cursor-pointer shadow-xl max-w-sm">
               <p className="text-lg italic font-medium">"Correct. Les vibrations du Sato purifient la terre."</p>
               <p className="text-[10px] mt-4 uppercase tracking-tighter text-gray-400">Cliquez pour continuer</p>
             </div>
@@ -246,12 +235,6 @@ export default function SatoRitualPage() {
                   </p>
                 ))}
               </div>
-            </div>
-            <div className="mb-10 p-5 border-l-4 border-[#a0412d] bg-[#a0412d]/5 text-left">
-              <p className="text-xs font-bold uppercase text-[#a0412d] mb-1">Inspiration</p>
-              <p className="text-sm italic text-gray-700">
-                "Doguicimi" de **Paul Hazoumé**.
-              </p>
             </div>
             <button className="w-full py-4 bg-[#a0412d] text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg">
               Partager mon score
