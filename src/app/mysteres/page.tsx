@@ -114,13 +114,15 @@ export default function MysteresPage() {
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap');
         .font-lato { font-family: 'Lato', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
 
       <Toaster position="top-center" richColors />
 
       <AnimatePresence mode="wait">
 
-        {/* --- GALERIE --- */}
+        {/* --- GALERIE : CARTES MYSTÈRES --- */}
         {view === "gallery" && (
           <motion.div
             key="gallery"
@@ -137,7 +139,8 @@ export default function MysteresPage() {
               onClick={() => { setQIndex(0); setExplanations([]); setView("challenge"); }}
               className="w-full max-w-[340px] h-[610px] bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-pointer flex flex-col"
             >
-              <div className="h-[65%] w-full overflow-hidden">
+              {/* Image haute (60% au lieu de 65% pour donner plus d'espace au texte) */}
+              <div className="h-[60%] w-full overflow-hidden">
                 <img
                   src={getImageUrl(currentM.id)}
                   className="h-full w-full object-cover pointer-events-none"
@@ -146,15 +149,18 @@ export default function MysteresPage() {
                 />
               </div>
 
-              <div className="p-7 flex flex-col flex-1 bg-white justify-center">
-                <h2 className="font-lato text-[26px] font-black text-[#1a1a1a] leading-[1.1] tracking-tight">
+              {/* Conteneur de texte remonté (pas de justify-center) */}
+              <div className="p-6 flex flex-col flex-1 bg-white overflow-hidden">
+                <h2 className="font-lato text-[24px] font-black text-[#1a1a1a] leading-[1.1] tracking-tight">
                   {formatTitle(currentM.title)}
                 </h2>
-                <p className="font-lato text-[12px] font-bold text-[#a0412d] mt-1 italic tracking-wide">
+                <p className="font-lato text-[11px] font-bold text-[#a0412d] mt-1 italic tracking-wide">
                   {currentM.subtitle}
                 </p>
-                <div className="mt-1.5 pt-3 border-t border-gray-50">
-                  <p className="font-lato text-[14px] text-gray-500 italic leading-[1.6] line-clamp-3">
+
+                {/* Mise en abyme avec scroll de secours si texte très long */}
+                <div className="mt-2 pt-3 border-t border-gray-50 flex-1 overflow-y-auto no-scrollbar">
+                  <p className="font-lato text-[14px] text-gray-500 italic leading-[1.5]">
                     "{currentM.mise_en_abyme}"
                   </p>
                 </div>
