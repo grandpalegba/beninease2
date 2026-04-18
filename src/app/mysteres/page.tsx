@@ -10,22 +10,25 @@ const SUPABASE_URL = "https://wtjhkqkqmexddroqwawk.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0amhrcWtxbWV4ZGRyb3F3YXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDU3NzQsImV4cCI6MjA4OTg4MTc3NH0.TdaWEVQxKF6s2j-7QStHZaFbOqs4e3UHVUN7iGQL_vc";
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// --- STYLES PARTAGÉS ---
+const clayGradient = "linear-gradient(165deg, #a0412d 0%, #8b3422 45%, #7a2a1b 100%)";
+
 // --- COMPOSANTS VISUELS ---
 
 const OkpeleSeed = ({ active }: { active: boolean }) => (
   <div className="flex flex-col items-center relative">
     <div
-      className="w-10 h-12 shadow-md relative overflow-hidden transition-all duration-500"
+      className="w-10 h-12 shadow-sm relative overflow-hidden transition-all duration-500"
       style={{
-        backgroundColor: '#a0412d', // Couleur Clay unifiée
+        background: clayGradient,
         borderRadius: '50% 50% 45% 45% / 70% 70% 30% 30%',
         opacity: active ? 1 : 0.2
       }}
     >
-      <div className={`absolute inset-0 ${active ? 'bg-gradient-to-br from-white/20 to-black/30' : 'bg-black/10'}`} />
+      <div className={`absolute inset-0 ${active ? 'bg-gradient-to-br from-white/10 to-black/40' : 'bg-black/20'}`} />
       {active && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-7 bg-yellow-400 rounded-full shadow-[0_0_10px_#facc15]"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-7 bg-yellow-400 rounded-full shadow-[0_0_8px_#facc15]"
         />
       )}
     </div>
@@ -34,24 +37,24 @@ const OkpeleSeed = ({ active }: { active: boolean }) => (
 
 const SatoJar = ({ holesCount, isOver }: { holesCount: number[], isOver: boolean }) => (
   <div className={`relative w-64 h-80 md:w-72 md:h-96 transition-transform duration-500 ${isOver ? 'scale-105' : 'scale-100'}`}>
-    {/* Col de la jarre (Lip) - Inspiré de ton code HTML */}
-    <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-32 h-7 bg-[#3d1810] rounded-[50%] shadow-inner border-2 border-[#a0412d]/20 z-20" />
+    {/* Lip of the jar (Le col) - Anatomie exacte du plan HTML */}
+    <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-32 h-7 bg-[#3d1810] rounded-[50%] shadow-inner border-2 border-[#a0412d]/20 z-10" />
 
-    {/* Corps de la jarre */}
-    <div className="absolute inset-0"
+    {/* Body of the jar */}
+    <div className="absolute inset-0 overflow-hidden"
       style={{
-        background: 'linear-gradient(165deg, #a0412d 0%, #8b3422 45%, #7a2a1b 100%)',
+        background: clayGradient,
         borderRadius: '42% 38% 34% 36% / 45% 45% 32% 32%',
-        boxShadow: 'inset -12px -12px 30px rgba(0,0,0,0.4), 0 25px 50px rgba(0,0,0,0.25)',
+        boxShadow: 'inset -8px -8px 20px rgba(0,0,0,0.2), inset 8px 8px 20px rgba(255,255,255,0.1)'
       }}>
-      {/* Ombre supérieure interne */}
-      <div className="absolute top-0 w-full h-12 bg-gradient-to-b from-black/30 to-transparent rounded-t-[45%]" />
+      {/* Top Shading (L'ombre interne du haut) */}
+      <div className="absolute top-0 w-full h-12 bg-gradient-to-b from-black/20 to-transparent" />
 
       <div className="relative w-full h-full p-8">
         <AnimatePresence>
           {holesCount.map((hIdx) => (
             <motion.div key={hIdx} exit={{ opacity: 0, scale: 2, filter: "blur(4px)" }}
-              className={`absolute rounded-full bg-[#1a0a07] shadow-[inset_2px_2px_6px_rgba(0,0,0,0.9)]
+              className={`absolute rounded-full bg-[#2a100a] shadow-inner opacity-90
                 ${hIdx === 0 ? 'top-[35%] left-[25%] w-10 h-10' : hIdx === 1 ? 'top-[28%] left-[55%] w-8 h-8' : hIdx === 2 ? 'top-[58%] left-[38%] w-12 h-12' : 'top-[52%] left-[68%] w-7 h-7'}`}
             />
           ))}
@@ -63,14 +66,15 @@ const SatoJar = ({ holesCount, isOver }: { holesCount: number[], isOver: boolean
 
 const AwaleMini = ({ seedsCount, isWrong }: { seedsCount: number, isWrong: boolean }) => (
   <motion.div animate={isWrong ? { x: [-2, 2, -2, 2, 0] } : {}}
-    className="w-28 bg-[#a0412d] rounded-[2rem] p-3 shadow-xl flex justify-center gap-3 border-[3px] border-[#7a2a1b] scale-90 opacity-80"
+    className="w-28 rounded-[2rem] p-3 shadow-xl flex justify-center gap-3 border-[3px] border-[#7a2a1b] scale-90 opacity-80"
+    style={{ background: clayGradient }}
   >
     {[0, 1].map((col) => (
       <div key={col} className="grid grid-cols-1 gap-2">
         {[...Array(4)].map((_, i) => (
           <div key={i} className="w-8 h-8 bg-[#3d1810] rounded-full shadow-inner flex flex-wrap justify-center items-center p-1 gap-0.5">
-            {seedsCount > (col * 4 + i) * 2 && <div className="w-2 h-2 rounded-full bg-yellow-400 shadow-[0_0_5px_rgba(250,204,21,0.5)]" />}
-            {seedsCount > (col * 4 + i) * 2 + 1 && <div className="w-2 h-2 rounded-full bg-yellow-400 shadow-[0_0_5px_rgba(250,204,21,0.5)]" />}
+            {seedsCount > (col * 4 + i) * 2 && <div className="w-2 h-2 rounded-full bg-yellow-500 shadow-sm" />}
+            {seedsCount > (col * 4 + i) * 2 + 1 && <div className="w-2 h-2 rounded-full bg-yellow-500 shadow-sm" />}
           </div>
         ))}
       </div>
@@ -78,7 +82,6 @@ const AwaleMini = ({ seedsCount, isWrong }: { seedsCount: number, isWrong: boole
   </motion.div>
 );
 
-// --- COMPOSANT RITUEL (Container) ---
 const OkpeleRitual = ({ activeSeeds }: { activeSeeds: number }) => (
   <div className="relative flex flex-col items-center scale-75 md:scale-90 opacity-80">
     <div className="w-20 h-10 border-t-[1.5px] border-x-[1.5px] border-yellow-600/30 rounded-t-full absolute -top-6 left-1/2 -translate-x-1/2" />
@@ -150,6 +153,7 @@ export default function MysteresPage() {
     setExplanations([]);
     setIsFinished(false);
     setQIndex(0);
+    setHoles([0, 1, 2, 3]);
   };
 
   const handleDragEndChoice = (info: any, isCorrect: boolean) => {
@@ -166,7 +170,7 @@ export default function MysteresPage() {
         } else { setShowExplanation(true); }
       } else {
         setIsWrong(true);
-        setSeeds(s => Math.max(0, s - 1)); // Modification : Seulement 1 graine perdue
+        setSeeds(s => Math.max(0, s - 1));
         setTimeout(() => setIsWrong(false), 400);
       }
     }
