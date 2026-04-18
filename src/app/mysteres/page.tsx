@@ -141,14 +141,14 @@ export default function MysteresPage() {
         if (tData) setThemes(tData.reduce((acc: any, t: any) => ({ ...acc, [t.id]: t.name }), {}));
 
         if (mData) {
-          // Fonction Shuffle pour mélanger l'ordre tout en gardant les objets intacts
+          // Stable Shuffle au chargement
           const shuffled = [...mData].sort(() => Math.random() - 0.5);
           setMysteres(shuffled);
         }
 
         if (qData) setAllQuestions(qData);
       } catch (e) {
-        toast.error("Échec du rituel de connexion");
+        toast.error("Erreur de connexion");
       } finally {
         setLoading(false);
       }
@@ -167,7 +167,6 @@ export default function MysteresPage() {
   useEffect(() => {
     if (timeLeft <= 0 || isFinished || showExplanation || view !== "ritual") {
       if (timeLeft <= 0 && view === "ritual" && !isFinished && !showExplanation) {
-        toast.error("Temps écoulé");
         setIsWrong(true);
         setSeeds(s => Math.max(0, s - 2));
         setTimeout(() => setIsWrong(false), 400);
@@ -183,7 +182,7 @@ export default function MysteresPage() {
     if (currentQuestions.length > 0) {
       setHoles([0, 1, 2, 3]); setSeeds(16); setTimeLeft(64); setQIndex(0); setExplanations([]); setIsFinished(false); setView("ritual");
     } else {
-      toast.error("Ce secret est encore scellé.");
+      toast.error("Mystère en cours de préparation...");
     }
   };
 
@@ -204,7 +203,6 @@ export default function MysteresPage() {
       } else {
         setIsWrong(true);
         setSeeds(s => Math.max(0, s - 1));
-        toast.error(" Vibration discordante");
         setTimeout(() => setIsWrong(false), 400);
       }
     }
@@ -223,7 +221,7 @@ export default function MysteresPage() {
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="h-full flex items-center justify-center"
           >
-            <div className="relative w-[320px] h-[580px]">
+            <div className="relative w-[340px] h-[620px] flex items-center justify-center">
               <AnimatePresence initial={false}>
                 {mysteres.map((m, idx) => (
                   idx === currentIndex && (
@@ -232,27 +230,28 @@ export default function MysteresPage() {
                       drag="x"
                       dragConstraints={{ left: 0, right: 0 }}
                       onDragEnd={(_, info) => {
-                        // Swipe vers la gauche ou la droite
+                        // SWIPE entre les cartes
                         if (info.offset.x > 80 && currentIndex > 0) setCurrentIndex(p => p - 1);
                         else if (info.offset.x < -80 && currentIndex < mysteres.length - 1) setCurrentIndex(p => p + 1);
                       }}
                       onTap={(e, info) => {
-                        // On vérifie que c'est bien un tap et pas un drag terminé
+                        // CLICK pour entrer dans le mystère (seuil de sécurité 10px)
                         if (Math.abs(info.offset.x) < 10) handleStartRitual();
                       }}
-                      initial={{ x: 300, opacity: 0 }}
-                      animate={{ x: 0, opacity: 1 }}
-                      exit={{ x: -300, opacity: 0 }}
-                      transition={{ type: "spring", stiffness: 260, damping: 25 }}
-                      className="absolute inset-0 bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-grab active:cursor-grabbing flex flex-col"
+                      initial={{ x: 300, opacity: 0, scale: 0.9 }}
+                      animate={{ x: 0, opacity: 1, scale: 1 }}
+                      exit={{ x: -300, opacity: 0, scale: 0.9 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                      className="absolute w-[320px] h-[600px] bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-grab active:cursor-grabbing flex flex-col"
                     >
-                      <div className="pt-5 pb-3 px-7 text-center">
-                        <span className="text-[11px] font-medium text-gray-400 uppercase tracking-[0.35em]">
+                      <div className="pt-6 pb-2 px-7 text-center">
+                        <span className="text-[10px] font-medium text-gray-400 uppercase tracking-[0.4em]">
                           {themes[m.theme_id] || "Bénin Éternel"}
                         </span>
                       </div>
 
-                      <div className="h-[55%] w-full overflow-hidden pointer-events-none select-none">
+                      {/* 1) Image plus haute (65%) */}
+                      <div className="h-[65%] w-full overflow-hidden pointer-events-none select-none">
                         <img
                           src={`https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/mysteres-assets/${m.id}.jpg`}
                           className="h-full w-full object-cover"
@@ -260,13 +259,10 @@ export default function MysteresPage() {
                         />
                       </div>
 
-                      <div className="p-7 flex flex-col flex-1">
-                        <h2 className="text-[24px] font-black leading-[1.1] tracking-[0.05em] uppercase">{m.title}</h2>
-                        <p className="text-[11px] font-bold text-[#a0412d] mt-1 italic tracking-[0.12em] uppercase">{m.subtitle}</p>
-                        <div className="mt-3 pt-3 border-t border-gray-50 flex-1">
-                          <p className="text-[15px] text-gray-400 italic leading-[1.6]">"{m.mise_en_abyme}"</p>
-                        </div>
-                        <div className="mt-2 py-4 bg-[#1a1a1a] text-white rounded-2xl text-[10px] font-black uppercase tracking-widest text-center">
+                      <div className="p-7 flex flex-col flex-1 justify-center">
+                        <h2 className="text-[22px] font-black leading-[1.1] tracking-wider uppercase text-[#1a1a1a]">{m.title}</h2>
+                        <p className="text-[10px] font-bold text-[#a0412d] mt-1 italic tracking-[0.1em] uppercase">{m.subtitle}</p>
+                        <div className="mt-4 py-3 bg-[#1a1a1a] text-white rounded-2xl text-[9px] font-black uppercase tracking-widest text-center shadow-lg">
                           Appuyer pour Révéler
                         </div>
                       </div>
@@ -280,10 +276,13 @@ export default function MysteresPage() {
           <motion.div
             key="ritual"
             initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
+            // 4) Swipe vers le bas pour revenir à la galerie
+            drag="y"
+            dragConstraints={{ top: 0, bottom: 0 }}
+            onDragEnd={(_, info) => { if (info.offset.y > 150) setView("gallery"); }}
             className="absolute inset-0 bg-white z-50 flex flex-col items-center p-6 overflow-y-auto no-scrollbar"
           >
-            {/* --- UI RITUEL --- */}
-            <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-6 md:gap-20 mb-12 h-[400px] shrink-0">
+            <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-6 md:gap-20 mb-12 h-[380px] shrink-0">
               <div className="flex flex-col items-center gap-6">
                 <div className="pt-8"><OkpeleRitual activeSeeds={Math.ceil(timeLeft / 8)} /></div>
                 <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
@@ -303,7 +302,7 @@ export default function MysteresPage() {
               {!isFinished ? (
                 !showExplanation ? (
                   <div className="text-center">
-                    <h2 className="text-xl font-bold mb-10 text-gray-700">{currentQuestions[qIndex]?.question || "Chargement..."}</h2>
+                    <h2 className="text-xl font-bold mb-10 text-[#1a1a1a] px-4 leading-relaxed">{currentQuestions[qIndex]?.question}</h2>
                     <div className="grid grid-cols-1 gap-3">
                       {['a', 'b', 'c', 'd'].map((l) => (
                         currentQuestions[qIndex]?.[`choice_${l}`] && (
@@ -313,7 +312,7 @@ export default function MysteresPage() {
                               if (jar) setIsOverJar(info.point.x > jar.left && info.point.x < jar.right && info.point.y > jar.top && info.point.y < jar.bottom);
                             }}
                             onDragEnd={(_, info) => handleDragEnd(info, l.toUpperCase() === currentQuestions[qIndex]?.correct_answer)}
-                            className="p-4 bg-white border border-gray-100 rounded-2xl shadow-sm cursor-grab active:cursor-grabbing flex items-center group touch-none z-50"
+                            className="p-4 bg-white border border-gray-100 rounded-2xl shadow-sm cursor-grab active:cursor-grabbing flex items-center touch-none z-50"
                           >
                             <span className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center font-bold text-[#a0412d] mr-4 uppercase">{l}</span>
                             <span className="font-bold text-gray-600 text-sm text-left">{currentQuestions[qIndex][`choice_${l}`]}</span>
@@ -329,16 +328,16 @@ export default function MysteresPage() {
                     className="p-8 bg-orange-50/50 rounded-[2rem] border border-orange-100/50 text-center cursor-pointer"
                   >
                     <p className="text-lg italic font-medium text-[#a0412d]">"{currentQuestions[qIndex]?.explanation}"</p>
-                    <p className="text-[10px] mt-4 uppercase tracking-widest font-black text-gray-300">Touchez pour continuer</p>
+                    <p className="text-[10px] mt-6 uppercase tracking-widest font-black text-gray-300">Touchez pour continuer</p>
                   </motion.div>
                 )
               ) : (
                 <div className="text-center">
                   <h2 className="text-2xl font-black mb-4 uppercase text-[#a0412d] tracking-widest">Mystère Révélé</h2>
-                  <div className="bg-white p-6 rounded-[2rem] text-left mb-6 space-y-3 border border-gray-50 shadow-inner">
-                    {explanations.map((exp, i) => <p key={i} className="text-sm text-gray-600 flex items-start"><span className="text-[#a0412d] mr-3 font-bold">✦</span> {exp}</p>)}
+                  <div className="bg-white p-6 rounded-[2rem] text-left mb-6 space-y-4 border border-gray-50 shadow-inner">
+                    {explanations.map((exp, i) => <p key={i} className="text-sm text-gray-600 flex items-start leading-relaxed"><span className="text-[#a0412d] mr-3 font-bold">✦</span> {exp}</p>)}
                   </div>
-                  <button onClick={() => setView("gallery")} className="w-full py-4 bg-[#a0412d] text-white rounded-full font-bold uppercase tracking-widest text-[10px]">Voir un autre secret</button>
+                  <button onClick={() => setView("gallery")} className="w-full py-4 bg-[#a0412d] text-white rounded-full font-bold uppercase tracking-widest text-[10px]">Découvrir d'autres mystères</button>
                 </div>
               )}
             </div>
