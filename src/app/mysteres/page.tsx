@@ -11,7 +11,7 @@ const SUPABASE_URL = "https://wtjhkqkqmexddroqwawk.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0amhrcWtxbWV4ZGRyb3F3YXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDU3NzQsImV4cCI6MjA4OTg4MTc3NH0.TdaWEVQxKF6s2j-7QStHZaFbOqs4e3UHVUN7iGQL_vc";
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// --- COMPOSANTS DE RITUEL ---
+// --- NOUVEAU COMPOSANT OKPELE AFFINÉ ---
 
 const OkpeleSeed = ({ active }: { active: boolean }) => (
   <div className="flex flex-col items-center relative z-10">
@@ -19,24 +19,58 @@ const OkpeleSeed = ({ active }: { active: boolean }) => (
       className="w-10 h-12 shadow-md relative overflow-hidden ring-1 ring-black/5 transition-all duration-500"
       style={{
         backgroundColor: '#833321',
-        borderRadius: '50% 50% 45% 45% / 70% 70% 30% 30%',
-        opacity: active ? 1 : 0.4
+        borderRadius: '50% 50% 45% 45% / 70% 70% 30% 30%', // Forme poire inversée
+        opacity: active ? 1 : 0.2 // Graines inactives beaucoup plus discrètes
       }}
     >
-      <div className={`absolute inset-0 ${active ? 'bg-gradient-to-br from-white/20 to-black/30' : 'bg-black/20'}`} />
+      <div className={`absolute inset-0 ${active ? 'bg-gradient-to-br from-white/20 to-black/30' : 'bg-black/10'}`} />
       {active && (
         <motion.div
           initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-7 bg-yellow-400 rounded-full shadow-[0_0_10px_#facc15]"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-7 bg-yellow-400 rounded-full shadow-[0_0_10px_#facc15,0_0_4px_#facc15]"
         />
       )}
     </div>
   </div>
 );
 
+const OkpeleRitual = ({ activeSeeds }: { activeSeeds: number }) => (
+  <div className="relative flex flex-col items-center scale-90">
+    {/* Arc de connexion supérieur */}
+    <div className="w-20 h-14 border-t-[2px] border-x-[2px] border-yellow-600/50 rounded-t-full absolute -top-10 left-1/2 -translate-x-1/2 z-0">
+      <div className="absolute -bottom-1 -left-1 w-1.5 h-1.5 bg-yellow-600/70 rounded-full"></div>
+      <div className="absolute -bottom-1 -right-1 w-1.5 h-1.5 bg-yellow-600/70 rounded-full"></div>
+    </div>
+
+    <div className="flex gap-10 relative z-10">
+      {/* Colonne Gauche */}
+      <div className="flex flex-col items-center">
+        {[...Array(4)].map((_, i) => (
+          <React.Fragment key={`l-${i}`}>
+            <OkpeleSeed active={activeSeeds > i} />
+            {i < 3 && <div className="w-[1.5px] h-3 bg-gradient-to-b from-yellow-600/40 to-yellow-700/40 shadow-sm" />}
+          </React.Fragment>
+        ))}
+      </div>
+      {/* Colonne Droite */}
+      <div className="flex flex-col items-center">
+        {[...Array(4)].map((_, i) => (
+          <React.Fragment key={`r-${i}`}>
+            <OkpeleSeed active={activeSeeds > i + 4} />
+            {i < 3 && <div className="w-[1.5px] h-3 bg-gradient-to-b from-yellow-600/40 to-yellow-700/40 shadow-sm" />}
+          </React.Fragment>
+        ))}
+      </div>
+    </div>
+    <span className="text-[9px] uppercase tracking-[0.4em] text-gray-300 mt-8 font-medium">Okpele</span>
+  </div>
+);
+
+// --- AUTRES COMPOSANTS ---
+
 const SatoJar = ({ holesCount, isOver }: { holesCount: number[], isOver: boolean }) => (
   <div className={`relative w-64 h-80 md:w-72 md:h-96 shrink-0 transition-transform duration-500 ${isOver ? 'scale-105' : 'scale-100'}`}>
-    <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-3/4 h-8 bg-black/20 blur-xl rounded-[50%] z-0" />
+    <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-3/4 h-8 bg-black/5 blur-xl rounded-[50%] z-0" />
     <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-44 md:w-52 h-12 z-20">
       <div className="absolute inset-0 bg-[#3d1810] rounded-[50%] border-b-4 border-[#5d251a] shadow-lg"></div>
       <div className="absolute top-1 left-1/2 -translate-x-1/2 w-[85%] h-[70%] bg-[#1a0a07] rounded-[50%] shadow-inner"></div>
@@ -51,7 +85,6 @@ const SatoJar = ({ holesCount, isOver }: { holesCount: number[], isOver: boolean
           ? '0 0 40px rgba(160,65,45,0.4), inset -8px -8px 20px rgba(0,0,0,0.3)'
           : 'inset -8px -8px 20px rgba(0,0,0,0.2), inset 8px 8px 20px rgba(255,255,255,0.1), 0 20px 40px rgba(0,0,0,0.15)',
       }}>
-      <div className="absolute inset-0 opacity-10 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/asfalt-dark.png')]"></div>
       <div className="relative w-full h-full p-8">
         <AnimatePresence>
           {holesCount.map((hIdx) => (
@@ -73,24 +106,24 @@ const SatoJar = ({ holesCount, isOver }: { holesCount: number[], isOver: boolean
 
 const AwaleMini = ({ seedsCount, isWrong }: { seedsCount: number, isWrong: boolean }) => (
   <motion.div animate={isWrong ? { x: [-1, 1, -1, 1, 0] } : {}}
-    className="relative w-36 bg-[#833321] rounded-[2rem] p-4 shadow-xl flex flex-row justify-center gap-5 border-[3px] border-[#652719] shrink-0"
+    className="relative w-32 bg-[#833321] rounded-[2rem] p-4 shadow-xl flex flex-row justify-center gap-4 border-[3px] border-[#652719] shrink-0"
   >
     <div className="grid grid-cols-1 gap-3 z-10">
       {[...Array(4)].map((_, i) => (
-        <div key={`left-${i}`} className="w-10 h-10 bg-[#532015] rounded-full shadow-inner flex items-center justify-center relative">
+        <div key={`left-${i}`} className="w-8 h-8 bg-[#532015] rounded-full shadow-inner flex items-center justify-center relative">
           <div className="flex gap-0.5 flex-wrap justify-center p-1">
-            {seedsCount > i * 2 && <div className="w-2.5 h-2.5 rounded-full bg-yellow-400 shadow-[0_0_4px_#facc15]" />}
-            {seedsCount > i * 2 + 1 && <div className="w-2.5 h-2.5 rounded-full bg-yellow-400 shadow-[0_0_4px_#facc15]" />}
+            {seedsCount > i * 2 && <div className="w-2 h-2 rounded-full bg-yellow-400 shadow-[0_0_4px_#facc15]" />}
+            {seedsCount > i * 2 + 1 && <div className="w-2 h-2 rounded-full bg-yellow-400 shadow-[0_0_4px_#facc15]" />}
           </div>
         </div>
       ))}
     </div>
     <div className="grid grid-cols-1 gap-3 z-10">
       {[...Array(4)].map((_, i) => (
-        <div key={`right-${i}`} className="w-10 h-10 bg-[#532015] rounded-full shadow-inner flex items-center justify-center relative">
+        <div key={`right-${i}`} className="w-8 h-8 bg-[#532015] rounded-full shadow-inner flex items-center justify-center relative">
           <div className="flex gap-0.5 flex-wrap justify-center p-1">
-            {seedsCount > (i + 4) * 2 && <div className="w-2.5 h-2.5 rounded-full bg-yellow-400 shadow-[0_0_4px_#facc15]" />}
-            {seedsCount > (i + 4) * 2 + 1 && <div className="w-2.5 h-2.5 rounded-full bg-yellow-400 shadow-[0_0_4px_#facc15]" />}
+            {seedsCount > (i + 4) * 2 && <div className="w-2 h-2 rounded-full bg-yellow-400 shadow-[0_0_4px_#facc15]" />}
+            {seedsCount > (i + 4) * 2 + 1 && <div className="w-2 h-2 rounded-full bg-yellow-400 shadow-[0_0_4px_#facc15]" />}
           </div>
         </div>
       ))}
@@ -176,10 +209,6 @@ export default function MysteresPage() {
   return (
     <div className="h-screen w-screen bg-white overflow-hidden relative touch-none font-sans text-[#1a1a1a]">
       <Toaster position="top-center" richColors />
-      <style jsx global>{`
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-      `}</style>
 
       <AnimatePresence mode="wait">
         {view === "gallery" ? (
@@ -189,16 +218,16 @@ export default function MysteresPage() {
               className="w-full max-w-[340px] h-[610px] bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-pointer flex flex-col"
             >
               <div className="pt-5 pb-3 px-7 text-center">
-                <span className="text-[11px] font-medium text-gray-500 uppercase tracking-[0.35em]">{themes[currentM.theme_id] || "Bénin Éternel"}</span>
+                <span className="text-[11px] font-medium text-gray-400 uppercase tracking-[0.35em]">{themes[currentM.theme_id] || "Bénin Éternel"}</span>
               </div>
               <div className="h-[55%] w-full overflow-hidden">
                 <img src={`https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/mysteres-assets/${currentM.id}.jpg`} className="h-full w-full object-cover" alt="" />
               </div>
-              <div className="p-7 flex flex-col flex-1 bg-white">
+              <div className="p-7 flex flex-col flex-1">
                 <h2 className="text-[24px] font-black leading-[1.1] tracking-[0.05em] uppercase">{currentM.title}</h2>
                 <p className="text-[11px] font-bold text-[#a0412d] mt-1 italic tracking-[0.12em] uppercase">{currentM.subtitle}</p>
                 <div className="mt-3 pt-3 border-t border-gray-50 flex-1 overflow-y-auto no-scrollbar">
-                  <p className="text-[15px] text-gray-500 italic leading-[1.6]">"{currentM.mise_en_abyme}"</p>
+                  <p className="text-[15px] text-gray-400 italic leading-[1.6]">"{currentM.mise_en_abyme}"</p>
                 </div>
               </div>
             </motion.div>
@@ -206,37 +235,25 @@ export default function MysteresPage() {
         ) : (
           <motion.div key="ritual" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-50 flex flex-col items-center p-6 overflow-y-auto no-scrollbar">
 
-            {/* OBJETS RITUELS */}
-            <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-4 md:gap-16 mb-8 h-[420px] shrink-0">
-              <div className="relative flex flex-col items-center scale-[0.85] origin-center">
-                <svg className="absolute -top-6 left-1/2 -translate-x-1/2 w-32 h-16 z-0 overflow-visible" viewBox="0 0 100 50">
-                  <path d="M 10 50 C 10 0, 90 0, 90 50" fill="none" stroke="#facc15" strokeWidth="3.5" strokeLinecap="round" className="drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]" />
-                  <circle cx="10" cy="50" r="3" fill="#ca8a04" /><circle cx="90" cy="50" r="3" fill="#ca8a04" />
-                </svg>
-                <div className="flex gap-6 pt-6">
-                  <div className="flex flex-col gap-2.5">
-                    {[...Array(4)].map((_, i) => (
-                      <React.Fragment key={`l-${i}`}>
-                        <OkpeleSeed active={activeOkpeleSeeds > i} />
-                        {i < 3 && <div className="w-0.5 h-3 bg-yellow-600/40 self-center" />}
-                      </React.Fragment>
-                    ))}
-                  </div>
-                  <div className="flex flex-col gap-2.5">
-                    {[...Array(4)].map((_, i) => (
-                      <React.Fragment key={`r-${i}`}>
-                        <OkpeleSeed active={activeOkpeleSeeds > i + 4} />
-                        {i < 3 && <div className="w-0.5 h-3 bg-yellow-600/40 self-center" />}
-                      </React.Fragment>
-                    ))}
-                  </div>
-                </div>
+            {/* OBJETS RITUELS RÉAJUSTÉS */}
+            <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-6 md:gap-20 mb-12 h-[450px] shrink-0">
+              {/* L'Okpele Affiné */}
+              <div className="pt-8">
+                <OkpeleRitual activeSeeds={activeOkpeleSeeds} />
               </div>
-              <div ref={jarRef} className="z-10"><SatoJar holesCount={holes} isOver={isOverJar} /></div>
-              <div className="scale-75"><AwaleMini seedsCount={seeds} isWrong={isWrong} /></div>
+
+              {/* La Jarre */}
+              <div ref={jarRef} className="z-10 pt-4">
+                <SatoJar holesCount={holes} isOver={isOverJar} />
+              </div>
+
+              {/* L'Awale */}
+              <div className="scale-90 pt-12">
+                <AwaleMini seedsCount={seeds} isWrong={isWrong} />
+              </div>
             </div>
 
-            {/* ZONE D'INTERACTION */}
+            {/* ZONE D'INTERACTION SUR FOND BLANC */}
             <div className="w-full max-w-xl pb-10">
               {!isFinished ? (
                 !showExplanation ? (
@@ -249,9 +266,12 @@ export default function MysteresPage() {
                     <div className="grid grid-cols-1 gap-3">
                       {['a', 'b', 'c', 'd'].map((l) => (
                         <motion.div key={l} drag dragSnapToOrigin
-                          onDrag={(_, info) => { const jar = jarRef.current?.getBoundingClientRect(); if (jar) setIsOverJar(info.point.x > jar.left && info.point.x < jar.right && info.point.y > jar.top && info.point.y < jar.bottom); }}
+                          onDrag={(_, info) => {
+                            const jar = jarRef.current?.getBoundingClientRect();
+                            if (jar) setIsOverJar(info.point.x > jar.left && info.point.x < jar.right && info.point.y > jar.top && info.point.y < jar.bottom);
+                          }}
                           onDragEnd={(_, info) => handleDragEnd(info, l.toUpperCase() === currentQuestions[qIndex]?.correct_answer)}
-                          className="p-4 bg-white border border-gray-100 rounded-2xl shadow-sm cursor-grab active:cursor-grabbing flex items-center group touch-none z-50"
+                          className="p-4 bg-white border border-gray-100 rounded-2xl shadow-sm cursor-grab active:cursor-grabbing flex items-center group touch-none z-50 hover:border-[#a0412d]/20 transition-colors"
                         >
                           <span className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center font-bold text-[#a0412d] mr-4 uppercase">{l}</span>
                           <span className="font-bold text-gray-600 text-sm text-left">{currentQuestions[qIndex]?.[`choice_${l}`]}</span>
@@ -260,16 +280,16 @@ export default function MysteresPage() {
                     </div>
                   </div>
                 ) : (
-                  <div onClick={() => { setShowExplanation(false); setQIndex(p => p + 1); }} className="p-8 bg-orange-50 rounded-[2rem] border border-orange-100 text-center cursor-pointer shadow-xl">
+                  <div onClick={() => { setShowExplanation(false); setQIndex(p => p + 1); }} className="p-8 bg-orange-50/50 rounded-[2rem] border border-orange-100/50 text-center cursor-pointer">
                     <p className="text-lg italic font-medium text-[#a0412d]">"{currentQuestions[qIndex]?.explanation}"</p>
-                    <p className="text-[10px] mt-4 uppercase tracking-widest font-black text-gray-400">Cliquez pour continuer le rituel</p>
+                    <p className="text-[10px] mt-4 uppercase tracking-widest font-black text-gray-300">Cliquez pour continuer le rituel</p>
                   </div>
                 )
               ) : (
                 <div className="text-center">
                   <h2 className="text-2xl font-black mb-4 uppercase text-[#a0412d] tracking-widest">Mystère Révélé</h2>
-                  <div className="bg-white p-6 rounded-[2rem] text-left mb-6 space-y-3 border border-gray-100">
-                    {explanations.map((exp, i) => <p key={i} className="text-sm text-gray-600 flex items-start"><span className="text-[#a0412d] mr-2">✦</span> {exp}</p>)}
+                  <div className="bg-white p-6 rounded-[2rem] text-left mb-6 space-y-3 border border-gray-50">
+                    {explanations.map((exp, i) => <p key={i} className="text-sm text-gray-500 flex items-start"><span className="text-[#a0412d] mr-2">✦</span> {exp}</p>)}
                   </div>
                   <button onClick={() => setView("gallery")} className="w-full py-4 bg-[#a0412d] text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg active:scale-95 transition-transform">Découvrir un autre mystère</button>
                 </div>
