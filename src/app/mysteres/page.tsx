@@ -11,7 +11,7 @@ const SUPABASE_URL = "https://wtjhkqkqmexddroqwawk.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0amhrcWtxbWV4ZGRyb3F3YXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDU3NzQsImV4cCI6MjA4OTg4MTc3NH0.TdaWEVQxKF6s2j-7QStHZaFbOqs4e3UHVUN7iGQL_vc";
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// --- NOUVEAU COMPOSANT OKPELE AFFINÉ ---
+// --- COMPOSANTS DE RITUEL ---
 
 const OkpeleSeed = ({ active }: { active: boolean }) => (
   <div className="flex flex-col items-center relative z-10">
@@ -19,15 +19,15 @@ const OkpeleSeed = ({ active }: { active: boolean }) => (
       className="w-10 h-12 shadow-md relative overflow-hidden ring-1 ring-black/5 transition-all duration-500"
       style={{
         backgroundColor: '#833321',
-        borderRadius: '50% 50% 45% 45% / 70% 70% 30% 30%', // Forme poire inversée
-        opacity: active ? 1 : 0.2 // Graines inactives beaucoup plus discrètes
+        borderRadius: '50% 50% 45% 45% / 70% 70% 30% 30%',
+        opacity: active ? 1 : 0.2
       }}
     >
       <div className={`absolute inset-0 ${active ? 'bg-gradient-to-br from-white/20 to-black/30' : 'bg-black/10'}`} />
       {active && (
         <motion.div
           initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-7 bg-yellow-400 rounded-full shadow-[0_0_10px_#facc15,0_0_4px_#facc15]"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-7 bg-yellow-400 rounded-full shadow-[0_0_10px_#facc15,0_0_4px_#facc15]"
         />
       )}
     </div>
@@ -62,7 +62,7 @@ const OkpeleRitual = ({ activeSeeds }: { activeSeeds: number }) => (
         ))}
       </div>
     </div>
-    <span className="text-[9px] uppercase tracking-[0.4em] text-gray-300 mt-8 font-medium">Okpele</span>
+    {/* Le mot Okpele a été retiré d'ici */}
   </div>
 );
 
@@ -215,7 +215,7 @@ export default function MysteresPage() {
           <motion.div key="gallery" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full flex flex-col items-center justify-center p-6">
             <motion.div
               onClick={() => { setHoles([0, 1, 2, 3]); setSeeds(16); setTimeLeft(64); setQIndex(0); setExplanations([]); setIsFinished(false); setView("ritual"); }}
-              className="w-full max-w-[340px] h-[610px] bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-pointer flex flex-col"
+              className="w-full max-w-[320px] h-[580px] bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-pointer flex flex-col"
             >
               <div className="pt-5 pb-3 px-7 text-center">
                 <span className="text-[11px] font-medium text-gray-400 uppercase tracking-[0.35em]">{themes[currentM.theme_id] || "Bénin Éternel"}</span>
@@ -223,7 +223,7 @@ export default function MysteresPage() {
               <div className="h-[55%] w-full overflow-hidden">
                 <img src={`https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/mysteres-assets/${currentM.id}.jpg`} className="h-full w-full object-cover" alt="" />
               </div>
-              <div className="p-7 flex flex-col flex-1">
+              <div className="p-7 flex flex-col flex-1 bg-white">
                 <h2 className="text-[24px] font-black leading-[1.1] tracking-[0.05em] uppercase">{currentM.title}</h2>
                 <p className="text-[11px] font-bold text-[#a0412d] mt-1 italic tracking-[0.12em] uppercase">{currentM.subtitle}</p>
                 <div className="mt-3 pt-3 border-t border-gray-50 flex-1 overflow-y-auto no-scrollbar">
@@ -236,10 +236,14 @@ export default function MysteresPage() {
           <motion.div key="ritual" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-50 flex flex-col items-center p-6 overflow-y-auto no-scrollbar">
 
             {/* OBJETS RITUELS RÉAJUSTÉS */}
-            <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-6 md:gap-20 mb-12 h-[450px] shrink-0">
-              {/* L'Okpele Affiné */}
-              <div className="pt-8">
-                <OkpeleRitual activeSeeds={activeOkpeleSeeds} />
+            <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-6 md:gap-20 mb-10 h-[450px] shrink-0">
+              {/* L'Okpele Affiné avec le temps en dessous */}
+              <div className="flex flex-col items-center gap-4">
+                <div className="pt-8">
+                  <OkpeleRitual activeSeeds={activeOkpeleSeeds} />
+                </div>
+                {/* Temps déplacé ici */}
+                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mt-2">Temps : <span className="text-[#a0412d]">{timeLeft}s</span></p>
               </div>
 
               {/* La Jarre */}
@@ -247,22 +251,26 @@ export default function MysteresPage() {
                 <SatoJar holesCount={holes} isOver={isOverJar} />
               </div>
 
-              {/* L'Awale */}
-              <div className="scale-90 pt-12">
-                <AwaleMini seedsCount={seeds} isWrong={isWrong} />
+              {/* L'Awale avec le nombre de graines en dessous */}
+              <div className="flex flex-col items-center gap-4">
+                <div className="scale-90 pt-12">
+                  <AwaleMini seedsCount={seeds} isWrong={isWrong} />
+                </div>
+                {/* Nombre de graines déplacé ici */}
+                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mt-2">Graines : <span className="text-[#a0412d]">{seeds}/16</span></p>
               </div>
             </div>
 
-            {/* ZONE D'INTERACTION SUR FOND BLANC */}
+            {/* ZONE D'INTERACTION AJUSTÉE SUR FOND BLANC */}
             <div className="w-full max-w-xl pb-10">
               {!isFinished ? (
                 !showExplanation ? (
-                  <div className="text-center">
-                    <h2 className="text-xl font-black mb-2 px-4 leading-tight min-h-[3.5rem] flex items-center justify-center">{currentQuestions[qIndex]?.question}</h2>
-                    <div className="flex gap-8 justify-center mb-6 text-[10px] font-bold uppercase tracking-widest text-gray-400">
-                      <p>Temps : <span className="text-[#a0412d]">{timeLeft}s</span></p>
-                      <p>Graines : <span className="text-[#a0412d]">{seeds}/16</span></p>
-                    </div>
+                  <div className="text-center flex flex-col gap-6">
+                    {/* Question remontée, police des réponses, interligne augmenté */}
+                    <h2 className="font-bold text-gray-700 text-xl leading-relaxed min-h-[4.5rem] flex items-center justify-center mb-2 px-4">{currentQuestions[qIndex]?.question}</h2>
+
+                    {/* Le bloc de stats a été retiré d'ici */}
+
                     <div className="grid grid-cols-1 gap-3">
                       {['a', 'b', 'c', 'd'].map((l) => (
                         <motion.div key={l} drag dragSnapToOrigin
@@ -274,7 +282,7 @@ export default function MysteresPage() {
                           className="p-4 bg-white border border-gray-100 rounded-2xl shadow-sm cursor-grab active:cursor-grabbing flex items-center group touch-none z-50 hover:border-[#a0412d]/20 transition-colors"
                         >
                           <span className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center font-bold text-[#a0412d] mr-4 uppercase">{l}</span>
-                          <span className="font-bold text-gray-600 text-sm text-left">{currentQuestions[qIndex]?.[`choice_${l}`]}</span>
+                          <span className="font-bold text-gray-700 text-sm text-left leading-relaxed">{currentQuestions[qIndex]?.[`choice_${l}`]}</span>
                         </motion.div>
                       ))}
                     </div>
