@@ -161,7 +161,6 @@ export default function MysteresPage() {
           setMysteres(mData.sort(() => Math.random() - 0.5));
         }
 
-        // Récupération de TOUTES les questions (Contournement de la limite des 1000 lignes)
         const [q1, q2] = await Promise.all([
           supabase.from('questions').select('*').range(0, 999),
           supabase.from('questions').select('*').range(1000, 1999)
@@ -184,13 +183,11 @@ export default function MysteresPage() {
 
   const currentQuestions = useMemo(() => {
     if (!currentM || allQuestions.length === 0) return [];
-    // Utilisation de String() pour s'assurer que la comparaison fonctionne toujours
     return allQuestions
       .filter(q => String(q.mystere_id) === String(currentM.id))
       .sort((a, b) => a.question_number - b.question_number);
   }, [allQuestions, currentM]);
 
-  // Fonctions de navigation
   const nextMystery = () => setCurrentIndex((prev) => (prev + 1) % mysteres.length);
   const prevMystery = () => setCurrentIndex((prev) => (prev - 1 + mysteres.length) % mysteres.length);
 
@@ -236,7 +233,6 @@ export default function MysteresPage() {
         {view === "gallery" ? (
           <motion.div key="gallery" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full flex flex-col items-center justify-center p-6">
 
-            {/* CONTENEUR AVEC NAVIGATION */}
             <div className="relative flex items-center gap-6">
               <button onClick={prevMystery} className="w-10 h-10 flex items-center justify-center bg-gray-50 rounded-full hover:bg-gray-100 transition-colors shadow-sm text-gray-500">
                 ←
@@ -281,9 +277,7 @@ export default function MysteresPage() {
         ) : (
           <motion.div key="ritual" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-50 flex flex-col items-center p-6 overflow-y-auto no-scrollbar">
 
-            {/* OBJETS RITUELS */}
             <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-6 md:gap-20 mb-10 h-[450px] shrink-0">
-              {/* L'Okpele */}
               <div className="flex flex-col items-center gap-4">
                 <div className="pt-8">
                   <OkpeleRitual activeSeeds={activeOkpeleSeeds} />
@@ -291,12 +285,10 @@ export default function MysteresPage() {
                 <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mt-2">Temps : <span className="text-[#a0412d]">{timeLeft}s</span></p>
               </div>
 
-              {/* La Jarre */}
               <div ref={jarRef} className="z-10 pt-4">
                 <SatoJar holesCount={holes} isOver={isOverJar} />
               </div>
 
-              {/* L'Awale */}
               <div className="flex flex-col items-center gap-4">
                 <div className="scale-90 pt-12">
                   <AwaleMini seedsCount={seeds} isWrong={isWrong} />
@@ -305,7 +297,6 @@ export default function MysteresPage() {
               </div>
             </div>
 
-            {/* ZONE D'INTERACTION */}
             <div className="w-full max-w-xl pb-10">
               {!isFinished ? (
                 !showExplanation ? (
@@ -331,7 +322,12 @@ export default function MysteresPage() {
                     </div>
                   </div>
                 ) : (
-                  <div onClick={() => { setShowExplanation(false); setQIndex(p => p + 1); }} className="p-8 bg-orange-50/50 rounded-[2rem] border border-orange-100/50 text-center cursor-pointer">
+                  // --- LA MODIFICATION EST ICI ---
+                  <div onClick={() => {
+                    setShowExplanation(false);
+                    setQIndex(p => p + 1);
+                    setTimeLeft(64); // Réinitialisation du temps à 64s
+                  }} className="p-8 bg-orange-50/50 rounded-[2rem] border border-orange-100/50 text-center cursor-pointer">
                     <p className="text-lg italic font-medium text-[#a0412d]">"{currentQuestions[qIndex]?.explanation}"</p>
                     <p className="text-[10px] mt-4 uppercase tracking-widest font-black text-gray-300">Cliquez pour continuer le rituel</p>
                   </div>
