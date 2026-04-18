@@ -36,9 +36,9 @@ const SatoJar = ({ holesCount }: { holesCount: number[] }) => (
               animate={{ scale: 1 }}
               exit={{ opacity: 0, scale: 2, filter: "blur(8px)" }}
               className={`absolute rounded-full bg-[#1a0a07] shadow-inner ${hIdx === 0 ? 'top-[35%] left-[25%] w-10 h-10' :
-                hIdx === 1 ? 'top-[28%] left-[55%] w-8 h-8' :
-                  hIdx === 2 ? 'top-[58%] left-[38%] w-12 h-12' :
-                    'top-[52%] left-[68%] w-7 h-7'
+                  hIdx === 1 ? 'top-[28%] left-[55%] w-8 h-8' :
+                    hIdx === 2 ? 'top-[58%] left-[38%] w-12 h-12' :
+                      'top-[52%] left-[68%] w-7 h-7'
                 }`}
             />
           ))}
