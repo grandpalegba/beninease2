@@ -205,16 +205,15 @@ export default function MysteresPage() {
               className="w-full max-w-[320px] h-[520px] md:h-[580px] -mt-12 md:-mt-20 bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-pointer flex flex-col"
             >
               <div className="pt-5 pb-3 px-7 text-center select-none">
-                {/* Catégorie : font-medium + tracking-[0.35em] */}
                 <span className="text-[10px] md:text-[11px] font-medium text-gray-400 uppercase tracking-[0.35em]">{themes[currentM.theme_id] || "Bénin Éternel"}</span>
               </div>
               <div className="h-[50%] md:h-[55%] w-full overflow-hidden bg-gray-100 pointer-events-none">
                 <img src={`https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/mysteres-assets/${currentM.id}.jpg`} className="h-full w-full object-cover" alt="" />
               </div>
               <div className="p-6 md:p-7 flex flex-col flex-1 bg-white select-none pointer-events-none">
-                {/* Titre : Désormais avec la même police (font-medium + tracking élargi) */}
-                <h2 className="text-[18px] md:text-[22px] font-medium leading-tight uppercase tracking-[0.15em] text-[#1a1a1a]">{currentM.title}</h2>
-                <p className="text-[10px] md:text-[11px] font-bold text-[#a0412d] mt-1 italic uppercase">{currentM.subtitle}</p>
+                {/* TITRE HARMONISÉ : Même police, même graisse (medium) et même espacement (0.35em) que la catégorie */}
+                <h2 className="text-[16px] md:text-[18px] font-medium leading-tight uppercase tracking-[0.35em] text-[#1a1a1a]">{currentM.title}</h2>
+                <p className="text-[10px] md:text-[11px] font-bold text-[#a0412d] mt-2 italic uppercase">{currentM.subtitle}</p>
                 <div className="mt-2 pt-2 border-t border-gray-50 flex-1 overflow-y-auto no-scrollbar">
                   <p className="text-[14px] md:text-[15px] text-gray-400 italic leading-relaxed">"{currentM.mise_en_abyme}"</p>
                 </div>
