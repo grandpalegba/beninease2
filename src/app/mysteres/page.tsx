@@ -136,18 +136,18 @@ export default function MysteresPage() {
 
   const jarRef = useRef<HTMLDivElement>(null);
 
-  // GESTION DU TIMER
+  // LOGIQUE DU TIMER ET DE L'OKPELE
   useEffect(() => {
-    let timer: NodeJS.Timeout;
+    let interval: NodeJS.Timeout;
     if (view === "ritual" && !isFinished && !showExplanation && timeLeft > 0) {
-      timer = setInterval(() => {
+      interval = setInterval(() => {
         setTimeLeft((prev) => prev - 1);
       }, 1000);
     } else if (timeLeft === 0 && !isFinished) {
-      toast.error("Le temps est écoulé...");
+      toast.error("Le temps est écoulé !");
       setView("gallery");
     }
-    return () => clearInterval(timer);
+    return () => clearInterval(interval);
   }, [view, isFinished, showExplanation, timeLeft]);
 
   useEffect(() => {
@@ -253,28 +253,27 @@ export default function MysteresPage() {
 
             <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-4 md:gap-20 h-[250px] md:h-[450px] shrink-0">
 
-              {/* OKPELE */}
+              {/* SECTION OKPELE */}
               <div className="flex flex-col items-center justify-center">
-                {/* L'Okpele évolue : 1 graine s'éteint toutes les 8s (64/8 = 8 étapes) */}
                 <OkpeleRitual activeSeeds={Math.ceil(timeLeft / 8)} />
-                {/* Espaceur pour l'alignement horizontal des labels */}
-                <div className="h-8 flex items-end">
+                {/* Conteneur de label avec hauteur fixe pour alignement horizontal */}
+                <div className="h-8 flex items-center mt-4">
                   <p className="text-[9px] md:text-[11px] font-bold uppercase text-gray-400 tracking-wider">
                     Temps : {timeLeft}s
                   </p>
                 </div>
               </div>
 
-              {/* JARRE */}
+              {/* SECTION JARRE */}
               <div ref={jarRef} className="z-10 flex items-center justify-center">
                 <SatoJar holesCount={holes} isOver={isOverJar} />
               </div>
 
-              {/* AWALE */}
+              {/* SECTION AWALE */}
               <div className="flex flex-col items-center justify-center">
                 <AwaleMini seedsCount={seeds} isWrong={isWrong} />
-                {/* Même hauteur d'espaceur pour l'alignement parfait sur la ligne horizontale */}
-                <div className="h-8 flex items-end">
+                {/* Conteneur de label avec hauteur fixe identique pour alignement parfait */}
+                <div className="h-8 flex items-center mt-4">
                   <p className="text-[9px] md:text-[11px] font-bold uppercase text-gray-400 tracking-wider">
                     Graines sacrées : {seeds} / 16
                   </p>
