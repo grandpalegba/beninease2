@@ -20,10 +20,10 @@ const OkpeleSeed = ({ active }: { active: boolean }) => (
       style={{
         backgroundColor: '#833321',
         borderRadius: '50% 50% 45% 45% / 70% 70% 30% 30%', // pear-seed-inverted
-        opacity: active ? 1 : 0.3
+        opacity: active ? 1 : 0.2
       }}
     >
-      <div className={`absolute inset-0 ${active ? 'bg-gradient-to-br from-white/20 to-black/30' : 'bg-black/40'}`} />
+      <div className={`absolute inset-0 ${active ? 'bg-gradient-to-br from-white/20 to-black/30' : 'bg-black/60'}`} />
       {active && (
         <motion.div
           initial={{ opacity: 0 }} animate={{ opacity: 1 }}
@@ -138,12 +138,12 @@ export default function MysteresPage() {
   }, []);
 
   const currentM = mysteres[currentIndex];
+
   const currentQuestions = useMemo(() => {
-    if (!currentM) return [];
+    if (!currentM || allQuestions.length === 0) return [];
     return allQuestions
       .filter(q => q.mystere_id === currentM.id)
-      .sort((a, b) => a.question_number - b.question_number)
-      .slice(0, 4);
+      .sort((a, b) => a.question_number - b.question_number);
   }, [allQuestions, currentM]);
 
   useEffect(() => {
@@ -183,7 +183,7 @@ export default function MysteresPage() {
   };
 
   if (loading) return (
-    <div className="h-screen flex items-center justify-center bg-[#faf9f8]">
+    <div className="h-screen flex items-center justify-center bg-white">
       <div className="w-10 h-10 border-4 border-[#a0412d] border-t-transparent rounded-full animate-spin" />
     </div>
   );
@@ -191,12 +191,6 @@ export default function MysteresPage() {
   return (
     <div className="h-screen w-screen bg-[#faf9f8] overflow-hidden relative touch-none font-sans text-[#1a1a1a]">
       <Toaster position="top-center" richColors />
-      <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap');
-        .font-lato { font-family: 'Lato', sans-serif; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-      `}</style>
 
       <AnimatePresence mode="wait">
         {view === "gallery" ? (
@@ -211,28 +205,29 @@ export default function MysteresPage() {
               className="w-full max-w-[340px] h-[610px] bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-pointer flex flex-col"
             >
               <div className="pt-5 pb-3 px-7 text-center">
-                <span className="font-lato text-[11px] font-medium text-gray-500 uppercase tracking-[0.35em]">{themes[currentM.theme_id] || "Bénin Éternel"}</span>
+                <span className="text-[11px] font-medium text-gray-500 uppercase tracking-[0.35em]">{themes[currentM.theme_id] || "Bénin Éternel"}</span>
               </div>
               <div className="h-[55%] w-full overflow-hidden">
                 <img src={`https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/mysteres-assets/${currentM.id}.jpg`} className="h-full w-full object-cover" alt={currentM.title} />
               </div>
               <div className="p-7 flex flex-col flex-1 bg-white">
-                <h2 className="font-lato text-[24px] font-black leading-[1.1] tracking-[0.05em] uppercase">{currentM.title}</h2>
-                <p className="font-lato text-[11px] font-bold text-[#a0412d] mt-1 italic tracking-[0.12em] uppercase">{currentM.subtitle}</p>
+                <h2 className="text-[24px] font-black leading-[1.1] tracking-[0.05em] uppercase">{currentM.title}</h2>
+                <p className="text-[11px] font-bold text-[#a0412d] mt-1 italic tracking-[0.12em] uppercase">{currentM.subtitle}</p>
                 <div className="mt-3 pt-3 border-t border-gray-50 flex-1 overflow-y-auto no-scrollbar">
-                  <p className="font-lato text-[15px] text-gray-500 italic leading-[1.6]">"{currentM.mise_en_abyme}"</p>
+                  <p className="text-[15px] text-gray-500 italic leading-[1.6]">"{currentM.mise_en_abyme}"</p>
                 </div>
               </div>
             </motion.div>
+            <p className="mt-8 text-[10px] font-black text-gray-300 uppercase tracking-[0.25em] animate-pulse">Swipe pour naviguer • Tap pour l'initiation</p>
           </motion.div>
         ) : (
           <motion.div key="ritual" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-50 flex flex-col items-center p-6 overflow-y-auto no-scrollbar">
 
-            {/* --- OKPELE RITUAL OBJECT (EXACT STITCH REPRODUCTION) --- */}
-            <div className="w-full max-w-5xl flex flex-col items-center justify-center mt-12 mb-8 shrink-0">
-              <div className="flex flex-row items-center justify-center gap-4 md:gap-16 relative">
+            {/* --- OKPELE RITUAL OBJECT (DESIGN STITCH) --- */}
+            <div className="w-full flex flex-col items-center mt-12 mb-8 shrink-0">
+              <div className="relative flex flex-col items-center">
 
-                {/* Arc de connexion supérieur */}
+                {/* La Chaîne Arc (96px large pour aligner les centres) */}
                 <div className="w-24 h-16 border-t-[3px] border-x-[3px] border-yellow-600/70 rounded-t-full absolute -top-14 left-1/2 -translate-x-1/2 z-0">
                   <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-yellow-600 rounded-full"></div>
                   <div className="absolute -bottom-1 -right-1 w-2 h-2 bg-yellow-600 rounded-full"></div>
@@ -259,33 +254,23 @@ export default function MysteresPage() {
                     ))}
                   </div>
                 </div>
-
-                {/* Jarre interactive Sato (placée à droite ou au centre selon layout) */}
-                <div ref={jarRef} className="ml-8 md:ml-12 z-10"><SatoJar holesCount={holes} isOver={isOverJar} /></div>
-
-                {/* Mini Awale */}
-                <div className="scale-75 ml-4"><AwaleMini seedsCount={seeds} isWrong={isWrong} /></div>
               </div>
-              <span className="text-[10px] uppercase tracking-[0.4em] text-gray-300 mt-12 font-light font-lato">Okpele</span>
+              <span className="text-[10px] uppercase tracking-[0.4em] text-gray-300 mt-12 font-light">Okpele</span>
             </div>
 
+            {/* --- ZONE DE QUESTIONS --- */}
             <div className="w-full max-w-xl pb-10">
               {!isFinished ? (
                 !showExplanation ? (
                   <div className="text-center">
-                    <h2 className="text-xl font-black mb-2 px-4 leading-tight min-h-[3.5rem] flex items-center justify-center">
-                      {currentQuestions[qIndex]?.question}
+                    <h2 className="text-xl font-black mb-6 px-4 leading-tight min-h-[4rem] flex items-center justify-center">
+                      {currentQuestions[qIndex]?.question || "Chargement..."}
                     </h2>
-                    <div className="flex gap-8 justify-center mb-6 text-[10px] font-bold uppercase tracking-widest text-gray-400">
-                      <p>Temps : <span className="text-[#a0412d]">{timeLeft}s</span></p>
-                      <p>Graines : <span className="text-[#a0412d]">{seeds}/16</span></p>
-                    </div>
-                    <div className="grid grid-cols-1 gap-3">
+
+                    <div className="grid grid-cols-1 gap-3 mb-12">
                       {['a', 'b', 'c', 'd'].map((l) => (
                         <motion.div
-                          key={l}
-                          drag
-                          dragSnapToOrigin
+                          key={l} drag dragSnapToOrigin
                           onDrag={(_, info) => {
                             const jar = jarRef.current?.getBoundingClientRect();
                             if (jar) setIsOverJar(info.point.x > jar.left && info.point.x < jar.right && info.point.y > jar.top && info.point.y < jar.bottom);
@@ -298,31 +283,36 @@ export default function MysteresPage() {
                         </motion.div>
                       ))}
                     </div>
+
+                    <div className="flex flex-row items-center justify-center gap-12 mt-8">
+                      <div ref={jarRef}><SatoJar holesCount={holes} isOver={isOverJar} /></div>
+                      <div className="scale-75"><AwaleMini seedsCount={seeds} isWrong={isWrong} /></div>
+                    </div>
                   </div>
                 ) : (
                   <div
                     onClick={() => { setShowExplanation(false); setQIndex(p => p + 1); }}
-                    className="p-8 bg-orange-50 rounded-[2rem] border border-orange-100 text-center cursor-pointer shadow-xl"
+                    className="p-8 bg-orange-50 rounded-[2rem] border border-orange-100 text-center cursor-pointer shadow-xl mt-12"
                   >
                     <p className="text-lg italic font-medium text-[#a0412d]">"{currentQuestions[qIndex]?.explanation}"</p>
-                    <p className="text-[10px] mt-4 uppercase tracking-widest font-black text-gray-400">Cliquez pour continuer le rituel</p>
+                    <p className="text-[10px] mt-6 uppercase tracking-widest font-black text-gray-400">Cliquez pour continuer l'éveil</p>
                   </div>
                 )
               ) : (
-                <div className="text-center font-lato">
+                <div className="text-center">
                   <h2 className="text-2xl font-black mb-4 uppercase text-[#a0412d] tracking-widest">Mystère Révélé</h2>
-                  <div className="bg-[#faf9f8] p-6 rounded-[2rem] text-left mb-6 space-y-3 border border-gray-100">
+                  <div className="bg-[#faf9f8] p-6 rounded-[2rem] text-left mb-8 space-y-4 border border-gray-100">
                     {explanations.map((exp, i) => (
-                      <p key={i} className="text-sm text-gray-600 flex items-start">
-                        <span className="text-[#a0412d] mr-2">✦</span> {exp}
+                      <p key={i} className="text-sm text-gray-600 flex items-start leading-relaxed">
+                        <span className="text-[#a0412d] mr-3 mt-1">✦</span> {exp}
                       </p>
                     ))}
                   </div>
                   <button
                     onClick={() => setView("gallery")}
-                    className="w-full py-4 bg-[#a0412d] text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg active:scale-95 transition-transform"
+                    className="w-full py-4 bg-[#a0412d] text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg"
                   >
-                    Découvrir un autre mystère
+                    Retour aux Mystères
                   </button>
                 </div>
               )}
