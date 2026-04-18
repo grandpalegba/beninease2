@@ -55,7 +55,7 @@ const SatoJar = ({ holesCount, isOver }: { holesCount: number[], isOver: boolean
       <div className="relative w-full h-full p-8">
         <AnimatePresence>
           {holesCount.map((hIdx) => (
-            <motion.div key={hIdx} exit={{ opacity: 0, scale: 1.5 }}
+            <motion.div key={hIdx} initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ opacity: 0, scale: 1.5 }}
               className={`absolute rounded-full bg-[#1a0a07] shadow-inner
                 ${hIdx === 0 ? 'top-[35%] left-[25%] w-10 h-10' : ''}
                 ${hIdx === 1 ? 'top-[28%] left-[55%] w-8 h-8' : ''}
@@ -72,7 +72,7 @@ const SatoJar = ({ holesCount, isOver }: { holesCount: number[], isOver: boolean
 );
 
 const AwaleMini = ({ seedsCount, isWrong }: { seedsCount: number, isWrong: boolean }) => (
-  <motion.div animate={isWrong ? { x: [-1, 1, -1, 1, 0] } : {}}
+  <motion.div animate={isWrong ? { x: [-2, 2, -2, 2, 0] } : {}}
     className="relative w-36 bg-[#833321] rounded-[2rem] p-4 shadow-xl flex flex-row justify-center gap-5 border-[3px] border-[#652719] shrink-0"
   >
     <div className="grid grid-cols-1 gap-3 z-10">
@@ -191,6 +191,12 @@ export default function MysteresPage() {
   return (
     <div className="h-screen w-screen bg-[#faf9f8] overflow-hidden relative touch-none font-sans text-[#1a1a1a]">
       <Toaster position="top-center" richColors />
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap');
+        .font-lato { font-family: 'Lato', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      `}</style>
 
       <AnimatePresence mode="wait">
         {view === "gallery" ? (
@@ -223,11 +229,11 @@ export default function MysteresPage() {
         ) : (
           <motion.div key="ritual" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-50 flex flex-col items-center p-6 overflow-y-auto no-scrollbar">
 
-            {/* --- OKPELE RITUAL OBJECT (DESIGN STITCH) --- */}
+            {/* --- BLOC OKPELE & RITUAL ELEMENTS --- */}
             <div className="w-full flex flex-col items-center mt-12 mb-8 shrink-0">
               <div className="relative flex flex-col items-center">
 
-                {/* La Chaîne Arc (96px large pour aligner les centres) */}
+                {/* La Chaîne Arc (96px large pour aligner les centres des graines de 48px) */}
                 <div className="w-24 h-16 border-t-[3px] border-x-[3px] border-yellow-600/70 rounded-t-full absolute -top-14 left-1/2 -translate-x-1/2 z-0">
                   <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-yellow-600 rounded-full"></div>
                   <div className="absolute -bottom-1 -right-1 w-2 h-2 bg-yellow-600 rounded-full"></div>
@@ -258,63 +264,104 @@ export default function MysteresPage() {
               <span className="text-[10px] uppercase tracking-[0.4em] text-gray-300 mt-12 font-light">Okpele</span>
             </div>
 
-            {/* --- ZONE DE QUESTIONS --- */}
-            <div className="w-full max-w-xl pb-10">
+            {/* --- ZONE INTERACTIVE (QUESTIONS, JARRE, AWALE) --- */}
+            <div className="w-full max-w-2xl pb-10 flex flex-col items-center">
               {!isFinished ? (
                 !showExplanation ? (
-                  <div className="text-center">
-                    <h2 className="text-xl font-black mb-6 px-4 leading-tight min-h-[4rem] flex items-center justify-center">
-                      {currentQuestions[qIndex]?.question || "Chargement..."}
-                    </h2>
+                  <div className="text-center w-full">
+                    {/* Intitulé Question */}
+                    <div className="min-h-[5rem] flex items-center justify-center mb-6">
+                      <h2 className="text-[22px] font-black leading-tight px-4 text-[#1a1a1a]">
+                        {currentQuestions[qIndex]?.question || "Chargement du mystère..."}
+                      </h2>
+                    </div>
 
-                    <div className="grid grid-cols-1 gap-3 mb-12">
+                    {/* Choix Glissables */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12 w-full px-4">
                       {['a', 'b', 'c', 'd'].map((l) => (
                         <motion.div
-                          key={l} drag dragSnapToOrigin
+                          key={l}
+                          drag
+                          dragSnapToOrigin
                           onDrag={(_, info) => {
                             const jar = jarRef.current?.getBoundingClientRect();
-                            if (jar) setIsOverJar(info.point.x > jar.left && info.point.x < jar.right && info.point.y > jar.top && info.point.y < jar.bottom);
+                            if (jar) {
+                              const over = info.point.x > jar.left && info.point.x < jar.right && info.point.y > jar.top && info.point.y < jar.bottom;
+                              setIsOverJar(over);
+                            }
                           }}
                           onDragEnd={(_, info) => handleDragEnd(info, l.toUpperCase() === currentQuestions[qIndex]?.correct_answer)}
-                          className="p-4 bg-[#faf9f8] border border-gray-100 rounded-2xl shadow-sm cursor-grab active:cursor-grabbing flex items-center group touch-none z-50"
+                          className="p-5 bg-[#faf9f8] border border-gray-100 rounded-[24px] shadow-sm cursor-grab active:cursor-grabbing flex items-center touch-none z-50 group transition-colors hover:border-orange-200"
                         >
-                          <span className="w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center font-bold text-[#a0412d] mr-4 uppercase">{l}</span>
-                          <span className="font-bold text-gray-600 text-sm text-left">{currentQuestions[qIndex]?.[`choice_${l}`]}</span>
+                          <span className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center font-bold text-[#a0412d] mr-4 uppercase border border-orange-50">{l}</span>
+                          <span className="font-bold text-gray-700 text-[15px] text-left leading-snug">{currentQuestions[qIndex]?.[`choice_${l}`]}</span>
                         </motion.div>
                       ))}
                     </div>
 
-                    <div className="flex flex-row items-center justify-center gap-12 mt-8">
-                      <div ref={jarRef}><SatoJar holesCount={holes} isOver={isOverJar} /></div>
-                      <div className="scale-75"><AwaleMini seedsCount={seeds} isWrong={isWrong} /></div>
+                    {/* Ritual Objects Area (Jarre & Awale) */}
+                    <div className="flex flex-row items-end justify-center gap-8 md:gap-16 mt-4 w-full">
+                      <div ref={jarRef} className="z-10">
+                        <SatoJar holesCount={holes} isOver={isOverJar} />
+                      </div>
+                      <div className="flex flex-col items-center gap-4 mb-4">
+                        <div className="text-[9px] font-black uppercase tracking-widest text-gray-400">Graines de vie</div>
+                        <AwaleMini seedsCount={seeds} isWrong={isWrong} />
+                      </div>
+                    </div>
+
+                    {/* Stats */}
+                    <div className="flex gap-10 justify-center mt-10 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-[#a0412d] animate-pulse"></span>
+                        Temps : {timeLeft}s
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-yellow-500"></span>
+                        Protection : {seeds}
+                      </div>
                     </div>
                   </div>
                 ) : (
-                  <div
+                  /* Feedback Explanation */
+                  <motion.div
+                    initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
                     onClick={() => { setShowExplanation(false); setQIndex(p => p + 1); }}
-                    className="p-8 bg-orange-50 rounded-[2rem] border border-orange-100 text-center cursor-pointer shadow-xl mt-12"
+                    className="p-10 bg-white rounded-[3rem] border border-orange-100 text-center cursor-pointer shadow-2xl mt-12 max-w-md relative overflow-hidden"
                   >
-                    <p className="text-lg italic font-medium text-[#a0412d]">"{currentQuestions[qIndex]?.explanation}"</p>
-                    <p className="text-[10px] mt-6 uppercase tracking-widest font-black text-gray-400">Cliquez pour continuer l'éveil</p>
-                  </div>
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#a0412d] to-transparent" />
+                    <p className="text-xl italic font-serif text-[#a0412d] leading-relaxed">"{currentQuestions[qIndex]?.explanation}"</p>
+                    <div className="mt-8 flex flex-col items-center">
+                      <div className="w-12 h-12 rounded-full bg-orange-50 flex items-center justify-center animate-bounce mb-4">
+                        <span className="text-[#a0412d]">↓</span>
+                      </div>
+                      <p className="text-[10px] uppercase tracking-[0.3em] font-black text-gray-400">Cliquez pour continuer l'initiation</p>
+                    </div>
+                  </motion.div>
                 )
               ) : (
-                <div className="text-center">
-                  <h2 className="text-2xl font-black mb-4 uppercase text-[#a0412d] tracking-widest">Mystère Révélé</h2>
-                  <div className="bg-[#faf9f8] p-6 rounded-[2rem] text-left mb-8 space-y-4 border border-gray-100">
+                /* Completion Screen */
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center w-full px-6">
+                  <div className="mb-8 relative inline-block">
+                    <div className="absolute inset-0 blur-2xl bg-orange-200/50 rounded-full" />
+                    <h2 className="text-[28px] font-black uppercase text-[#a0412d] tracking-[0.15em] relative">Mystère Révélé</h2>
+                  </div>
+
+                  <div className="bg-[#faf9f8] p-8 rounded-[2.5rem] text-left mb-10 space-y-5 border border-gray-100 shadow-inner max-w-lg mx-auto">
                     {explanations.map((exp, i) => (
-                      <p key={i} className="text-sm text-gray-600 flex items-start leading-relaxed">
-                        <span className="text-[#a0412d] mr-3 mt-1">✦</span> {exp}
-                      </p>
+                      <motion.p initial={{ x: -10, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: i * 0.2 }} key={i} className="text-[15px] text-gray-600 flex items-start leading-relaxed">
+                        <span className="text-[#a0412d] mr-4 mt-1 font-bold">✦</span> {exp}
+                      </motion.p>
                     ))}
                   </div>
+
                   <button
                     onClick={() => setView("gallery")}
-                    className="w-full py-4 bg-[#a0412d] text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg"
+                    className="w-full max-w-xs py-5 bg-[#a0412d] text-white rounded-full font-black uppercase tracking-[0.25em] text-[11px] shadow-xl hover:bg-[#8b3422] active:scale-95 transition-all"
                   >
-                    Retour aux Mystères
+                    Découvrir un autre secret
                   </button>
-                </div>
+                </motion.div>
               )}
             </div>
           </motion.div>
