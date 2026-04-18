@@ -20,10 +20,10 @@ const OkpeleSeed = ({ active }: { active: boolean }) => (
       style={{
         backgroundColor: '#833321',
         borderRadius: '50% 50% 45% 45% / 70% 70% 30% 30%',
-        opacity: active ? 1 : 0.2
+        opacity: active ? 1 : 0.15
       }}
     >
-      <div className={`absolute inset-0 ${active ? 'bg-gradient-to-br from-white/20 to-black/30' : 'bg-black/10'}`} />
+      <div className={`absolute inset-0 ${active ? 'bg-gradient-to-br from-white/20 to-black/30' : 'bg-black/20'}`} />
       {active && (
         <motion.div
           initial={{ opacity: 0 }} animate={{ opacity: 1 }}
@@ -136,6 +136,20 @@ export default function MysteresPage() {
 
   const jarRef = useRef<HTMLDivElement>(null);
 
+  // GESTION DU TIMER
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (view === "ritual" && !isFinished && !showExplanation && timeLeft > 0) {
+      timer = setInterval(() => {
+        setTimeLeft((prev) => prev - 1);
+      }, 1000);
+    } else if (timeLeft === 0 && !isFinished) {
+      toast.error("Le temps est écoulé...");
+      setView("gallery");
+    }
+    return () => clearInterval(timer);
+  }, [view, isFinished, showExplanation, timeLeft]);
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -237,28 +251,34 @@ export default function MysteresPage() {
           >
             <div className="w-12 h-1 bg-gray-100 rounded-full mb-4 shrink-0" />
 
-            {/* --- SECTION RITUEL CENTRÉE VERTICALEMENT --- */}
             <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-4 md:gap-20 h-[250px] md:h-[450px] shrink-0">
 
-              {/* 1. OKPELE (Centré verticalement) */}
+              {/* OKPELE */}
               <div className="flex flex-col items-center justify-center">
+                {/* L'Okpele évolue : 1 graine s'éteint toutes les 8s (64/8 = 8 étapes) */}
                 <OkpeleRitual activeSeeds={Math.ceil(timeLeft / 8)} />
-                <p className="text-[9px] md:text-[11px] font-bold uppercase text-gray-400 mt-4 tracking-wider">
-                  Temps : {timeLeft}s
-                </p>
+                {/* Espaceur pour l'alignement horizontal des labels */}
+                <div className="h-8 flex items-end">
+                  <p className="text-[9px] md:text-[11px] font-bold uppercase text-gray-400 tracking-wider">
+                    Temps : {timeLeft}s
+                  </p>
+                </div>
               </div>
 
-              {/* 2. JARRE (Pivot central) */}
+              {/* JARRE */}
               <div ref={jarRef} className="z-10 flex items-center justify-center">
                 <SatoJar holesCount={holes} isOver={isOverJar} />
               </div>
 
-              {/* 3. AWALE (Symétrique à l'Okpele) */}
+              {/* AWALE */}
               <div className="flex flex-col items-center justify-center">
                 <AwaleMini seedsCount={seeds} isWrong={isWrong} />
-                <p className="text-[9px] md:text-[11px] font-bold uppercase text-gray-400 mt-4 tracking-wider">
-                  Graines sacrées : {seeds} / 16
-                </p>
+                {/* Même hauteur d'espaceur pour l'alignement parfait sur la ligne horizontale */}
+                <div className="h-8 flex items-end">
+                  <p className="text-[9px] md:text-[11px] font-bold uppercase text-gray-400 tracking-wider">
+                    Graines sacrées : {seeds} / 16
+                  </p>
+                </div>
               </div>
 
             </div>
