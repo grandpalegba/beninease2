@@ -139,10 +139,16 @@ export default function MysteresPage() {
         const { data: tData } = await supabase.from('themes').select('id, name');
 
         if (tData) setThemes(tData.reduce((acc: any, t: any) => ({ ...acc, [t.id]: t.name }), {}));
-        if (mData) setMysteres(mData);
+
+        if (mData) {
+          // Fonction Shuffle pour mélanger l'ordre tout en gardant les objets intacts
+          const shuffled = [...mData].sort(() => Math.random() - 0.5);
+          setMysteres(shuffled);
+        }
+
         if (qData) setAllQuestions(qData);
       } catch (e) {
-        toast.error("Erreur de connexion");
+        toast.error("Échec du rituel de connexion");
       } finally {
         setLoading(false);
       }
@@ -177,7 +183,7 @@ export default function MysteresPage() {
     if (currentQuestions.length > 0) {
       setHoles([0, 1, 2, 3]); setSeeds(16); setTimeLeft(64); setQIndex(0); setExplanations([]); setIsFinished(false); setView("ritual");
     } else {
-      toast.error("Ce mystère n'a pas encore de questions.");
+      toast.error("Ce secret est encore scellé.");
     }
   };
 
@@ -198,7 +204,7 @@ export default function MysteresPage() {
       } else {
         setIsWrong(true);
         setSeeds(s => Math.max(0, s - 1));
-        toast.error("Erreur");
+        toast.error(" Vibration discordante");
         setTimeout(() => setIsWrong(false), 400);
       }
     }
@@ -226,38 +232,42 @@ export default function MysteresPage() {
                       drag="x"
                       dragConstraints={{ left: 0, right: 0 }}
                       onDragEnd={(_, info) => {
+                        // Swipe vers la gauche ou la droite
                         if (info.offset.x > 80 && currentIndex > 0) setCurrentIndex(p => p - 1);
                         else if (info.offset.x < -80 && currentIndex < mysteres.length - 1) setCurrentIndex(p => p + 1);
                       }}
                       onTap={(e, info) => {
-                        // On ne déclenche le rituel que si ce n'est pas un drag (mouvement < 5px)
-                        if (Math.abs(info.offset.x) < 5) handleStartRitual();
+                        // On vérifie que c'est bien un tap et pas un drag terminé
+                        if (Math.abs(info.offset.x) < 10) handleStartRitual();
                       }}
                       initial={{ x: 300, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
                       exit={{ x: -300, opacity: 0 }}
+                      transition={{ type: "spring", stiffness: 260, damping: 25 }}
                       className="absolute inset-0 bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-grab active:cursor-grabbing flex flex-col"
                     >
                       <div className="pt-5 pb-3 px-7 text-center">
                         <span className="text-[11px] font-medium text-gray-400 uppercase tracking-[0.35em]">
-                          {m.theme_id ? (themes[m.theme_id] || "Bénin Éternel") : "Chargement..."}
+                          {themes[m.theme_id] || "Bénin Éternel"}
                         </span>
                       </div>
-                      <div className="h-[55%] w-full overflow-hidden pointer-events-none">
+
+                      <div className="h-[55%] w-full overflow-hidden pointer-events-none select-none">
                         <img
                           src={`https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/mysteres-assets/${m.id}.jpg`}
                           className="h-full w-full object-cover"
-                          alt=""
+                          alt={m.title}
                         />
                       </div>
+
                       <div className="p-7 flex flex-col flex-1">
                         <h2 className="text-[24px] font-black leading-[1.1] tracking-[0.05em] uppercase">{m.title}</h2>
                         <p className="text-[11px] font-bold text-[#a0412d] mt-1 italic tracking-[0.12em] uppercase">{m.subtitle}</p>
                         <div className="mt-3 pt-3 border-t border-gray-50 flex-1">
                           <p className="text-[15px] text-gray-400 italic leading-[1.6]">"{m.mise_en_abyme}"</p>
                         </div>
-                        <div className="text-[9px] font-bold text-center text-gray-300 uppercase tracking-widest mt-2">
-                          Touchez pour entrer
+                        <div className="mt-2 py-4 bg-[#1a1a1a] text-white rounded-2xl text-[10px] font-black uppercase tracking-widest text-center">
+                          Appuyer pour Révéler
                         </div>
                       </div>
                     </motion.div>
@@ -272,9 +282,10 @@ export default function MysteresPage() {
             initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
             className="absolute inset-0 bg-white z-50 flex flex-col items-center p-6 overflow-y-auto no-scrollbar"
           >
+            {/* --- UI RITUEL --- */}
             <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-6 md:gap-20 mb-12 h-[400px] shrink-0">
               <div className="flex flex-col items-center gap-6">
-                <div className="pt-8"><OkpeleRitual activeSeeds={activeOkpeleSeeds} /></div>
+                <div className="pt-8"><OkpeleRitual activeSeeds={Math.ceil(timeLeft / 8)} /></div>
                 <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
                   <p>Focus : <span className="text-[#a0412d] font-black">{timeLeft}s</span></p>
                 </div>
@@ -327,7 +338,7 @@ export default function MysteresPage() {
                   <div className="bg-white p-6 rounded-[2rem] text-left mb-6 space-y-3 border border-gray-50 shadow-inner">
                     {explanations.map((exp, i) => <p key={i} className="text-sm text-gray-600 flex items-start"><span className="text-[#a0412d] mr-3 font-bold">✦</span> {exp}</p>)}
                   </div>
-                  <button onClick={() => setView("gallery")} className="w-full py-4 bg-[#a0412d] text-white rounded-full font-bold uppercase tracking-widest text-[10px]">Autre secret</button>
+                  <button onClick={() => setView("gallery")} className="w-full py-4 bg-[#a0412d] text-white rounded-full font-bold uppercase tracking-widest text-[10px]">Voir un autre secret</button>
                 </div>
               )}
             </div>
