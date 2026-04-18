@@ -14,7 +14,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 // --- COMPOSANTS DE RITUEL ---
 
 const OkpeleSeed = ({ active }: { active: boolean }) => (
-  <div className="flex flex-col items-center relative">
+  <div className="flex flex-col items-center relative z-10">
     <div
       className="w-10 h-12 shadow-md relative overflow-hidden ring-1 ring-black/5 transition-all duration-500"
       style={{
@@ -27,7 +27,7 @@ const OkpeleSeed = ({ active }: { active: boolean }) => (
       {active && (
         <motion.div
           initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-7 bg-yellow-400 rounded-full shadow-[0_0_10px_#facc15]"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-7 bg-yellow-400 rounded-full shadow-[0_0_10px_#facc15]"
         />
       )}
     </div>
@@ -107,7 +107,6 @@ export default function MysteresPage() {
   const [allQuestions, setAllQuestions] = useState<any[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // États du Rituel
   const [view, setView] = useState<"gallery" | "ritual">("gallery");
   const [timeLeft, setTimeLeft] = useState(64);
   const [holes, setHoles] = useState([0, 1, 2, 3]);
@@ -183,11 +182,7 @@ export default function MysteresPage() {
     }
   };
 
-  if (loading) return (
-    <div className="h-screen flex items-center justify-center bg-[#faf9f8]">
-      <div className="w-10 h-10 border-4 border-[#a0412d] border-t-transparent rounded-full animate-spin" />
-    </div>
-  );
+  if (loading) return <div className="h-screen flex items-center justify-center bg-[#faf9f8]"><div className="w-10 h-10 border-4 border-[#a0412d] border-t-transparent rounded-full animate-spin" /></div>;
 
   return (
     <div className="h-screen w-screen bg-[#faf9f8] overflow-hidden relative touch-none font-sans text-[#1a1a1a]">
@@ -201,34 +196,21 @@ export default function MysteresPage() {
 
       <AnimatePresence mode="wait">
         {view === "gallery" ? (
-          <motion.div
-            key="gallery"
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-            className="h-full flex flex-col items-center justify-center p-6"
-          >
+          <motion.div key="gallery" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full flex flex-col items-center justify-center p-6">
             <motion.div
               drag="x" dragConstraints={{ left: 0, right: 0 }}
               onDragEnd={(_, info) => {
                 if (info.offset.x < -60) setCurrentIndex(prev => (prev + 1) % mysteres.length);
                 if (info.offset.x > 60) setCurrentIndex(prev => (prev - 1 + mysteres.length) % mysteres.length);
               }}
-              onClick={() => {
-                setHoles([0, 1, 2, 3]); setSeeds(16); setTimeLeft(64);
-                setQIndex(0); setExplanations([]); setIsFinished(false); setView("ritual");
-              }}
+              onClick={() => { setHoles([0, 1, 2, 3]); setSeeds(16); setTimeLeft(64); setQIndex(0); setExplanations([]); setIsFinished(false); setView("ritual"); }}
               className="w-full max-w-[340px] h-[610px] bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-pointer flex flex-col"
             >
               <div className="pt-5 pb-3 px-7 text-center">
-                <span className="font-lato text-[11px] font-medium text-gray-500 uppercase tracking-[0.35em]">
-                  {themes[currentM.theme_id] || "Bénin Éternel"}
-                </span>
+                <span className="font-lato text-[11px] font-medium text-gray-500 uppercase tracking-[0.35em]">{themes[currentM.theme_id] || "Bénin Éternel"}</span>
               </div>
               <div className="h-[55%] w-full overflow-hidden">
-                <img
-                  src={`https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/mysteres-assets/${currentM.id}.jpg`}
-                  className="h-full w-full object-cover"
-                  alt={currentM.title}
-                />
+                <img src={`https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/mysteres-assets/${currentM.id}.jpg`} className="h-full w-full object-cover" alt="" />
               </div>
               <div className="p-7 flex flex-col flex-1 bg-white">
                 <h2 className="font-lato text-[24px] font-black leading-[1.1] tracking-[0.05em] uppercase">{currentM.title}</h2>
@@ -238,24 +220,48 @@ export default function MysteresPage() {
                 </div>
               </div>
             </motion.div>
-            <p className="mt-8 text-[10px] font-black text-gray-300 uppercase tracking-[0.25em] animate-pulse">
-              Swipe pour naviguer • Tap pour l'initiation
-            </p>
           </motion.div>
         ) : (
-          <motion.div
-            key="ritual"
-            initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
-            className="absolute inset-0 bg-white z-50 flex flex-col items-center p-6 overflow-y-auto no-scrollbar"
-          >
-            {/* Header du Rituel */}
-            <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-4 md:gap-16 mb-8 h-[400px] shrink-0">
-              <div className="flex flex-col items-center scale-75 origin-center">
-                <div className="flex gap-3">
-                  <div className="flex flex-col gap-2">{[...Array(4)].map((_, i) => <OkpeleSeed key={i} active={activeOkpeleSeeds > i} />)}</div>
-                  <div className="flex flex-col gap-2">{[...Array(4)].map((_, i) => <OkpeleSeed key={i} active={activeOkpeleSeeds > i + 4} />)}</div>
+          <motion.div key="ritual" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-50 flex flex-col items-center p-6 overflow-y-auto no-scrollbar">
+
+            {/* EXPÉRIENCE OUKPÉLÉ AVEC CHAINE DORÉE */}
+            <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-4 md:gap-16 mb-8 h-[420px] shrink-0">
+
+              <div className="relative flex flex-col items-center scale-[0.85] origin-center">
+                {/* CHAINE DORÉE (SVG) */}
+                <svg className="absolute -top-6 left-1/2 -translate-x-1/2 w-32 h-16 z-0 overflow-visible" viewBox="0 0 100 50">
+                  <path
+                    d="M 10 50 C 10 0, 90 0, 90 50"
+                    fill="none"
+                    stroke="#facc15"
+                    strokeWidth="3.5"
+                    strokeLinecap="round"
+                    className="drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]"
+                  />
+                  <circle cx="10" cy="50" r="3" fill="#ca8a04" />
+                  <circle cx="90" cy="50" r="3" fill="#ca8a04" />
+                </svg>
+
+                <div className="flex gap-6 pt-6">
+                  <div className="flex flex-col gap-2.5">
+                    {[...Array(4)].map((_, i) => (
+                      <React.Fragment key={`l-${i}`}>
+                        <OkpeleSeed active={activeOkpeleSeeds > i} />
+                        {i < 3 && <div className="w-0.5 h-3 bg-yellow-600/40 self-center" />}
+                      </React.Fragment>
+                    ))}
+                  </div>
+                  <div className="flex flex-col gap-2.5">
+                    {[...Array(4)].map((_, i) => (
+                      <React.Fragment key={`r-${i}`}>
+                        <OkpeleSeed active={activeOkpeleSeeds > i + 4} />
+                        {i < 3 && <div className="w-0.5 h-3 bg-yellow-600/40 self-center" />}
+                      </React.Fragment>
+                    ))}
+                  </div>
                 </div>
               </div>
+
               <div ref={jarRef} className="z-10"><SatoJar holesCount={holes} isOver={isOverJar} /></div>
               <div className="scale-75"><AwaleMini seedsCount={seeds} isWrong={isWrong} /></div>
             </div>
@@ -264,23 +270,15 @@ export default function MysteresPage() {
               {!isFinished ? (
                 !showExplanation ? (
                   <div className="text-center">
-                    <h2 className="text-xl font-black mb-2 px-4 leading-tight min-h-[3.5rem] flex items-center justify-center">
-                      {currentQuestions[qIndex]?.question}
-                    </h2>
+                    <h2 className="text-xl font-black mb-2 px-4 leading-tight min-h-[3.5rem] flex items-center justify-center">{currentQuestions[qIndex]?.question}</h2>
                     <div className="flex gap-8 justify-center mb-6 text-[10px] font-bold uppercase tracking-widest text-gray-400">
                       <p>Temps : <span className="text-[#a0412d]">{timeLeft}s</span></p>
                       <p>Graines : <span className="text-[#a0412d]">{seeds}/16</span></p>
                     </div>
                     <div className="grid grid-cols-1 gap-3">
                       {['a', 'b', 'c', 'd'].map((l) => (
-                        <motion.div
-                          key={l}
-                          drag
-                          dragSnapToOrigin
-                          onDrag={(_, info) => {
-                            const jar = jarRef.current?.getBoundingClientRect();
-                            if (jar) setIsOverJar(info.point.x > jar.left && info.point.x < jar.right && info.point.y > jar.top && info.point.y < jar.bottom);
-                          }}
+                        <motion.div key={l} drag dragSnapToOrigin
+                          onDrag={(_, info) => { const jar = jarRef.current?.getBoundingClientRect(); if (jar) setIsOverJar(info.point.x > jar.left && info.point.x < jar.right && info.point.y > jar.top && info.point.y < jar.bottom); }}
                           onDragEnd={(_, info) => handleDragEnd(info, l.toUpperCase() === currentQuestions[qIndex]?.correct_answer)}
                           className="p-4 bg-[#faf9f8] border border-gray-100 rounded-2xl shadow-sm cursor-grab active:cursor-grabbing flex items-center group touch-none z-50"
                         >
@@ -291,10 +289,7 @@ export default function MysteresPage() {
                     </div>
                   </div>
                 ) : (
-                  <div
-                    onClick={() => { setShowExplanation(false); setQIndex(p => p + 1); }}
-                    className="p-8 bg-orange-50 rounded-[2rem] border border-orange-100 text-center cursor-pointer shadow-xl"
-                  >
+                  <div onClick={() => { setShowExplanation(false); setQIndex(p => p + 1); }} className="p-8 bg-orange-50 rounded-[2rem] border border-orange-100 text-center cursor-pointer shadow-xl">
                     <p className="text-lg italic font-medium text-[#a0412d]">"{currentQuestions[qIndex]?.explanation}"</p>
                     <p className="text-[10px] mt-4 uppercase tracking-widest font-black text-gray-400">Cliquez pour continuer le rituel</p>
                   </div>
@@ -303,18 +298,9 @@ export default function MysteresPage() {
                 <div className="text-center font-lato">
                   <h2 className="text-2xl font-black mb-4 uppercase text-[#a0412d] tracking-widest">Mystère Révélé</h2>
                   <div className="bg-[#faf9f8] p-6 rounded-[2rem] text-left mb-6 space-y-3 border border-gray-100">
-                    {explanations.map((exp, i) => (
-                      <p key={i} className="text-sm text-gray-600 flex items-start">
-                        <span className="text-[#a0412d] mr-2">✦</span> {exp}
-                      </p>
-                    ))}
+                    {explanations.map((exp, i) => <p key={i} className="text-sm text-gray-600 flex items-start"><span className="text-[#a0412d] mr-2">✦</span> {exp}</p>)}
                   </div>
-                  <button
-                    onClick={() => setView("gallery")}
-                    className="w-full py-4 bg-[#a0412d] text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg active:scale-95 transition-transform"
-                  >
-                    Découvrir un autre mystère
-                  </button>
+                  <button onClick={() => setView("gallery")} className="w-full py-4 bg-[#a0412d] text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg active:scale-95 transition-transform">Découvrir un autre mystère</button>
                 </div>
               )}
             </div>
