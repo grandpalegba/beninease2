@@ -34,15 +34,12 @@ const OkpeleSeed = ({ active }: { active: boolean }) => (
   </div>
 );
 
-// --- COMPOSANT OKPELE RÉVISÉ (Arc Fin & Sans Points) ---
-
 const OkpeleRitual = ({ activeSeeds }: { activeSeeds: number }) => (
   <div className="relative flex flex-col items-center scale-90">
-    {/* Arc de connexion supérieur : Épaisseur réduite à 1.5px, pas de points aux extrémités */}
+    {/* Arc de connexion supérieur fin et sans points */}
     <div className="w-20 h-10 border-t-[1.5px] border-x-[1.5px] border-yellow-600/60 rounded-t-full absolute -top-6 left-1/2 -translate-x-1/2 z-0" />
 
     <div className="flex gap-10 relative z-10 pt-4">
-      {/* Colonne Gauche */}
       <div className="flex flex-col items-center">
         {[...Array(4)].map((_, i) => (
           <React.Fragment key={`l-${i}`}>
@@ -51,7 +48,6 @@ const OkpeleRitual = ({ activeSeeds }: { activeSeeds: number }) => (
           </React.Fragment>
         ))}
       </div>
-      {/* Colonne Droite */}
       <div className="flex flex-col items-center">
         {[...Array(4)].map((_, i) => (
           <React.Fragment key={`r-${i}`}>
@@ -63,8 +59,6 @@ const OkpeleRitual = ({ activeSeeds }: { activeSeeds: number }) => (
     </div>
   </div>
 );
-
-// --- AUTRES COMPOSANTS ---
 
 const SatoJar = ({ holesCount, isOver }: { holesCount: number[], isOver: boolean }) => (
   <div className={`relative w-64 h-80 md:w-72 md:h-96 shrink-0 transition-transform duration-500 ${isOver ? 'scale-105' : 'scale-100'}`}>
@@ -106,26 +100,18 @@ const AwaleMini = ({ seedsCount, isWrong }: { seedsCount: number, isWrong: boole
   <motion.div animate={isWrong ? { x: [-1, 1, -1, 1, 0] } : {}}
     className="relative w-32 bg-[#833321] rounded-[2rem] p-4 shadow-xl flex flex-row justify-center gap-4 border-[3px] border-[#652719] shrink-0"
   >
-    <div className="grid grid-cols-1 gap-3 z-10">
-      {[...Array(4)].map((_, i) => (
-        <div key={`left-${i}`} className="w-8 h-8 bg-[#532015] rounded-full shadow-inner flex items-center justify-center relative">
-          <div className="flex gap-0.5 flex-wrap justify-center p-1">
-            {seedsCount > i * 2 && <div className="w-2 h-2 rounded-full bg-yellow-400 shadow-[0_0_4px_#facc15]" />}
-            {seedsCount > i * 2 + 1 && <div className="w-2 h-2 rounded-full bg-yellow-400 shadow-[0_0_4px_#facc15]" />}
+    {[...Array(2)].map((_, col) => (
+      <div key={col} className="grid grid-cols-1 gap-3 z-10">
+        {[...Array(4)].map((_, i) => (
+          <div key={`${col}-${i}`} className="w-8 h-8 bg-[#532015] rounded-full shadow-inner flex items-center justify-center relative">
+            <div className="flex gap-0.5 flex-wrap justify-center p-1">
+              {seedsCount > (col * 4 + i) * 2 && <div className="w-2 h-2 rounded-full bg-yellow-400 shadow-[0_0_4px_#facc15]" />}
+              {seedsCount > (col * 4 + i) * 2 + 1 && <div className="w-2 h-2 rounded-full bg-yellow-400 shadow-[0_0_4px_#facc15]" />}
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
-    <div className="grid grid-cols-1 gap-3 z-10">
-      {[...Array(4)].map((_, i) => (
-        <div key={`right-${i}`} className="w-8 h-8 bg-[#532015] rounded-full shadow-inner flex items-center justify-center relative">
-          <div className="flex gap-0.5 flex-wrap justify-center p-1">
-            {seedsCount > (i + 4) * 2 && <div className="w-2 h-2 rounded-full bg-yellow-400 shadow-[0_0_4px_#facc15]" />}
-            {seedsCount > (i + 4) * 2 + 1 && <div className="w-2 h-2 rounded-full bg-yellow-400 shadow-[0_0_4px_#facc15]" />}
-          </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+    ))}
   </motion.div>
 );
 
@@ -233,63 +219,72 @@ export default function MysteresPage() {
         ) : (
           <motion.div key="ritual" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-50 flex flex-col items-center p-6 overflow-y-auto no-scrollbar">
 
-            {/* OBJETS RITUELS RÉAJUSTÉS */}
-            <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-6 md:gap-20 mb-12 h-[450px] shrink-0">
-              {/* L'Okpele Affiné */}
+            {/* OBJETS RITUELS */}
+            <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-6 md:gap-20 mb-12 h-[400px] shrink-0">
               <div className="flex flex-col items-center gap-6">
                 <div className="pt-8">
                   <OkpeleRitual activeSeeds={activeOkpeleSeeds} />
                 </div>
-                {/* Information de stats sous l'Okpele */}
-                <div className="flex gap-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
                   <p>Temps : <span className="text-[#a0412d]">{timeLeft}s</span></p>
                 </div>
               </div>
 
-              {/* La Jarre */}
               <div ref={jarRef} className="z-10 pt-4">
                 <SatoJar holesCount={holes} isOver={isOverJar} />
               </div>
 
-              {/* L'Awale avec les graines en dessous */}
               <div className="flex flex-col items-center gap-6">
                 <div className="scale-90 pt-12">
                   <AwaleMini seedsCount={seeds} isWrong={isWrong} />
                 </div>
-                <div className="flex gap-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
                   <p>Graines : <span className="text-[#a0412d]">{seeds}/16</span></p>
                 </div>
               </div>
             </div>
 
-            {/* ZONE D'INTERACTION */}
+            {/* ZONE D'INTERACTION : QUESTIONS ET RÉPONSES */}
             <div className="w-full max-w-xl pb-10">
               {!isFinished ? (
                 !showExplanation ? (
                   <div className="text-center">
-                    <h2 className="text-xl font-bold mb-10 px-4 leading-[1.7] min-h-[4rem] flex items-center justify-center text-gray-700">{currentQuestions[qIndex]?.question}</h2>
+                    <motion.h2
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-xl font-bold mb-10 px-4 leading-[1.7] min-h-[4rem] flex items-center justify-center text-gray-700"
+                    >
+                      {currentQuestions[qIndex]?.question || "Chargement du mystère..."}
+                    </motion.h2>
 
                     <div className="grid grid-cols-1 gap-3">
                       {['a', 'b', 'c', 'd'].map((l) => (
-                        <motion.div key={l} drag dragSnapToOrigin
-                          onDrag={(_, info) => {
-                            const jar = jarRef.current?.getBoundingClientRect();
-                            if (jar) setIsOverJar(info.point.x > jar.left && info.point.x < jar.right && info.point.y > jar.top && info.point.y < jar.bottom);
-                          }}
-                          onDragEnd={(_, info) => handleDragEnd(info, l.toUpperCase() === currentQuestions[qIndex]?.correct_answer)}
-                          className="p-4 bg-white border border-gray-100 rounded-2xl shadow-sm cursor-grab active:cursor-grabbing flex items-center group touch-none z-50 hover:border-[#a0412d]/20 transition-colors"
-                        >
-                          <span className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center font-bold text-[#a0412d] mr-4 uppercase">{l}</span>
-                          <span className="font-bold text-gray-600 text-sm text-left leading-relaxed">{currentQuestions[qIndex]?.[`choice_${l}`]}</span>
-                        </motion.div>
+                        currentQuestions[qIndex]?.[`choice_${l}`] && (
+                          <motion.div key={l} drag dragSnapToOrigin
+                            onDrag={(_, info) => {
+                              const jar = jarRef.current?.getBoundingClientRect();
+                              if (jar) setIsOverJar(info.point.x > jar.left && info.point.x < jar.right && info.point.y > jar.top && info.point.y < jar.bottom);
+                            }}
+                            onDragEnd={(_, info) => handleDragEnd(info, l.toUpperCase() === currentQuestions[qIndex]?.correct_answer)}
+                            className="p-4 bg-white border border-gray-100 rounded-2xl shadow-sm cursor-grab active:cursor-grabbing flex items-center group touch-none z-50 hover:border-[#a0412d]/20 transition-colors"
+                          >
+                            <span className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center font-bold text-[#a0412d] mr-4 uppercase">{l}</span>
+                            <span className="font-bold text-gray-600 text-sm text-left leading-relaxed">{currentQuestions[qIndex][`choice_${l}`]}</span>
+                          </motion.div>
+                        )
                       ))}
                     </div>
                   </div>
                 ) : (
-                  <div onClick={() => { setShowExplanation(false); setQIndex(p => p + 1); }} className="p-8 bg-orange-50/50 rounded-[2rem] border border-orange-100/50 text-center cursor-pointer">
+                  <motion.div
+                    initial={{ scale: 0.95, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    onClick={() => { setShowExplanation(false); setQIndex(p => p + 1); }}
+                    className="p-8 bg-orange-50/50 rounded-[2rem] border border-orange-100/50 text-center cursor-pointer"
+                  >
                     <p className="text-lg italic font-medium text-[#a0412d]">"{currentQuestions[qIndex]?.explanation}"</p>
                     <p className="text-[10px] mt-4 uppercase tracking-widest font-black text-gray-300">Cliquez pour continuer le rituel</p>
-                  </div>
+                  </motion.div>
                 )
               ) : (
                 <div className="text-center">
