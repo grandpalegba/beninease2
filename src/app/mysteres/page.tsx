@@ -16,18 +16,18 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const OkpeleSeed = ({ active }: { active: boolean }) => (
   <div className="flex flex-col items-center relative z-10">
     <div
-      className="w-10 h-12 shadow-md relative overflow-hidden ring-1 ring-black/5 transition-all duration-500"
+      className="w-12 h-14 shadow-md relative overflow-hidden ring-1 ring-black/5 transition-all duration-500"
       style={{
         backgroundColor: '#833321',
-        borderRadius: '50% 50% 45% 45% / 70% 70% 30% 30%',
-        opacity: active ? 1 : 0.4
+        borderRadius: '50% 50% 45% 45% / 70% 70% 30% 30%', // pear-seed-inverted
+        opacity: active ? 1 : 0.3
       }}
     >
-      <div className={`absolute inset-0 ${active ? 'bg-gradient-to-br from-white/20 to-black/30' : 'bg-black/20'}`} />
+      <div className={`absolute inset-0 ${active ? 'bg-gradient-to-br from-white/20 to-black/30' : 'bg-black/40'}`} />
       {active && (
         <motion.div
           initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-7 bg-yellow-400 rounded-full shadow-[0_0_10px_#facc15]"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-8 bg-yellow-400 rounded-full shadow-[0_0_10px_#facc15,0_0_4px_#facc15]"
         />
       )}
     </div>
@@ -224,63 +224,49 @@ export default function MysteresPage() {
                 </div>
               </div>
             </motion.div>
-            <p className="mt-8 text-[10px] font-black text-gray-300 uppercase tracking-[0.25em] animate-pulse">Swipe pour naviguer • Tap pour l'initiation</p>
           </motion.div>
         ) : (
           <motion.div key="ritual" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-50 flex flex-col items-center p-6 overflow-y-auto no-scrollbar">
 
-            {/* --- EXPÉRIENCE OUKPÉLÉ ASSOUPLIE --- */}
-            <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-4 md:gap-12 mb-8 h-[450px] shrink-0">
+            {/* --- OKPELE RITUAL OBJECT (EXACT STITCH REPRODUCTION) --- */}
+            <div className="w-full max-w-5xl flex flex-col items-center justify-center mt-12 mb-8 shrink-0">
+              <div className="flex flex-row items-center justify-center gap-4 md:gap-16 relative">
 
-              <div className="relative flex flex-col items-center scale-[0.9] origin-center">
-                {/* CHAINE DORÉE SVG */}
-                <svg className="absolute -top-10 left-1/2 -translate-x-1/2 w-48 h-24 z-0 overflow-visible" viewBox="0 0 120 60">
-                  <path
-                    d="M 15 60 C 15 -10, 105 -10, 105 60"
-                    fill="none"
-                    stroke="#facc15"
-                    strokeWidth="4"
-                    strokeLinecap="round"
-                    className="drop-shadow-[0_3px_5px_rgba(0,0,0,0.3)]"
-                  />
-                  <circle cx="15" cy="60" r="4" fill="#ca8a04" />
-                  <circle cx="105" cy="60" r="4" fill="#ca8a04" />
-                </svg>
+                {/* Arc de connexion supérieur */}
+                <div className="w-24 h-16 border-t-[3px] border-x-[3px] border-yellow-600/70 rounded-t-full absolute -top-14 left-1/2 -translate-x-1/2 z-0">
+                  <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-yellow-600 rounded-full"></div>
+                  <div className="absolute -bottom-1 -right-1 w-2 h-2 bg-yellow-600 rounded-full"></div>
+                </div>
 
-                <div className="flex gap-12 pt-10">
+                <div className="flex gap-12 relative z-10">
                   {/* Colonne Gauche */}
                   <div className="flex flex-col items-center">
-                    <div className="w-0.5 h-4 bg-yellow-600/60 mb-1" />
-                    <div className="flex flex-col gap-2.5">
-                      {[...Array(4)].map((_, i) => (
-                        <React.Fragment key={`l-${i}`}>
-                          <OkpeleSeed active={activeOkpeleSeeds > i} />
-                          {i < 3 && <div className="w-0.5 h-3 bg-yellow-600/40 self-center" />}
-                        </React.Fragment>
-                      ))}
-                    </div>
+                    {[...Array(4)].map((_, i) => (
+                      <React.Fragment key={`l-${i}`}>
+                        <OkpeleSeed active={activeOkpeleSeeds > i} />
+                        {i < 3 && <div className="w-[2px] h-4 bg-gradient-to-b from-yellow-600 to-yellow-700 shadow-sm" />}
+                      </React.Fragment>
+                    ))}
                   </div>
 
                   {/* Colonne Droite */}
                   <div className="flex flex-col items-center">
-                    <div className="w-0.5 h-4 bg-yellow-600/60 mb-1" />
-                    <div className="flex flex-col gap-2.5">
-                      {[...Array(4)].map((_, i) => (
-                        <React.Fragment key={`r-${i}`}>
-                          <OkpeleSeed active={activeOkpeleSeeds > i + 4} />
-                          {i < 3 && <div className="w-0.5 h-3 bg-yellow-600/40 self-center" />}
-                        </React.Fragment>
-                      ))}
-                    </div>
+                    {[...Array(4)].map((_, i) => (
+                      <React.Fragment key={`r-${i}`}>
+                        <OkpeleSeed active={activeOkpeleSeeds > i + 4} />
+                        {i < 3 && <div className="w-[2px] h-4 bg-gradient-to-b from-yellow-600 to-yellow-700 shadow-sm" />}
+                      </React.Fragment>
+                    ))}
                   </div>
                 </div>
+
+                {/* Jarre interactive Sato (placée à droite ou au centre selon layout) */}
+                <div ref={jarRef} className="ml-8 md:ml-12 z-10"><SatoJar holesCount={holes} isOver={isOverJar} /></div>
+
+                {/* Mini Awale */}
+                <div className="scale-75 ml-4"><AwaleMini seedsCount={seeds} isWrong={isWrong} /></div>
               </div>
-
-              {/* Jarre interactive Sato */}
-              <div ref={jarRef} className="z-10"><SatoJar holesCount={holes} isOver={isOverJar} /></div>
-
-              {/* Mini Awale de vie */}
-              <div className="scale-75"><AwaleMini seedsCount={seeds} isWrong={isWrong} /></div>
+              <span className="text-[10px] uppercase tracking-[0.4em] text-gray-300 mt-12 font-light font-lato">Okpele</span>
             </div>
 
             <div className="w-full max-w-xl pb-10">
