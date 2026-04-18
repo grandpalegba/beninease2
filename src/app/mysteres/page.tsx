@@ -8,10 +8,10 @@ import { confetti } from "tsparticles-confetti";
 
 // --- CONFIGURATION SUPABASE ---
 const SUPABASE_URL = "https://wtjhkqkqmexddroqwawk.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0amhrcWtxbWV4ZGRyb3F3YXdrIiwicm9sZSI6ImFunonIiwiaWF0IjoxNzc0MzA1Nzc0LCJleHAiOjIwODk4ODE3NzR9.TdaWEVQxKF6s2j-7QStHZaFbOqs4e3UHVUN7iGQL_vc";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0amhrcWtxbWV4ZGRyb3F3YXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDU3NzQsImV4cCI6MjA4OTg4MTc3NH0.TdaWEVQxKF6s2j-7QStHZaFbOqs4e3UHVUN7iGQL_vc";
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// --- COMPOSANTS DE RITUEL ---
+// --- COMPOSANTS VISUELS ---
 
 const OkpeleSeed = ({ active }: { active: boolean }) => (
   <div className="flex flex-col items-center relative z-10">
@@ -113,6 +113,8 @@ const AwaleMini = ({ seedsCount, isWrong }: { seedsCount: number, isWrong: boole
   </motion.div>
 );
 
+// --- PAGE PRINCIPALE ---
+
 export default function MysteresPage() {
   const [loading, setLoading] = useState(true);
   const [mysteres, setMysteres] = useState<any[]>([]);
@@ -135,14 +137,19 @@ export default function MysteresPage() {
 
   useEffect(() => {
     async function fetchData() {
-      const { data: mData } = await supabase.from('mysteres').select('*');
-      const { data: qData } = await supabase.from('questions').select('*');
-      const { data: tData } = await supabase.from('themes').select('id, name');
+      try {
+        const { data: mData } = await supabase.from('mysteres').select('*');
+        const { data: qData } = await supabase.from('questions').select('*');
+        const { data: tData } = await supabase.from('themes').select('id, name');
 
-      if (tData) setThemes(tData.reduce((acc: any, t: any) => ({ ...acc, [t.id]: t.name }), {}));
-      if (mData) setMysteres(mData.sort(() => Math.random() - 0.5));
-      if (qData) setAllQuestions(qData);
-      setLoading(false);
+        if (tData) setThemes(tData.reduce((acc: any, t: any) => ({ ...acc, [t.id]: t.name }), {}));
+        if (mData) setMysteres(mData.sort(() => Math.random() - 0.5));
+        if (qData) setAllQuestions(qData);
+      } catch (e) {
+        toast.error("Erreur de connexion");
+      } finally {
+        setLoading(false);
+      }
     }
     fetchData();
   }, []);
@@ -170,7 +177,7 @@ export default function MysteresPage() {
       if (isCorrect) {
         const nextHoles = holes.slice(1);
         setHoles(nextHoles);
-        setExplanations(prev => [...prev, currentQuestions[qIndex].explanation]);
+        setExplanations(prev => [...prev, currentQuestions[qIndex]?.explanation || "Sagesse acquise"]);
         if (nextHoles.length === 0) {
           setIsFinished(true);
           confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
@@ -200,22 +207,27 @@ export default function MysteresPage() {
               className="w-full max-w-[320px] h-[580px] bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-pointer flex flex-col"
             >
               <div className="pt-5 pb-3 px-7 text-center">
-                <span className="text-[11px] font-medium text-gray-400 uppercase tracking-[0.35em]">{themes[currentM.theme_id] || "Bénin Éternel"}</span>
+                <span className="text-[11px] font-medium text-gray-400 uppercase tracking-[0.35em]">
+                  {currentM?.theme_id ? themes[currentM.theme_id] : "Bénin Éternel"}
+                </span>
               </div>
-              {/* Image consolidée : pas de drag, pas de sélection souris */}
+
               <div className="h-[55%] w-full overflow-hidden select-none pointer-events-none">
-                <img
-                  src={`https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/mysteres-assets/${currentM.id}.jpg`}
-                  className="h-full w-full object-cover"
-                  alt=""
-                  draggable="false"
-                />
+                {currentM?.id && (
+                  <img
+                    src={`https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/mysteres-assets/${currentM.id}.jpg`}
+                    className="h-full w-full object-cover"
+                    alt=""
+                    draggable="false"
+                  />
+                )}
               </div>
+
               <div className="p-7 flex flex-col flex-1">
-                <h2 className="text-[24px] font-black leading-[1.1] tracking-[0.05em] uppercase">{currentM.title}</h2>
-                <p className="text-[11px] font-bold text-[#a0412d] mt-1 italic tracking-[0.12em] uppercase">{currentM.subtitle}</p>
+                <h2 className="text-[24px] font-black leading-[1.1] tracking-[0.05em] uppercase">{currentM?.title || "Mystère"}</h2>
+                <p className="text-[11px] font-bold text-[#a0412d] mt-1 italic tracking-[0.12em] uppercase">{currentM?.subtitle}</p>
                 <div className="mt-3 pt-3 border-t border-gray-50 flex-1 overflow-y-auto no-scrollbar">
-                  <p className="text-[15px] text-gray-400 italic leading-[1.6]">"{currentM.mise_en_abyme}"</p>
+                  <p className="text-[15px] text-gray-400 italic leading-[1.6]">"{currentM?.mise_en_abyme}"</p>
                 </div>
               </div>
             </motion.div>
@@ -228,49 +240,38 @@ export default function MysteresPage() {
             exit={{ y: "100%" }}
             drag="y"
             dragConstraints={{ top: 0, bottom: 0 }}
-            onDragEnd={(_, info) => {
-              // Swipe vers le bas pour quitter le rituel
-              if (info.offset.y > 100) setView("gallery");
-            }}
+            dragElastic={0.2}
+            onDragEnd={(_, info) => { if (info.offset.y > 150) setView("gallery"); }}
             className="absolute inset-0 bg-white z-50 flex flex-col items-center p-6 overflow-y-auto no-scrollbar"
           >
 
-            {/* OBJETS RITUELS */}
             <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-6 md:gap-20 mb-12 h-[400px] shrink-0">
               <div className="flex flex-col items-center gap-6">
-                <div className="pt-8">
-                  <OkpeleRitual activeSeeds={activeOkpeleSeeds} />
-                </div>
+                <div className="pt-8"><OkpeleRitual activeSeeds={activeOkpeleSeeds} /></div>
                 <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
                   <p>Temps : <span className="text-[#a0412d]">{timeLeft}s</span></p>
                 </div>
               </div>
 
-              <div ref={jarRef} className="z-10 pt-4">
-                <SatoJar holesCount={holes} isOver={isOverJar} />
-              </div>
+              <div ref={jarRef} className="z-10 pt-4"><SatoJar holesCount={holes} isOver={isOverJar} /></div>
 
               <div className="flex flex-col items-center gap-6">
-                <div className="scale-90 pt-12">
-                  <AwaleMini seedsCount={seeds} isWrong={isWrong} />
-                </div>
+                <div className="scale-90 pt-12"><AwaleMini seedsCount={seeds} isWrong={isWrong} /></div>
                 <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
                   <p>Graines : <span className="text-[#a0412d]">{seeds}/16</span></p>
                 </div>
               </div>
             </div>
 
-            {/* ZONE D'INTERACTION */}
             <div className="w-full max-w-xl pb-10">
               {!isFinished ? (
                 !showExplanation ? (
                   <div className="text-center">
                     <motion.h2
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
+                      initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                       className="text-xl font-bold mb-10 px-4 leading-[1.7] min-h-[4rem] flex items-center justify-center text-gray-700"
                     >
-                      {currentQuestions[qIndex]?.question || "Chargement du mystère..."}
+                      {currentQuestions[qIndex]?.question || "Chargement..."}
                     </motion.h2>
 
                     <div className="grid grid-cols-1 gap-3">
@@ -293,13 +294,12 @@ export default function MysteresPage() {
                   </div>
                 ) : (
                   <motion.div
-                    initial={{ scale: 0.95, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
+                    initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
                     onClick={() => { setShowExplanation(false); setQIndex(p => p + 1); }}
                     className="p-8 bg-orange-50/50 rounded-[2rem] border border-orange-100/50 text-center cursor-pointer"
                   >
                     <p className="text-lg italic font-medium text-[#a0412d]">"{currentQuestions[qIndex]?.explanation}"</p>
-                    <p className="text-[10px] mt-4 uppercase tracking-widest font-black text-gray-300">Cliquez pour continuer le rituel</p>
+                    <p className="text-[10px] mt-4 uppercase tracking-widest font-black text-gray-300">Cliquez pour continuer</p>
                   </motion.div>
                 )
               ) : (
