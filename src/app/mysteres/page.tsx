@@ -11,7 +11,7 @@ const SUPABASE_URL = "https://wtjhkqkqmexddroqwawk.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0amhrcWtxbWV4ZGRyb3F3YXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDU3NzQsImV4cCI6MjA4OTg4MTc3NH0.TdaWEVQxKF6s2j-7QStHZaFbOqs4e3UHVUN7iGQL_vc";
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Fonction Shuffle
+// Fonction Shuffle pour l'ordre aléatoire des 256 mystères
 const shuffleArray = (array: any[]) => {
   return [...array].sort(() => Math.random() - 0.5);
 };
@@ -60,7 +60,7 @@ export default function MysteresPage() {
     async function fetchData() {
       const { data: mData } = await supabase.from('mysteres').select('*');
       const { data: qData } = await supabase.from('questions').select('*');
-      if (mData) setMysteres(shuffleArray(mData)); // Application du SHUFFLE ici
+      if (mData) setMysteres(shuffleArray(mData));
       if (qData) setAllQuestions(qData);
       setLoading(false);
     }
@@ -84,18 +84,17 @@ export default function MysteresPage() {
 
   const handleAnswer = (isCorrect: boolean) => {
     if (isCorrect) {
+      setExplanations(prev => [...prev, currentQuestions[qIndex].explanation]);
       if (qIndex === 3) {
-        setExplanations(prev => [...prev, currentQuestions[qIndex].explanation]);
         setView("success");
         confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
       } else {
-        setExplanations(prev => [...prev, currentQuestions[qIndex].explanation]);
         setQIndex(prev => prev + 1);
         toast.success("Énergie capturée...");
       }
     } else {
       setSeeds(s => Math.max(0, s - 1));
-      toast.error("Vibration incorrecte");
+      toast.error("Vibration discordante");
     }
   };
 
@@ -131,9 +130,9 @@ export default function MysteresPage() {
                 if (info.offset.x > 60) setCurrentIndex(prev => (prev - 1 + mysteres.length) % mysteres.length);
               }}
               onClick={() => { setQIndex(0); setExplanations([]); setView("challenge"); }}
-              className="w-full max-w-[340px] h-[580px] bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-pointer flex flex-col"
+              className="w-full max-w-[340px] h-[600px] bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-pointer flex flex-col"
             >
-              {/* Image plus haute (65%) */}
+              {/* Image haute (65%) pour éviter les coupes de têtes */}
               <div className="h-[65%] w-full overflow-hidden">
                 <img
                   src={getImageUrl(currentM.id)}
@@ -143,23 +142,23 @@ export default function MysteresPage() {
                 />
               </div>
 
-              {/* Contenu Texte */}
-              <div className="p-6 flex flex-col flex-1 bg-white">
-                <h2 className="font-lato text-2xl font-black text-[#1a1a1a] uppercase leading-none tracking-tight">
+              {/* Contenu Texte avec Lato et Casse Normale */}
+              <div className="p-7 flex flex-col flex-1 bg-white">
+                <h2 className="font-lato text-[26px] font-black text-[#1a1a1a] leading-[1.1] tracking-tight">
                   {currentM.title}
                 </h2>
-                <p className="font-lato text-[11px] font-bold text-[#a0412d] mt-2 italic uppercase tracking-wider">
+                <p className="font-lato text-[12px] font-bold text-[#a0412d] mt-2 italic tracking-wide">
                   {currentM.subtitle}
                 </p>
-                <div className="mt-4 border-t border-gray-50 pt-4">
-                  <p className="font-lato text-[13px] text-gray-500 italic leading-[1.8] line-clamp-3">
+                <div className="mt-5 border-t border-gray-50 pt-5">
+                  <p className="font-lato text-[14px] text-gray-500 italic leading-[1.8] line-clamp-3">
                     "{currentM.mise_en_abyme}"
                   </p>
                 </div>
               </div>
             </motion.div>
-            <p className="mt-6 text-[9px] font-black text-gray-300 uppercase tracking-[0.2em] animate-pulse font-lato">
-              Swipe pour explorer • Tap pour l'initiation
+            <p className="mt-8 text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] animate-pulse font-lato">
+              Swipe pour naviguer • Tap pour entrer
             </p>
           </motion.div>
         )}
@@ -176,7 +175,7 @@ export default function MysteresPage() {
             onDragEnd={(_, info) => { if (info.offset.y > 120) setView("gallery"); }}
             className="absolute inset-0 bg-white z-50 flex flex-col overflow-hidden"
           >
-            <div className="h-10 w-full flex items-center justify-center shrink-0">
+            <div className="h-12 w-full flex items-center justify-center shrink-0 cursor-grab active:cursor-grabbing">
               <div className="w-12 h-1.5 bg-gray-100 rounded-full" />
             </div>
 
@@ -184,7 +183,7 @@ export default function MysteresPage() {
               {view === "challenge" ? (
                 <div className="max-w-md mx-auto flex flex-col h-full font-lato">
                   <SatoJar filledCount={qIndex} />
-                  <h1 className="text-xl font-black text-center text-[#1a1a1a] uppercase mb-8 leading-snug">
+                  <h1 className="text-2xl font-black text-center text-[#1a1a1a] mb-8 leading-snug">
                     {currentQuestions[qIndex]?.question}
                   </h1>
 
@@ -206,36 +205,39 @@ export default function MysteresPage() {
                     })}
                   </div>
                   <div className="mt-auto pt-8 flex justify-between items-center opacity-30">
-                    <span className="text-[10px] font-black uppercase">Vies : {seeds}</span>
-                    <span className="text-[10px] font-black uppercase">Étape {qIndex + 1}/4</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest">Graines : {seeds}/16</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest">Rituel {qIndex + 1}/4</span>
                   </div>
                 </div>
               ) : (
                 <div className="max-w-md mx-auto h-full flex flex-col font-lato">
                   <div className="text-center mb-8">
-                    <div className="w-16 h-16 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">🏺</div>
-                    <h2 className="text-3xl font-black uppercase text-[#1a1a1a]">{currentM.title}</h2>
+                    <div className="w-20 h-20 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">🏺</div>
+                    <h2 className="text-3xl font-black text-[#1a1a1a] leading-tight">{currentM.title}</h2>
                   </div>
                   <div className="space-y-6 flex-1">
-                    <div className="p-6 bg-[#3d1810] rounded-[30px] italic text-center text-orange-50 border-2 border-[#fdb813]">
+                    <div className="p-7 bg-[#3d1810] rounded-[35px] italic text-center text-orange-50 border-2 border-[#fdb813] shadow-xl">
                       "{currentM.inspiration}"
                     </div>
                     <div className="space-y-4">
                       {explanations.map((text, i) => (
                         <motion.div key={i} className="p-5 bg-orange-50/50 border-l-4 border-[#a0412d] rounded-r-2xl">
-                          <p className="text-[13px] leading-relaxed text-gray-700 font-medium">{text}</p>
+                          <p className="text-[14px] leading-relaxed text-gray-700 font-medium">{text}</p>
                         </motion.div>
                       ))}
                     </div>
                   </div>
                   <button
                     onClick={() => { setView("gallery"); setCurrentIndex(prev => (prev + 1) % mysteres.length); }}
-                    className="mt-8 w-full py-5 bg-[#a0412d] text-white rounded-full font-black uppercase text-xs tracking-widest shadow-xl"
+                    className="mt-10 w-full py-5 bg-[#a0412d] text-white rounded-full font-black uppercase text-xs tracking-widest shadow-xl active:scale-95 transition-transform"
                   >
-                    Suivant
+                    Mystère suivant
                   </button>
                 </div>
               )}
+            </div>
+            <div className="pb-6 text-center shrink-0 opacity-20">
+              <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Glissez vers le bas pour quitter</p>
             </div>
           </motion.div>
         )}
