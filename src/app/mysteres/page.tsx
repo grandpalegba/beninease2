@@ -35,7 +35,7 @@ const OkpeleSeed = ({ active }: { active: boolean }) => (
 );
 
 const OkpeleRitual = ({ activeSeeds }: { activeSeeds: number }) => (
-  <div className="relative flex flex-col items-center scale-[0.65] md:scale-90 origin-top">
+  <div className="relative flex flex-col items-center scale-[0.65] md:scale-90 origin-center">
     <div className="w-[64px] md:w-[80px] h-10 border-t-[1.5px] border-x-[1.5px] border-yellow-700/40 rounded-t-[40px] absolute top-[2px] left-1/2 -translate-x-1/2 z-0" />
     <div className="flex gap-8 md:gap-10 relative z-10 pt-10">
       <div className="flex flex-col items-center">
@@ -202,11 +202,9 @@ export default function MysteresPage() {
                 else if (info.offset.y < -50) startRitual();
               }}
               onClick={startRitual}
-              /* 1. CARTES REMONTÉES : Marges négatives ajustées */
               className="w-full max-w-[320px] h-[520px] md:h-[580px] -mt-12 md:-mt-20 bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-pointer flex flex-col"
             >
               <div className="pt-5 pb-3 px-7 text-center select-none">
-                {/* LA CATÉGORIE (Modèle Sans-Serif) */}
                 <span className="text-[10px] md:text-[11px] font-medium text-gray-400 uppercase tracking-[0.35em] font-sans">
                   {themes[currentM.theme_id] || "Bénin Éternel"}
                 </span>
@@ -215,11 +213,9 @@ export default function MysteresPage() {
                 <img src={`https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/mysteres-assets/${currentM.id}.jpg`} className="h-full w-full object-cover" alt="" />
               </div>
               <div className="p-6 md:p-7 flex flex-col flex-1 bg-white select-none pointer-events-none">
-                {/* 2. LE TITRE : Forcé en font-sans + tracking identique à la catégorie */}
                 <h2 className="text-[15px] md:text-[17px] font-medium font-sans leading-tight uppercase tracking-[0.35em] text-[#1a1a1a]">
                   {currentM.title}
                 </h2>
-
                 <p className="text-[10px] md:text-[11px] font-bold text-[#a0412d] mt-2 italic uppercase">
                   {currentM.subtitle}
                 </p>
@@ -240,17 +236,33 @@ export default function MysteresPage() {
             className="absolute inset-0 bg-white z-50 flex flex-col items-center p-4 overflow-hidden"
           >
             <div className="w-12 h-1 bg-gray-100 rounded-full mb-4 shrink-0" />
-            <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-2 md:gap-20 h-[220px] md:h-[400px] shrink-0">
-              <div className="flex flex-col items-center">
+
+            {/* --- SECTION RITUEL CENTRÉE VERTICALEMENT --- */}
+            <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-4 md:gap-20 h-[250px] md:h-[450px] shrink-0">
+
+              {/* 1. OKPELE (Centré verticalement) */}
+              <div className="flex flex-col items-center justify-center">
                 <OkpeleRitual activeSeeds={Math.ceil(timeLeft / 8)} />
-                <p className="text-[9px] font-bold uppercase text-gray-300 mt-2">{timeLeft}s</p>
+                <p className="text-[9px] md:text-[11px] font-bold uppercase text-gray-400 mt-4 tracking-wider">
+                  Temps : {timeLeft}s
+                </p>
               </div>
-              <div ref={jarRef} className="z-10"><SatoJar holesCount={holes} isOver={isOverJar} /></div>
-              <div className="flex flex-col items-center">
+
+              {/* 2. JARRE (Pivot central) */}
+              <div ref={jarRef} className="z-10 flex items-center justify-center">
+                <SatoJar holesCount={holes} isOver={isOverJar} />
+              </div>
+
+              {/* 3. AWALE (Symétrique à l'Okpele) */}
+              <div className="flex flex-col items-center justify-center">
                 <AwaleMini seedsCount={seeds} isWrong={isWrong} />
-                <p className="text-[9px] font-bold uppercase text-gray-300 mt-2">{seeds}/16</p>
+                <p className="text-[9px] md:text-[11px] font-bold uppercase text-gray-400 mt-4 tracking-wider">
+                  Graines sacrées : {seeds} / 16
+                </p>
               </div>
+
             </div>
+
             <div className="w-full max-w-xl flex-1 flex flex-col justify-center pb-4">
               {!isFinished ? (
                 !showExplanation ? (
