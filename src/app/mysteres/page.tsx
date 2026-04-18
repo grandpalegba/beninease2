@@ -6,12 +6,11 @@ import { createClient } from "@supabase/supabase-js";
 import { toast, Toaster } from "sonner";
 import { confetti } from "tsparticles-confetti";
 
-// --- CONFIGURATION ---
 const SUPABASE_URL = "https://wtjhkqkqmexddroqwawk.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0amhrcWtxbWV4ZGRyb3F3YXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDU3NzQsImV4cCI6MjA4OTg4MTc3NH0.TdaWEVQxKF6s2j-7QStHZaFbOqs4e3UHVUN7iGQL_vc";
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// --- COMPOSANTS VISUELS ---
+// --- VISUELS ---
 
 const OkpeleSeed = ({ active }: { active: boolean }) => (
   <div className="flex flex-col items-center relative">
@@ -33,8 +32,35 @@ const OkpeleSeed = ({ active }: { active: boolean }) => (
   </div>
 );
 
+const SatoJar = ({ holesCount, isOver }: { holesCount: number[], isOver: boolean }) => (
+  <div className={`relative w-64 h-80 md:w-72 md:h-96 transition-transform duration-500 ${isOver ? 'scale-105' : 'scale-100'}`}>
+    {/* Haut de la Jarre - Effet de col réaliste */}
+    <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-36 h-9 bg-[#1a0a07] rounded-[50%] z-20 shadow-[inset_0_4px_8px_rgba(0,0,0,0.6)]" />
+    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[148px] h-7 bg-[#4d1f15] rounded-[50%] z-10 border-b border-black/20" />
+
+    <div className="absolute inset-0 mt-4"
+      style={{
+        background: 'linear-gradient(165deg, #a0412d 0%, #8b3422 45%, #7a2a1b 100%)',
+        borderRadius: '42% 38% 34% 36% / 45% 45% 32% 32%',
+        boxShadow: 'inset -12px -12px 30px rgba(0,0,0,0.4), 0 25px 50px rgba(0,0,0,0.25)',
+      }}>
+      <div className="relative w-full h-full p-8">
+        <AnimatePresence>
+          {holesCount.map((hIdx) => (
+            <motion.div key={hIdx} exit={{ opacity: 0, scale: 2, filter: "blur(4px)" }}
+              className={`absolute rounded-full bg-[#1a0a07] shadow-[inset_2px_2px_6px_rgba(0,0,0,0.8)]
+                ${hIdx === 0 ? 'top-[35%] left-[25%] w-8 h-8' : hIdx === 1 ? 'top-[28%] left-[55%] w-7 h-7' : hIdx === 2 ? 'top-[58%] left-[38%] w-10 h-10' : 'top-[52%] left-[68%] w-6 h-6'}`}
+            />
+          ))}
+        </AnimatePresence>
+      </div>
+    </div>
+  </div>
+);
+
+// --- COMPOSANTS AUXILIAIRES ---
 const OkpeleRitual = ({ activeSeeds }: { activeSeeds: number }) => (
-  <div className="relative flex flex-col items-center scale-75 md:scale-90">
+  <div className="relative flex flex-col items-center scale-75 md:scale-90 opacity-80">
     <div className="w-20 h-10 border-t-[1.5px] border-x-[1.5px] border-yellow-600/30 rounded-t-full absolute -top-6 left-1/2 -translate-x-1/2" />
     <div className="flex gap-10 relative pt-4">
       {[0, 4].map((start) => (
@@ -51,35 +77,9 @@ const OkpeleRitual = ({ activeSeeds }: { activeSeeds: number }) => (
   </div>
 );
 
-const SatoJar = ({ holesCount, isOver }: { holesCount: number[], isOver: boolean }) => (
-  <div className={`relative w-60 h-72 md:w-72 md:h-96 transition-transform duration-500 ${isOver ? 'scale-105' : 'scale-100'}`}>
-    {/* Ouverture supérieure (Col de la Jarre) */}
-    <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-32 h-8 bg-[#1a0a07] rounded-[50%] z-20 shadow-lg" />
-    <div className="absolute top-1 left-1/2 -translate-x-1/2 w-[134px] h-6 bg-[#3d1810] rounded-[50%] z-10" />
-
-    <div className="absolute inset-0 mt-4"
-      style={{
-        background: 'linear-gradient(165deg, #a0412d 0%, #8b3422 45%, #7a2a1b 100%)',
-        borderRadius: '42% 38% 34% 36% / 45% 45% 32% 32%',
-        boxShadow: 'inset -10px -10px 30px rgba(0,0,0,0.3), 0 20px 40px rgba(0,0,0,0.2)',
-      }}>
-      <div className="relative w-full h-full p-8">
-        <AnimatePresence>
-          {holesCount.map((hIdx) => (
-            <motion.div key={hIdx} exit={{ opacity: 0, scale: 1.5 }}
-              className={`absolute rounded-full bg-[#1a0a07] shadow-inner
-                ${hIdx === 0 ? 'top-[35%] left-[25%] w-8 h-8' : hIdx === 1 ? 'top-[28%] left-[55%] w-7 h-7' : hIdx === 2 ? 'top-[58%] left-[38%] w-10 h-10' : 'top-[52%] left-[68%] w-6 h-6'}`}
-            />
-          ))}
-        </AnimatePresence>
-      </div>
-    </div>
-  </div>
-);
-
 const AwaleMini = ({ seedsCount, isWrong }: { seedsCount: number, isWrong: boolean }) => (
   <motion.div animate={isWrong ? { x: [-2, 2, -2, 2, 0] } : {}}
-    className="w-28 bg-[#833321] rounded-[2rem] p-3 shadow-xl flex justify-center gap-3 border-[3px] border-[#652719] scale-90"
+    className="w-28 bg-[#833321] rounded-[2rem] p-3 shadow-xl flex justify-center gap-3 border-[3px] border-[#652719] scale-90 opacity-80"
   >
     {[0, 1].map((col) => (
       <div key={col} className="grid grid-cols-1 gap-2">
@@ -94,7 +94,7 @@ const AwaleMini = ({ seedsCount, isWrong }: { seedsCount: number, isWrong: boole
   </motion.div>
 );
 
-// --- PAGE PRINCIPALE ---
+// --- PAGE ---
 
 export default function MysteresPage() {
   const [loading, setLoading] = useState(true);
@@ -125,11 +125,7 @@ export default function MysteresPage() {
         if (tData) setThemes(tData.reduce((acc, t) => ({ ...acc, [t.id]: t.name }), {}));
         if (mData) setMysteres([...mData].sort(() => Math.random() - 0.5));
         if (qData) setAllQuestions(qData);
-      } catch (e) {
-        toast.error("Erreur de connexion");
-      } finally {
-        setLoading(false);
-      }
+      } catch (e) { toast.error("Erreur de connexion"); } finally { setLoading(false); }
     }
     fetchData();
   }, []);
@@ -145,6 +141,11 @@ export default function MysteresPage() {
     return () => clearInterval(timer);
   }, [view, isFinished, showExplanation, timeLeft]);
 
+  const handleNextMystery = () => {
+    setCurrentIndex((prev) => (prev + 1) % mysteres.length);
+    setView("gallery");
+  };
+
   const handleDragEndChoice = (info: any, isCorrect: boolean) => {
     setIsOverJar(false);
     const jar = jarRef.current?.getBoundingClientRect();
@@ -156,13 +157,9 @@ export default function MysteresPage() {
         if (nextHoles.length === 0) {
           setIsFinished(true);
           confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-        } else {
-          setShowExplanation(true);
-        }
+        } else { setShowExplanation(true); }
       } else {
-        setIsWrong(true);
-        setSeeds(s => Math.max(0, s - 2));
-        toast.error("La jarre reste scellée...");
+        setIsWrong(true); setSeeds(s => Math.max(0, s - 2));
         setTimeout(() => setIsWrong(false), 400);
       }
     }
@@ -182,29 +179,26 @@ export default function MysteresPage() {
                 {mysteres.map((m, idx) => idx === currentIndex && (
                   <motion.div
                     key={m.id}
-                    drag="x"
-                    dragConstraints={{ left: 0, right: 0 }}
-                    onTap={() => currentQuestions.length > 0 ? setView("ritual") : toast.error("Bientôt disponible")}
+                    drag="x" dragConstraints={{ left: 0, right: 0 }}
+                    onTap={() => currentQuestions.length > 0 ? (setHoles([0, 1, 2, 3]), setView("ritual")) : toast.error("En cours de création")}
                     onDragEnd={(_, info) => {
                       if (info.offset.x > 80 && currentIndex > 0) setCurrentIndex(p => p - 1);
                       else if (info.offset.x < -80 && currentIndex < mysteres.length - 1) setCurrentIndex(p => p + 1);
                     }}
                     whileTap={{ scale: 0.98 }}
-                    initial={{ x: 300, opacity: 0, scale: 0.9 }}
-                    animate={{ x: 0, opacity: 1, scale: 1 }}
-                    exit={{ x: -300, opacity: 0, scale: 0.9 }}
+                    initial={{ x: 300, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -300, opacity: 0 }}
                     className="absolute w-[320px] h-[580px] bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-pointer flex flex-col"
                   >
                     <div className="pt-6 pb-2 text-center pointer-events-none">
-                      <span className="text-[10px] font-medium text-gray-400 uppercase tracking-[0.4em]">{themes[m.theme_id] || "Bénin"}</span>
+                      <span className="text-[10px] font-medium text-gray-400 uppercase tracking-[0.4em]">{themes[m.theme_id]}</span>
                     </div>
-                    <div className="h-[65%] w-full overflow-hidden pointer-events-none">
+                    <div className="h-[60%] w-full overflow-hidden pointer-events-none">
                       <img src={`https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/mysteres-assets/${m.id}.jpg`} className="h-full w-full object-cover" alt="" />
                     </div>
                     <div className="p-7 flex flex-col flex-1 pointer-events-none">
-                      <h2 className="text-[22px] font-black leading-tight uppercase tracking-tight">{m.title}</h2>
-                      <p className="text-[10px] font-bold text-[#a0412d] mt-1 italic uppercase tracking-wider">{m.subtitle}</p>
-                      <p className="text-[14px] text-gray-400 italic leading-relaxed mt-4">"{m.mise_en_abyme}"</p>
+                      <h2 className="text-[20px] font-black leading-tight uppercase">{m.title}</h2>
+                      <p className="text-[10px] font-bold text-[#a0412d] mt-1 uppercase italic">{m.subtitle}</p>
+                      <p className="text-[14px] text-gray-400 italic mt-4 leading-relaxed">"{m.mise_en_abyme}"</p>
                     </div>
                   </motion.div>
                 ))}
@@ -214,63 +208,58 @@ export default function MysteresPage() {
         ) : (
           <motion.div
             key="ritual"
-            drag="y"
-            dragConstraints={{ top: 0, bottom: 0 }}
-            onDragEnd={(_, info) => { if (info.offset.y > 150) setView("gallery"); }}
+            drag="y" dragConstraints={{ top: 0, bottom: 0 }}
+            onDragEnd={(_, info) => { if (info.offset.y > 120) handleNextMystery(); }}
             initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
-            className="absolute inset-0 bg-white z-50 flex flex-col items-center p-6 overflow-y-auto no-scrollbar"
+            className="absolute inset-0 bg-white z-50 flex flex-col items-center p-6 overflow-hidden"
           >
-            {/* ZONE VISUELLE */}
-            <div className="w-full flex flex-row items-center justify-center gap-6 md:gap-12 h-[350px] shrink-0 pt-4">
+            <div className="w-full flex flex-row items-center justify-center gap-4 md:gap-12 h-[350px] shrink-0 pt-4">
               <OkpeleRitual activeSeeds={Math.ceil(timeLeft / 8)} />
-              <div ref={jarRef} className="z-10 relative"><SatoJar holesCount={holes} isOver={isOverJar} /></div>
+              <div ref={jarRef} className="z-10"><SatoJar holesCount={holes} isOver={isOverJar} /></div>
               <AwaleMini seedsCount={seeds} isWrong={isWrong} />
             </div>
 
-            {/* ESPACE ENTRE JARRE ET QUESTIONS */}
-            <div className="w-full max-w-xl mt-12 pb-10">
+            <div className="w-full max-w-xl mt-16 flex-1">
               {!isFinished ? (
                 !showExplanation ? (
                   <div className="text-center">
-                    <h2 className="text-xl font-bold mb-8 text-gray-700 leading-relaxed px-4">{currentQuestions[qIndex]?.question}</h2>
+                    <h2 className="text-lg font-bold mb-10 text-gray-700 leading-relaxed px-4">{currentQuestions[qIndex]?.question}</h2>
                     <div className="grid grid-cols-1 gap-3">
-                      {['a', 'b', 'c', 'd'].map((l) => (
-                        currentQuestions[qIndex]?.[`choice_${l}`] && (
-                          <motion.div key={l} drag dragSnapToOrigin
-                            onDrag={(_, info) => {
-                              const jar = jarRef.current?.getBoundingClientRect();
-                              if (jar) setIsOverJar(info.point.x > jar.left && info.point.x < jar.right && info.point.y > jar.top && info.point.y < jar.bottom);
-                            }}
-                            onDragEnd={(_, info) => handleDragEndChoice(info, l.toUpperCase() === currentQuestions[qIndex]?.correct_answer)}
-                            className="p-4 bg-white border border-gray-100 rounded-2xl shadow-sm cursor-grab active:cursor-grabbing flex items-center touch-none z-50"
-                          >
-                            <span className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center font-bold text-[#a0412d] mr-4 uppercase">{l}</span>
-                            <span className="font-bold text-gray-600 text-sm text-left">{currentQuestions[qIndex][`choice_${l}`]}</span>
-                          </motion.div>
-                        )
+                      {['a', 'b', 'c', 'd'].map((l) => currentQuestions[qIndex]?.[`choice_${l}`] && (
+                        <motion.div key={l} drag dragSnapToOrigin
+                          onDrag={(_, info) => {
+                            const jar = jarRef.current?.getBoundingClientRect();
+                            if (jar) setIsOverJar(info.point.x > jar.left && info.point.x < jar.right && info.point.y > jar.top && info.point.y < jar.bottom);
+                          }}
+                          onDragEnd={(_, info) => handleDragEndChoice(info, l.toUpperCase() === currentQuestions[qIndex]?.correct_answer)}
+                          className="p-4 bg-white border border-gray-100 rounded-2xl shadow-sm cursor-grab active:cursor-grabbing flex items-center touch-none z-50"
+                        >
+                          <span className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center font-bold text-[#a0412d] mr-4 uppercase">{l}</span>
+                          <span className="font-bold text-gray-600 text-sm text-left">{currentQuestions[qIndex][`choice_${l}`]}</span>
+                        </motion.div>
                       ))}
                     </div>
-                    <p className="text-[9px] mt-8 text-gray-300 uppercase tracking-widest font-bold">Glissez la réponse vers la jarre • Swipe bas pour quitter</p>
                   </div>
                 ) : (
-                  <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-                    onClick={() => { setShowExplanation(false); setQIndex(p => p + 1); setTimeLeft(64); }}
-                    className="p-8 bg-orange-50 rounded-[2rem] text-center cursor-pointer border border-orange-100 shadow-sm"
+                  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+                    onClick={() => { setShowExplanation(false); setQIndex(p => p + 1); setHoles([0, 1, 2, 3]); setTimeLeft(64); }}
+                    className="p-8 bg-orange-50 rounded-[2.5rem] text-center cursor-pointer border border-orange-100 shadow-sm"
                   >
                     <p className="text-lg italic font-medium text-[#a0412d]">"{currentQuestions[qIndex]?.explanation}"</p>
-                    <p className="text-[10px] mt-6 uppercase tracking-widest font-black text-gray-300">Toucher pour la suite</p>
+                    <p className="text-[10px] mt-8 uppercase tracking-widest font-black text-gray-300 animate-pulse">Toucher pour continuer</p>
                   </motion.div>
                 )
               ) : (
                 <div className="text-center">
                   <h2 className="text-2xl font-black mb-4 uppercase text-[#a0412d]">Secret Révélé</h2>
-                  <div className="bg-white p-6 rounded-[2rem] text-left mb-6 space-y-3 border border-gray-50 shadow-inner">
+                  <div className="bg-white p-6 rounded-[2.5rem] text-left mb-6 space-y-4 border border-gray-50 shadow-inner max-h-[250px] overflow-y-auto no-scrollbar">
                     {explanations.map((exp, i) => <p key={i} className="text-sm text-gray-600 leading-relaxed"><span className="text-[#a0412d] mr-2">✦</span> {exp}</p>)}
                   </div>
-                  <button onClick={() => setView("gallery")} className="w-full py-4 bg-[#a0412d] text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg active:scale-95 transition-transform">Continuer l'exploration</button>
+                  <button onClick={handleNextMystery} className="w-full py-5 bg-[#a0412d] text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg active:scale-95 transition-transform">Découvrir le suivant</button>
                 </div>
               )}
             </div>
+            <p className="text-[8px] mb-4 text-gray-300 uppercase font-bold tracking-[0.3em]">Glisser vers le bas pour quitter</p>
           </motion.div>
         )}
       </AnimatePresence>
