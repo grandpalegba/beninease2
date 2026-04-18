@@ -36,9 +36,7 @@ const OkpeleSeed = ({ active }: { active: boolean }) => (
 
 const OkpeleRitual = ({ activeSeeds }: { activeSeeds: number }) => (
   <div className="relative flex flex-col items-center scale-[0.65] md:scale-90 origin-top">
-    {/* ARC STRUCTUREL : Épuré, sans les points aux extrémités */}
     <div className="w-[64px] md:w-[80px] h-10 border-t-[1.5px] border-x-[1.5px] border-yellow-700/40 rounded-t-[40px] absolute top-[2px] left-1/2 -translate-x-1/2 z-0" />
-
     <div className="flex gap-8 md:gap-10 relative z-10 pt-10">
       <div className="flex flex-col items-center">
         {[...Array(4)].map((_, i) => (
@@ -161,12 +159,6 @@ export default function MysteresPage() {
     return allQuestions.filter(q => String(q.mystere_id) === String(currentM.id)).sort((a, b) => a.question_number - b.question_number);
   }, [allQuestions, currentM]);
 
-  useEffect(() => {
-    if (timeLeft <= 0 || isFinished || showExplanation || view !== "ritual") return;
-    const timer = setInterval(() => setTimeLeft(p => p - 1), 1000);
-    return () => clearInterval(timer);
-  }, [timeLeft, isFinished, showExplanation, view]);
-
   const startRitual = () => {
     if (currentQuestions.length > 0) {
       setHoles([0, 1, 2, 3]); setSeeds(16); setTimeLeft(64); setQIndex(0); setExplanations([]); setIsFinished(false); setView("ritual");
@@ -210,7 +202,8 @@ export default function MysteresPage() {
                 else if (info.offset.y < -50) startRitual();
               }}
               onClick={startRitual}
-              className="w-full max-w-[320px] h-[520px] md:h-[580px] bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-pointer flex flex-col"
+              /* AJOUT : Marges négatives pour remonter la carte vers le haut */
+              className="w-full max-w-[320px] h-[520px] md:h-[580px] -mt-8 md:-mt-12 bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-pointer flex flex-col"
             >
               <div className="pt-5 pb-3 px-7 text-center select-none">
                 <span className="text-[10px] md:text-[11px] font-medium text-gray-400 uppercase tracking-[0.35em]">{themes[currentM.theme_id] || "Bénin Éternel"}</span>
@@ -226,6 +219,7 @@ export default function MysteresPage() {
                 </div>
               </div>
             </motion.div>
+            <p className="mt-6 md:mt-8 text-[9px] uppercase tracking-[0.2em] text-gray-300 font-bold animate-pulse">Cliquez ou swipe haut pour entrer</p>
           </motion.div>
         ) : (
           <motion.div
@@ -235,7 +229,6 @@ export default function MysteresPage() {
             className="absolute inset-0 bg-white z-50 flex flex-col items-center p-4 overflow-hidden"
           >
             <div className="w-12 h-1 bg-gray-100 rounded-full mb-4 shrink-0" />
-
             <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-2 md:gap-20 h-[220px] md:h-[400px] shrink-0">
               <div className="flex flex-col items-center">
                 <OkpeleRitual activeSeeds={Math.ceil(timeLeft / 8)} />
@@ -247,14 +240,11 @@ export default function MysteresPage() {
                 <p className="text-[9px] font-bold uppercase text-gray-300 mt-2">{seeds}/16</p>
               </div>
             </div>
-
             <div className="w-full max-w-xl flex-1 flex flex-col justify-center pb-4">
               {!isFinished ? (
                 !showExplanation ? (
                   <div className="text-center flex flex-col gap-3 md:gap-5">
-                    <h2 className="font-bold text-gray-700 text-base md:text-xl leading-snug px-4">
-                      {currentQuestions[qIndex]?.question}
-                    </h2>
+                    <h2 className="font-bold text-gray-700 text-base md:text-xl leading-snug px-4">{currentQuestions[qIndex]?.question}</h2>
                     <div className="grid grid-cols-1 gap-2">
                       {['a', 'b', 'c', 'd'].map((l) => (
                         <motion.div key={l} drag dragSnapToOrigin
