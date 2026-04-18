@@ -202,8 +202,8 @@ export default function MysteresPage() {
                 else if (info.offset.y < -50) startRitual();
               }}
               onClick={startRitual}
-              /* AJOUT : Marges négatives pour remonter la carte vers le haut */
-              className="w-full max-w-[320px] h-[520px] md:h-[580px] -mt-8 md:-mt-12 bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-pointer flex flex-col"
+              /* REMONTÉE ACCENTUÉE DE LA CARTE */
+              className="w-full max-w-[320px] h-[520px] md:h-[580px] -mt-12 md:-mt-20 bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-pointer flex flex-col"
             >
               <div className="pt-5 pb-3 px-7 text-center select-none">
                 <span className="text-[10px] md:text-[11px] font-medium text-gray-400 uppercase tracking-[0.35em]">{themes[currentM.theme_id] || "Bénin Éternel"}</span>
@@ -219,7 +219,7 @@ export default function MysteresPage() {
                 </div>
               </div>
             </motion.div>
-            <p className="mt-6 md:mt-8 text-[9px] uppercase tracking-[0.2em] text-gray-300 font-bold animate-pulse">Cliquez ou swipe haut pour entrer</p>
+            <p className="mt-4 md:mt-6 text-[9px] uppercase tracking-[0.2em] text-gray-300 font-bold animate-pulse">Cliquez ou swipe haut pour entrer</p>
           </motion.div>
         ) : (
           <motion.div
