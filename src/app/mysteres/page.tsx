@@ -98,8 +98,6 @@ const AwaleMini = ({ seedsCount, isWrong }: { seedsCount: number, isWrong: boole
   </motion.div>
 );
 
-// --- COMPOSANT PRINCIPAL ---
-
 export default function MysteresPage() {
   const [loading, setLoading] = useState(true);
   const [mysteres, setMysteres] = useState<any[]>([]);
@@ -126,10 +124,7 @@ export default function MysteresPage() {
       const { data: qData } = await supabase.from('questions').select('*');
       const { data: tData } = await supabase.from('themes').select('id, name');
 
-      if (tData) {
-        const themeMap = tData.reduce((acc: any, t: any) => ({ ...acc, [t.id]: t.name }), {});
-        setThemes(themeMap);
-      }
+      if (tData) setThemes(tData.reduce((acc: any, t: any) => ({ ...acc, [t.id]: t.name }), {}));
       if (mData) setMysteres(mData.sort(() => Math.random() - 0.5));
       if (qData) setAllQuestions(qData);
       setLoading(false);
@@ -142,8 +137,7 @@ export default function MysteresPage() {
     if (!currentM) return [];
     return allQuestions
       .filter(q => q.mystere_id === currentM.id)
-      .sort((a, b) => a.question_number - b.question_number)
-      .slice(0, 4);
+      .sort((a, b) => a.question_number - b.question_number);
   }, [allQuestions, currentM]);
 
   useEffect(() => {
@@ -157,39 +151,32 @@ export default function MysteresPage() {
   const handleDragEnd = (info: any, isCorrect: boolean) => {
     setIsOverJar(false);
     const jar = jarRef.current?.getBoundingClientRect();
-    if (jar) {
-      const isInside = info.point.x > jar.left && info.point.x < jar.right &&
-        info.point.y > jar.top && info.point.y < jar.bottom;
-
-      if (isInside) {
-        if (isCorrect) {
-          const newHoles = holes.slice(1);
-          setHoles(newHoles);
-          setExplanations(prev => [...prev, currentQuestions[qIndex].explanation]);
-          if (newHoles.length === 0) {
-            setIsFinished(true);
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-          } else {
-            setShowExplanation(true);
-          }
+    if (jar && info.point.x > jar.left && info.point.x < jar.right && info.point.y > jar.top && info.point.y < jar.bottom) {
+      if (isCorrect) {
+        const nextHoles = holes.slice(1);
+        setHoles(nextHoles);
+        setExplanations(prev => [...prev, currentQuestions[qIndex].explanation]);
+        if (nextHoles.length === 0) {
+          setIsFinished(true);
+          confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
         } else {
-          setIsWrong(true);
-          setSeeds(s => Math.max(0, s - 1));
-          toast.error("Vibration discordante");
-          setTimeout(() => setIsWrong(false), 400);
+          setShowExplanation(true);
         }
+      } else {
+        setIsWrong(true);
+        setSeeds(s => Math.max(0, s - 1));
+        toast.error("Vibration discordante");
+        setTimeout(() => setIsWrong(false), 400);
       }
     }
   };
 
-  if (loading) return <div className="h-screen flex items-center justify-center bg-[#faf9f8]"><div className="w-10 h-10 border-4 border-[#a0412d] border-t-transparent rounded-full animate-spin" /></div>;
+  if (loading) return <div className="h-screen flex items-center justify-center bg-white"><div className="w-10 h-10 border-4 border-[#a0412d] border-t-transparent rounded-full animate-spin" /></div>;
 
   return (
-    <div className="h-screen w-screen bg-[#faf9f8] overflow-hidden relative touch-none font-sans text-[#1a1a1a]">
+    <div className="h-screen w-screen bg-white overflow-hidden relative touch-none font-sans text-[#1a1a1a]">
       <Toaster position="top-center" richColors />
       <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap');
-        .font-lato { font-family: 'Lato', sans-serif; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
@@ -198,25 +185,20 @@ export default function MysteresPage() {
         {view === "gallery" ? (
           <motion.div key="gallery" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full flex flex-col items-center justify-center p-6">
             <motion.div
-              drag="x" dragConstraints={{ left: 0, right: 0 }}
-              onDragEnd={(_, info) => {
-                if (info.offset.x < -60) setCurrentIndex(prev => (prev + 1) % mysteres.length);
-                if (info.offset.x > 60) setCurrentIndex(prev => (prev - 1 + mysteres.length) % mysteres.length);
-              }}
               onClick={() => { setHoles([0, 1, 2, 3]); setSeeds(16); setTimeLeft(64); setQIndex(0); setExplanations([]); setIsFinished(false); setView("ritual"); }}
               className="w-full max-w-[340px] h-[610px] bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-pointer flex flex-col"
             >
               <div className="pt-5 pb-3 px-7 text-center">
-                <span className="font-lato text-[11px] font-medium text-gray-500 uppercase tracking-[0.35em]">{themes[currentM.theme_id] || "Bénin Éternel"}</span>
+                <span className="text-[11px] font-medium text-gray-500 uppercase tracking-[0.35em]">{themes[currentM.theme_id] || "Bénin Éternel"}</span>
               </div>
               <div className="h-[55%] w-full overflow-hidden">
                 <img src={`https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/mysteres-assets/${currentM.id}.jpg`} className="h-full w-full object-cover" alt="" />
               </div>
               <div className="p-7 flex flex-col flex-1 bg-white">
-                <h2 className="font-lato text-[24px] font-black leading-[1.1] tracking-[0.05em] uppercase">{currentM.title}</h2>
-                <p className="font-lato text-[11px] font-bold text-[#a0412d] mt-1 italic tracking-[0.12em] uppercase">{currentM.subtitle}</p>
+                <h2 className="text-[24px] font-black leading-[1.1] tracking-[0.05em] uppercase">{currentM.title}</h2>
+                <p className="text-[11px] font-bold text-[#a0412d] mt-1 italic tracking-[0.12em] uppercase">{currentM.subtitle}</p>
                 <div className="mt-3 pt-3 border-t border-gray-50 flex-1 overflow-y-auto no-scrollbar">
-                  <p className="font-lato text-[15px] text-gray-500 italic leading-[1.6]">"{currentM.mise_en_abyme}"</p>
+                  <p className="text-[15px] text-gray-500 italic leading-[1.6]">"{currentM.mise_en_abyme}"</p>
                 </div>
               </div>
             </motion.div>
@@ -224,24 +206,13 @@ export default function MysteresPage() {
         ) : (
           <motion.div key="ritual" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-50 flex flex-col items-center p-6 overflow-y-auto no-scrollbar">
 
-            {/* EXPÉRIENCE OUKPÉLÉ AVEC CHAINE DORÉE */}
+            {/* OBJETS RITUELS */}
             <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-4 md:gap-16 mb-8 h-[420px] shrink-0">
-
               <div className="relative flex flex-col items-center scale-[0.85] origin-center">
-                {/* CHAINE DORÉE (SVG) */}
                 <svg className="absolute -top-6 left-1/2 -translate-x-1/2 w-32 h-16 z-0 overflow-visible" viewBox="0 0 100 50">
-                  <path
-                    d="M 10 50 C 10 0, 90 0, 90 50"
-                    fill="none"
-                    stroke="#facc15"
-                    strokeWidth="3.5"
-                    strokeLinecap="round"
-                    className="drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]"
-                  />
-                  <circle cx="10" cy="50" r="3" fill="#ca8a04" />
-                  <circle cx="90" cy="50" r="3" fill="#ca8a04" />
+                  <path d="M 10 50 C 10 0, 90 0, 90 50" fill="none" stroke="#facc15" strokeWidth="3.5" strokeLinecap="round" className="drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]" />
+                  <circle cx="10" cy="50" r="3" fill="#ca8a04" /><circle cx="90" cy="50" r="3" fill="#ca8a04" />
                 </svg>
-
                 <div className="flex gap-6 pt-6">
                   <div className="flex flex-col gap-2.5">
                     {[...Array(4)].map((_, i) => (
@@ -261,11 +232,11 @@ export default function MysteresPage() {
                   </div>
                 </div>
               </div>
-
               <div ref={jarRef} className="z-10"><SatoJar holesCount={holes} isOver={isOverJar} /></div>
               <div className="scale-75"><AwaleMini seedsCount={seeds} isWrong={isWrong} /></div>
             </div>
 
+            {/* ZONE D'INTERACTION */}
             <div className="w-full max-w-xl pb-10">
               {!isFinished ? (
                 !showExplanation ? (
@@ -280,9 +251,9 @@ export default function MysteresPage() {
                         <motion.div key={l} drag dragSnapToOrigin
                           onDrag={(_, info) => { const jar = jarRef.current?.getBoundingClientRect(); if (jar) setIsOverJar(info.point.x > jar.left && info.point.x < jar.right && info.point.y > jar.top && info.point.y < jar.bottom); }}
                           onDragEnd={(_, info) => handleDragEnd(info, l.toUpperCase() === currentQuestions[qIndex]?.correct_answer)}
-                          className="p-4 bg-[#faf9f8] border border-gray-100 rounded-2xl shadow-sm cursor-grab active:cursor-grabbing flex items-center group touch-none z-50"
+                          className="p-4 bg-white border border-gray-100 rounded-2xl shadow-sm cursor-grab active:cursor-grabbing flex items-center group touch-none z-50"
                         >
-                          <span className="w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center font-bold text-[#a0412d] mr-4 uppercase">{l}</span>
+                          <span className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center font-bold text-[#a0412d] mr-4 uppercase">{l}</span>
                           <span className="font-bold text-gray-600 text-sm text-left">{currentQuestions[qIndex]?.[`choice_${l}`]}</span>
                         </motion.div>
                       ))}
@@ -295,9 +266,9 @@ export default function MysteresPage() {
                   </div>
                 )
               ) : (
-                <div className="text-center font-lato">
+                <div className="text-center">
                   <h2 className="text-2xl font-black mb-4 uppercase text-[#a0412d] tracking-widest">Mystère Révélé</h2>
-                  <div className="bg-[#faf9f8] p-6 rounded-[2rem] text-left mb-6 space-y-3 border border-gray-100">
+                  <div className="bg-white p-6 rounded-[2rem] text-left mb-6 space-y-3 border border-gray-100">
                     {explanations.map((exp, i) => <p key={i} className="text-sm text-gray-600 flex items-start"><span className="text-[#a0412d] mr-2">✦</span> {exp}</p>)}
                   </div>
                   <button onClick={() => setView("gallery")} className="w-full py-4 bg-[#a0412d] text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg active:scale-95 transition-transform">Découvrir un autre mystère</button>
