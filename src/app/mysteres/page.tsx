@@ -35,7 +35,6 @@ const OkpeleSeed = ({ active }: { active: boolean }) => (
 );
 
 const OkpeleRitual = ({ activeSeeds }: { activeSeeds: number }) => (
-  // Taille réduite (scale-0.5) pour correspondre à la hauteur de l'Awalé
   <div className="relative flex flex-col items-center scale-[0.5] md:scale-[0.7] origin-center">
     <div className="w-[64px] md:w-[80px] h-10 border-t-[1.5px] border-x-[1.5px] border-yellow-700/40 rounded-t-[40px] absolute top-[2px] left-1/2 -translate-x-1/2 z-0" />
     <div className="flex gap-8 md:gap-10 relative z-10 pt-10">
@@ -229,36 +228,40 @@ export default function MysteresPage() {
           <motion.div key="ritual" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-50 flex flex-col items-center p-4 overflow-hidden">
             <div className="w-12 h-1 bg-gray-100 rounded-full mb-4 shrink-0" />
 
+            {/* ZONE VISUELLE : OKPELE | JARRE | AWALE */}
             <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-4 md:gap-20 h-[220px] md:h-[350px] shrink-0">
-
-              {/* OKPELE (Ajusté en hauteur) */}
               <div className="flex flex-col items-center justify-center">
                 <OkpeleRitual activeSeeds={Math.ceil(timeLeft / 8)} />
-                <div className="h-10 flex items-center"> {/* Aligne Temps sur Graines sacrées */}
-                  <p className="text-[9px] md:text-[11px] font-bold uppercase text-gray-400 tracking-wider">Temps : {timeLeft}s</p>
-                </div>
               </div>
-
-              {/* JARRE */}
               <div ref={jarRef} className="z-10 flex items-center justify-center">
                 <SatoJar holesCount={holes} isOver={isOverJar} />
               </div>
-
-              {/* AWALE */}
               <div className="flex flex-col items-center justify-center">
                 <AwaleMini seedsCount={seeds} isWrong={isWrong} />
-                <div className="h-10 flex items-center">
-                  <p className="text-[9px] md:text-[11px] font-bold uppercase text-gray-400 tracking-wider">Graines sacrées : {seeds} / 16</p>
-                </div>
               </div>
-
             </div>
 
+            {/* ZONE QUESTION ET LABELS */}
             <div className="w-full max-w-xl flex-1 flex flex-col justify-center pb-4">
               {!isFinished ? (
                 !showExplanation ? (
                   <div className="text-center flex flex-col gap-3 md:gap-5">
-                    <h2 className="font-bold text-gray-700 text-base md:text-xl leading-snug px-4">{currentQuestions[qIndex]?.question}</h2>
+                    {/* QUESTION */}
+                    <h2 className="font-bold text-gray-700 text-base md:text-xl leading-snug px-4">
+                      {currentQuestions[qIndex]?.question}
+                    </h2>
+
+                    {/* LABELS ALIGNÉS SOUS LA QUESTION */}
+                    <div className="flex justify-center items-center gap-10 -mt-2 mb-2">
+                      <p className="text-[9px] md:text-[11px] font-bold uppercase text-gray-400 tracking-wider">
+                        Temps : {timeLeft}s
+                      </p>
+                      <p className="text-[9px] md:text-[11px] font-bold uppercase text-gray-400 tracking-wider">
+                        Graines sacrées : {seeds} / 16
+                      </p>
+                    </div>
+
+                    {/* CHOIX */}
                     <div className="grid grid-cols-1 gap-2">
                       {['a', 'b', 'c', 'd'].map((l) => (
                         <motion.div key={l} drag dragSnapToOrigin
