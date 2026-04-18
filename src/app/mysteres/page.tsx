@@ -162,8 +162,18 @@ export default function MysteresPage() {
       .sort((a, b) => a.question_number - b.question_number);
   }, [allQuestions, currentM]);
 
+  // GESTION DU TIMER PAR QUESTION
   useEffect(() => {
-    if (timeLeft <= 0 || isFinished || showExplanation || view !== "ritual") return;
+    if (timeLeft <= 0 || isFinished || showExplanation || view !== "ritual") {
+      if (timeLeft <= 0 && view === "ritual" && !isFinished && !showExplanation) {
+        toast.error("Le temps du secret s'est écoulé");
+        setIsWrong(true);
+        setSeeds(s => Math.max(0, s - 2)); // Pénalité temps
+        setTimeout(() => setIsWrong(false), 400);
+        setTimeLeft(64); // On reset pour laisser une chance
+      }
+      return;
+    }
     const timer = setInterval(() => setTimeLeft(p => p - 1), 1000);
     return () => clearInterval(timer);
   }, [timeLeft, isFinished, showExplanation, view]);
@@ -249,7 +259,7 @@ export default function MysteresPage() {
               <div className="flex flex-col items-center gap-6">
                 <div className="pt-8"><OkpeleRitual activeSeeds={activeOkpeleSeeds} /></div>
                 <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
-                  <p>Temps : <span className="text-[#a0412d]">{timeLeft}s</span></p>
+                  <p>Focus : <span className="text-[#a0412d] font-black">{timeLeft}s</span></p>
                 </div>
               </div>
 
@@ -295,11 +305,15 @@ export default function MysteresPage() {
                 ) : (
                   <motion.div
                     initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-                    onClick={() => { setShowExplanation(false); setQIndex(p => p + 1); }}
+                    onClick={() => {
+                      setShowExplanation(false);
+                      setQIndex(p => p + 1);
+                      setTimeLeft(64); // LE TIMER RECOMMENCE ICI
+                    }}
                     className="p-8 bg-orange-50/50 rounded-[2rem] border border-orange-100/50 text-center cursor-pointer"
                   >
                     <p className="text-lg italic font-medium text-[#a0412d]">"{currentQuestions[qIndex]?.explanation}"</p>
-                    <p className="text-[10px] mt-4 uppercase tracking-widest font-black text-gray-300">Cliquez pour continuer</p>
+                    <p className="text-[10px] mt-4 uppercase tracking-widest font-black text-gray-300">Continuez pour le secret suivant</p>
                   </motion.div>
                 )
               ) : (
