@@ -34,24 +34,19 @@ const OkpeleSeed = ({ active }: { active: boolean }) => (
   </div>
 );
 
-// --- COMPOSANT OKPELE RÉAJUSTÉ ---
+// --- COMPOSANT OKPELE RÉVISÉ (Arc Fin & Sans Points) ---
 
 const OkpeleRitual = ({ activeSeeds }: { activeSeeds: number }) => (
   <div className="relative flex flex-col items-center scale-90">
-    {/* Arc de connexion supérieur : extrémité basses s'arrêtent au sommet des noix (z-0) */}
-    <div className="w-20 h-10 border-t-[3px] border-x-[3px] border-yellow-600/60 rounded-t-full absolute -top-8 left-1/2 -translate-x-1/2 z-0">
-      <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-yellow-600 rounded-full"></div>
-      <div className="absolute -bottom-1 -right-1 w-2 h-2 bg-yellow-600 rounded-full"></div>
-    </div>
+    {/* Arc de connexion supérieur : Épaisseur réduite à 1.5px, pas de points aux extrémités */}
+    <div className="w-20 h-10 border-t-[1.5px] border-x-[1.5px] border-yellow-600/60 rounded-t-full absolute -top-6 left-1/2 -translate-x-1/2 z-0" />
 
-    {/* Gain de z-10 pour que les connecteurs passent au-dessus de l'arc */}
     <div className="flex gap-10 relative z-10 pt-4">
       {/* Colonne Gauche */}
       <div className="flex flex-col items-center">
         {[...Array(4)].map((_, i) => (
           <React.Fragment key={`l-${i}`}>
             <OkpeleSeed active={activeSeeds > i} />
-            {/* Connecteurs : passent au-dessus de l'arc au z-10, ne touche pas à la chaine entre les noix */}
             {i < 3 && <div className="w-[1.5px] h-3 bg-gradient-to-b from-yellow-600 to-yellow-700 shadow-sm" />}
           </React.Fragment>
         ))}
@@ -61,7 +56,6 @@ const OkpeleRitual = ({ activeSeeds }: { activeSeeds: number }) => (
         {[...Array(4)].map((_, i) => (
           <React.Fragment key={`r-${i}`}>
             <OkpeleSeed active={activeSeeds > i + 4} />
-            {/* Connecteurs : passent au-dessus de l'arc au z-10, ne touche pas à la chaine entre les noix */}
             {i < 3 && <div className="w-[1.5px] h-3 bg-gradient-to-b from-yellow-600 to-yellow-700 shadow-sm" />}
           </React.Fragment>
         ))}
@@ -241,15 +235,14 @@ export default function MysteresPage() {
 
             {/* OBJETS RITUELS RÉAJUSTÉS */}
             <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-6 md:gap-20 mb-12 h-[450px] shrink-0">
-              {/* L'Okpele Affiné avec temps et seeds en dessous */}
+              {/* L'Okpele Affiné */}
               <div className="flex flex-col items-center gap-6">
                 <div className="pt-8">
                   <OkpeleRitual activeSeeds={activeOkpeleSeeds} />
                 </div>
-                {/* Information déplacées ici */}
+                {/* Information de stats sous l'Okpele */}
                 <div className="flex gap-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">
                   <p>Temps : <span className="text-[#a0412d]">{timeLeft}s</span></p>
-                  <p>Graines : <span className="text-[#a0412d]">{seeds}/16</span></p>
                 </div>
               </div>
 
@@ -258,21 +251,23 @@ export default function MysteresPage() {
                 <SatoJar holesCount={holes} isOver={isOverJar} />
               </div>
 
-              {/* L'Awale */}
-              <div className="scale-90 pt-12">
-                <AwaleMini seedsCount={seeds} isWrong={isWrong} />
+              {/* L'Awale avec les graines en dessous */}
+              <div className="flex flex-col items-center gap-6">
+                <div className="scale-90 pt-12">
+                  <AwaleMini seedsCount={seeds} isWrong={isWrong} />
+                </div>
+                <div className="flex gap-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                  <p>Graines : <span className="text-[#a0412d]">{seeds}/16</span></p>
+                </div>
               </div>
             </div>
 
-            {/* ZONE D'INTERACTION AJUSTÉE SUR FOND BLANC */}
+            {/* ZONE D'INTERACTION */}
             <div className="w-full max-w-xl pb-10">
               {!isFinished ? (
                 !showExplanation ? (
                   <div className="text-center">
-                    {/* Interligne augmenté pour la question */}
-                    <h2 className="text-xl font-black mb-10 px-4 leading-[1.7] min-h-[4rem] flex items-center justify-center text-gray-700">{currentQuestions[qIndex]?.question}</h2>
-
-                    {/* Le bloc de stats a été retiré d'ici */}
+                    <h2 className="text-xl font-bold mb-10 px-4 leading-[1.7] min-h-[4rem] flex items-center justify-center text-gray-700">{currentQuestions[qIndex]?.question}</h2>
 
                     <div className="grid grid-cols-1 gap-3">
                       {['a', 'b', 'c', 'd'].map((l) => (
@@ -302,7 +297,7 @@ export default function MysteresPage() {
                   <div className="bg-white p-6 rounded-[2rem] text-left mb-6 space-y-3 border border-gray-50 shadow-inner">
                     {explanations.map((exp, i) => <p key={i} className="text-sm text-gray-600 flex items-start leading-relaxed"><span className="text-[#a0412d] mr-3 font-bold">✦</span> {exp}</p>)}
                   </div>
-                  <button onClick={() => setView("gallery")} className="w-full py-4 bg-[#a0412d] text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg active:scale-95 transition-transform leading-snug">Autre secret</button>
+                  <button onClick={() => setView("gallery")} className="w-full py-4 bg-[#a0412d] text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg active:scale-95 transition-transform">Autre secret</button>
                 </div>
               )}
             </div>
