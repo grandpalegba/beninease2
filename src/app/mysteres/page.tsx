@@ -123,6 +123,9 @@ export default function MysteresPage() {
 
   const jarRef = useRef<HTMLDivElement>(null);
 
+  // RÉFÉRENCE POUR CORRIGER LE CLIC
+  const isDragging = useRef(false);
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -210,13 +213,20 @@ export default function MysteresPage() {
                       key={m.id}
                       drag="x"
                       dragConstraints={{ left: 0, right: 0 }}
+                      onDragStart={() => {
+                        isDragging.current = true;
+                      }}
                       onDragEnd={(_, info) => {
+                        // Délai pour éviter que le drop soit considéré comme un clic
+                        setTimeout(() => { isDragging.current = false; }, 50);
                         if (info.offset.x > 80 && currentIndex > 0) setCurrentIndex(p => p - 1);
                         else if (info.offset.x < -80 && currentIndex < mysteres.length - 1) setCurrentIndex(p => p + 1);
                       }}
-                      onTap={(e, info) => {
-                        // Tolérance de 5px pour différencier le tap du drag
-                        if (Math.abs(info.offset.x) < 5) startRitual();
+                      onClick={() => {
+                        // Le clic est déclenché SEULEMENT si on n'a pas swipé
+                        if (!isDragging.current) {
+                          startRitual();
+                        }
                       }}
                       initial={{ x: 300, opacity: 0, scale: 0.9 }}
                       animate={{ x: 0, opacity: 1, scale: 1 }}
@@ -238,7 +248,7 @@ export default function MysteresPage() {
                         />
                       </div>
 
-                      <div className="p-7 flex flex-col flex-1">
+                      <div className="p-7 flex flex-col flex-1 pointer-events-none">
                         <h2 className="text-[22px] font-black leading-tight uppercase tracking-tight">{m.title}</h2>
                         <p className="text-[10px] font-bold text-[#a0412d] mt-1 italic uppercase tracking-wider">{m.subtitle}</p>
                         <div className="mt-4 flex-1 overflow-y-auto no-scrollbar">
