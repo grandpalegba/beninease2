@@ -6,11 +6,12 @@ import { createClient } from "@supabase/supabase-js";
 import { toast, Toaster } from "sonner";
 import { confetti } from "tsparticles-confetti";
 
+// Configuration Supabase
 const SUPABASE_URL = "https://wtjhkqkqmexddroqwawk.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0amhrcWtxbWV4ZGRyb3F3YXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDU3NzQsImV4cCI6MjA4OTg4MTc3NH0.TdaWEVQxKF6s2j-7QStHZaFbOqs4e3UHVUN7iGQL_vc";
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// --- STYLES PARTAGÉS ---
+// Style partagé Terre Cuite
 const clayGradient = "linear-gradient(165deg, #a0412d 0%, #8b3422 45%, #7a2a1b 100%)";
 
 // --- COMPOSANTS VISUELS ---
@@ -37,24 +38,26 @@ const OkpeleSeed = ({ active }: { active: boolean }) => (
 
 const SatoJar = ({ holesCount, isOver }: { holesCount: number[], isOver: boolean }) => (
   <div className={`relative w-64 h-80 md:w-72 md:h-96 transition-transform duration-500 ${isOver ? 'scale-105' : 'scale-100'}`}>
-    {/* Lip of the jar (Le col) - Anatomie exacte du plan HTML */}
-    <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-32 h-7 bg-[#3d1810] rounded-[50%] shadow-inner border-2 border-[#a0412d]/20 z-10" />
+    {/* Col de la jarre (Lip) */}
+    <div
+      className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-8 bg-[#3d1810] rounded-[50%] shadow-inner border-2 border-[#a0412d]/10 z-20"
+      style={{ transform: 'translate(-50%, -40%)' }}
+    />
 
-    {/* Body of the jar */}
+    {/* Corps de la jarre */}
     <div className="absolute inset-0 overflow-hidden"
       style={{
         background: clayGradient,
         borderRadius: '42% 38% 34% 36% / 45% 45% 32% 32%',
-        boxShadow: 'inset -8px -8px 20px rgba(0,0,0,0.2), inset 8px 8px 20px rgba(255,255,255,0.1)'
+        boxShadow: 'inset -8px -12px 20px rgba(0,0,0,0.3), inset 8px 8px 20px rgba(255,255,255,0.1)'
       }}>
-      {/* Top Shading (L'ombre interne du haut) */}
-      <div className="absolute top-0 w-full h-12 bg-gradient-to-b from-black/20 to-transparent" />
+      <div className="absolute top-0 w-full h-16 bg-gradient-to-b from-black/40 to-transparent" />
 
       <div className="relative w-full h-full p-8">
         <AnimatePresence>
           {holesCount.map((hIdx) => (
             <motion.div key={hIdx} exit={{ opacity: 0, scale: 2, filter: "blur(4px)" }}
-              className={`absolute rounded-full bg-[#2a100a] shadow-inner opacity-90
+              className={`absolute rounded-full bg-[#1a0a07] shadow-inner
                 ${hIdx === 0 ? 'top-[35%] left-[25%] w-10 h-10' : hIdx === 1 ? 'top-[28%] left-[55%] w-8 h-8' : hIdx === 2 ? 'top-[58%] left-[38%] w-12 h-12' : 'top-[52%] left-[68%] w-7 h-7'}`}
             />
           ))}
@@ -154,6 +157,7 @@ export default function MysteresPage() {
     setIsFinished(false);
     setQIndex(0);
     setHoles([0, 1, 2, 3]);
+    setSeeds(16);
   };
 
   const handleDragEndChoice = (info: any, isCorrect: boolean) => {
@@ -191,12 +195,21 @@ export default function MysteresPage() {
                   <motion.div
                     key={m.id}
                     drag="x" dragConstraints={{ left: 0, right: 0 }}
-                    onTap={() => currentQuestions.length > 0 ? (setHoles([0, 1, 2, 3]), setView("ritual"), setTimeLeft(64)) : toast.error("Mystère bientôt disponible")}
+                    onClick={() => {
+                      if (currentQuestions.length > 0) {
+                        setHoles([0, 1, 2, 3]);
+                        setSeeds(16);
+                        setView("ritual");
+                        setTimeLeft(64);
+                      } else {
+                        toast.error("Mystère bientôt disponible");
+                      }
+                    }}
                     onDragEnd={(_, info) => {
                       if (info.offset.x > 80 && currentIndex > 0) setCurrentIndex(p => p - 1);
                       else if (info.offset.x < -80 && currentIndex < mysteres.length - 1) setCurrentIndex(p => p + 1);
                     }}
-                    whileTap={{ scale: 0.98 }}
+                    whileTap={{ scale: 0.95 }}
                     initial={{ x: 300, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -300, opacity: 0 }}
                     className="absolute w-[320px] h-[580px] bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-pointer flex flex-col"
                   >
@@ -220,21 +233,21 @@ export default function MysteresPage() {
           <motion.div
             key="ritual"
             drag="y" dragConstraints={{ top: 0, bottom: 0 }}
-            onDragEnd={(_, info) => { if (info.offset.y > 120) handleNextMystery(); }}
+            onDragEnd={(_, info) => { if (info.offset.y > 120) setView("gallery"); }}
             initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
             className="absolute inset-0 bg-white z-50 flex flex-col items-center p-6 overflow-hidden"
           >
-            <div className="w-full flex flex-row items-center justify-center gap-4 md:gap-12 h-[350px] shrink-0 pt-4">
+            <div className="w-full flex flex-row items-center justify-center gap-4 md:gap-12 h-[350px] shrink-0 pt-8">
               <OkpeleRitual activeSeeds={Math.ceil(timeLeft / 8)} />
               <div ref={jarRef} className="z-10"><SatoJar holesCount={holes} isOver={isOverJar} /></div>
               <AwaleMini seedsCount={seeds} isWrong={isWrong} />
             </div>
 
-            <div className="w-full max-w-xl mt-16 flex-1">
+            <div className="w-full max-w-xl mt-12 flex-1">
               {!isFinished ? (
                 !showExplanation ? (
                   <div className="text-center px-4">
-                    <h2 className="text-lg font-bold mb-10 text-gray-700 leading-relaxed">{currentQuestions[qIndex]?.question}</h2>
+                    <h2 className="text-lg font-bold mb-8 text-gray-700 leading-relaxed">{currentQuestions[qIndex]?.question}</h2>
                     <div className="grid grid-cols-1 gap-3">
                       {['a', 'b', 'c', 'd'].map((l) => currentQuestions[qIndex]?.[`choice_${l}`] && (
                         <motion.div key={l} drag dragSnapToOrigin
@@ -253,7 +266,7 @@ export default function MysteresPage() {
                   </div>
                 ) : (
                   <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-                    onClick={() => { setShowExplanation(false); setQIndex(p => p + 1); setHoles([0, 1, 2, 3]); setTimeLeft(64); }}
+                    onClick={() => { setShowExplanation(false); setQIndex(p => p + 1); setTimeLeft(64); }}
                     className="p-8 bg-orange-50 rounded-[2.5rem] text-center cursor-pointer border border-orange-100 shadow-sm mx-4"
                   >
                     <p className="text-lg italic font-medium text-[#a0412d]">"{currentQuestions[qIndex]?.explanation}"</p>
