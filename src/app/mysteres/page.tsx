@@ -8,7 +8,7 @@ import { confetti } from "tsparticles-confetti";
 
 // --- CONFIGURATION SUPABASE ---
 const SUPABASE_URL = "https://wtjhkqkqmexddroqwawk.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0amhrcWtxbWV4ZGRyb3F3YXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDU3NzQsImV4cCI6MjA4OTg4MTc3NH0.TdaWEVQxKF6s2j-7QStHZaFbOqs4e3UHVUN7iGQL_vc";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0amhrcWtxbWV4ZGRyb3F3YXdrIiwicm9sZSI6ImFunonIiwiaWF0IjoxNzc0MzA1Nzc0LCJleHAiOjIwODk4ODE3NzR9.TdaWEVQxKF6s2j-7QStHZaFbOqs4e3UHVUN7iGQL_vc";
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // --- COMPOSANTS DE RITUEL ---
@@ -36,9 +36,7 @@ const OkpeleSeed = ({ active }: { active: boolean }) => (
 
 const OkpeleRitual = ({ activeSeeds }: { activeSeeds: number }) => (
   <div className="relative flex flex-col items-center scale-90">
-    {/* Arc de connexion supérieur fin et sans points */}
     <div className="w-20 h-10 border-t-[1.5px] border-x-[1.5px] border-yellow-600/60 rounded-t-full absolute -top-6 left-1/2 -translate-x-1/2 z-0" />
-
     <div className="flex gap-10 relative z-10 pt-4">
       <div className="flex flex-col items-center">
         {[...Array(4)].map((_, i) => (
@@ -204,8 +202,14 @@ export default function MysteresPage() {
               <div className="pt-5 pb-3 px-7 text-center">
                 <span className="text-[11px] font-medium text-gray-400 uppercase tracking-[0.35em]">{themes[currentM.theme_id] || "Bénin Éternel"}</span>
               </div>
-              <div className="h-[55%] w-full overflow-hidden">
-                <img src={`https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/mysteres-assets/${currentM.id}.jpg`} className="h-full w-full object-cover" alt="" />
+              {/* Image consolidée : pas de drag, pas de sélection souris */}
+              <div className="h-[55%] w-full overflow-hidden select-none pointer-events-none">
+                <img
+                  src={`https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/mysteres-assets/${currentM.id}.jpg`}
+                  className="h-full w-full object-cover"
+                  alt=""
+                  draggable="false"
+                />
               </div>
               <div className="p-7 flex flex-col flex-1">
                 <h2 className="text-[24px] font-black leading-[1.1] tracking-[0.05em] uppercase">{currentM.title}</h2>
@@ -217,7 +221,19 @@ export default function MysteresPage() {
             </motion.div>
           </motion.div>
         ) : (
-          <motion.div key="ritual" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-50 flex flex-col items-center p-6 overflow-y-auto no-scrollbar">
+          <motion.div
+            key="ritual"
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            drag="y"
+            dragConstraints={{ top: 0, bottom: 0 }}
+            onDragEnd={(_, info) => {
+              // Swipe vers le bas pour quitter le rituel
+              if (info.offset.y > 100) setView("gallery");
+            }}
+            className="absolute inset-0 bg-white z-50 flex flex-col items-center p-6 overflow-y-auto no-scrollbar"
+          >
 
             {/* OBJETS RITUELS */}
             <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-6 md:gap-20 mb-12 h-[400px] shrink-0">
@@ -244,7 +260,7 @@ export default function MysteresPage() {
               </div>
             </div>
 
-            {/* ZONE D'INTERACTION : QUESTIONS ET RÉPONSES */}
+            {/* ZONE D'INTERACTION */}
             <div className="w-full max-w-xl pb-10">
               {!isFinished ? (
                 !showExplanation ? (
