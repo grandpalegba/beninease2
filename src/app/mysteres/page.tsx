@@ -36,12 +36,8 @@ const OkpeleSeed = ({ active }: { active: boolean }) => (
 
 const OkpeleRitual = ({ activeSeeds }: { activeSeeds: number }) => (
   <div className="relative flex flex-col items-center scale-[0.65] md:scale-90 origin-top">
-    {/* ARC STRUCTUREL : Fin (1.5px) et connecté aux noix */}
-    <div className="w-[66px] md:w-[82px] h-10 border-t-[1.5px] border-x-[1.5px] border-yellow-700/40 rounded-t-[40px] absolute top-[2px] left-1/2 -translate-x-1/2 z-0">
-      {/* Points de jonction discrets */}
-      <div className="absolute -bottom-[1px] -left-[1px] w-[3px] h-[3px] bg-yellow-700/50 rounded-full"></div>
-      <div className="absolute -bottom-[1px] -right-[1px] w-[3px] h-[3px] bg-yellow-700/50 rounded-full"></div>
-    </div>
+    {/* ARC STRUCTUREL : Épuré, sans les points aux extrémités */}
+    <div className="w-[64px] md:w-[80px] h-10 border-t-[1.5px] border-x-[1.5px] border-yellow-700/40 rounded-t-[40px] absolute top-[2px] left-1/2 -translate-x-1/2 z-0" />
 
     <div className="flex gap-8 md:gap-10 relative z-10 pt-10">
       <div className="flex flex-col items-center">
@@ -240,7 +236,6 @@ export default function MysteresPage() {
           >
             <div className="w-12 h-1 bg-gray-100 rounded-full mb-4 shrink-0" />
 
-            {/* INSTRUMENTS : Arc maintenant structurel et fin */}
             <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-2 md:gap-20 h-[220px] md:h-[400px] shrink-0">
               <div className="flex flex-col items-center">
                 <OkpeleRitual activeSeeds={Math.ceil(timeLeft / 8)} />
@@ -253,7 +248,6 @@ export default function MysteresPage() {
               </div>
             </div>
 
-            {/* QUESTIONS : Ajustées pour éviter le scroll sur mobile */}
             <div className="w-full max-w-xl flex-1 flex flex-col justify-center pb-4">
               {!isFinished ? (
                 !showExplanation ? (
