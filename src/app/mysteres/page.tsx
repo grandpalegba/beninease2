@@ -11,7 +11,12 @@ const SUPABASE_URL = "https://wtjhkqkqmexddroqwawk.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0amhrcWtxbWV4ZGRyb3F3YXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDU3NzQsImV4cCI6MjA4OTg4MTc3NH0.TdaWEVQxKF6s2j-7QStHZaFbOqs4e3UHVUN7iGQL_vc";
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Fonction Shuffle pour l'ordre aléatoire des mystères
+// Formate "LES TATA SOMBA" -> "Les Tata Somba"
+const formatTitle = (str: string) => {
+  if (!str) return "";
+  return str.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+};
+
 const shuffleArray = (array: any[]) => {
   return [...array].sort(() => Math.random() - 0.5);
 };
@@ -143,13 +148,12 @@ export default function MysteresPage() {
 
               <div className="p-7 flex flex-col flex-1 bg-white justify-center">
                 <h2 className="font-lato text-[26px] font-black text-[#1a1a1a] leading-[1.1] tracking-tight">
-                  {currentM.title}
+                  {formatTitle(currentM.title)}
                 </h2>
-                <p className="font-lato text-[12px] font-bold text-[#a0412d] mt-1.5 italic tracking-wide">
+                <p className="font-lato text-[12px] font-bold text-[#a0412d] mt-1 italic tracking-wide">
                   {currentM.subtitle}
                 </p>
-                {/* Espacement réduit mt-2 entre sous-titre et mise en abyme */}
-                <div className="mt-2 pt-3 border-t border-gray-50">
+                <div className="mt-1.5 pt-3 border-t border-gray-50">
                   <p className="font-lato text-[14px] text-gray-500 italic leading-[1.6] line-clamp-3">
                     "{currentM.mise_en_abyme}"
                   </p>
@@ -212,7 +216,9 @@ export default function MysteresPage() {
                 <div className="max-w-md mx-auto h-full flex flex-col font-lato">
                   <div className="text-center mb-8 pt-6">
                     <div className="w-16 h-16 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">🏺</div>
-                    <h2 className="text-3xl font-black text-[#1a1a1a] leading-tight">{currentM.title}</h2>
+                    <h2 className="text-3xl font-black text-[#1a1a1a] leading-tight">
+                      {formatTitle(currentM.title)}
+                    </h2>
                   </div>
                   <div className="space-y-6 flex-1">
                     <div className="p-7 bg-[#3d1810] rounded-[30px] italic text-center text-orange-50 border-2 border-[#fdb813]">
