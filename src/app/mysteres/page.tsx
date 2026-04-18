@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import { createClient } from "@supabase/supabase-js";
 import { toast, Toaster } from "sonner";
 import { confetti } from "tsparticles-confetti";
@@ -143,10 +143,10 @@ export default function MysteresPage() {
         const { data: tData } = await supabase.from('themes').select('id, name');
 
         if (tData) setThemes(tData.reduce((acc: any, t: any) => ({ ...acc, [t.id]: t.name }), {}));
-        if (mData) setMysteres(mData.sort(() => Math.random() - 0.5));
+        if (mData) setMysteres(mData);
         if (qData) setAllQuestions(qData);
       } catch (e) {
-        toast.error("Erreur de connexion");
+        toast.error("Connexion aux mystères impossible");
       } finally {
         setLoading(false);
       }
@@ -154,23 +154,22 @@ export default function MysteresPage() {
     fetchData();
   }, []);
 
-  const currentM = mysteres[currentIndex];
+  const currentM = mysteres[currentIndex] || null;
   const currentQuestions = useMemo(() => {
-    if (!currentM) return [];
+    if (!currentM || allQuestions.length === 0) return [];
     return allQuestions
       .filter(q => q.mystere_id === currentM.id)
       .sort((a, b) => a.question_number - b.question_number);
   }, [allQuestions, currentM]);
 
-  // GESTION DU TIMER PAR QUESTION
   useEffect(() => {
     if (timeLeft <= 0 || isFinished || showExplanation || view !== "ritual") {
       if (timeLeft <= 0 && view === "ritual" && !isFinished && !showExplanation) {
         toast.error("Le temps du secret s'est écoulé");
         setIsWrong(true);
-        setSeeds(s => Math.max(0, s - 2)); // Pénalité temps
+        setSeeds(s => Math.max(0, s - 2));
         setTimeout(() => setIsWrong(false), 400);
-        setTimeLeft(64); // On reset pour laisser une chance
+        setTimeLeft(64);
       }
       return;
     }
@@ -211,50 +210,83 @@ export default function MysteresPage() {
 
       <AnimatePresence mode="wait">
         {view === "gallery" ? (
-          <motion.div key="gallery" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full flex flex-col items-center justify-center p-6">
-            <motion.div
-              onClick={() => { setHoles([0, 1, 2, 3]); setSeeds(16); setTimeLeft(64); setQIndex(0); setExplanations([]); setIsFinished(false); setView("ritual"); }}
-              className="w-full max-w-[320px] h-[580px] bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-pointer flex flex-col"
-            >
-              <div className="pt-5 pb-3 px-7 text-center">
-                <span className="text-[11px] font-medium text-gray-400 uppercase tracking-[0.35em]">
-                  {currentM?.theme_id ? themes[currentM.theme_id] : "Bénin Éternel"}
-                </span>
-              </div>
+          <motion.div
+            key="gallery"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="h-full flex flex-col items-center justify-center overflow-hidden"
+          >
+            <div className="relative w-full max-w-[340px] h-[600px] flex items-center justify-center">
+              <AnimatePresence initial={false}>
+                {mysteres.map((m, idx) => (
+                  idx === currentIndex && (
+                    <motion.div
+                      key={m.id}
+                      drag="x"
+                      dragConstraints={{ left: 0, right: 0 }}
+                      onDragEnd={(_, info) => {
+                        if (info.offset.x > 100 && currentIndex > 0) setCurrentIndex(p => p - 1);
+                        else if (info.offset.x < -100 && currentIndex < mysteres.length - 1) setCurrentIndex(p => p + 1);
+                      }}
+                      initial={{ x: 300, opacity: 0, scale: 0.9 }}
+                      animate={{ x: 0, opacity: 1, scale: 1 }}
+                      exit={{ x: -300, opacity: 0, scale: 0.9 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                      className="absolute w-[320px] h-[580px] bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-grab active:cursor-grabbing flex flex-col"
+                    >
+                      <div className="pt-5 pb-3 px-7 text-center">
+                        <span className="text-[11px] font-medium text-gray-400 uppercase tracking-[0.35em]">
+                          {m.theme_id ? (themes[m.theme_id] || "Bénin Éternel") : "Chargement..."}
+                        </span>
+                      </div>
 
-              <div className="h-[55%] w-full overflow-hidden select-none pointer-events-none">
-                {currentM?.id && (
-                  <img
-                    src={`https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/mysteres-assets/${currentM.id}.jpg`}
-                    className="h-full w-full object-cover"
-                    alt=""
-                    draggable="false"
-                  />
-                )}
-              </div>
+                      <div className="h-[55%] w-full overflow-hidden select-none pointer-events-none">
+                        <img
+                          src={`https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/mysteres-assets/${m.id}.jpg`}
+                          className="h-full w-full object-cover"
+                          alt=""
+                          draggable="false"
+                        />
+                      </div>
 
-              <div className="p-7 flex flex-col flex-1">
-                <h2 className="text-[24px] font-black leading-[1.1] tracking-[0.05em] uppercase">{currentM?.title || "Mystère"}</h2>
-                <p className="text-[11px] font-bold text-[#a0412d] mt-1 italic tracking-[0.12em] uppercase">{currentM?.subtitle}</p>
-                <div className="mt-3 pt-3 border-t border-gray-50 flex-1 overflow-y-auto no-scrollbar">
-                  <p className="text-[15px] text-gray-400 italic leading-[1.6]">"{currentM?.mise_en_abyme}"</p>
-                </div>
-              </div>
-            </motion.div>
+                      <div className="p-7 flex flex-col flex-1">
+                        <h2 className="text-[24px] font-black leading-[1.1] tracking-[0.05em] uppercase">{m.title}</h2>
+                        <p className="text-[11px] font-bold text-[#a0412d] mt-1 italic tracking-[0.12em] uppercase">{m.subtitle}</p>
+                        <div className="mt-3 pt-3 border-t border-gray-50 flex-1 overflow-y-auto no-scrollbar">
+                          <p className="text-[15px] text-gray-400 italic leading-[1.6]">"{m.mise_en_abyme}"</p>
+                        </div>
+                        <button
+                          onClick={() => {
+                            if (currentQuestions.length > 0) {
+                              setHoles([0, 1, 2, 3]); setSeeds(16); setTimeLeft(64); setQIndex(0); setExplanations([]); setIsFinished(false); setView("ritual");
+                            } else {
+                              toast.error("Ce secret n'est pas encore prêt.");
+                            }
+                          }}
+                          className="mt-4 py-3 bg-[#1a1a1a] text-white rounded-2xl text-[10px] font-black uppercase tracking-widest active:scale-95 transition-transform"
+                        >
+                          Entrer dans le rituel
+                        </button>
+                      </div>
+                    </motion.div>
+                  )
+                ))}
+              </AnimatePresence>
+            </div>
+
+            <div className="flex gap-2 mt-8">
+              {mysteres.map((_, i) => (
+                <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i === currentIndex ? 'w-8 bg-[#a0412d]' : 'w-2 bg-gray-200'}`} />
+              ))}
+            </div>
           </motion.div>
         ) : (
           <motion.div
             key="ritual"
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
-            drag="y"
-            dragConstraints={{ top: 0, bottom: 0 }}
-            dragElastic={0.2}
+            initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
+            drag="y" dragConstraints={{ top: 0, bottom: 0 }} dragElastic={0.2}
             onDragEnd={(_, info) => { if (info.offset.y > 150) setView("gallery"); }}
             className="absolute inset-0 bg-white z-50 flex flex-col items-center p-6 overflow-y-auto no-scrollbar"
           >
-
             <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-6 md:gap-20 mb-12 h-[400px] shrink-0">
               <div className="flex flex-col items-center gap-6">
                 <div className="pt-8"><OkpeleRitual activeSeeds={activeOkpeleSeeds} /></div>
@@ -262,9 +294,7 @@ export default function MysteresPage() {
                   <p>Focus : <span className="text-[#a0412d] font-black">{timeLeft}s</span></p>
                 </div>
               </div>
-
               <div ref={jarRef} className="z-10 pt-4"><SatoJar holesCount={holes} isOver={isOverJar} /></div>
-
               <div className="flex flex-col items-center gap-6">
                 <div className="scale-90 pt-12"><AwaleMini seedsCount={seeds} isWrong={isWrong} /></div>
                 <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
@@ -283,7 +313,6 @@ export default function MysteresPage() {
                     >
                       {currentQuestions[qIndex]?.question || "Chargement..."}
                     </motion.h2>
-
                     <div className="grid grid-cols-1 gap-3">
                       {['a', 'b', 'c', 'd'].map((l) => (
                         currentQuestions[qIndex]?.[`choice_${l}`] && (
@@ -293,10 +322,10 @@ export default function MysteresPage() {
                               if (jar) setIsOverJar(info.point.x > jar.left && info.point.x < jar.right && info.point.y > jar.top && info.point.y < jar.bottom);
                             }}
                             onDragEnd={(_, info) => handleDragEnd(info, l.toUpperCase() === currentQuestions[qIndex]?.correct_answer)}
-                            className="p-4 bg-white border border-gray-100 rounded-2xl shadow-sm cursor-grab active:cursor-grabbing flex items-center group touch-none z-50 hover:border-[#a0412d]/20 transition-colors"
+                            className="p-4 bg-white border border-gray-100 rounded-2xl shadow-sm cursor-grab active:cursor-grabbing flex items-center group touch-none z-50"
                           >
                             <span className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center font-bold text-[#a0412d] mr-4 uppercase">{l}</span>
-                            <span className="font-bold text-gray-600 text-sm text-left leading-relaxed">{currentQuestions[qIndex][`choice_${l}`]}</span>
+                            <span className="font-bold text-gray-600 text-sm text-left">{currentQuestions[qIndex][`choice_${l}`]}</span>
                           </motion.div>
                         )
                       ))}
@@ -305,11 +334,7 @@ export default function MysteresPage() {
                 ) : (
                   <motion.div
                     initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-                    onClick={() => {
-                      setShowExplanation(false);
-                      setQIndex(p => p + 1);
-                      setTimeLeft(64); // LE TIMER RECOMMENCE ICI
-                    }}
+                    onClick={() => { setShowExplanation(false); setQIndex(p => p + 1); setTimeLeft(64); }}
                     className="p-8 bg-orange-50/50 rounded-[2rem] border border-orange-100/50 text-center cursor-pointer"
                   >
                     <p className="text-lg italic font-medium text-[#a0412d]">"{currentQuestions[qIndex]?.explanation}"</p>
@@ -322,7 +347,7 @@ export default function MysteresPage() {
                   <div className="bg-white p-6 rounded-[2rem] text-left mb-6 space-y-3 border border-gray-50 shadow-inner">
                     {explanations.map((exp, i) => <p key={i} className="text-sm text-gray-600 flex items-start leading-relaxed"><span className="text-[#a0412d] mr-3 font-bold">✦</span> {exp}</p>)}
                   </div>
-                  <button onClick={() => setView("gallery")} className="w-full py-4 bg-[#a0412d] text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg active:scale-95 transition-transform">Autre secret</button>
+                  <button onClick={() => setView("gallery")} className="w-full py-4 bg-[#a0412d] text-white rounded-full font-bold uppercase tracking-widest text-[10px] active:scale-95 transition-transform">Autre secret</button>
                 </div>
               )}
             </div>
