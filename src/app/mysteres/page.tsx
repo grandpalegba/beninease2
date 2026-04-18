@@ -118,7 +118,7 @@ export default function MysteresPage() {
   );
 
   return (
-    <div className="h-screen w-screen bg-[#faf9f8] overflow-hidden relative touch-none font-sans">
+    <div className="h-screen w-screen bg-[#faf9f8] overflow-hidden relative touch-none font-sans text-[#1a1a1a]">
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap');
         .font-lato { font-family: 'Lato', sans-serif; }
@@ -147,14 +147,14 @@ export default function MysteresPage() {
               onClick={() => { setQIndex(0); setExplanations([]); setView("challenge"); }}
               className="w-full max-w-[340px] h-[610px] bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-pointer flex flex-col"
             >
-              {/* En-tête de catégorie discret */}
-              <div className="pt-6 pb-3 px-7 text-center">
-                <span className="font-lato text-[10px] font-light text-gray-400 uppercase tracking-[0.3em]">
-                  {themes[currentM.theme_id] || "Mystère du Bénin"}
+              {/* Catégorie : Lisibilité améliorée (poids 400, texte plus sombre, tracking augmenté) */}
+              <div className="pt-5 pb-3 px-7 text-center">
+                <span className="font-lato text-[11px] font-medium text-gray-500 uppercase tracking-[0.35em]">
+                  {themes[currentM.theme_id] || "Bénin éternel"}
                 </span>
               </div>
 
-              {/* Image (ajustée à 55% pour l'équilibre avec l'en-tête) */}
+              {/* Image (55%) */}
               <div className="h-[55%] w-full overflow-hidden">
                 <img
                   src={getImageUrl(currentM.id)}
@@ -169,7 +169,7 @@ export default function MysteresPage() {
                 <h2 className="font-lato text-[24px] font-black text-[#1a1a1a] leading-[1.1] tracking-[0.05em]">
                   {formatTitle(currentM.title)}
                 </h2>
-                <p className="font-lato text-[11px] font-bold text-[#a0412d] mt-1 italic tracking-[0.1em] uppercase opacity-80">
+                <p className="font-lato text-[11px] font-bold text-[#a0412d] mt-1 italic tracking-[0.12em] uppercase opacity-90">
                   {currentM.subtitle}
                 </p>
 
@@ -186,7 +186,7 @@ export default function MysteresPage() {
           </motion.div>
         )}
 
-        {/* --- CHALLENGE & SUCCÈS --- */}
+        {/* --- CHALLENGE & SUCCÈS (Le reste du code demeure identique pour garantir la stabilité) --- */}
         {(view === "challenge" || view === "success") && (
           <motion.div
             key="active-challenge"
