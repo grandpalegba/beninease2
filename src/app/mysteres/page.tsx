@@ -139,7 +139,7 @@ export default function MysteresPage() {
               onClick={() => { setQIndex(0); setExplanations([]); setView("challenge"); }}
               className="w-full max-w-[340px] h-[610px] bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-pointer flex flex-col"
             >
-              {/* Image haute (60% au lieu de 65% pour donner plus d'espace au texte) */}
+              {/* Image haute (60%) */}
               <div className="h-[60%] w-full overflow-hidden">
                 <img
                   src={getImageUrl(currentM.id)}
@@ -149,24 +149,24 @@ export default function MysteresPage() {
                 />
               </div>
 
-              {/* Conteneur de texte remonté (pas de justify-center) */}
-              <div className="p-6 flex flex-col flex-1 bg-white overflow-hidden">
-                <h2 className="font-lato text-[24px] font-black text-[#1a1a1a] leading-[1.1] tracking-tight">
+              {/* Conteneur de texte remonté et aéré */}
+              <div className="p-7 flex flex-col flex-1 bg-white overflow-hidden">
+                <h2 className="font-lato text-[24px] font-black text-[#1a1a1a] leading-[1.1] tracking-[0.05em]">
                   {formatTitle(currentM.title)}
                 </h2>
-                <p className="font-lato text-[11px] font-bold text-[#a0412d] mt-1 italic tracking-wide">
+                <p className="font-lato text-[11px] font-bold text-[#a0412d] mt-1 italic tracking-[0.1em] uppercase opacity-80">
                   {currentM.subtitle}
                 </p>
 
-                {/* Mise en abyme avec scroll de secours si texte très long */}
-                <div className="mt-2 pt-3 border-t border-gray-50 flex-1 overflow-y-auto no-scrollbar">
-                  <p className="font-lato text-[14px] text-gray-500 italic leading-[1.5]">
+                {/* Mise en abyme intégrale */}
+                <div className="mt-4 pt-4 border-t border-gray-50 flex-1 overflow-y-auto no-scrollbar">
+                  <p className="font-lato text-[15px] text-gray-500 italic leading-[1.6]">
                     "{currentM.mise_en_abyme}"
                   </p>
                 </div>
               </div>
             </motion.div>
-            <p className="mt-8 text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] animate-pulse font-lato">
+            <p className="mt-8 text-[10px] font-black text-gray-300 uppercase tracking-[0.25em] animate-pulse font-lato">
               Swipe pour naviguer • Tap pour entrer
             </p>
           </motion.div>
@@ -192,7 +192,7 @@ export default function MysteresPage() {
               {view === "challenge" ? (
                 <div className="max-w-md mx-auto flex flex-col h-full font-lato pt-4">
                   <SatoJar filledCount={qIndex} />
-                  <h1 className="text-2xl font-black text-center text-[#1a1a1a] mb-8 leading-snug">
+                  <h1 className="text-2xl font-black text-center text-[#1a1a1a] mb-8 leading-snug tracking-tight">
                     {currentQuestions[qIndex]?.question}
                   </h1>
 
@@ -222,7 +222,7 @@ export default function MysteresPage() {
                 <div className="max-w-md mx-auto h-full flex flex-col font-lato">
                   <div className="text-center mb-8 pt-6">
                     <div className="w-16 h-16 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">🏺</div>
-                    <h2 className="text-3xl font-black text-[#1a1a1a] leading-tight">
+                    <h2 className="text-3xl font-black text-[#1a1a1a] leading-tight tracking-[0.05em]">
                       {formatTitle(currentM.title)}
                     </h2>
                   </div>
