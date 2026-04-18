@@ -52,6 +52,7 @@ const SatoJar = ({ filledCount }: { filledCount: number }) => (
 
 export default function MysteresPage() {
   const [mysteres, setMysteres] = useState<any[]>([]);
+  const [themes, setThemes] = useState<Record<string, string>>({});
   const [allQuestions, setAllQuestions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -65,6 +66,13 @@ export default function MysteresPage() {
     async function fetchData() {
       const { data: mData } = await supabase.from('mysteres').select('*');
       const { data: qData } = await supabase.from('questions').select('*');
+      const { data: tData } = await supabase.from('themes').select('id, name');
+
+      if (tData) {
+        const themeMap = tData.reduce((acc: any, t: any) => ({ ...acc, [t.id]: t.name }), {});
+        setThemes(themeMap);
+      }
+
       if (mData) setMysteres(shuffleArray(mData));
       if (qData) setAllQuestions(qData);
       setLoading(false);
@@ -112,7 +120,7 @@ export default function MysteresPage() {
   return (
     <div className="h-screen w-screen bg-[#faf9f8] overflow-hidden relative touch-none font-sans">
       <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap');
         .font-lato { font-family: 'Lato', sans-serif; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -139,8 +147,15 @@ export default function MysteresPage() {
               onClick={() => { setQIndex(0); setExplanations([]); setView("challenge"); }}
               className="w-full max-w-[340px] h-[610px] bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-pointer flex flex-col"
             >
-              {/* Image haute (60%) */}
-              <div className="h-[60%] w-full overflow-hidden">
+              {/* En-tête de catégorie discret */}
+              <div className="pt-6 pb-3 px-7 text-center">
+                <span className="font-lato text-[10px] font-light text-gray-400 uppercase tracking-[0.3em]">
+                  {themes[currentM.theme_id] || "Mystère du Bénin"}
+                </span>
+              </div>
+
+              {/* Image (ajustée à 55% pour l'équilibre avec l'en-tête) */}
+              <div className="h-[55%] w-full overflow-hidden">
                 <img
                   src={getImageUrl(currentM.id)}
                   className="h-full w-full object-cover pointer-events-none"
@@ -149,7 +164,7 @@ export default function MysteresPage() {
                 />
               </div>
 
-              {/* Conteneur de texte remonté et aéré */}
+              {/* Conteneur de texte */}
               <div className="p-7 flex flex-col flex-1 bg-white overflow-hidden">
                 <h2 className="font-lato text-[24px] font-black text-[#1a1a1a] leading-[1.1] tracking-[0.05em]">
                   {formatTitle(currentM.title)}
@@ -158,8 +173,7 @@ export default function MysteresPage() {
                   {currentM.subtitle}
                 </p>
 
-                {/* Mise en abyme intégrale */}
-                <div className="mt-4 pt-4 border-t border-gray-50 flex-1 overflow-y-auto no-scrollbar">
+                <div className="mt-3 pt-3 border-t border-gray-50 flex-1 overflow-y-auto no-scrollbar">
                   <p className="font-lato text-[15px] text-gray-500 italic leading-[1.6]">
                     "{currentM.mise_en_abyme}"
                   </p>
@@ -242,7 +256,7 @@ export default function MysteresPage() {
                     onClick={() => { setView("gallery"); setCurrentIndex(prev => (prev + 1) % mysteres.length); }}
                     className="mt-10 w-full py-5 bg-[#a0412d] text-white rounded-full font-black uppercase text-xs tracking-widest shadow-xl active:scale-95 transition-transform"
                   >
-                    Découvrir un autre mystère
+                    Suivant
                   </button>
                 </div>
               )}
