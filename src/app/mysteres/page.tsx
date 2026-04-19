@@ -122,7 +122,6 @@ export default function MysteresPage() {
   const [themes, setThemes] = useState<Record<string, string>>({});
   const [allQuestions, setAllQuestions] = useState<any[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const [view, setView] = useState<"gallery" | "ritual">("gallery");
   const [timeLeft, setTimeLeft] = useState(64);
@@ -200,46 +199,6 @@ export default function MysteresPage() {
     <div className="h-screen w-screen bg-white overflow-hidden relative touch-none font-sans text-[#1a1a1a]">
       <Toaster position="top-center" richColors />
 
-      {/* HEADER AVEC MENU HARMONISÉ */}
-      <header className="fixed top-0 left-0 right-0 z-[100] p-6 flex justify-between items-center bg-white/80 backdrop-blur-md">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-[#a0412d] rounded-full" />
-          <span className="font-sans font-bold tracking-tight text-lg">BeninEase</span>
-        </div>
-
-        {/* MENU DESKTOP */}
-        <nav className="hidden md:flex gap-8">
-          {['Mystères', 'E-shop', 'Communauté', 'Connexion'].map((item) => (
-            <button key={item} className="font-sans text-sm font-semibold text-gray-500 hover:text-[#a0412d] transition-colors">
-              {item}
-            </button>
-          ))}
-        </nav>
-
-        {/* BOUTON HAMBURGER MOBILE */}
-        <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden z-[110]">
-          <div className="w-6 h-0.5 bg-black mb-1.5" />
-          <div className="w-6 h-0.5 bg-black mb-1.5" />
-          <div className="w-4 h-0.5 bg-black ml-auto" />
-        </button>
-      </header>
-
-      {/* OVERLAY MENU MOBILE HARMONISÉ */}
-      <AnimatePresence>
-        {isMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, x: "100%" }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: "100%" }}
-            className="fixed inset-0 bg-white z-[105] flex flex-col items-center justify-center gap-8"
-          >
-            {['Mystères', 'E-shop', 'Communauté', 'Connexion'].map((item) => (
-              <button key={item} className="font-sans text-2xl font-bold text-gray-800 hover:text-[#a0412d]">
-                {item}
-              </button>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       <AnimatePresence mode="wait">
         {view === "gallery" ? (
           <motion.div key={currentM.id} initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }} className="h-full flex flex-col items-center justify-center p-6">
@@ -250,7 +209,7 @@ export default function MysteresPage() {
                 else if (info.offset.y < -50) startRitual();
               }}
               onClick={startRitual}
-              className="w-full max-w-[320px] h-[520px] md:h-[580px] -mt-12 bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-pointer flex flex-col"
+              className="w-full max-w-[320px] h-[520px] md:h-[580px] -mt-12 md:-mt-20 bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-pointer flex flex-col"
             >
               <div className="pt-5 pb-3 px-7 text-center select-none">
                 <span className="text-[10px] md:text-[11px] font-sans font-medium text-gray-400 uppercase tracking-[0.35em]">
@@ -274,7 +233,7 @@ export default function MysteresPage() {
             </motion.div>
           </motion.div>
         ) : (
-          <motion.div key="ritual" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-50 flex flex-col items-center p-4 overflow-hidden pt-20">
+          <motion.div key="ritual" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-50 flex flex-col items-center p-4 overflow-hidden">
             <div className="w-12 h-1 bg-gray-100 rounded-full mb-4 shrink-0" />
 
             {/* ZONE VISUELLE */}
