@@ -35,7 +35,6 @@ const OkpeleSeed = ({ active }: { active: boolean }) => (
 );
 
 const OkpeleRitual = ({ activeSeeds }: { activeSeeds: number }) => (
-  /* Taille réduite (scale-0.5) pour s'aligner sur la hauteur de l'Awalé */
   <div className="relative flex flex-col items-center scale-[0.5] md:scale-[0.7] origin-center">
     <div className="w-[64px] md:w-[80px] h-10 border-t-[1.5px] border-x-[1.5px] border-yellow-700/40 rounded-t-[40px] absolute top-[2px] left-1/2 -translate-x-1/2 z-0" />
     <div className="flex gap-8 md:gap-10 relative z-10 pt-10">
@@ -123,6 +122,7 @@ export default function MysteresPage() {
   const [themes, setThemes] = useState<Record<string, string>>({});
   const [allQuestions, setAllQuestions] = useState<any[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const [view, setView] = useState<"gallery" | "ritual">("gallery");
   const [timeLeft, setTimeLeft] = useState(64);
@@ -200,6 +200,46 @@ export default function MysteresPage() {
     <div className="h-screen w-screen bg-white overflow-hidden relative touch-none font-sans text-[#1a1a1a]">
       <Toaster position="top-center" richColors />
 
+      {/* HEADER AVEC MENU HARMONISÉ */}
+      <header className="fixed top-0 left-0 right-0 z-[100] p-6 flex justify-between items-center bg-white/80 backdrop-blur-md">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-[#a0412d] rounded-full" />
+          <span className="font-sans font-bold tracking-tight text-lg">BeninEase</span>
+        </div>
+
+        {/* MENU DESKTOP */}
+        <nav className="hidden md:flex gap-8">
+          {['Mystères', 'E-shop', 'Communauté', 'Connexion'].map((item) => (
+            <button key={item} className="font-sans text-sm font-semibold text-gray-500 hover:text-[#a0412d] transition-colors">
+              {item}
+            </button>
+          ))}
+        </nav>
+
+        {/* BOUTON HAMBURGER MOBILE */}
+        <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden z-[110]">
+          <div className="w-6 h-0.5 bg-black mb-1.5" />
+          <div className="w-6 h-0.5 bg-black mb-1.5" />
+          <div className="w-4 h-0.5 bg-black ml-auto" />
+        </button>
+      </header>
+
+      {/* OVERLAY MENU MOBILE HARMONISÉ */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, x: "100%" }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: "100%" }}
+            className="fixed inset-0 bg-white z-[105] flex flex-col items-center justify-center gap-8"
+          >
+            {['Mystères', 'E-shop', 'Communauté', 'Connexion'].map((item) => (
+              <button key={item} className="font-sans text-2xl font-bold text-gray-800 hover:text-[#a0412d]">
+                {item}
+              </button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <AnimatePresence mode="wait">
         {view === "gallery" ? (
           <motion.div key={currentM.id} initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }} className="h-full flex flex-col items-center justify-center p-6">
@@ -210,20 +250,21 @@ export default function MysteresPage() {
                 else if (info.offset.y < -50) startRitual();
               }}
               onClick={startRitual}
-              className="w-full max-w-[320px] h-[520px] md:h-[580px] -mt-12 md:-mt-20 bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-pointer flex flex-col"
+              className="w-full max-w-[320px] h-[520px] md:h-[580px] -mt-12 bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-pointer flex flex-col"
             >
               <div className="pt-5 pb-3 px-7 text-center select-none">
-                <span className="text-[10px] md:text-[11px] font-medium text-gray-400 uppercase tracking-[0.35em]">{themes[currentM.theme_id] || "Bénin Éternel"}</span>
+                <span className="text-[10px] md:text-[11px] font-sans font-medium text-gray-400 uppercase tracking-[0.35em]">
+                  {themes[currentM.theme_id] || "Bénin Éternel"}
+                </span>
               </div>
               <div className="h-[50%] md:h-[55%] w-full overflow-hidden bg-gray-100 pointer-events-none">
                 <img src={`https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/mysteres-assets/${currentM.id}.jpg`} className="h-full w-full object-cover" alt="" />
               </div>
               <div className="p-6 md:p-7 flex flex-col flex-1 bg-white select-none pointer-events-none">
-                {/* TITRE : Police Sans Serif avec espacement réduit */}
                 <h2 className="text-[15px] md:text-[17px] font-bold font-sans uppercase tracking-[0.1em] text-[#1a1a1a] leading-tight">
                   {currentM.title}
                 </h2>
-                <p className="text-[10px] md:text-[11px] font-bold text-[#a0412d] mt-2 italic uppercase">
+                <p className="text-[10px] md:text-[11px] font-sans font-bold text-[#a0412d] mt-2 italic uppercase">
                   {currentM.subtitle}
                 </p>
                 <div className="mt-2 pt-2 border-t border-gray-50 flex-1 overflow-y-auto no-scrollbar">
@@ -233,20 +274,16 @@ export default function MysteresPage() {
             </motion.div>
           </motion.div>
         ) : (
-          <motion.div key="ritual" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-50 flex flex-col items-center p-4 overflow-hidden">
+          <motion.div key="ritual" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-50 flex flex-col items-center p-4 overflow-hidden pt-20">
             <div className="w-12 h-1 bg-gray-100 rounded-full mb-4 shrink-0" />
 
-            {/* ZONE VISUELLE : OKPELE | JARRE | AWALE */}
+            {/* ZONE VISUELLE */}
             <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-4 md:gap-20 h-[220px] md:h-[350px] shrink-0">
-              <div className="flex flex-col items-center justify-center">
-                <OkpeleRitual activeSeeds={Math.ceil(timeLeft / 8)} />
-              </div>
+              <OkpeleRitual activeSeeds={Math.ceil(timeLeft / 8)} />
               <div ref={jarRef} className="z-10 flex items-center justify-center">
                 <SatoJar holesCount={holes} isOver={isOverJar} />
               </div>
-              <div className="flex flex-col items-center justify-center">
-                <AwaleMini seedsCount={seeds} isWrong={isWrong} />
-              </div>
+              <AwaleMini seedsCount={seeds} isWrong={isWrong} />
             </div>
 
             {/* ZONE QUESTION ET LABELS */}
@@ -254,22 +291,20 @@ export default function MysteresPage() {
               {!isFinished ? (
                 !showExplanation ? (
                   <div className="text-center flex flex-col gap-3 md:gap-5">
-                    {/* QUESTION */}
-                    <h2 className="font-bold text-gray-700 text-base md:text-xl leading-snug px-4">
+                    {/* QUESTION EN SANS SERIF */}
+                    <h2 className="font-sans font-bold text-gray-700 text-base md:text-xl leading-snug px-4">
                       {currentQuestions[qIndex]?.question}
                     </h2>
 
-                    {/* LABELS ALIGNÉS SOUS LA QUESTION */}
                     <div className="flex justify-center items-center gap-10 -mt-2 mb-2">
-                      <p className="text-[9px] md:text-[11px] font-bold uppercase text-gray-400 tracking-wider">
+                      <p className="text-[9px] md:text-[11px] font-sans font-bold uppercase text-gray-400 tracking-wider">
                         Temps : {timeLeft}s
                       </p>
-                      <p className="text-[9px] md:text-[11px] font-bold uppercase text-gray-400 tracking-wider">
+                      <p className="text-[9px] md:text-[11px] font-sans font-bold uppercase text-gray-400 tracking-wider">
                         Graines sacrées : {seeds} / 16
                       </p>
                     </div>
 
-                    {/* CHOIX */}
                     <div className="grid grid-cols-1 gap-2">
                       {['a', 'b', 'c', 'd'].map((l) => (
                         <motion.div key={l} drag dragSnapToOrigin
@@ -281,24 +316,24 @@ export default function MysteresPage() {
                           className="p-3 bg-white border border-gray-100 rounded-xl shadow-sm flex items-center touch-none z-50 active:scale-95 transition-transform"
                         >
                           <span className="w-7 h-7 rounded-lg bg-orange-50 flex items-center justify-center font-bold text-[#a0412d] mr-3 uppercase text-xs">{l}</span>
-                          <span className="font-bold text-gray-700 text-xs md:text-sm text-left flex-1">{currentQuestions[qIndex]?.[`choice_${l}`]}</span>
+                          <span className="font-sans font-bold text-gray-700 text-xs md:text-sm text-left flex-1">{currentQuestions[qIndex]?.[`choice_${l}`]}</span>
                         </motion.div>
                       ))}
                     </div>
                   </div>
                 ) : (
                   <div onClick={() => { setShowExplanation(false); setQIndex(p => p + 1); setTimeLeft(64); }} className="p-6 bg-orange-50/50 rounded-[2rem] border border-orange-100/50 text-center cursor-pointer">
-                    <p className="text-sm md:text-lg italic font-medium text-[#a0412d]">"{currentQuestions[qIndex]?.explanation}"</p>
-                    <p className="text-[9px] mt-4 uppercase tracking-widest font-black text-gray-300">Tapoter pour continuer</p>
+                    <p className="text-sm md:text-lg italic font-sans font-medium text-[#a0412d]">"{currentQuestions[qIndex]?.explanation}"</p>
+                    <p className="text-[9px] mt-4 uppercase tracking-widest font-sans font-black text-gray-300">Tapoter pour continuer</p>
                   </div>
                 )
               ) : (
                 <div className="text-center px-4">
-                  <h2 className="text-xl md:text-2xl font-black mb-2 uppercase text-[#a0412d]">Mystère Révélé</h2>
+                  <h2 className="text-xl md:text-2xl font-sans font-black mb-2 uppercase text-[#a0412d]">Mystère Révélé</h2>
                   <div className="bg-white p-4 rounded-[2rem] text-left mb-4 space-y-2 border border-gray-50 max-h-40 overflow-y-auto no-scrollbar">
-                    {explanations.map((exp, i) => <p key={i} className="text-[11px] text-gray-500 flex items-start"><span className="text-[#a0412d] mr-2">✦</span> {exp}</p>)}
+                    {explanations.map((exp, i) => <p key={i} className="text-[11px] font-sans text-gray-500 flex items-start"><span className="text-[#a0412d] mr-2">✦</span> {exp}</p>)}
                   </div>
-                  <button onClick={() => setView("gallery")} className="w-full py-3 bg-[#a0412d] text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg">Autre mystère</button>
+                  <button onClick={() => setView("gallery")} className="w-full py-3 bg-[#a0412d] text-white rounded-full font-sans font-bold uppercase tracking-widest text-[10px] shadow-lg">Autre mystère</button>
                 </div>
               )}
             </div>
