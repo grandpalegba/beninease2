@@ -35,6 +35,7 @@ const OkpeleSeed = ({ active }: { active: boolean }) => (
 );
 
 const OkpeleRitual = ({ activeSeeds }: { activeSeeds: number }) => (
+  /* Taille réduite (scale-0.5) pour s'aligner sur la hauteur de l'Awalé */
   <div className="relative flex flex-col items-center scale-[0.5] md:scale-[0.7] origin-center">
     <div className="w-[64px] md:w-[80px] h-10 border-t-[1.5px] border-x-[1.5px] border-yellow-700/40 rounded-t-[40px] absolute top-[2px] left-1/2 -translate-x-1/2 z-0" />
     <div className="flex gap-8 md:gap-10 relative z-10 pt-10">
@@ -211,13 +212,20 @@ export default function MysteresPage() {
               onClick={startRitual}
               className="w-full max-w-[320px] h-[520px] md:h-[580px] -mt-12 md:-mt-20 bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-pointer flex flex-col"
             >
-              <div className="pt-5 pb-3 px-7 text-center select-none"><span className="text-[10px] md:text-[11px] font-medium text-gray-400 uppercase tracking-[0.35em]">{themes[currentM.theme_id] || "Bénin Éternel"}</span></div>
+              <div className="pt-5 pb-3 px-7 text-center select-none">
+                <span className="text-[10px] md:text-[11px] font-medium text-gray-400 uppercase tracking-[0.35em]">{themes[currentM.theme_id] || "Bénin Éternel"}</span>
+              </div>
               <div className="h-[50%] md:h-[55%] w-full overflow-hidden bg-gray-100 pointer-events-none">
                 <img src={`https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/mysteres-assets/${currentM.id}.jpg`} className="h-full w-full object-cover" alt="" />
               </div>
               <div className="p-6 md:p-7 flex flex-col flex-1 bg-white select-none pointer-events-none">
-                <h2 className="text-[15px] md:text-[17px] font-medium uppercase tracking-[0.35em] text-[#1a1a1a]">{currentM.title}</h2>
-                <p className="text-[10px] md:text-[11px] font-bold text-[#a0412d] mt-2 italic uppercase">{currentM.subtitle}</p>
+                {/* TITRE : Police Sans Serif avec espacement réduit */}
+                <h2 className="text-[15px] md:text-[17px] font-bold font-sans uppercase tracking-[0.1em] text-[#1a1a1a] leading-tight">
+                  {currentM.title}
+                </h2>
+                <p className="text-[10px] md:text-[11px] font-bold text-[#a0412d] mt-2 italic uppercase">
+                  {currentM.subtitle}
+                </p>
                 <div className="mt-2 pt-2 border-t border-gray-50 flex-1 overflow-y-auto no-scrollbar">
                   <p className="text-[14px] md:text-[15px] text-gray-400 italic leading-relaxed">"{currentM.mise_en_abyme}"</p>
                 </div>
