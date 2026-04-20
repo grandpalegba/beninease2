@@ -198,61 +198,63 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
             animate={{ opacity: 1 }} 
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
           >
-            <div className="w-full max-w-5xl bg-white rounded-3xl overflow-hidden shadow-2xl flex flex-col lg:flex-row max-h-[90vh]">
+            <div className="w-full max-w-5xl lg:max-w-6xl bg-white rounded-3xl overflow-hidden shadow-2xl flex flex-col lg:flex-row max-h-[85vh]">
               {/* Panneau Gauche : Immersion & Choix Définitif */}
               <div className="w-full lg:w-[45%] flex flex-col bg-white overflow-y-auto custom-scrollbar border-r border-neutral-100">
-                <div className="relative aspect-square w-full shrink-0">
-                <img src={lifeCase.photoUrl} className="w-full h-full object-cover grayscale-[0.2]" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                <div className="absolute bottom-6 left-6">
-                  <div className="bg-black/40 backdrop-blur-md px-4 py-2 rounded-xl border border-white/20">
-                    <span className="text-white text-sm font-light italic">{lifeCase.persona}</span>
+                {/* Photo taking top half */}
+                <div className="relative w-full h-[40vh] md:h-[45%] shrink-0">
+                  <img src={lifeCase.photoUrl} className="w-full h-full object-cover grayscale-[0.2]" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                  <div className="absolute bottom-4 left-4">
+                    <div className="bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/20">
+                      <span className="text-white text-xs font-light italic">{lifeCase.persona}</span>
+                    </div>
+                  </div>
+                  <div className="absolute bottom-4 right-4">
+                    <AudioPlayer audioUrl={lifeCase.audioUrl} />
                   </div>
                 </div>
-                <div className="absolute bottom-6 right-6">
-                  <AudioPlayer audioUrl={lifeCase.audioUrl} />
+
+                {/* Quote and Options taking bottom half */}
+                <div className="p-6 md:p-8 flex-1 flex flex-col">
+                  <blockquote className="text-xs md:text-sm text-neutral-500 font-light italic border-l-2 border-[#fcd116] pl-4 leading-relaxed mb-6">
+                    "{lifeCase.quote}"
+                  </blockquote>
+
+                  <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#00693e] mb-4">Ton choix définitif</p>
+                  <div className="grid gap-2 mb-4">
+                    {lifeCase.options.map((opt, i) => (
+                      <button 
+                        key={i} 
+                        onClick={() => setFinalChoice(i)} 
+                        className={`p-3 md:p-4 text-left rounded-xl transition-all duration-300 flex items-start gap-3 relative overflow-hidden ${
+                          finalChoice === i 
+                            ? "bg-[#00693e]/5 ring-1 ring-[#00693e]/30" 
+                            : "bg-neutral-50 hover:bg-neutral-100 ring-1 ring-transparent"
+                        }`}
+                      >
+                        <span className={`text-[11px] font-bold mt-0.5 ${finalChoice === i ? "text-[#00693e]" : "text-black"}`}>
+                          {String.fromCharCode(65 + i)}.
+                        </span>
+                        <span className="text-xs md:text-sm font-light text-neutral-600 leading-snug pr-16">{opt}</span>
+                        
+                        {/* Badges */}
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex flex-col gap-1 items-end">
+                          {intuitiveChoice === i && (
+                            <span className="text-[8px] font-bold uppercase tracking-widest text-[#fcd116]">Intuition</span>
+                          )}
+                          {finalChoice === i && (
+                            <span className="bg-[#00693e] text-white text-[8px] px-1.5 py-0.5 rounded font-bold uppercase tracking-widest">Définitif</span>
+                          )}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              <div className="p-8 lg:p-12 flex-1 flex flex-col">
-                <blockquote className="text-sm text-neutral-500 font-light italic border-l-2 border-[#fcd116] pl-6 leading-relaxed mb-10">
-                  "{lifeCase.quote}"
-                </blockquote>
-
-                <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#00693e] mb-6">Ton choix définitif</p>
-                <div className="grid gap-3 mb-8">
-                  {lifeCase.options.map((opt, i) => (
-                    <button 
-                      key={i} 
-                      onClick={() => setFinalChoice(i)} 
-                      className={`p-5 text-left rounded-xl transition-all duration-300 flex items-start gap-4 relative overflow-hidden ${
-                        finalChoice === i 
-                          ? "bg-[#00693e]/5 ring-1 ring-[#00693e]/30" 
-                          : "bg-neutral-50 hover:bg-neutral-100 ring-1 ring-transparent"
-                      }`}
-                    >
-                      <span className={`text-[11px] font-bold mt-0.5 ${finalChoice === i ? "text-[#00693e]" : "text-black"}`}>
-                        {String.fromCharCode(65 + i)}.
-                      </span>
-                      <span className="text-sm font-light text-neutral-600 leading-snug">{opt}</span>
-                      
-                      {/* Badges (Intuition vs Définitif) */}
-                      <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col gap-1 items-end">
-                        {intuitiveChoice === i && (
-                          <span className="text-[9px] font-bold uppercase tracking-widest text-[#fcd116]">Intuition</span>
-                        )}
-                        {finalChoice === i && (
-                          <span className="bg-[#00693e] text-white text-[8px] px-2 py-1 rounded font-bold uppercase tracking-widest">Définitif</span>
-                        )}
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Panneau Droit : L'Oracle & Action */}
-            <div className="w-full lg:w-[55%] overflow-y-auto bg-[#fafafa] p-8 lg:p-12 flex flex-col relative">
+              {/* Panneau Droit : L'Oracle & Action */}
+              <div className="w-full lg:w-[55%] overflow-y-auto custom-scrollbar bg-[#fafafa] p-6 md:p-10 flex flex-col relative">
               
               {/* Header Oracle */}
               <div className="flex justify-between items-center mb-10">

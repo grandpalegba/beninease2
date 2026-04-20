@@ -41,7 +41,7 @@ const SwipeableCaseDeck: React.FC<SwipeableCaseDeckProps> = ({ cases, initialCas
   return (
     <div className="w-full h-full flex flex-col items-center justify-center p-4">
       {/* Container limitant la taille globale (réduit) */}
-      <div className="w-full max-w-4xl flex relative items-center justify-center">
+      <div className="w-full max-w-3xl flex relative items-center justify-center">
         {/* Navigation Arrows (Visible on hover) */}
         {currentIndex > 0 && (
           <button 
