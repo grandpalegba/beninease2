@@ -27,10 +27,12 @@ export function useLifeCases() {
 
         if (error) throw error;
 
+        console.log("Nombre de records chargés:", data?.length);
+
         const mappedData: LifeCase[] = (data || []).map((item: any) => ({
           id: item.id,
           label: item.domaine_cas_de_vie,
-          persona: `${item.prenom_cas_de_vie}, ${item.age_cas_de_vie}`,
+          persona: `${item.prenom_cas_de_vie}, ${item.age_cas_de_vie} ans, ${item.profession_cas_de_vie}`,
           title: item.titre_cas_de_vie,
           quote: item.situation_cas_de_vie,
           options: [
