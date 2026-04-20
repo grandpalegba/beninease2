@@ -8,6 +8,8 @@ export interface LifeCase {
   title: string;
   quote: string;
   options: string[];
+  verdicts: string[];
+  audioUrls: string[];
 }
 
 export function useLifeCases() {
@@ -37,7 +39,19 @@ export function useLifeCases() {
             item.option_2,
             item.option_3,
             item.option_4
-          ].filter((opt) => opt !== null && opt !== '')
+          ].filter((opt) => opt !== null && opt !== ''),
+          verdicts: [
+            item.conseil_1,
+            item.conseil_2,
+            item.conseil_3,
+            item.conseil_4
+          ].map(v => v || ""),
+          audioUrls: [
+            item.audio_1,
+            item.audio_2,
+            item.audio_3,
+            item.audio_4
+          ].map(a => a || "")
         }));
 
         setCases(mappedData);
