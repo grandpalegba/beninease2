@@ -95,7 +95,7 @@ export default function ConsultationPage() {
   }
 
   return (
-    <main className="min-h-screen bg-white text-black font-sans antialiased flex flex-col items-center pt-6 pb-24 overflow-hidden">
+    <main className="h-[100dvh] bg-white text-black font-sans antialiased flex flex-col items-center justify-center overflow-hidden pb-20">
       {/* Title Section */}
       <div className="w-full text-center shrink-0 z-10 mb-6">
         <h1 className="text-4xl md:text-5xl font-serif text-[#2d2f2f] mb-4">

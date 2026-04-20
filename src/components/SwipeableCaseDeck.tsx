@@ -40,8 +40,8 @@ const SwipeableCaseDeck: React.FC<SwipeableCaseDeckProps> = ({ cases, initialCas
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center p-4">
-      {/* Container limitant la taille globale (réduit de ~33%) */}
-      <div className="w-full max-w-5xl h-[85vh] lg:h-[75vh] flex relative">
+      {/* Container limitant la taille globale (réduit) */}
+      <div className="w-full max-w-4xl flex relative items-center justify-center">
         {/* Navigation Arrows (Visible on hover) */}
         {currentIndex > 0 && (
           <button 
@@ -67,11 +67,11 @@ const SwipeableCaseDeck: React.FC<SwipeableCaseDeckProps> = ({ cases, initialCas
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.4 }}
-            className="w-full h-full flex flex-col md:flex-row bg-white rounded-[2rem] overflow-hidden"
+            className="w-full flex flex-col md:flex-row bg-white rounded-[2rem] overflow-hidden"
             style={{ boxShadow: '0 40px 120px rgba(0,0,0,0.08)' }}
           >
             {/* Left Column: Image */}
-            <section className="w-full md:w-1/2 relative bg-neutral-900 overflow-hidden">
+            <section className="w-full md:w-[45%] relative bg-neutral-900 overflow-hidden min-h-[40vh] md:min-h-[60vh]">
               <img
                 src={currentCase.photoUrl || '/assets/profile-aicha.jpg'}
                 alt={currentCase.persona}
@@ -105,20 +105,20 @@ const SwipeableCaseDeck: React.FC<SwipeableCaseDeckProps> = ({ cases, initialCas
             </section>
 
             {/* Right Column: Content */}
-            <section className="w-full md:w-1/2 p-6 md:p-10 flex flex-col bg-white relative overflow-y-auto">
-              <div className="flex justify-between items-start mb-8">
+            <section className="w-full md:w-[55%] p-6 md:p-8 flex flex-col bg-white relative">
+              <div className="flex justify-between items-start mb-6">
                 <span className="text-[10px] uppercase tracking-[0.4em] font-bold text-neutral-400">
                   {currentCase.label || 'SAGESSE'}
                 </span>
                 <div className="flex gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#008751' }} />
-                  <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#fcd116' }} />
-                  <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#e8112d' }} />
+                  <span className="w-2 h-2 rounded-full" style={{ background: '#008751' }} />
+                  <span className="w-2 h-2 rounded-full" style={{ background: '#fcd116' }} />
+                  <span className="w-2 h-2 rounded-full" style={{ background: '#e8112d' }} />
                 </div>
               </div>
 
-              <div className="flex-1">
-                <h2 className="text-5xl md:text-6xl font-serif text-[#00693e] leading-[0.9] mb-6">
+              <div className="flex-1 flex flex-col">
+                <h2 className="text-4xl md:text-5xl font-serif text-[#00693e] leading-[0.9] mb-4">
                   {currentCase.title}
                 </h2>
 
@@ -183,8 +183,8 @@ const OptionList = ({ options, onSelect }: { options: string[]; onSelect: (idx: 
   };
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
         {options.map((opt, i) => (
           <button
             key={i}
@@ -206,11 +206,11 @@ const OptionList = ({ options, onSelect }: { options: string[]; onSelect: (idx: 
       </div>
 
       {/* Action Button Centered */}
-      <div className="mt-auto flex justify-center">
+      <div className="mt-4 flex justify-center">
         <button
           onClick={handleConfirm}
           disabled={selectedOption === null}
-          className="w-full md:w-auto px-8 py-4 bg-[#00693e] text-white text-[11px] uppercase tracking-[0.2em] font-bold rounded-xl hover:brightness-110 transition-all shadow-sm shadow-[#00693e]/20 disabled:opacity-30 disabled:cursor-not-allowed"
+          className="w-full md:w-auto px-6 py-3 bg-[#00693e] text-white text-[11px] uppercase tracking-[0.2em] font-bold rounded-xl hover:brightness-110 transition-all shadow-sm shadow-[#00693e]/20 disabled:opacity-30 disabled:cursor-not-allowed"
         >
           Ouvrir la matrice des choix
         </button>

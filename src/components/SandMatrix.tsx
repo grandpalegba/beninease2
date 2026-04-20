@@ -196,11 +196,12 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
             key="revealed" 
             initial={{ opacity: 0 }} 
             animate={{ opacity: 1 }} 
-            className="fixed inset-0 z-50 flex flex-col lg:flex-row bg-white overflow-hidden"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
           >
-            {/* Panneau Gauche : Immersion & Choix Définitif */}
-            <div className="w-full lg:w-[50%] h-[50vh] lg:h-full flex flex-col bg-white overflow-y-auto custom-scrollbar border-r border-neutral-100">
-              <div className="relative aspect-[16/9] w-full shrink-0">
+            <div className="w-full max-w-5xl bg-white rounded-3xl overflow-hidden shadow-2xl flex flex-col lg:flex-row max-h-[90vh]">
+              {/* Panneau Gauche : Immersion & Choix Définitif */}
+              <div className="w-full lg:w-[45%] flex flex-col bg-white overflow-y-auto custom-scrollbar border-r border-neutral-100">
+                <div className="relative aspect-square w-full shrink-0">
                 <img src={lifeCase.photoUrl} className="w-full h-full object-cover grayscale-[0.2]" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                 <div className="absolute bottom-6 left-6">
@@ -248,10 +249,9 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
                   ))}
                 </div>
               </div>
-            </div>
 
-            {/* Panneau Droit : L'Oracle & Action */}
-            <div className="w-full lg:w-[50%] h-[50vh] lg:h-full overflow-y-auto bg-[#fafafa] p-8 lg:p-16 flex flex-col relative">
+              {/* Panneau Droit : L'Oracle & Action */}
+              <div className="w-full lg:w-[55%] overflow-y-auto bg-[#fafafa] p-8 lg:p-12 flex flex-col relative">
               
               {/* Header Oracle */}
               <div className="flex justify-between items-center mb-10">
@@ -322,20 +322,9 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
                         <AudioRecorder onSaved={setRecordedBlob} />
                       </div>
 
-                      <div className="space-y-4 mb-8">
-                        <textarea
-                          value={wisdomPhrase}
-                          onChange={(e) => setWisdomPhrase(e.target.value)}
-                          maxLength={100}
-                          placeholder="Une phrase courte qui accompagne ton enregistrement..."
-                          className="w-full bg-white border-l-4 border-[#fcd116] p-4 text-sm md:text-base font-light italic focus:ring-0 focus:outline-none resize-none placeholder:text-neutral-300 shadow-inner rounded-r-xl"
-                          rows={3}
-                        />
-                      </div>
-
                       <button
                         onClick={handleTransmitSagesse}
-                        disabled={isSubmitting || !recordedBlob || wisdomPhrase.length < 5}
+                        disabled={isSubmitting || !recordedBlob}
                         className="w-full py-5 bg-[#00693e] text-white text-[10px] uppercase tracking-[0.3em] font-bold rounded-xl hover:brightness-110 transition-all flex items-center justify-center gap-3 disabled:opacity-20"
                       >
                         {isSubmitting ? <Loader2 className="animate-spin" size={16} /> : "Transmettre ma sagesse"}
@@ -347,10 +336,11 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
 
               <button 
                 onClick={() => setConfirmCloseOpen(true)} 
-                className="absolute top-10 right-10 p-2 text-neutral-300 hover:text-black transition-colors bg-white rounded-full border border-neutral-100 shadow-sm"
+                className="absolute top-6 right-6 p-2 text-neutral-300 hover:text-black transition-colors bg-white rounded-full border border-neutral-100 shadow-sm"
               >
                 <X size={20} strokeWidth={1.5} />
               </button>
+            </div>
             </div>
           </motion.div>
         )}
