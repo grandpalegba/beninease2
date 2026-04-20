@@ -1,22 +1,20 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
+import { ArrowLeft, ArrowRight, ChevronUp } from 'lucide-react';
 import { LifeCase } from '@/features/consultation/useLifeCases';
-import { Play, Pause, ChevronLeft, ChevronRight } from 'lucide-react';
+import CaseCard from './CaseCard';
 
 interface SwipeableCaseDeckProps {
   cases: LifeCase[];
-  onChoice: (caseId: string, option: string) => void;
   initialCaseId?: string;
   onPickCase?: (picked: LifeCase, selectedOption: number | null) => void;
 }
 
-/**
- * SwipeableCaseDeck - High-Fidelity Split Layout Redesign
- * 
- * Matches the provided mockup with Image on Left and Content on Right.
- */
+const SUPABASE_PROJECT_ID = "wtjhkqkqmexddroqwawk";
+const STORAGE_BASE_URL = `https://${SUPABASE_PROJECT_ID}.supabase.co/storage/v1/object/public`;
+
 const SwipeableCaseDeck: React.FC<SwipeableCaseDeckProps> = ({ cases, initialCaseId, onPickCase }) => {
   const [currentIndex, setCurrentIndex] = useState(() => {
     if (initialCaseId) {
@@ -26,192 +24,158 @@ const SwipeableCaseDeck: React.FC<SwipeableCaseDeckProps> = ({ cases, initialCas
     return 0;
   });
 
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const currentCase = cases[currentIndex];
 
-  const handleNext = () => {
-    if (currentIndex < cases.length - 1) setCurrentIndex(prev => prev + 1);
-  };
+  // URLs dynamiques basées sur l'ID du cas pour les buckets spécifiés
+  const audioUrl = `${STORAGE_BASE_URL}/casdevie/cas${currentCase?.id}.mp3`;
 
-  const handlePrev = () => {
-    if (currentIndex > 0) setCurrentIndex(prev => prev - 1);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const opacity = useTransform(x, [-150, 0, 150], [0, 1, 0]);
+
+  const handleDragEnd = (event: any, info: any) => {
+    // Swipe Horizontal : Navigation entre les cas
+    if (Math.abs(info.offset.x) > 100) {
+      if (info.offset.x > 0 && currentIndex > 0) setCurrentIndex(prev => prev - 1);
+      else if (info.offset.x < 0 && currentIndex < cases.length - 1) setCurrentIndex(prev => prev + 1);
+    }
+    // Swipe Vertical : Ouverture des détails (Drawer)
+    if (info.offset.y < -50) {
+      setIsDetailsOpen(true);
+    }
   };
 
   if (!currentCase) return null;
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center p-4">
-      {/* Container limitant la taille globale (réduit) */}
-      <div className="w-full max-w-3xl flex relative items-center justify-center">
-        {/* Navigation Arrows (Visible on hover) */}
-        {currentIndex > 0 && (
-          <button 
-            onClick={handlePrev}
-            className="absolute left-[-60px] top-1/2 -translate-y-1/2 p-4 text-neutral-200 hover:text-black transition-colors hidden md:block"
-          >
-            <ChevronLeft size={40} strokeWidth={1} />
-          </button>
-        )}
-        {currentIndex < cases.length - 1 && (
-          <button 
-            onClick={handleNext}
-            className="absolute right-[-60px] top-1/2 -translate-y-1/2 p-4 text-neutral-200 hover:text-black transition-colors hidden md:block"
-          >
-            <ChevronRight size={40} strokeWidth={1} />
-          </button>
-        )}
+    <main className="w-full min-h-screen bg-white flex flex-col items-center justify-center py-8 md:py-12 px-4 overflow-hidden">
 
+      {/* HEADER : Titre minimaliste (visible uniquement sur Desktop) */}
+      <header className="text-center mb-8 md:mb-16 hidden md:block">
+        <h1 className="text-5xl lg:text-6xl font-serif text-black mb-4 tracking-tight">Situations.</h1>
+        <p className="text-[10px] uppercase tracking-[0.4em] text-neutral-400 font-bold">
+          Choisissez un cas de vie pour interroger le Fâ
+        </p>
+      </header>
+
+      {/* ZONE DE LA CARTE */}
+      <div className="relative w-full max-w-[450px] aspect-[3/4] md:aspect-[4/5] z-10">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentCase.id}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.4 }}
-            className="w-full flex flex-col md:flex-row bg-white rounded-[2rem] overflow-hidden"
-            style={{ boxShadow: '0 40px 120px rgba(0,0,0,0.08)' }}
+            style={{ x, opacity }}
+            drag={isDetailsOpen ? false : "both"}
+            dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+            onDragEnd={handleDragEnd}
+            className="w-full h-full rounded-[2.5rem] md:rounded-[3rem] overflow-hidden bg-white shadow-[0_30px_60px_rgba(0,0,0,0.06)] border border-neutral-100 cursor-grab active:cursor-grabbing"
           >
-            {/* Left Column: Image & Quote */}
-            <section className="w-full md:w-[45%] flex flex-col bg-neutral-50 border-r border-neutral-100">
-              {/* Photo */}
-              <div className="relative w-full aspect-square md:aspect-auto md:h-1/2 overflow-hidden shrink-0">
-                <img
-                  src={currentCase.photoUrl || '/assets/profile-aicha.jpg'}
-                  alt={currentCase.persona}
-                  className="absolute inset-0 w-full h-full object-cover grayscale-[0.2]"
-                />
-                
-                {/* Persona Badge */}
-                <div className="absolute bottom-4 left-4">
-                  <div className="bg-black/40 backdrop-blur-md px-4 py-2 rounded-xl border border-white/20">
-                    <span className="text-white text-xs font-light italic">
-                      {currentCase.persona}
-                    </span>
-                  </div>
-                </div>
+            <CaseCard
+              lifeCase={currentCase}
+              isActive={!isDetailsOpen}
+            />
 
-                {/* Play Button */}
-                <div className="absolute bottom-4 right-4">
-                  <AudioTrigger audioUrl={currentCase.audioUrl} />
-                </div>
-              </div>
-
-              {/* Quote Area */}
-              <div className="p-6 md:p-8 flex-1 flex flex-col justify-center bg-white">
-                <blockquote className="text-sm md:text-base text-neutral-600 font-light italic border-l-4 border-[#fcd116] pl-6 leading-relaxed">
-                  "{currentCase.quote}"
-                </blockquote>
-              </div>
-            </section>
-
-            {/* Right Column: Content */}
-            <section className="w-full md:w-[55%] p-6 md:p-10 flex flex-col bg-white relative">
-              <div className="flex justify-between items-start mb-6">
-                <span className="text-[10px] uppercase tracking-[0.4em] font-bold text-neutral-400">
-                  {currentCase.label || 'SAGESSE'}
-                </span>
-                <div className="flex gap-2">
-                  <span className="w-2 h-2 rounded-full" style={{ background: '#008751' }} />
-                  <span className="w-2 h-2 rounded-full" style={{ background: '#fcd116' }} />
-                  <span className="w-2 h-2 rounded-full" style={{ background: '#e8112d' }} />
-                </div>
-              </div>
-
-              <div className="flex-1 flex flex-col">
-                <h2 className="text-4xl md:text-5xl font-serif text-[#00693e] leading-[0.9] mb-8">
-                  {currentCase.title}
-                </h2>
-
-                <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#00693e] mb-4">
-                  Choisissez une option selon votre intuition
-                </p>
-
-                <OptionList 
-                  options={currentCase.options} 
-                  onSelect={(idx) => onPickCase?.(currentCase, idx)}
-                />
-              </div>
-            </section>
+            {/* L'audio player invisible qui gère le son du cas */}
+            <AudioPlayer audioUrl={audioUrl} active={!isDetailsOpen} />
           </motion.div>
         </AnimatePresence>
+
+        {/* NAVIGATION DESKTOP : Flèches latérales style Talents */}
+        <div className="hidden md:flex absolute top-1/2 -left-24 -right-24 -translate-y-1/2 justify-between pointer-events-none">
+          <button
+            onClick={() => currentIndex > 0 && setCurrentIndex(v => v - 1)}
+            className="p-5 rounded-full bg-white text-neutral-300 hover:text-black hover:shadow-xl transition-all pointer-events-auto border border-neutral-100 disabled:opacity-0"
+            disabled={currentIndex === 0}
+          >
+            <ArrowLeft size={24} strokeWidth={1.5} />
+          </button>
+          <button
+            onClick={() => currentIndex < cases.length - 1 && setCurrentIndex(v => v + 1)}
+            className="p-5 rounded-full bg-white text-neutral-300 hover:text-black hover:shadow-xl transition-all pointer-events-auto border border-neutral-100 disabled:opacity-0"
+            disabled={currentIndex === cases.length - 1}
+          >
+            <ArrowRight size={24} strokeWidth={1.5} />
+          </button>
+        </div>
       </div>
-    </div>
+
+      {/* FOOTER : Switcher d'application */}
+      <footer className="mt-12 md:mt-20 w-full flex flex-col items-center gap-8">
+        <div className="inline-flex p-1.5 bg-neutral-50 rounded-full border border-neutral-100 shadow-sm">
+          <button className="px-8 py-3 bg-[#1a1a1a] text-white rounded-full text-[10px] font-bold uppercase tracking-widest transition-transform active:scale-95 shadow-lg">
+            Matrice des choix
+          </button>
+          <button className="px-8 py-3 text-neutral-400 hover:text-black rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors">
+            Mur des consultations
+          </button>
+        </div>
+      </footer>
+
+      {/* PANNEAU DE RÉVÉLATION (Drawer Swipe Haut) */}
+      <AnimatePresence>
+        {isDetailsOpen && (
+          <motion.div
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ type: "spring", damping: 30, stiffness: 200 }}
+            className="fixed inset-0 z-[100] bg-white flex flex-col p-8 md:p-16"
+          >
+            {/* Bouton de fermeture / Drag handle */}
+            <button
+              onClick={() => setIsDetailsOpen(false)}
+              className="absolute top-8 left-1/2 -translate-x-1/2 w-12 h-1.5 bg-neutral-100 rounded-full hover:bg-neutral-200 transition-colors"
+            />
+
+            <div className="overflow-y-auto flex-1 max-w-2xl mx-auto w-full pt-12 flex flex-col justify-center">
+              <blockquote className="text-2xl md:text-3xl font-serif italic text-neutral-800 mb-12 leading-tight border-l-[6px] border-[#fcd116] pl-8">
+                "{currentCase.quote}"
+              </blockquote>
+
+              <p className="text-[10px] uppercase tracking-[0.3em] font-bold text-neutral-400 mb-10 text-center">
+                Écoutez votre intuition avant d'interroger le Fâ
+              </p>
+
+              <div className="grid gap-4">
+                {currentCase.options.map((opt, i) => (
+                  <button
+                    key={i}
+                    onClick={() => onPickCase?.(currentCase, i)}
+                    className="group w-full p-6 text-left rounded-[1.8rem] bg-neutral-50 hover:bg-neutral-100 transition-all flex items-center gap-6 border border-transparent hover:border-neutral-200"
+                  >
+                    <span className="font-bold text-sm text-black bg-white w-10 h-10 rounded-full flex items-center justify-center shadow-sm">
+                      {String.fromCharCode(65 + i)}
+                    </span>
+                    <span className="flex-1 text-sm md:text-base font-light text-neutral-600 leading-snug">
+                      {opt}
+                    </span>
+                    <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                      <ArrowRight size={18} className="text-[#00693e]" />
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </main>
   );
 };
 
-const AudioTrigger = ({ audioUrl }: { audioUrl: string }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
+// COMPOSANT AUDIO INTERNE
+const AudioPlayer = ({ audioUrl, active }: { audioUrl: string, active: boolean }) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const toggle = () => {
-    if (!audioRef.current) return;
-    if (isPlaying) audioRef.current.pause();
-    else audioRef.current.play().catch(console.error);
-    setIsPlaying(!isPlaying);
-  };
+  useEffect(() => {
+    if (active) {
+      audioRef.current?.play().catch(() => { });
+    } else {
+      audioRef.current?.pause();
+    }
+  }, [active, audioUrl]);
 
-  return (
-    <>
-      <button 
-        onClick={toggle}
-        className="w-14 h-14 rounded-full flex items-center justify-center bg-black/40 backdrop-blur-md text-white transition-transform active:scale-90"
-      >
-        {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" className="ml-1" />}
-      </button>
-      <audio 
-        ref={audioRef} 
-        src={audioUrl} 
-        playsInline
-        preload="auto"
-        onEnded={() => setIsPlaying(false)}
-        onPlay={() => setIsPlaying(true)}
-        onPause={() => setIsPlaying(false)}
-      />
-    </>
-  );
-};
-
-const OptionList = ({ options, onSelect }: { options: string[]; onSelect: (idx: number) => void }) => {
-  const [selectedOption, setSelectedOption] = useState<number | null>(null);
-
-  const handleConfirm = () => {
-    if (selectedOption !== null) onSelect(selectedOption);
-  };
-
-  return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-        {options.map((opt, i) => (
-          <button
-            key={i}
-            onClick={() => setSelectedOption(i)}
-            className={`text-left px-5 py-4 rounded-2xl transition-all duration-300 flex items-center gap-4 ${
-              selectedOption === i 
-                ? 'bg-neutral-100 ring-1 ring-black/5 shadow-sm' 
-                : 'bg-neutral-50 hover:bg-neutral-100'
-            }`}
-          >
-            <span className="text-[11px] font-bold text-black min-w-[20px]">
-              {String.fromCharCode(65 + i)}:
-            </span>
-            <span className="text-[13px] font-light text-neutral-600 leading-snug">
-              {opt}
-            </span>
-          </button>
-        ))}
-      </div>
-
-      {/* Action Button Centered */}
-      <div className="mt-4 flex justify-center">
-        <button
-          onClick={handleConfirm}
-          disabled={selectedOption === null}
-          className="w-full md:w-auto px-6 py-3 bg-[#00693e] text-white text-[11px] uppercase tracking-[0.2em] font-bold rounded-xl hover:brightness-110 transition-all shadow-sm shadow-[#00693e]/20 disabled:opacity-30 disabled:cursor-not-allowed"
-        >
-          Ouvrir la matrice des choix
-        </button>
-      </div>
-    </div>
-  );
+  return <audio ref={audioRef} src={audioUrl} loop />;
 };
 
 export default SwipeableCaseDeck;

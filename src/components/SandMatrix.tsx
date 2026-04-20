@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Loader2, RotateCcw, ArrowRight } from "lucide-react";
+import { X, Loader2, RotateCcw } from "lucide-react";
 import { SIGNS, shuffle, valueToMatrixIndex, type FongbeSign } from "@/data/fongbe";
 import { DYNAMICS_MATRIX, DYNAMICS_AXIS } from "@/data/dynamics";
 import { type LifeCase, useLifeCases } from "@/features/consultation/useLifeCases";
@@ -48,7 +48,6 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
   const [revealed, setRevealed] = useState<RevealedCell | null>(null);
   const [finalChoice, setFinalChoice] = useState<number | null>(null);
   const [confirmCloseOpen, setConfirmCloseOpen] = useState(false);
-  const [wisdomPhrase, setWisdomPhrase] = useState("");
   const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -59,7 +58,6 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
     setShuffledY(shuffle(SIGNS));
     setRevealed(null);
     setFinalChoice(null);
-    setWisdomPhrase("");
     setRecordedBlob(null);
     setPhase("case");
   }, []);
@@ -99,7 +97,6 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
         case_id: lifeCase.id,
         choix_intuitif: intuitiveChoice !== null ? lifeCase.options[intuitiveChoice] : null,
         choix_definitif: lifeCase.options[finalChoice],
-        phrase_sagesse: wisdomPhrase,
         audio_url: publicUrlData.publicUrl,
         signe_revele: `${revealed.signX.name} ${revealed.signY.name}`
       }]);
@@ -117,249 +114,162 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
   if (casesLoading && phase === "case") return <LoadingScreen />;
 
   return (
-    <div className="w-full flex items-center justify-center">
+    <div className="w-full min-h-screen bg-white">
       <AnimatePresence mode="wait">
 
-        {/* PHASE 1 : SÉLECTION */}
+        {/* PHASE 1 : SÉLECTION (Le Bumble) */}
         {phase === "case" && (
-          <motion.div 
-            key="case" 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }} 
-            exit={{ opacity: 0 }} 
-            className="w-full"
+          <motion.div
+            key="case"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="h-screen w-full"
           >
             <SwipeableCaseDeck
               cases={cases}
               onPickCase={handlePickCase}
               initialCaseId={lifeCase?.id}
-              onChoice={() => {}}
             />
           </motion.div>
         )}
 
-        {/* PHASE 2 : MATRICE */}
+        {/* PHASE 2 : MATRICE (L'immensité) */}
         {phase === "matrix" && lifeCase && (
-          <motion.div 
-            key="matrix" 
-            initial={{ opacity: 0, scale: 0.98 }} 
-            animate={{ opacity: 1, scale: 1 }} 
-            className="flex flex-col items-center w-full"
+          <motion.div
+            key="matrix"
+            initial={{ opacity: 0, scale: 1.05 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="fixed inset-0 z-50 bg-white flex flex-col items-center justify-center p-6"
           >
-            <div className="text-center mb-10">
-              <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-neutral-400 block mb-2">LA MATRICE DES CHOIX</span>
-              <p className="text-sm italic text-neutral-400 font-light">
-                Touchez une case — un signe du Fâ se révélera.
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-serif mb-2">La Matrice des Choix</h2>
+              <p className="text-[10px] uppercase tracking-[0.3em] text-neutral-400 font-bold">
+                Touchez une case pour sceller votre destin
               </p>
             </div>
 
-            <div className="w-full max-w-[700px] aspect-square relative p-2">
-              {/* Benin Tricolor Border Decor */}
-              <div className="absolute inset-0 border-2 border-[#e8112d]" />
-              <div className="absolute inset-0 border-t-2 border-l-2 border-[#fcd116]" />
-              <div className="absolute inset-0 border-b-2 border-r-2 border-[#008751]" style={{ clipPath: 'polygon(0 50%, 100% 50%, 100% 100%, 0 100%)' }} />
-              <div className="absolute inset-0 border-t-2 border-r-2 border-[#008751]" style={{ clipPath: 'polygon(50% 0, 100% 0, 100% 100%, 50% 100%)' }} />
-              {/* Actually let's use a simpler way for the tricolor border as shown in image */}
-              <div className="absolute inset-0 flex flex-col">
-                 <div className="h-[2px] w-full flex">
-                    <div className="flex-1 bg-[#e8112d]" />
-                    <div className="flex-1 bg-[#008751]" />
-                 </div>
-                 <div className="flex-1 w-full flex">
-                    <div className="w-[2px] bg-[#fcd116]" />
-                    <div className="flex-1" />
-                    <div className="w-[2px] bg-[#e8112d]" />
-                 </div>
-                 <div className="h-[2px] w-full flex">
-                    <div className="flex-1 bg-[#008751]" />
-                    <div className="flex-1 bg-[#fcd116]" />
-                 </div>
-              </div>
-
-              <div className="w-full h-full p-1 bg-white">
-                <LivingChoiceGrid onCellClick={handleCellClick} />
-              </div>
+            <div className="w-full max-w-[600px] aspect-square relative shadow-2xl border-[12px] border-neutral-50 rounded-xl overflow-hidden">
+              <LivingChoiceGrid onCellClick={handleCellClick} />
             </div>
 
-            <button 
-              onClick={() => setPhase("case")} 
-              className="mt-12 text-[10px] font-bold uppercase tracking-[0.4em] text-neutral-300 hover:text-black transition-colors flex items-center gap-3"
+            <button
+              onClick={() => setPhase("case")}
+              className="mt-10 px-8 py-3 rounded-full border border-neutral-100 text-[10px] font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-all"
             >
-              <RotateCcw size={12} /> Retour aux situations
+              Retourner aux situations
             </button>
           </motion.div>
         )}
 
-        {/* PHASE 3 : RÉVÉLATION */}
+        {/* PHASE 3 : RÉVÉLATION (Split Panel) */}
         {phase === "revealed" && revealed && lifeCase && (
-          <motion.div 
-            key="revealed" 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }} 
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+          <motion.div
+            key="revealed"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-white lg:bg-neutral-900/10 p-4"
           >
-            <div className="w-full max-w-5xl lg:max-w-6xl bg-white rounded-3xl overflow-hidden shadow-2xl flex flex-col lg:flex-row max-h-[85vh]">
-              {/* Panneau Gauche : Immersion & Choix Définitif */}
-              <div className="w-full lg:w-[45%] flex flex-col bg-white overflow-y-auto custom-scrollbar border-r border-neutral-100">
-                {/* Photo taking top half */}
-                <div className="relative w-full h-[40vh] md:h-[45%] shrink-0">
-                  <img src={lifeCase.photoUrl} className="w-full h-full object-cover grayscale-[0.2]" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                  <div className="absolute bottom-4 left-4">
-                    <div className="bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/20">
-                      <span className="text-white text-xs font-light italic">{lifeCase.persona}</span>
-                    </div>
-                  </div>
-                  <div className="absolute bottom-4 right-4">
-                    <AudioPlayer audioUrl={lifeCase.audioUrl} />
+            <div className="w-full max-w-6xl bg-white lg:rounded-[3rem] overflow-hidden shadow-2xl flex flex-col lg:flex-row h-full lg:h-[85vh]">
+
+              {/* PANNEAU GAUCHE : Rappel de l'immersion */}
+              <div className="w-full lg:w-[40%] flex flex-col bg-white border-r border-neutral-50 overflow-y-auto">
+                <div className="relative w-full aspect-[4/3] lg:h-1/2 shrink-0">
+                  <img src={`https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/images_casdevie/cas${lifeCase.id}.jpg`} className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute bottom-6 left-6 text-white">
+                    <span className="text-[10px] font-bold uppercase tracking-widest opacity-70 block mb-1">{lifeCase.label}</span>
+                    <h3 className="text-2xl font-serif">{lifeCase.persona}</h3>
                   </div>
                 </div>
 
-                {/* Quote and Options taking bottom half */}
-                <div className="p-6 md:p-8 flex-1 flex flex-col">
-                  <blockquote className="text-xs md:text-sm text-neutral-500 font-light italic border-l-2 border-[#fcd116] pl-4 leading-relaxed mb-6">
-                    "{lifeCase.quote}"
-                  </blockquote>
-
-                  <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#00693e] mb-4">Ton choix définitif</p>
-                  <div className="grid gap-2 mb-4">
+                <div className="p-8">
+                  <p className="text-[10px] uppercase tracking-widest font-bold text-[#00693e] mb-4">Confirmation du choix</p>
+                  <div className="space-y-3">
                     {lifeCase.options.map((opt, i) => (
-                      <button 
-                        key={i} 
-                        onClick={() => setFinalChoice(i)} 
-                        className={`p-3 md:p-4 text-left rounded-xl transition-all duration-300 flex items-start gap-3 relative overflow-hidden ${
-                          finalChoice === i 
-                            ? "bg-[#00693e]/5 ring-1 ring-[#00693e]/30" 
-                            : "bg-neutral-50 hover:bg-neutral-100 ring-1 ring-transparent"
-                        }`}
+                      <button
+                        key={i}
+                        onClick={() => setFinalChoice(i)}
+                        className={`w-full p-4 text-left rounded-2xl transition-all flex items-center gap-4 relative ${finalChoice === i ? "bg-[#00693e]/5 ring-1 ring-[#00693e]/20" : "bg-neutral-50"
+                          }`}
                       >
-                        <span className={`text-[11px] font-bold mt-0.5 ${finalChoice === i ? "text-[#00693e]" : "text-black"}`}>
-                          {String.fromCharCode(65 + i)}.
-                        </span>
-                        <span className="text-xs md:text-sm font-light text-neutral-600 leading-snug pr-16">{opt}</span>
-                        
-                        {/* Badges */}
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex flex-col gap-1 items-end">
-                          {intuitiveChoice === i && (
-                            <span className="text-[8px] font-bold uppercase tracking-widest text-[#fcd116]">Intuition</span>
-                          )}
-                          {finalChoice === i && (
-                            <span className="bg-[#00693e] text-white text-[8px] px-1.5 py-0.5 rounded font-bold uppercase tracking-widest">Définitif</span>
-                          )}
-                        </div>
+                        <span className="font-bold text-xs">{String.fromCharCode(65 + i)}</span>
+                        <span className="text-xs font-light pr-12">{opt}</span>
+                        {intuitiveChoice === i && <span className="absolute right-4 text-[8px] font-bold text-[#fcd116] uppercase">Intuition</span>}
+                        {finalChoice === i && <div className="absolute right-4 w-2 h-2 rounded-full bg-[#00693e]" />}
                       </button>
                     ))}
                   </div>
                 </div>
               </div>
 
-              {/* Panneau Droit : L'Oracle & Action */}
-              <div className="w-full lg:w-[55%] overflow-y-auto custom-scrollbar bg-[#fafafa] p-6 md:p-10 flex flex-col relative">
-              
-              {/* Header Oracle */}
-              <div className="flex justify-between items-center mb-10">
-                <span className="text-[10px] uppercase tracking-[0.3em] text-neutral-400 font-bold">Signe Révélé</span>
-                <div className="flex gap-2">
-                  <span className="w-2 h-2 rounded-full" style={{ background: '#008751' }} />
-                  <span className="w-2 h-2 rounded-full" style={{ background: '#fcd116' }} />
-                  <span className="w-2 h-2 rounded-full" style={{ background: '#e8112d' }} />
-                </div>
-              </div>
-
-              {/* Sign Card */}
-              <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-neutral-100 mb-8">
-                <div className="flex items-center gap-6 mb-6">
-                  <div className="bg-neutral-50 p-4 rounded-2xl">
-                    {/* Using CombinedTrace for thin lines */}
-                    <DotIdeogram leftCode={revealed.signX.code} rightCode={revealed.signY.code} size={40} color="#00693e" />
+              {/* PANNEAU DROIT : Oracle & Transmission */}
+              <div className="flex-1 bg-[#fafafa] p-8 lg:p-12 overflow-y-auto flex flex-col">
+                <div className="flex justify-between items-center mb-10">
+                  <span className="text-[10px] uppercase tracking-widest font-bold text-neutral-400">Le Signe du Fâ</span>
+                  <div className="flex gap-1">
+                    {[1, 2, 3].map(i => <div key={i} className="w-1.5 h-1.5 rounded-full bg-neutral-200" />)}
                   </div>
-                  <h4 className="text-4xl font-serif text-[#00693e]">{revealed.signX.name} {revealed.signY.name}</h4>
                 </div>
-                <div>
-                   <p className="text-sm text-neutral-600 leading-relaxed font-light">
-                     {revealed.signX.name} {revealed.signY.name} révèle une énergie de {revealed.dynamicWord.toLowerCase()}. Ce signe combine la force de {revealed.signY.name} et celle de {revealed.signX.name}. Leur rencontre dessine une voie d'évolution : un appel à honorer ce qui, en toi, cherche à s'accorder. Écoute ce que cette tension intérieure veut révéler — c'est là que se trouve ta réponse.
-                   </p>
-                </div>
-              </div>
 
-              {/* Résonances */}
-              <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-neutral-100 mb-12">
-                <span className="text-[10px] uppercase tracking-[0.3em] text-[#806c00] font-bold block mb-4">Résonances à explorer</span>
-                <div className="flex items-center gap-3 text-sm md:text-base font-medium text-neutral-800">
-                  <span className="text-[#00693e]">{revealed.axisYWord}</span>
-                  <span className="text-[#fcd116]">×</span>
-                  <span className="text-neutral-500">{revealed.axisXWord}</span>
-                  <span className="text-[#e8112d]">=</span>
-                  <span className="font-bold">{revealed.dynamicWord}</span>
+                <div className="bg-white p-8 rounded-[2rem] border border-neutral-100 shadow-sm mb-8 flex items-center gap-8">
+                  <div className="shrink-0 p-4 bg-neutral-50 rounded-2xl">
+                    <DotIdeogram leftCode={revealed.signX.code} rightCode={revealed.signY.code} size={50} color="#00693e" />
+                  </div>
+                  <div>
+                    <h4 className="text-3xl font-serif text-[#00693e] mb-2">{revealed.signX.name} {revealed.signY.name}</h4>
+                    <p className="text-sm font-light text-neutral-500 leading-relaxed">
+                      L'union de ces deux énergies révèle une dynamique de <span className="font-bold text-black">{revealed.dynamicWord}</span>.
+                    </p>
+                  </div>
                 </div>
-              </div>
 
-              {/* Action Area (Empty State vs Active State) */}
-              <div className="mt-auto">
-                <AnimatePresence mode="wait">
+                {/* Zone d'action dynamique */}
+                <div className="mt-auto">
                   {finalChoice === null ? (
-                    <motion.div 
-                      key="empty"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="border border-dashed border-[#e8112d]/50 bg-[#e8112d]/[0.02] rounded-2xl p-8 text-center"
-                    >
-                      <p className="text-xs text-[#e8112d] font-bold italic">
-                        Compte tenu du signe révélé et des résonances à explorer, faîtes un choix définitif et enregistrer votre interprétation.
+                    <div className="p-8 border-2 border-dashed border-[#e8112d]/20 rounded-[2rem] text-center bg-[#e8112d]/[0.02]">
+                      <p className="text-xs font-bold text-[#e8112d] italic">
+                        Scellez votre choix à gauche pour déverrouiller la parole.
                       </p>
-                    </motion.div>
+                    </div>
                   ) : (
-                    <motion.div 
-                      key="active"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="bg-white rounded-[2rem] p-8 border border-[#e8112d]/20 shadow-sm"
-                    >
+                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white p-8 rounded-[2rem] border border-neutral-100 shadow-sm">
                       <div className="flex justify-between items-center mb-6">
-                        <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#e8112d]">Enregistre ta réponse</span>
-                        <span className="text-[10px] font-mono bg-neutral-100 px-2 py-1 rounded text-neutral-500">1 minute maximum</span>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-[#00693e]">Enregistrement</span>
+                        <span className="text-[9px] text-neutral-400">Audio 1 min max</span>
                       </div>
-                      
-                      <div className="mb-8">
-                        <AudioRecorder onSaved={setRecordedBlob} />
-                      </div>
-
+                      <AudioRecorder onSaved={setRecordedBlob} />
                       <button
                         onClick={handleTransmitSagesse}
-                        disabled={isSubmitting || !recordedBlob}
-                        className="w-full py-5 bg-[#00693e] text-white text-[10px] uppercase tracking-[0.3em] font-bold rounded-xl hover:brightness-110 transition-all flex items-center justify-center gap-3 disabled:opacity-20"
+                        disabled={!recordedBlob || isSubmitting}
+                        className="w-full mt-6 py-5 bg-[#00693e] text-white rounded-2xl text-[10px] font-bold uppercase tracking-widest shadow-lg shadow-[#00693e]/20 disabled:opacity-20 transition-all"
                       >
-                        {isSubmitting ? <Loader2 className="animate-spin" size={16} /> : "Transmettre ma sagesse"}
+                        {isSubmitting ? "Scellage en cours..." : "Transmettre ma sagesse"}
                       </button>
                     </motion.div>
                   )}
-                </AnimatePresence>
+                </div>
               </div>
 
-              <button 
-                onClick={() => setConfirmCloseOpen(true)} 
-                className="absolute top-6 right-6 p-2 text-neutral-300 hover:text-black transition-colors bg-white rounded-full border border-neutral-100 shadow-sm"
-              >
-                <X size={20} strokeWidth={1.5} />
+              <button onClick={() => setConfirmCloseOpen(true)} className="absolute top-6 right-6 p-3 bg-white rounded-full shadow-lg hover:scale-110 transition-transform">
+                <X size={20} />
               </button>
-            </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
       <AlertDialog open={confirmCloseOpen} onOpenChange={setConfirmCloseOpen}>
-        <AlertDialogContent className="bg-white rounded-[2rem] border-none p-12 shadow-2xl">
-          <AlertDialogHeader className="space-y-6">
-            <AlertDialogTitle className="text-3xl font-serif italic text-center text-black">Interrompre le rituel ?</AlertDialogTitle>
-            <AlertDialogDescription className="text-center text-neutral-400 text-sm font-light">
-              Le sable ne retient pas l'empreinte de celui qui hésite. Votre progression sera perdue.
+        <AlertDialogContent className="rounded-[2.5rem] p-12">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-3xl font-serif text-center">Interrompre le rituel ?</AlertDialogTitle>
+            <AlertDialogDescription className="text-center text-neutral-400">
+              Votre progression dans cette consultation sera perdue.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className="flex-col sm:flex-row gap-3 mt-12">
-            <AlertDialogCancel className="w-full py-5 border-neutral-100 bg-neutral-50 rounded-2xl uppercase text-[10px] font-bold tracking-widest text-neutral-400">Poursuivre</AlertDialogCancel>
-            <AlertDialogAction onClick={() => { setConfirmCloseOpen(false); restart(); }} className="w-full py-5 bg-[#e8112d] text-white rounded-2xl uppercase text-[10px] font-bold tracking-widest">Abandonner</AlertDialogAction>
+          <AlertDialogFooter className="mt-8 gap-4 flex-col sm:flex-row">
+            <AlertDialogCancel className="rounded-2xl py-4 flex-1">Poursuivre</AlertDialogCancel>
+            <AlertDialogAction onClick={() => { setConfirmCloseOpen(false); restart(); }} className="bg-[#e8112d] rounded-2xl py-4 flex-1">Abandonner</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -367,51 +277,32 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
   );
 };
 
-// --- COLORS FROM MOCKUP ---
-const MOCKUP_COLORS = [
-  "#ffffff", // White
-  "#f5d5d5", // Soft Pink
-  "#b4ccc0", // Soft Green
-  "#f9e8b0", // Soft Yellow
-  "#f7f7f7", // Off White
-];
+// --- Reste du code (LivingChoiceGrid, LoadingScreen, etc.) inchangé mais optimisé visuellement ---
+const MOCKUP_COLORS = ["#ffffff", "#f5d5d5", "#b4ccc0", "#f9e8b0", "#f7f7f7"];
 
 const LivingChoiceGrid = ({ onCellClick }: { onCellClick: (row: number, col: number) => void }) => {
-  const TOTAL_CELLS = 256;
-  const cells = useMemo(() => Array.from({ length: TOTAL_CELLS }, (_, i) => ({
-    id: i, row: Math.floor(i / 16), col: i % 16
-  })), []);
-
-  const order = useLivingOrder(TOTAL_CELLS, 8, 3000);
-  const [colorTick, setColorTick] = useState(0);
+  const cells = useMemo(() => Array.from({ length: 256 }, (_, i) => ({ id: i, row: Math.floor(i / 16), col: i % 16 })), []);
+  const order = useLivingOrder(256, 8, 3000);
+  const [tick, setTick] = useState(0);
 
   useEffect(() => {
-    const id = setInterval(() => setColorTick((t) => t + 1), 3000);
+    const id = setInterval(() => setTick(t => t + 1), 3000);
     return () => clearInterval(id);
   }, []);
 
   return (
-    <div className="grid gap-[1px] w-full aspect-square bg-neutral-100/30" style={{ gridTemplateColumns: `repeat(16, 1fr)` }}>
+    <div className="grid grid-cols-16 w-full h-full bg-white gap-[1px]" style={{ gridTemplateColumns: 'repeat(16, 1fr)' }}>
       {order.map((cellId, slot) => {
         const cell = cells[cellId];
-        const colorIdx = (cell.id * 11 + colorTick * 17 + slot * 5) % MOCKUP_COLORS.length;
+        const color = MOCKUP_COLORS[(cell.id + tick) % MOCKUP_COLORS.length];
         return (
           <motion.button
             key={cell.id}
-            layout
             onClick={() => onCellClick(cell.row, cell.col)}
-            className="aspect-square relative group/cell border-[0.5px] border-white/50"
-            animate={{ backgroundColor: MOCKUP_COLORS[colorIdx] }}
-            whileHover={{
-              scale: 1.4,
-              backgroundColor: "#00693e",
-              zIndex: 20,
-              boxShadow: "0 10px 30px rgba(0,0,0,0.1)"
-            }}
-            transition={{ backgroundColor: { duration: 3 } }}
-          >
-            <div className="absolute inset-0 bg-white opacity-0 group-hover/cell:opacity-10 transition-opacity" />
-          </motion.button>
+            animate={{ backgroundColor: color }}
+            whileHover={{ scale: 1.5, zIndex: 10, backgroundColor: "#00693e" }}
+            className="aspect-square border-[0.5px] border-neutral-50/10"
+          />
         );
       })}
     </div>
@@ -419,50 +310,10 @@ const LivingChoiceGrid = ({ onCellClick }: { onCellClick: (row: number, col: num
 };
 
 const LoadingScreen = () => (
-  <div className="h-screen flex flex-col items-center justify-center bg-white space-y-6">
-    <Loader2 className="animate-spin text-neutral-100" size={40} strokeWidth={1} />
-    <span className="text-[10px] uppercase tracking-[0.6em] text-neutral-300">Initialisation de la Matrice</span>
+  <div className="h-screen flex flex-col items-center justify-center bg-white">
+    <Loader2 className="animate-spin text-neutral-200 mb-4" size={48} strokeWidth={1} />
+    <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-neutral-300">Ouverture de la Matrice</span>
   </div>
 );
-
-const AudioPlayer = ({ audioUrl }: { audioUrl: string }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  // Stop playback when url changes
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      setIsPlaying(false);
-    }
-  }, [audioUrl]);
-
-  const toggle = () => {
-    if (!audioRef.current) return;
-    if (isPlaying) audioRef.current.pause();
-    else audioRef.current.play().catch(console.error);
-    setIsPlaying(!isPlaying);
-  };
-
-  return (
-    <>
-      <button 
-        onClick={toggle}
-        className="w-12 h-12 rounded-full flex items-center justify-center bg-black/40 backdrop-blur-md text-white transition-transform active:scale-90"
-      >
-        {isPlaying ? <div className="w-3 h-3 bg-white" /> : <div className="w-0 h-0 border-t-8 border-b-8 border-l-[12px] border-t-transparent border-b-transparent border-l-white ml-1" />}
-      </button>
-      <audio 
-        ref={audioRef} 
-        src={audioUrl} 
-        playsInline
-        preload="auto"
-        onEnded={() => setIsPlaying(false)}
-        onPlay={() => setIsPlaying(true)}
-        onPause={() => setIsPlaying(false)}
-      />
-    </>
-  );
-};
 
 export default SandMatrix;
