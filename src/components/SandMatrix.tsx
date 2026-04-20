@@ -280,9 +280,9 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
               </div>
 
               {/* Résonances */}
-              <div className="mb-12">
-                <span className="text-[10px] uppercase tracking-[0.3em] text-[#00693e] font-bold block mb-4">Résonances à explorer</span>
-                <div className="flex items-center gap-3 text-sm font-medium text-neutral-800">
+              <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-neutral-100 mb-12">
+                <span className="text-[10px] uppercase tracking-[0.3em] text-[#806c00] font-bold block mb-4">Résonances à explorer</span>
+                <div className="flex items-center gap-3 text-sm md:text-base font-medium text-neutral-800">
                   <span className="text-[#00693e]">{revealed.axisYWord}</span>
                   <span className="text-[#fcd116]">×</span>
                   <span className="text-neutral-500">{revealed.axisXWord}</span>
@@ -323,16 +323,12 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
                       </div>
 
                       <div className="space-y-4 mb-8">
-                        <div className="flex justify-between items-center">
-                          <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#00693e]">Ta phrase de sagesse</span>
-                          <span className="text-[9px] text-neutral-400 font-mono">{wisdomPhrase.length} / 100</span>
-                        </div>
                         <textarea
                           value={wisdomPhrase}
                           onChange={(e) => setWisdomPhrase(e.target.value)}
                           maxLength={100}
                           placeholder="Une phrase courte qui accompagne ton enregistrement..."
-                          className="w-full bg-white border-l-2 border-[#fcd116] p-4 text-sm font-light italic focus:ring-0 focus:outline-none resize-none placeholder:text-neutral-300 shadow-inner rounded-r-xl"
+                          className="w-full bg-white border-l-4 border-[#fcd116] p-4 text-sm md:text-base font-light italic focus:ring-0 focus:outline-none resize-none placeholder:text-neutral-300 shadow-inner rounded-r-xl"
                           rows={3}
                         />
                       </div>
