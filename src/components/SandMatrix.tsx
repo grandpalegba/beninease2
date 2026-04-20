@@ -200,7 +200,7 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
           >
             {/* Panneau Gauche : Immersion & Choix Définitif */}
             <div className="w-full lg:w-[50%] h-[50vh] lg:h-full flex flex-col bg-white overflow-y-auto custom-scrollbar border-r border-neutral-100">
-              <div className="relative aspect-[4/3] w-full shrink-0">
+              <div className="relative aspect-[16/9] w-full shrink-0">
                 <img src={lifeCase.photoUrl} className="w-full h-full object-cover grayscale-[0.2]" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                 <div className="absolute bottom-6 left-6">
@@ -264,16 +264,15 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
               </div>
 
               {/* Sign Card */}
-              <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-neutral-100 mb-12">
-                <div className="flex items-center gap-6 mb-8">
+              <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-neutral-100 mb-8">
+                <div className="flex items-center gap-6 mb-6">
                   <div className="bg-neutral-50 p-4 rounded-2xl">
                     {/* Using CombinedTrace for thin lines */}
-                    <DotIdeogram leftCode={revealed.signX.code} rightCode={revealed.signY.code} size={50} color="#00693e" />
+                    <DotIdeogram leftCode={revealed.signX.code} rightCode={revealed.signY.code} size={40} color="#00693e" />
                   </div>
-                  <h4 className="text-5xl font-serif text-[#00693e]">{revealed.signX.name} {revealed.signY.name}</h4>
+                  <h4 className="text-4xl font-serif text-[#00693e]">{revealed.signX.name} {revealed.signY.name}</h4>
                 </div>
                 <div>
-                   <h5 className="text-xl font-serif text-[#00693e] mb-4">{revealed.signX.name} {revealed.signY.name}</h5>
                    <p className="text-sm text-neutral-600 leading-relaxed font-light">
                      {revealed.signX.name} {revealed.signY.name} révèle une énergie de {revealed.dynamicWord.toLowerCase()}. Ce signe combine la force de {revealed.signY.name} et celle de {revealed.signX.name}. Leur rencontre dessine une voie d'évolution : un appel à honorer ce qui, en toi, cherche à s'accorder. Écoute ce que cette tension intérieure veut révéler — c'est là que se trouve ta réponse.
                    </p>
@@ -467,6 +466,7 @@ const AudioPlayer = ({ audioUrl }: { audioUrl: string }) => {
       <audio 
         ref={audioRef} 
         src={audioUrl} 
+        crossOrigin="anonymous"
         onEnded={() => setIsPlaying(false)}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}

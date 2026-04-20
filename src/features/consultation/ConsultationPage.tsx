@@ -95,10 +95,10 @@ export default function ConsultationPage() {
   }
 
   return (
-    <main className="min-h-screen bg-white text-black font-sans antialiased flex flex-col items-center pt-6 pb-8">
-      {/* Title Section */}
-      <div className="text-center mb-4">
-        <h1 className="text-5xl md:text-6xl font-serif text-[#2d2f2f] mb-8">
+    <main className="h-screen bg-white text-black font-sans antialiased flex flex-col-reverse items-center overflow-hidden">
+      {/* Title Section (Now at bottom) */}
+      <div className="w-full pt-4 pb-8 flex flex-col items-center shrink-0 z-10">
+        <h1 className="text-4xl md:text-5xl font-serif text-[#2d2f2f] mb-4">
           Sagesses du Bénin
         </h1>
 
@@ -106,7 +106,7 @@ export default function ConsultationPage() {
         <div className="bg-neutral-100 p-1 rounded-full flex gap-1 shadow-sm mx-auto w-fit">
           <button
             onClick={() => setActiveView('matrix')}
-            className={`px-8 py-2.5 rounded-full text-[11px] font-bold tracking-[0.05em] transition-all ${
+            className={`px-6 py-2 rounded-full text-[10px] font-bold tracking-[0.05em] transition-all ${
               activeView === 'matrix' 
                 ? 'bg-[#2d2f2f] text-white shadow-sm' 
                 : 'text-neutral-400 hover:text-neutral-600'
@@ -116,7 +116,7 @@ export default function ConsultationPage() {
           </button>
           <button
             onClick={() => setActiveView('wall')}
-            className={`px-8 py-2.5 rounded-full text-[11px] font-bold tracking-[0.05em] transition-all ${
+            className={`px-6 py-2 rounded-full text-[10px] font-bold tracking-[0.05em] transition-all ${
               activeView === 'wall' 
                 ? 'bg-[#2d2f2f] text-white shadow-sm' 
                 : 'text-neutral-400 hover:text-neutral-600'
@@ -128,7 +128,7 @@ export default function ConsultationPage() {
       </div>
 
       {/* Content Area */}
-      <div className="w-full max-w-7xl px-4 md:px-12 flex-1 flex items-center justify-center mt-6">
+      <div className="w-full max-w-7xl px-4 md:px-12 flex-1 flex items-center justify-center min-h-0 py-6">
         <AnimatePresence mode="wait">
           {activeView === 'matrix' ? (
             <motion.div 
