@@ -51,13 +51,7 @@ const SwipeableCaseDeck: React.FC<SwipeableCaseDeckProps> = ({ cases, initialCas
   return (
     <main className="w-full min-h-screen bg-white flex flex-col items-center justify-center py-8 md:py-12 px-4 overflow-hidden">
 
-      {/* HEADER : Titre minimaliste (visible uniquement sur Desktop) */}
-      <header className="text-center mb-8 md:mb-16 hidden md:block">
-        <h1 className="text-5xl lg:text-6xl font-serif text-black mb-4 tracking-tight">Situations.</h1>
-        <p className="text-[10px] uppercase tracking-[0.4em] text-neutral-400 font-bold">
-          Choisissez un cas de vie pour interroger le Fâ
-        </p>
-      </header>
+
 
       {/* ZONE DE LA CARTE */}
       <div className="relative w-full max-w-[450px] aspect-[3/4] md:aspect-[4/5] z-10">
