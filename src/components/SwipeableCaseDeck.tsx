@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useRef } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { LifeCase } from '@/features/consultation/useLifeCases';
-import { Play, Pause, ArrowRight } from 'lucide-react';
+import { Play, Pause, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface SwipeableCaseDeckProps {
   cases: LifeCase[];
@@ -13,145 +13,199 @@ interface SwipeableCaseDeckProps {
 }
 
 /**
- * SwipeableCaseDeck - Horizontal Swiper Redesign (Next.js 15 + Tailwind)
+ * SwipeableCaseDeck - High-Fidelity Split Layout Redesign
  * 
- * Ultra-minimalist horizontal scroll with snap-to-center cards.
+ * Matches the provided mockup with Image on Left and Content on Right.
  */
 const SwipeableCaseDeck: React.FC<SwipeableCaseDeckProps> = ({ cases, initialCaseId, onPickCase }) => {
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  const handleOpenMatrix = (currentCase: LifeCase, selectedOptionIdx: number | null) => {
-    if (onPickCase) {
-      onPickCase(currentCase, selectedOptionIdx);
+  const [currentIndex, setCurrentIndex] = useState(() => {
+    if (initialCaseId) {
+      const idx = cases.findIndex(c => c.id === initialCaseId);
+      return idx !== -1 ? idx : 0;
     }
+    return 0;
+  });
+
+  const currentCase = cases[currentIndex];
+
+  const handleNext = () => {
+    if (currentIndex < cases.length - 1) setCurrentIndex(prev => prev + 1);
   };
 
+  const handlePrev = () => {
+    if (currentIndex > 0) setCurrentIndex(prev => prev - 1);
+  };
+
+  if (!currentCase) return null;
+
   return (
-    <div className="w-full flex flex-col items-center">
-      {/* Horizontal Swiper Container */}
-      <div 
-        ref={scrollRef}
-        className="w-full flex overflow-x-auto snap-x snap-mandatory scrollbar-hide py-12 gap-8 px-[10%] md:px-[25%]"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-      >
-        {cases.map((item, idx) => (
-          <div 
-            key={item.id}
-            className="flex-shrink-0 w-full max-w-md snap-center"
-          >
-            <CaseCard 
-              item={item} 
-              onPick={(optionIdx) => handleOpenMatrix(item, optionIdx)}
+    <div className="relative w-full flex items-center justify-center group">
+      {/* Navigation Arrows (Visible on hover) */}
+      {currentIndex > 0 && (
+        <button 
+          onClick={handlePrev}
+          className="absolute left-[-60px] top-1/2 -translate-y-1/2 p-4 text-neutral-200 hover:text-black transition-colors hidden md:block"
+        >
+          <ChevronLeft size={40} strokeWidth={1} />
+        </button>
+      )}
+      {currentIndex < cases.length - 1 && (
+        <button 
+          onClick={handleNext}
+          className="absolute right-[-60px] top-1/2 -translate-y-1/2 p-4 text-neutral-200 hover:text-black transition-colors hidden md:block"
+        >
+          <ChevronRight size={40} strokeWidth={1} />
+        </button>
+      )}
+
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentCase.id}
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
+          transition={{ duration: 0.4 }}
+          className="w-full max-w-6xl flex flex-col md:flex-row bg-white rounded-[2rem] overflow-hidden"
+          style={{ boxShadow: '0 40px 120px rgba(0,0,0,0.08)' }}
+        >
+          {/* Left Column: Visual */}
+          <section className="relative w-full md:w-[45%] aspect-[3/4] md:aspect-auto overflow-hidden">
+            <img
+              src={currentCase.photoUrl || '/assets/profile-aicha.jpg'}
+              alt={currentCase.persona}
+              className="absolute inset-0 w-full h-full object-cover grayscale-[0.2]"
             />
-          </div>
-        ))}
-      </div>
+            
+            {/* Persona Badge */}
+            <div className="absolute bottom-10 left-10">
+              <div className="bg-white/20 backdrop-blur-xl px-4 py-2 rounded-xl border border-white/30">
+                <span className="text-white text-sm font-light italic">
+                  {currentCase.persona}
+                </span>
+              </div>
+            </div>
+
+            {/* Play Button */}
+            <div className="absolute bottom-10 right-10">
+              <AudioTrigger audioUrl={currentCase.audioUrl} />
+            </div>
+
+            {/* Sound Wave Decor */}
+            <div className="absolute bottom-4 left-44 flex items-end gap-1 h-6 opacity-40">
+              {[3, 6, 8, 4, 7, 5, 9, 4].map((h, i) => (
+                <div 
+                  key={i} 
+                  className="w-1 bg-[#fcd116] rounded-full" 
+                  style={{ height: `${h * 2}px` }} 
+                />
+              ))}
+            </div>
+          </section>
+
+          {/* Right Column: Content */}
+          <section className="w-full md:w-[55%] p-10 md:p-20 flex flex-col bg-white relative">
+            <div className="flex justify-between items-start mb-12">
+              <span className="text-[10px] uppercase tracking-[0.4em] font-bold text-neutral-400">
+                {currentCase.label || 'SAGESSE'}
+              </span>
+              <div className="flex gap-2">
+                <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#008751' }} />
+                <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#fcd116' }} />
+                <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#e8112d' }} />
+              </div>
+            </div>
+
+            <div className="flex-1">
+              <h2 className="text-6xl md:text-7xl font-serif text-[#00693e] leading-[0.9] mb-12">
+                {currentCase.title}
+              </h2>
+
+              <blockquote className="text-xl font-light text-neutral-500 leading-relaxed italic border-l-4 border-[#fcd116] pl-8 mb-16">
+                "{currentCase.quote}"
+              </blockquote>
+
+              <p className="text-[10px] uppercase tracking-[0.15em] font-bold text-neutral-400 mb-6">
+                CHOISISSEZ UNE OPTION SELON VOTRE INTUITION ET OUVREZ LA MATRICE DES CHOIX
+              </p>
+
+              <OptionList 
+                options={currentCase.options} 
+                onSelect={(idx) => onPickCase?.(currentCase, idx)}
+              />
+            </div>
+          </section>
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 };
 
-const CaseCard = ({ item, onPick }: { item: LifeCase; onPick: (idx: number | null) => void }) => {
-  const [isPlaying, setIsPlaying] = React.useState(false);
-  const [selectedIdx, setSelectedIdx] = React.useState<number | null>(null);
-  const audioRef = React.useRef<HTMLAudioElement | null>(null);
+const AudioTrigger = ({ audioUrl }: { audioUrl: string }) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const toggleAudio = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const toggle = () => {
     if (!audioRef.current) return;
-    if (isPlaying) {
-      audioRef.current.pause();
-    } else {
-      audioRef.current.play().catch(console.error);
-    }
+    if (isPlaying) audioRef.current.pause();
+    else audioRef.current.play().catch(console.error);
     setIsPlaying(!isPlaying);
   };
 
   return (
-    <motion.div 
-      className="bg-white rounded-[2.5rem] overflow-hidden border border-neutral-100 flex flex-col h-full"
-      style={{ boxShadow: '0 40px 100px -20px rgba(0,0,0,0.06)' }}
-      whileHover={{ y: -5 }}
-      transition={{ duration: 0.4 }}
-    >
-      {/* Media Section */}
-      <div className="relative aspect-[4/3] bg-neutral-50 overflow-hidden group">
-        <img
-          src={item.photoUrl || '/placeholder-face.jpg'}
-          alt={item.persona}
-          className="absolute inset-0 w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-700"
-        />
-        <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors duration-700" />
-        
-        {/* Simple Audio Button */}
-        <button 
-          onClick={toggleAudio}
-          className="absolute inset-0 m-auto w-16 h-16 rounded-full flex items-center justify-center bg-white/20 backdrop-blur-lg border border-white/30 text-white transition-all active:scale-90"
-        >
-          {isPlaying ? <Pause size={24} fill="currentColor" /> : <Play size={24} fill="currentColor" className="ml-1" />}
-        </button>
+    <>
+      <button 
+        onClick={toggle}
+        className="w-14 h-14 rounded-full flex items-center justify-center bg-black/40 backdrop-blur-md text-white transition-transform active:scale-90"
+      >
+        {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" className="ml-1" />}
+      </button>
+      <audio 
+        ref={audioRef} 
+        src={audioUrl} 
+        onEnded={() => setIsPlaying(false)}
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
+      />
+    </>
+  );
+};
 
-        <div className="absolute bottom-6 left-6">
-          <span className="text-[10px] font-bold tracking-[0.3em] text-white uppercase opacity-80">
-            {item.persona}
-          </span>
-        </div>
+const OptionList = ({ options, onSelect }: { options: string[]; onSelect: (idx: number) => void }) => {
+  const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
 
-        <audio 
-          ref={audioRef} 
-          src={item.audioUrl} 
-          onEnded={() => setIsPlaying(false)}
-          onPlay={() => setIsPlaying(true)}
-          onPause={() => setIsPlaying(false)}
-        />
+  return (
+    <div className="space-y-3">
+      <div className="grid grid-cols-1 gap-2.5">
+        {options.map((opt, i) => (
+          <button
+            key={i}
+            onClick={() => setSelectedIdx(i)}
+            className={`text-left px-6 py-5 rounded-2xl transition-all duration-300 flex items-center gap-4 ${
+              selectedIdx === i 
+                ? 'bg-neutral-100 ring-1 ring-black/5 shadow-sm' 
+                : 'bg-neutral-50 hover:bg-neutral-100'
+            }`}
+          >
+            <span className="text-[11px] font-bold text-black min-w-[20px]">
+              {String.fromCharCode(65 + i)}:
+            </span>
+            <span className="text-[13px] font-light text-neutral-600 leading-snug">
+              {opt}
+            </span>
+          </button>
+        ))}
       </div>
 
-      {/* Content Section */}
-      <div className="p-10 flex flex-col flex-grow">
-        <div className="mb-6">
-          <span className="text-[10px] font-bold tracking-[0.4em] text-neutral-300 uppercase mb-2 block">
-            {item.label}
-          </span>
-          <h3 className="text-3xl font-serif italic text-black leading-tight">
-            {item.title}
-          </h3>
-        </div>
-
-        <p className="text-sm font-light text-neutral-400 leading-relaxed italic mb-10 border-l-2 border-neutral-100 pl-6">
-          "{item.quote}"
-        </p>
-
-        {/* Options - Minimalist */}
-        <div className="grid grid-cols-1 gap-2.5 mb-10">
-          {item.options.map((opt, i) => (
-            <button
-              key={i}
-              onClick={() => setSelectedIdx(i)}
-              className={`text-left px-5 py-4 rounded-xl text-xs transition-all duration-300 flex items-center gap-4 ${
-                selectedIdx === i 
-                  ? 'bg-black text-white' 
-                  : 'bg-neutral-50 text-neutral-500 hover:bg-neutral-100'
-              }`}
-            >
-              <span className={`w-6 h-6 rounded flex items-center justify-center text-[10px] font-bold border ${
-                selectedIdx === i ? 'border-white/20' : 'border-neutral-200'
-              }`}>
-                {String.fromCharCode(65 + i)}
-              </span>
-              <span className="flex-1 truncate">{opt}</span>
-            </button>
-          ))}
-        </div>
-
+      <div className="pt-10">
         <button
           disabled={selectedIdx === null}
-          onClick={() => onPick(selectedIdx)}
-          className="mt-auto w-full py-5 rounded-2xl bg-black text-white text-[10px] font-bold uppercase tracking-[0.3em] flex items-center justify-center gap-3 transition-all disabled:opacity-20 disabled:grayscale"
+          onClick={() => onSelect(selectedIdx!)}
+          className="w-full py-6 rounded-2xl bg-[#00693e] text-white text-[11px] font-bold uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all hover:brightness-110 active:scale-[0.98] disabled:opacity-20 disabled:grayscale"
         >
-          Ouvrir la matrice
-          <ArrowRight size={14} />
+          OUVRIR LA MATRICE DES CHOIX
         </button>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

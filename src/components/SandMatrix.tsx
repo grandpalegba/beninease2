@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useCallback, useMemo, useEffect, useRef } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Play, Pause, Loader2, CheckCircle2, RotateCcw, ArrowRight } from "lucide-react";
+import { X, Loader2, RotateCcw, ArrowRight } from "lucide-react";
 import { SIGNS, shuffle, valueToMatrixIndex, type FongbeSign } from "@/data/fongbe";
 import { DYNAMICS_MATRIX, DYNAMICS_AXIS } from "@/data/dynamics";
 import { type LifeCase, useLifeCases } from "@/features/consultation/useLifeCases";
@@ -12,10 +12,8 @@ import { toast } from "sonner";
 
 // UI Components
 import DotIdeogram from "./DotIdeogram";
-import BeninFrame from "./BeninFrame";
 import SwipeableCaseDeck from "./SwipeableCaseDeck";
 import AudioRecorder from "./AudioRecorder";
-import EthnicDots from "./EthnicDots";
 
 import {
   AlertDialog,
@@ -53,8 +51,6 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
   const [wisdomPhrase, setWisdomPhrase] = useState("");
   const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const WISDOM_MAX = 140;
 
   const restart = useCallback(() => {
     setLifeCase(null);
@@ -121,10 +117,10 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
   if (casesLoading && phase === "case") return <LoadingScreen />;
 
   return (
-    <div className="w-full h-full flex items-center justify-center">
+    <div className="w-full flex items-center justify-center">
       <AnimatePresence mode="wait">
 
-        {/* PHASE 1 : SÉLECTION (Minimalist Deck) */}
+        {/* PHASE 1 : SÉLECTION */}
         {phase === "case" && (
           <motion.div 
             key="case" 
@@ -137,6 +133,7 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
               cases={cases}
               onPickCase={handlePickCase}
               initialCaseId={lifeCase?.id}
+              onChoice={() => {}}
             />
           </motion.div>
         )}
@@ -147,12 +144,41 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
             key="matrix" 
             initial={{ opacity: 0, scale: 0.98 }} 
             animate={{ opacity: 1, scale: 1 }} 
-            className="flex flex-col items-center justify-center p-8 bg-white"
+            className="flex flex-col items-center w-full"
           >
-            <div className="w-full max-w-[500px] aspect-square relative">
-              <BeninFrame thickness={4} inset={12} className="shadow-2xl shadow-black/[0.02]">
+            <div className="text-center mb-10">
+              <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-neutral-400 block mb-2">LA MATRICE DES CHOIX</span>
+              <p className="text-sm italic text-neutral-400 font-light">
+                Touchez une case — un signe du Fâ se révélera.
+              </p>
+            </div>
+
+            <div className="w-full max-w-[700px] aspect-square relative p-2">
+              {/* Benin Tricolor Border Decor */}
+              <div className="absolute inset-0 border-2 border-[#e8112d]" />
+              <div className="absolute inset-0 border-t-2 border-l-2 border-[#fcd116]" />
+              <div className="absolute inset-0 border-b-2 border-r-2 border-[#008751]" style={{ clipPath: 'polygon(0 50%, 100% 50%, 100% 100%, 0 100%)' }} />
+              <div className="absolute inset-0 border-t-2 border-r-2 border-[#008751]" style={{ clipPath: 'polygon(50% 0, 100% 0, 100% 100%, 50% 100%)' }} />
+              {/* Actually let's use a simpler way for the tricolor border as shown in image */}
+              <div className="absolute inset-0 flex flex-col">
+                 <div className="h-[2px] w-full flex">
+                    <div className="flex-1 bg-[#e8112d]" />
+                    <div className="flex-1 bg-[#008751]" />
+                 </div>
+                 <div className="flex-1 w-full flex">
+                    <div className="w-[2px] bg-[#fcd116]" />
+                    <div className="flex-1" />
+                    <div className="w-[2px] bg-[#e8112d]" />
+                 </div>
+                 <div className="h-[2px] w-full flex">
+                    <div className="flex-1 bg-[#008751]" />
+                    <div className="flex-1 bg-[#fcd116]" />
+                 </div>
+              </div>
+
+              <div className="w-full h-full p-1 bg-white">
                 <LivingChoiceGrid onCellClick={handleCellClick} />
-              </BeninFrame>
+              </div>
             </div>
 
             <button 
@@ -172,29 +198,26 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
             animate={{ opacity: 1 }} 
             className="fixed inset-0 z-50 flex flex-col lg:flex-row bg-white overflow-hidden"
           >
-            {/* Panneau Gauche : Immersion */}
-            <div className="w-full lg:w-[45%] h-[40vh] lg:h-full relative bg-neutral-50 group">
-              <img src={lifeCase.photoUrl} className="w-full h-full object-cover grayscale-[0.2] transition-transform duration-[3000ms] group-hover:scale-105" />
-              <div className="absolute inset-0 bg-white/5 group-hover:bg-transparent transition-colors" />
-              <div className="absolute bottom-12 left-12 right-12 space-y-4">
-                <h3 className="text-5xl text-black font-serif italic leading-tight">{lifeCase.persona}</h3>
-                <blockquote className="text-neutral-400 text-lg font-light italic border-l border-neutral-100 pl-6 leading-relaxed">"{lifeCase.quote}"</blockquote>
+            <div className="w-full lg:w-[45%] h-[40vh] lg:h-full relative bg-neutral-50">
+              <img src={lifeCase.photoUrl} className="w-full h-full object-cover grayscale-[0.2]" />
+              <div className="absolute bottom-12 left-12 right-12">
+                <h3 className="text-5xl text-black font-serif italic mb-4">{lifeCase.persona}</h3>
+                <blockquote className="text-neutral-400 text-lg font-light italic border-l-2 border-[#fcd116] pl-6 leading-relaxed">"{lifeCase.quote}"</blockquote>
               </div>
             </div>
 
-            {/* Panneau Droit : L'Oracle & Action */}
             <div className="w-full lg:w-[55%] h-[60vh] lg:h-full overflow-y-auto bg-white p-12 lg:p-24 flex flex-col relative">
               <div className="flex justify-between items-start mb-20">
                 <div className="space-y-4">
                   <span className="text-[10px] uppercase tracking-[0.5em] text-neutral-300 font-bold">Signe Révélé</span>
-                  <h4 className="text-7xl font-serif italic tracking-tighter text-black">{revealed.signX.name} {revealed.signY.name}</h4>
+                  <h4 className="text-7xl font-serif italic tracking-tighter text-[#00693e]">{revealed.signX.name} {revealed.signY.name}</h4>
                   <div className="flex gap-4">
                     <span className="text-[10px] uppercase tracking-widest text-black/40 font-bold">{revealed.axisYWord}</span>
                     <span className="text-[10px] text-neutral-200">•</span>
                     <span className="text-[10px] uppercase tracking-widest text-neutral-300">{revealed.axisXWord}</span>
                   </div>
                 </div>
-                <DotIdeogram leftCode={revealed.signX.code} rightCode={revealed.signY.code} size={100} color="black" />
+                <DotIdeogram leftCode={revealed.signX.code} rightCode={revealed.signY.code} size={100} color="#00693e" />
               </div>
 
               <div className="space-y-4 mb-24">
@@ -202,8 +225,7 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
                 <p className="text-4xl font-serif italic text-black/80 leading-snug">"{revealed.dynamicWord}"</p>
               </div>
 
-              {/* Formulaire de Sagesse */}
-              <div className="mt-auto space-y-12 border-t border-neutral-50 pt-12">
+              <div className="mt-auto space-y-12 pt-12 border-t border-neutral-50">
                 <div className="space-y-6">
                   <p className="text-[10px] uppercase tracking-[0.4em] font-bold text-neutral-300">Votre Sentence</p>
                   <div className="grid gap-2">
@@ -211,9 +233,9 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
                       <button 
                         key={i} 
                         onClick={() => setFinalChoice(i)} 
-                        className={`p-6 text-left border rounded-2xl transition-all duration-500 ${
+                        className={`p-6 text-left border rounded-2xl transition-all duration-300 ${
                           finalChoice === i 
-                            ? "bg-black text-white border-black" 
+                            ? "bg-[#00693e] text-white border-[#00693e]" 
                             : "bg-neutral-50 border-neutral-100 text-neutral-400 hover:border-neutral-200"
                         }`}
                       >
@@ -228,35 +250,28 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
                   </div>
                 </div>
 
-                <AnimatePresence>
-                  {finalChoice !== null && (
-                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-12">
-                      <AudioRecorder onSaved={setRecordedBlob} />
-                      <div className="space-y-4">
-                        <textarea
-                          value={wisdomPhrase}
-                          onChange={(e) => setWisdomPhrase(e.target.value)}
-                          placeholder="Gravez ici l'essence de votre sagesse..."
-                          className="w-full bg-transparent border-none p-0 text-3xl font-serif italic focus:ring-0 h-32 resize-none placeholder:text-neutral-100"
-                        />
-                        <div className="flex justify-between text-[9px] uppercase tracking-widest text-neutral-200">
-                          <span>{wisdomPhrase.length} / {WISDOM_MAX}</span>
-                          <span>Audio scellé par BeninEase</span>
-                        </div>
-                      </div>
-                      <button
-                        onClick={handleTransmitSagesse}
-                        disabled={isSubmitting || !recordedBlob || wisdomPhrase.length < 5}
-                        className="w-full py-6 bg-black text-white text-[10px] uppercase tracking-[0.5em] font-bold rounded-2xl hover:bg-neutral-800 transition-colors flex items-center justify-center gap-4 disabled:opacity-20"
-                      >
-                        {isSubmitting ? <Loader2 className="animate-spin" size={16} /> : <>Transmettre la Sagesse <ArrowRight size={14} /></>}
-                      </button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                {finalChoice !== null && (
+                  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-12">
+                    <AudioRecorder onSaved={setRecordedBlob} />
+                    <div className="space-y-4">
+                      <textarea
+                        value={wisdomPhrase}
+                        onChange={(e) => setWisdomPhrase(e.target.value)}
+                        placeholder="Gravez ici l'essence de votre sagesse..."
+                        className="w-full bg-transparent border-none p-0 text-3xl font-serif italic focus:ring-0 h-32 resize-none placeholder:text-neutral-100"
+                      />
+                    </div>
+                    <button
+                      onClick={handleTransmitSagesse}
+                      disabled={isSubmitting || !recordedBlob || wisdomPhrase.length < 5}
+                      className="w-full py-6 bg-[#00693e] text-white text-[11px] uppercase tracking-[0.4em] font-bold rounded-2xl hover:brightness-110 transition-all flex items-center justify-center gap-4 disabled:opacity-20"
+                    >
+                      {isSubmitting ? <Loader2 className="animate-spin" size={16} /> : <>Sceller la Consultation <ArrowRight size={14} /></>}
+                    </button>
+                  </motion.div>
+                )}
               </div>
 
-              {/* Close Button UI Minimalist */}
               <button 
                 onClick={() => setConfirmCloseOpen(true)} 
                 className="absolute top-12 right-12 p-2 text-neutral-200 hover:text-black transition-colors"
@@ -278,7 +293,7 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
           </AlertDialogHeader>
           <AlertDialogFooter className="flex-col sm:flex-row gap-3 mt-12">
             <AlertDialogCancel className="w-full py-5 border-neutral-100 bg-neutral-50 rounded-2xl uppercase text-[10px] font-bold tracking-widest text-neutral-400">Poursuivre</AlertDialogCancel>
-            <AlertDialogAction onClick={() => { setConfirmCloseOpen(false); restart(); }} className="w-full py-5 bg-black text-white rounded-2xl uppercase text-[10px] font-bold tracking-widest">Abandonner</AlertDialogAction>
+            <AlertDialogAction onClick={() => { setConfirmCloseOpen(false); restart(); }} className="w-full py-5 bg-[#e8112d] text-white rounded-2xl uppercase text-[10px] font-bold tracking-widest">Abandonner</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -286,8 +301,14 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
   );
 };
 
-// --- COMPOSANT GRILLE (Le Sable Vivant Restauré) ---
-const CELL_COLORS = ["#ffffff", "#fafafa", "#f5f5f5", "#ffffff", "#fafafa", "rgba(0, 0, 0, 0.02)"];
+// --- COLORS FROM MOCKUP ---
+const MOCKUP_COLORS = [
+  "#ffffff", // White
+  "#f5d5d5", // Soft Pink
+  "#b4ccc0", // Soft Green
+  "#f9e8b0", // Soft Yellow
+  "#f7f7f7", // Off White
+];
 
 const LivingChoiceGrid = ({ onCellClick }: { onCellClick: (row: number, col: number) => void }) => {
   const TOTAL_CELLS = 256;
@@ -295,33 +316,33 @@ const LivingChoiceGrid = ({ onCellClick }: { onCellClick: (row: number, col: num
     id: i, row: Math.floor(i / 16), col: i % 16
   })), []);
 
-  const order = useLivingOrder(TOTAL_CELLS, 8, 2000);
+  const order = useLivingOrder(TOTAL_CELLS, 8, 3000);
   const [colorTick, setColorTick] = useState(0);
 
   useEffect(() => {
-    const id = setInterval(() => setColorTick((t) => t + 1), 2000);
+    const id = setInterval(() => setColorTick((t) => t + 1), 3000);
     return () => clearInterval(id);
   }, []);
 
   return (
-    <div className="grid gap-[1px] w-full aspect-square bg-neutral-50" style={{ gridTemplateColumns: `repeat(16, 1fr)` }}>
+    <div className="grid gap-[1px] w-full aspect-square bg-neutral-100/30" style={{ gridTemplateColumns: `repeat(16, 1fr)` }}>
       {order.map((cellId, slot) => {
         const cell = cells[cellId];
-        const colorIdx = (cell.id * 7 + colorTick * 13 + slot * 3) % CELL_COLORS.length;
+        const colorIdx = (cell.id * 11 + colorTick * 17 + slot * 5) % MOCKUP_COLORS.length;
         return (
           <motion.button
             key={cell.id}
             layout
             onClick={() => onCellClick(cell.row, cell.col)}
-            className="aspect-square relative group/cell"
-            animate={{ backgroundColor: CELL_COLORS[colorIdx] }}
+            className="aspect-square relative group/cell border-[0.5px] border-white/50"
+            animate={{ backgroundColor: MOCKUP_COLORS[colorIdx] }}
             whileHover={{
-              scale: 1.5,
-              backgroundColor: "#000000",
+              scale: 1.4,
+              backgroundColor: "#00693e",
               zIndex: 20,
-              boxShadow: "0 20px 40px rgba(0,0,0,0.1)"
+              boxShadow: "0 10px 30px rgba(0,0,0,0.1)"
             }}
-            transition={{ backgroundColor: { duration: 2 } }}
+            transition={{ backgroundColor: { duration: 3 } }}
           >
             <div className="absolute inset-0 bg-white opacity-0 group-hover/cell:opacity-10 transition-opacity" />
           </motion.button>

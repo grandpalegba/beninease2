@@ -11,16 +11,16 @@ import Link from 'next/link';
 type View = 'matrix' | 'wall';
 
 /**
- * ConsultationPage - "Sagesses du Bénin" Redesign
+ * ConsultationPage - "Sagesses du Bénin"
  * 
- * Ultra-minimalist interface with bottom-heavy layout and horizontal swiping.
+ * Layout matching the provided mockups: Title and Selector at the top.
  */
 export default function ConsultationPage() {
   const { cases, loading, error } = useLifeCases();
   const [isCompleted, setIsCompleted] = useState(false);
   const [activeView, setActiveView] = useState<View>('matrix');
 
-  // Success Screen - White Minimalist
+  // Success Screen
   if (isCompleted) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-white p-8">
@@ -48,7 +48,7 @@ export default function ConsultationPage() {
           <div className="flex flex-col gap-4 px-8">
             <Link 
               href="/"
-              className="flex items-center justify-center gap-3 bg-black text-white py-5 rounded-2xl font-bold text-[10px] uppercase tracking-[0.2em] transition-all hover:scale-[1.02]"
+              className="flex items-center justify-center gap-3 bg-[#00693e] text-white py-5 rounded-2xl font-bold text-[10px] uppercase tracking-[0.2em] transition-all hover:scale-[1.02]"
             >
               Retourner à l'accueil
               <ArrowRight size={14} />
@@ -70,7 +70,7 @@ export default function ConsultationPage() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-6">
-          <div className="w-12 h-12 border-t-2 border-black border-solid rounded-full animate-spin"></div>
+          <div className="w-12 h-12 border-t-2 border-[#00693e] border-solid rounded-full animate-spin"></div>
           <h1 className="text-[10px] font-bold tracking-[0.4em] text-neutral-300 uppercase">
             Initialisation
           </h1>
@@ -86,7 +86,7 @@ export default function ConsultationPage() {
           <p className="text-xs font-light text-neutral-500 leading-relaxed">
             Désolé, une erreur est survenue lors du chargement de l'expérience. 
           </p>
-          <button onClick={() => window.location.reload()} className="mt-4 text-[10px] underline tracking-widest text-black font-bold">
+          <button onClick={() => window.location.reload()} className="mt-4 text-[10px] underline tracking-widest text-[#00693e] font-bold">
             RÉESSAYER
           </button>
         </div>
@@ -95,22 +95,20 @@ export default function ConsultationPage() {
   }
 
   return (
-    <main className="h-screen flex flex-col-reverse bg-white text-black font-sans antialiased overflow-hidden">
-      {/* Header (Bottom) */}
-      <footer className="w-full pt-8 pb-16 px-8 flex flex-col items-center gap-8 bg-white z-10">
-        <div className="text-center">
-          <h1 className="text-5xl md:text-6xl font-serif text-black italic">
-            Sagesses du Bénin
-          </h1>
-        </div>
+    <main className="min-h-screen bg-white text-black font-sans antialiased flex flex-col items-center pt-12 pb-24">
+      {/* Title Section */}
+      <div className="text-center mb-6">
+        <h1 className="text-5xl md:text-6xl font-serif text-[#2d2f2f] mb-8">
+          Sagesses du Bénin
+        </h1>
 
         {/* Tab Selector - Pill Style */}
-        <div className="bg-neutral-100 p-1 rounded-full flex gap-1 shadow-sm">
+        <div className="bg-neutral-100 p-1 rounded-full flex gap-1 shadow-sm mx-auto w-fit">
           <button
             onClick={() => setActiveView('matrix')}
-            className={`px-8 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] transition-all ${
+            className={`px-8 py-2.5 rounded-full text-[11px] font-bold tracking-[0.05em] transition-all ${
               activeView === 'matrix' 
-                ? 'bg-white text-black shadow-sm' 
+                ? 'bg-[#2d2f2f] text-white shadow-sm' 
                 : 'text-neutral-400 hover:text-neutral-600'
             }`}
           >
@@ -118,39 +116,39 @@ export default function ConsultationPage() {
           </button>
           <button
             onClick={() => setActiveView('wall')}
-            className={`px-8 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] transition-all ${
+            className={`px-8 py-2.5 rounded-full text-[11px] font-bold tracking-[0.05em] transition-all ${
               activeView === 'wall' 
-                ? 'bg-white text-black shadow-sm' 
+                ? 'bg-[#2d2f2f] text-white shadow-sm' 
                 : 'text-neutral-400 hover:text-neutral-600'
             }`}
           >
             Mur des consultations
           </button>
         </div>
-      </footer>
+      </div>
 
-      {/* Zone de Contenu (Center) */}
-      <div className="flex-grow relative flex items-center justify-center overflow-hidden py-12">
+      {/* Content Area */}
+      <div className="w-full max-w-7xl px-4 md:px-12 flex-1 flex items-center justify-center mt-12">
         <AnimatePresence mode="wait">
           {activeView === 'matrix' ? (
             <motion.div 
               key="matrix"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-              className="w-full max-w-7xl px-6"
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              transition={{ duration: 0.4 }}
+              className="w-full h-full"
             >
               <SandMatrix onComplete={() => setIsCompleted(true)} />
             </motion.div>
           ) : (
             <motion.div 
               key="wall"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-              className="w-full max-w-7xl px-6"
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              transition={{ duration: 0.4 }}
+              className="w-full h-full"
             >
               <SynchronicityWall />
             </motion.div>
@@ -165,9 +163,9 @@ export default function ConsultationPage() {
         }
       `}</style>
 
-      {/* Debug Simulation Trigger (Only in Dev) */}
+      {/* Debug Trigger */}
       {process.env.NODE_ENV === 'development' && (
-        <div className="fixed top-4 right-4 z-[100] opacity-5 hover:opacity-100 transition-opacity">
+        <div className="fixed bottom-4 right-4 z-[100] opacity-5 hover:opacity-100 transition-opacity">
           <button 
             onClick={async () => {
               const { simulateFullConsultation } = await import('./testConsultation');
