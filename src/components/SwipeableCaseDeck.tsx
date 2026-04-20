@@ -103,8 +103,8 @@ const SwipeableCaseDeck: React.FC<SwipeableCaseDeckProps> = ({ cases, initialCas
           </section>
 
           {/* Right Column: Content */}
-          <section className="w-full md:w-[55%] p-10 md:p-20 flex flex-col bg-white relative">
-            <div className="flex justify-between items-start mb-12">
+          <section className="w-full md:w-[55%] p-8 md:p-12 flex flex-col bg-white relative">
+            <div className="flex justify-between items-start mb-8">
               <span className="text-[10px] uppercase tracking-[0.4em] font-bold text-neutral-400">
                 {currentCase.label || 'SAGESSE'}
               </span>
@@ -116,15 +116,15 @@ const SwipeableCaseDeck: React.FC<SwipeableCaseDeckProps> = ({ cases, initialCas
             </div>
 
             <div className="flex-1">
-              <h2 className="text-6xl md:text-7xl font-serif text-[#00693e] leading-[0.9] mb-12">
+              <h2 className="text-5xl md:text-6xl font-serif text-[#00693e] leading-[0.9] mb-6">
                 {currentCase.title}
               </h2>
 
-              <blockquote className="text-xl font-light text-neutral-500 leading-relaxed italic border-l-4 border-[#fcd116] pl-8 mb-16">
+              <blockquote className="text-lg md:text-xl font-light text-neutral-500 leading-relaxed italic border-l-4 border-[#fcd116] pl-6 md:pl-8 mb-8">
                 "{currentCase.quote}"
               </blockquote>
 
-              <p className="text-[10px] uppercase tracking-[0.15em] font-bold text-neutral-400 mb-6">
+              <p className="text-[10px] uppercase tracking-[0.15em] font-bold text-neutral-400 mb-4">
                 CHOISISSEZ UNE OPTION SELON VOTRE INTUITION ET OUVREZ LA MATRICE DES CHOIX
               </p>
 
@@ -175,12 +175,12 @@ const OptionList = ({ options, onSelect }: { options: string[]; onSelect: (idx: 
 
   return (
     <div className="space-y-3">
-      <div className="grid grid-cols-1 gap-2.5">
+      <div className="grid grid-cols-1 gap-2">
         {options.map((opt, i) => (
           <button
             key={i}
             onClick={() => setSelectedIdx(i)}
-            className={`text-left px-6 py-5 rounded-2xl transition-all duration-300 flex items-center gap-4 ${
+            className={`text-left px-5 py-4 rounded-2xl transition-all duration-300 flex items-center gap-4 ${
               selectedIdx === i 
                 ? 'bg-neutral-100 ring-1 ring-black/5 shadow-sm' 
                 : 'bg-neutral-50 hover:bg-neutral-100'
@@ -196,11 +196,11 @@ const OptionList = ({ options, onSelect }: { options: string[]; onSelect: (idx: 
         ))}
       </div>
 
-      <div className="pt-10">
+      <div className="pt-6">
         <button
           disabled={selectedIdx === null}
           onClick={() => onSelect(selectedIdx!)}
-          className="w-full py-6 rounded-2xl bg-[#00693e] text-white text-[11px] font-bold uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all hover:brightness-110 active:scale-[0.98] disabled:opacity-20 disabled:grayscale"
+          className="w-full py-5 rounded-2xl bg-[#00693e] text-white text-[11px] font-bold uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all hover:brightness-110 active:scale-[0.98] disabled:opacity-20 disabled:grayscale"
         >
           OUVRIR LA MATRICE DES CHOIX
         </button>

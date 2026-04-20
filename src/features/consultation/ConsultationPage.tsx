@@ -95,9 +95,9 @@ export default function ConsultationPage() {
   }
 
   return (
-    <main className="min-h-screen bg-white text-black font-sans antialiased flex flex-col items-center pt-12 pb-24">
+    <main className="min-h-screen bg-white text-black font-sans antialiased flex flex-col items-center pt-6 pb-8">
       {/* Title Section */}
-      <div className="text-center mb-6">
+      <div className="text-center mb-4">
         <h1 className="text-5xl md:text-6xl font-serif text-[#2d2f2f] mb-8">
           Sagesses du Bénin
         </h1>
@@ -128,7 +128,7 @@ export default function ConsultationPage() {
       </div>
 
       {/* Content Area */}
-      <div className="w-full max-w-7xl px-4 md:px-12 flex-1 flex items-center justify-center mt-12">
+      <div className="w-full max-w-7xl px-4 md:px-12 flex-1 flex items-center justify-center mt-6">
         <AnimatePresence mode="wait">
           {activeView === 'matrix' ? (
             <motion.div 

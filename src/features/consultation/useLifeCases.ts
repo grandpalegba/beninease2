@@ -57,7 +57,7 @@ export function useLifeCases() {
             item.audio_3,
             item.audio_4
           ].map(a => a || ""),
-          photoUrl: item.photo_cas_de_vie || "",
+          photoUrl: `https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/images_casdevie/m${item.cas_numero}.jpg`,
           audioUrl: `https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/casdevie/cas${item.cas_numero}.mp3`
         }));
 
