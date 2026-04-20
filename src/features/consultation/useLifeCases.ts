@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase/client';
 
 export interface LifeCase {
   id: string;
+  cas_numero: number;
   label: string;
   persona: string;
   title: string;
@@ -10,6 +11,8 @@ export interface LifeCase {
   options: string[];
   verdicts: string[];
   audioUrls: string[];
+  photoUrl: string;
+  audioUrl: string;
 }
 
 export function useLifeCases() {
@@ -31,6 +34,7 @@ export function useLifeCases() {
 
         const mappedData: LifeCase[] = (data || []).map((item: any) => ({
           id: item.id,
+          cas_numero: item.cas_numero,
           label: item.domaine_cas_de_vie,
           persona: `${item.prenom_cas_de_vie}, ${item.age_cas_de_vie} ans, ${item.profession_cas_de_vie}`,
           title: item.titre_cas_de_vie,
@@ -52,7 +56,9 @@ export function useLifeCases() {
             item.audio_2,
             item.audio_3,
             item.audio_4
-          ].map(a => a || "")
+          ].map(a => a || ""),
+          photoUrl: item.photo_cas_de_vie || "",
+          audioUrl: `https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/casdevie/cas${item.cas_numero}.mp3`
         }));
 
         setCases(mappedData);
@@ -64,7 +70,7 @@ export function useLifeCases() {
     }
 
     fetchCases();
-  }, [supabase]);
+  }, []);
 
   return { cases, loading, error };
 }
