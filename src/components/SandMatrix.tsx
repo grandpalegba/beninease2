@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useMemo, useEffect } from "react";
+import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Loader2, RotateCcw, ArrowRight } from "lucide-react";
 import { SIGNS, shuffle, valueToMatrixIndex, type FongbeSign } from "@/data/fongbe";
@@ -198,85 +198,163 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
             animate={{ opacity: 1 }} 
             className="fixed inset-0 z-50 flex flex-col lg:flex-row bg-white overflow-hidden"
           >
-            <div className="w-full lg:w-[45%] h-[40vh] lg:h-full relative bg-neutral-50">
-              <img src={lifeCase.photoUrl} className="w-full h-full object-cover grayscale-[0.2]" />
-              <div className="absolute bottom-12 left-12 right-12">
-                <h3 className="text-5xl text-black font-serif italic mb-4">{lifeCase.persona}</h3>
-                <blockquote className="text-neutral-400 text-lg font-light italic border-l-2 border-[#fcd116] pl-6 leading-relaxed">"{lifeCase.quote}"</blockquote>
+            {/* Panneau Gauche : Immersion & Choix Définitif */}
+            <div className="w-full lg:w-[50%] h-[50vh] lg:h-full flex flex-col bg-white overflow-y-auto custom-scrollbar border-r border-neutral-100">
+              <div className="relative aspect-[4/3] w-full shrink-0">
+                <img src={lifeCase.photoUrl} className="w-full h-full object-cover grayscale-[0.2]" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                <div className="absolute bottom-6 left-6">
+                  <div className="bg-black/40 backdrop-blur-md px-4 py-2 rounded-xl border border-white/20">
+                    <span className="text-white text-sm font-light italic">{lifeCase.persona}</span>
+                  </div>
+                </div>
+                <div className="absolute bottom-6 right-6">
+                  <AudioPlayer audioUrl={lifeCase.audioUrl} />
+                </div>
+              </div>
+
+              <div className="p-8 lg:p-12 flex-1 flex flex-col">
+                <blockquote className="text-sm text-neutral-500 font-light italic border-l-2 border-[#fcd116] pl-6 leading-relaxed mb-10">
+                  "{lifeCase.quote}"
+                </blockquote>
+
+                <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#00693e] mb-6">Ton choix définitif</p>
+                <div className="grid gap-3 mb-8">
+                  {lifeCase.options.map((opt, i) => (
+                    <button 
+                      key={i} 
+                      onClick={() => setFinalChoice(i)} 
+                      className={`p-5 text-left rounded-xl transition-all duration-300 flex items-start gap-4 relative overflow-hidden ${
+                        finalChoice === i 
+                          ? "bg-[#00693e]/5 ring-1 ring-[#00693e]/30" 
+                          : "bg-neutral-50 hover:bg-neutral-100 ring-1 ring-transparent"
+                      }`}
+                    >
+                      <span className={`text-[11px] font-bold mt-0.5 ${finalChoice === i ? "text-[#00693e]" : "text-black"}`}>
+                        {String.fromCharCode(65 + i)}.
+                      </span>
+                      <span className="text-sm font-light text-neutral-600 leading-snug">{opt}</span>
+                      
+                      {/* Badges (Intuition vs Définitif) */}
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col gap-1 items-end">
+                        {intuitiveChoice === i && (
+                          <span className="text-[9px] font-bold uppercase tracking-widest text-[#fcd116]">Intuition</span>
+                        )}
+                        {finalChoice === i && (
+                          <span className="bg-[#00693e] text-white text-[8px] px-2 py-1 rounded font-bold uppercase tracking-widest">Définitif</span>
+                        )}
+                      </div>
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
-            <div className="w-full lg:w-[55%] h-[60vh] lg:h-full overflow-y-auto bg-white p-12 lg:p-24 flex flex-col relative">
-              <div className="flex justify-between items-start mb-20">
-                <div className="space-y-4">
-                  <span className="text-[10px] uppercase tracking-[0.5em] text-neutral-300 font-bold">Signe Révélé</span>
-                  <h4 className="text-7xl font-serif italic tracking-tighter text-[#00693e]">{revealed.signX.name} {revealed.signY.name}</h4>
-                  <div className="flex gap-4">
-                    <span className="text-[10px] uppercase tracking-widest text-black/40 font-bold">{revealed.axisYWord}</span>
-                    <span className="text-[10px] text-neutral-200">•</span>
-                    <span className="text-[10px] uppercase tracking-widest text-neutral-300">{revealed.axisXWord}</span>
-                  </div>
+            {/* Panneau Droit : L'Oracle & Action */}
+            <div className="w-full lg:w-[50%] h-[50vh] lg:h-full overflow-y-auto bg-[#fafafa] p-8 lg:p-16 flex flex-col relative">
+              
+              {/* Header Oracle */}
+              <div className="flex justify-between items-center mb-10">
+                <span className="text-[10px] uppercase tracking-[0.3em] text-neutral-400 font-bold">Signe Révélé</span>
+                <div className="flex gap-2">
+                  <span className="w-2 h-2 rounded-full" style={{ background: '#008751' }} />
+                  <span className="w-2 h-2 rounded-full" style={{ background: '#fcd116' }} />
+                  <span className="w-2 h-2 rounded-full" style={{ background: '#e8112d' }} />
                 </div>
-                <DotIdeogram leftCode={revealed.signX.code} rightCode={revealed.signY.code} size={100} color="#00693e" />
               </div>
 
-              <div className="space-y-4 mb-24">
-                <span className="text-[10px] uppercase tracking-[0.5em] text-neutral-300 font-bold">Dynamique</span>
-                <p className="text-4xl font-serif italic text-black/80 leading-snug">"{revealed.dynamicWord}"</p>
+              {/* Sign Card */}
+              <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-neutral-100 mb-12">
+                <div className="flex items-center gap-6 mb-8">
+                  <div className="bg-neutral-50 p-4 rounded-2xl">
+                    {/* Using CombinedTrace for thin lines */}
+                    <DotIdeogram leftCode={revealed.signX.code} rightCode={revealed.signY.code} size={50} color="#00693e" />
+                  </div>
+                  <h4 className="text-5xl font-serif text-[#00693e]">{revealed.signX.name} {revealed.signY.name}</h4>
+                </div>
+                <div>
+                   <h5 className="text-xl font-serif text-[#00693e] mb-4">{revealed.signX.name} {revealed.signY.name}</h5>
+                   <p className="text-sm text-neutral-600 leading-relaxed font-light">
+                     {revealed.signX.name} {revealed.signY.name} révèle une énergie de {revealed.dynamicWord.toLowerCase()}. Ce signe combine la force de {revealed.signY.name} et celle de {revealed.signX.name}. Leur rencontre dessine une voie d'évolution : un appel à honorer ce qui, en toi, cherche à s'accorder. Écoute ce que cette tension intérieure veut révéler — c'est là que se trouve ta réponse.
+                   </p>
+                </div>
               </div>
 
-              <div className="mt-auto space-y-12 pt-12 border-t border-neutral-50">
-                <div className="space-y-6">
-                  <p className="text-[10px] uppercase tracking-[0.4em] font-bold text-neutral-300">Votre Sentence</p>
-                  <div className="grid gap-2">
-                    {lifeCase.options.map((opt, i) => (
-                      <button 
-                        key={i} 
-                        onClick={() => setFinalChoice(i)} 
-                        className={`p-6 text-left border rounded-2xl transition-all duration-300 ${
-                          finalChoice === i 
-                            ? "bg-[#00693e] text-white border-[#00693e]" 
-                            : "bg-neutral-50 border-neutral-100 text-neutral-400 hover:border-neutral-200"
-                        }`}
-                      >
-                        <div className="flex items-center gap-4">
-                          <span className={`text-[10px] font-bold ${finalChoice === i ? "text-white/40" : "text-neutral-300"}`}>
-                            {String.fromCharCode(65 + i)}
-                          </span>
-                          <span className="text-xs font-medium">{opt}</span>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
+              {/* Résonances */}
+              <div className="mb-12">
+                <span className="text-[10px] uppercase tracking-[0.3em] text-[#00693e] font-bold block mb-4">Résonances à explorer</span>
+                <div className="flex items-center gap-3 text-sm font-medium text-neutral-800">
+                  <span className="text-[#00693e]">{revealed.axisYWord}</span>
+                  <span className="text-[#fcd116]">×</span>
+                  <span className="text-neutral-500">{revealed.axisXWord}</span>
+                  <span className="text-[#e8112d]">=</span>
+                  <span className="font-bold">{revealed.dynamicWord}</span>
                 </div>
+              </div>
 
-                {finalChoice !== null && (
-                  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-12">
-                    <AudioRecorder onSaved={setRecordedBlob} />
-                    <div className="space-y-4">
-                      <textarea
-                        value={wisdomPhrase}
-                        onChange={(e) => setWisdomPhrase(e.target.value)}
-                        placeholder="Gravez ici l'essence de votre sagesse..."
-                        className="w-full bg-transparent border-none p-0 text-3xl font-serif italic focus:ring-0 h-32 resize-none placeholder:text-neutral-100"
-                      />
-                    </div>
-                    <button
-                      onClick={handleTransmitSagesse}
-                      disabled={isSubmitting || !recordedBlob || wisdomPhrase.length < 5}
-                      className="w-full py-6 bg-[#00693e] text-white text-[11px] uppercase tracking-[0.4em] font-bold rounded-2xl hover:brightness-110 transition-all flex items-center justify-center gap-4 disabled:opacity-20"
+              {/* Action Area (Empty State vs Active State) */}
+              <div className="mt-auto">
+                <AnimatePresence mode="wait">
+                  {finalChoice === null ? (
+                    <motion.div 
+                      key="empty"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="border border-dashed border-[#e8112d]/50 bg-[#e8112d]/[0.02] rounded-2xl p-8 text-center"
                     >
-                      {isSubmitting ? <Loader2 className="animate-spin" size={16} /> : <>Sceller la Consultation <ArrowRight size={14} /></>}
-                    </button>
-                  </motion.div>
-                )}
+                      <p className="text-xs text-[#e8112d] font-bold italic">
+                        Compte tenu du signe révélé et des résonances à explorer, faîtes un choix définitif et enregistrer votre interprétation.
+                      </p>
+                    </motion.div>
+                  ) : (
+                    <motion.div 
+                      key="active"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="bg-white rounded-[2rem] p-8 border border-[#e8112d]/20 shadow-sm"
+                    >
+                      <div className="flex justify-between items-center mb-6">
+                        <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#e8112d]">Enregistre ta réponse</span>
+                        <span className="text-[10px] font-mono bg-neutral-100 px-2 py-1 rounded text-neutral-500">1 minute maximum</span>
+                      </div>
+                      
+                      <div className="mb-8">
+                        <AudioRecorder onSaved={setRecordedBlob} />
+                      </div>
+
+                      <div className="space-y-4 mb-8">
+                        <div className="flex justify-between items-center">
+                          <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#00693e]">Ta phrase de sagesse</span>
+                          <span className="text-[9px] text-neutral-400 font-mono">{wisdomPhrase.length} / 100</span>
+                        </div>
+                        <textarea
+                          value={wisdomPhrase}
+                          onChange={(e) => setWisdomPhrase(e.target.value)}
+                          maxLength={100}
+                          placeholder="Une phrase courte qui accompagne ton enregistrement..."
+                          className="w-full bg-white border-l-2 border-[#fcd116] p-4 text-sm font-light italic focus:ring-0 focus:outline-none resize-none placeholder:text-neutral-300 shadow-inner rounded-r-xl"
+                          rows={3}
+                        />
+                      </div>
+
+                      <button
+                        onClick={handleTransmitSagesse}
+                        disabled={isSubmitting || !recordedBlob || wisdomPhrase.length < 5}
+                        className="w-full py-5 bg-[#00693e] text-white text-[10px] uppercase tracking-[0.3em] font-bold rounded-xl hover:brightness-110 transition-all flex items-center justify-center gap-3 disabled:opacity-20"
+                      >
+                        {isSubmitting ? <Loader2 className="animate-spin" size={16} /> : "Transmettre ma sagesse"}
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
               <button 
                 onClick={() => setConfirmCloseOpen(true)} 
-                className="absolute top-12 right-12 p-2 text-neutral-200 hover:text-black transition-colors"
+                className="absolute top-10 right-10 p-2 text-neutral-300 hover:text-black transition-colors bg-white rounded-full border border-neutral-100 shadow-sm"
               >
-                <X size={24} strokeWidth={1.5} />
+                <X size={20} strokeWidth={1.5} />
               </button>
             </div>
           </motion.div>
@@ -358,5 +436,43 @@ const LoadingScreen = () => (
     <span className="text-[10px] uppercase tracking-[0.6em] text-neutral-300">Initialisation de la Matrice</span>
   </div>
 );
+
+const AudioPlayer = ({ audioUrl }: { audioUrl: string }) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Stop playback when url changes
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    }
+  }, [audioUrl]);
+
+  const toggle = () => {
+    if (!audioRef.current) return;
+    if (isPlaying) audioRef.current.pause();
+    else audioRef.current.play().catch(console.error);
+    setIsPlaying(!isPlaying);
+  };
+
+  return (
+    <>
+      <button 
+        onClick={toggle}
+        className="w-12 h-12 rounded-full flex items-center justify-center bg-black/40 backdrop-blur-md text-white transition-transform active:scale-90"
+      >
+        {isPlaying ? <div className="w-3 h-3 bg-white" /> : <div className="w-0 h-0 border-t-8 border-b-8 border-l-[12px] border-t-transparent border-b-transparent border-l-white ml-1" />}
+      </button>
+      <audio 
+        ref={audioRef} 
+        src={audioUrl} 
+        onEnded={() => setIsPlaying(false)}
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
+      />
+    </>
+  );
+};
 
 export default SandMatrix;
