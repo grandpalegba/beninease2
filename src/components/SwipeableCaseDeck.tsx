@@ -49,7 +49,7 @@ const SwipeableCaseDeck: React.FC<SwipeableCaseDeckProps> = ({ cases, initialCas
   if (!currentCase) return null;
 
   return (
-    <main className="w-full min-h-screen bg-white flex flex-col items-center justify-center py-8 md:py-12 px-4 overflow-hidden">
+    <main className="w-full min-h-screen bg-white flex flex-col items-center justify-start pt-2 md:pt-4 px-4 overflow-hidden">
 
 
 

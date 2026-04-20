@@ -39,7 +39,7 @@ const CaseCard = ({ lifeCase, isActive }: Props) => {
         </motion.span>
 
         <h2 className="font-headline text-4xl text-white mt-1 leading-tight">
-          {lifeCase.persona}
+          {lifeCase.persona.split(',').slice(0, 2).join(',')}
         </h2>
 
         {/* Onde sonore dorée animée (s'active si la carte est au centre) */}
