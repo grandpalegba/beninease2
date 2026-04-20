@@ -1,8 +1,6 @@
-import { createClient } from '@/lib/supabase/client';
+import { supabase } from '@/lib/supabase/client';
 
 export async function logChoice(caseId: string, option: string) {
-  const supabase = createClient();
-
   const { data, error } = await supabase
     .from('consultations')
     .insert([

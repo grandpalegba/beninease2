@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { createClient } from '@/lib/supabase/client';
+import { supabase } from '@/lib/supabase/client';
 
 export interface LifeCase {
   id: string;
@@ -16,7 +16,6 @@ export function useLifeCases() {
   const [cases, setCases] = useState<LifeCase[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const supabase = createClient();
 
   useEffect(() => {
     async function fetchCases() {
