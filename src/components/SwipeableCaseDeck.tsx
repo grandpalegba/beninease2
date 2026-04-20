@@ -162,7 +162,8 @@ const AudioTrigger = ({ audioUrl }: { audioUrl: string }) => {
       <audio 
         ref={audioRef} 
         src={audioUrl} 
-        crossOrigin="anonymous"
+        playsInline
+        preload="auto"
         onEnded={() => setIsPlaying(false)}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
