@@ -249,9 +249,10 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
                   ))}
                 </div>
               </div>
+            </div>
 
-              {/* Panneau Droit : L'Oracle & Action */}
-              <div className="w-full lg:w-[55%] overflow-y-auto bg-[#fafafa] p-8 lg:p-12 flex flex-col relative">
+            {/* Panneau Droit : L'Oracle & Action */}
+            <div className="w-full lg:w-[55%] overflow-y-auto bg-[#fafafa] p-8 lg:p-12 flex flex-col relative">
               
               {/* Header Oracle */}
               <div className="flex justify-between items-center mb-10">
