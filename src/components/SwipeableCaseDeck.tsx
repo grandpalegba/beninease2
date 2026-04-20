@@ -70,42 +70,41 @@ const SwipeableCaseDeck: React.FC<SwipeableCaseDeckProps> = ({ cases, initialCas
             className="w-full flex flex-col md:flex-row bg-white rounded-[2rem] overflow-hidden"
             style={{ boxShadow: '0 40px 120px rgba(0,0,0,0.08)' }}
           >
-            {/* Left Column: Image */}
-            <section className="w-full md:w-[45%] relative bg-neutral-900 overflow-hidden min-h-[40vh] md:min-h-[60vh]">
-              <img
-                src={currentCase.photoUrl || '/assets/profile-aicha.jpg'}
-                alt={currentCase.persona}
-                className="absolute inset-0 w-full h-full object-cover grayscale-[0.2]"
-              />
-              
-              {/* Persona Badge */}
-              <div className="absolute bottom-10 left-10">
-                <div className="bg-white/20 backdrop-blur-xl px-4 py-2 rounded-xl border border-white/30">
-                  <span className="text-white text-sm font-light italic">
-                    {currentCase.persona}
-                  </span>
+            {/* Left Column: Image & Quote */}
+            <section className="w-full md:w-[45%] flex flex-col bg-neutral-50 border-r border-neutral-100">
+              {/* Photo */}
+              <div className="relative w-full aspect-square md:aspect-auto md:h-1/2 overflow-hidden shrink-0">
+                <img
+                  src={currentCase.photoUrl || '/assets/profile-aicha.jpg'}
+                  alt={currentCase.persona}
+                  className="absolute inset-0 w-full h-full object-cover grayscale-[0.2]"
+                />
+                
+                {/* Persona Badge */}
+                <div className="absolute bottom-4 left-4">
+                  <div className="bg-black/40 backdrop-blur-md px-4 py-2 rounded-xl border border-white/20">
+                    <span className="text-white text-xs font-light italic">
+                      {currentCase.persona}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Play Button */}
+                <div className="absolute bottom-4 right-4">
+                  <AudioTrigger audioUrl={currentCase.audioUrl} />
                 </div>
               </div>
 
-              {/* Play Button */}
-              <div className="absolute bottom-10 right-10">
-                <AudioTrigger audioUrl={currentCase.audioUrl} />
-              </div>
-
-              {/* Sound Wave Decor */}
-              <div className="absolute bottom-4 left-44 flex items-end gap-1 h-6 opacity-40">
-                {[3, 6, 8, 4, 7, 5, 9, 4].map((h, i) => (
-                  <div 
-                    key={i} 
-                    className="w-1 bg-[#fcd116] rounded-full" 
-                    style={{ height: `${h * 2}px` }} 
-                  />
-                ))}
+              {/* Quote Area */}
+              <div className="p-6 md:p-8 flex-1 flex flex-col justify-center bg-white">
+                <blockquote className="text-sm md:text-base text-neutral-600 font-light italic border-l-4 border-[#fcd116] pl-6 leading-relaxed">
+                  "{currentCase.quote}"
+                </blockquote>
               </div>
             </section>
 
             {/* Right Column: Content */}
-            <section className="w-full md:w-[55%] p-6 md:p-8 flex flex-col bg-white relative">
+            <section className="w-full md:w-[55%] p-6 md:p-10 flex flex-col bg-white relative">
               <div className="flex justify-between items-start mb-6">
                 <span className="text-[10px] uppercase tracking-[0.4em] font-bold text-neutral-400">
                   {currentCase.label || 'SAGESSE'}
@@ -118,16 +117,12 @@ const SwipeableCaseDeck: React.FC<SwipeableCaseDeckProps> = ({ cases, initialCas
               </div>
 
               <div className="flex-1 flex flex-col">
-                <h2 className="text-4xl md:text-5xl font-serif text-[#00693e] leading-[0.9] mb-4">
+                <h2 className="text-4xl md:text-5xl font-serif text-[#00693e] leading-[0.9] mb-8">
                   {currentCase.title}
                 </h2>
 
-                <blockquote className="text-sm md:text-base text-neutral-600 font-light italic border-l-4 border-[#fcd116] pl-6 leading-relaxed mb-8">
-                  "{currentCase.quote}"
-                </blockquote>
-
-                <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-neutral-500 mb-4">
-                  Choisissez une option selon votre intuition et ouvrez la matrice des choix
+                <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#00693e] mb-4">
+                  Choisissez une option selon votre intuition
                 </p>
 
                 <OptionList 
