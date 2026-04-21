@@ -32,11 +32,39 @@ const CaseCard = ({ lifeCase, isActive }: Props) => {
     }
   }, [isActive]);
 
-  // Reset audio on case change
+  // Reset audio and set up listeners robustly
   useEffect(() => {
     setIsPlaying(false);
     setCurrentTime(0);
     setDuration(0);
+
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    // S'assure que le navigateur charge l'audio
+    audio.load();
+
+    const handleLoadedMetadata = () => setDuration(audio.duration);
+    const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
+    const handleEnded = () => setIsPlaying(false);
+    const handleError = (e: Event) => console.error('Audio load error:', e);
+
+    // Si les métadonnées sont déjà chargées
+    if (audio.readyState >= 1) {
+      handleLoadedMetadata();
+    }
+
+    audio.addEventListener('loadedmetadata', handleLoadedMetadata);
+    audio.addEventListener('timeupdate', handleTimeUpdate);
+    audio.addEventListener('ended', handleEnded);
+    audio.addEventListener('error', handleError);
+
+    return () => {
+      audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      audio.removeEventListener('timeupdate', handleTimeUpdate);
+      audio.removeEventListener('ended', handleEnded);
+      audio.removeEventListener('error', handleError);
+    };
   }, [lifeCase.cas_numero]);
 
   const togglePlay = useCallback((e: React.MouseEvent | React.PointerEvent) => {
@@ -77,14 +105,8 @@ const CaseCard = ({ lifeCase, isActive }: Props) => {
         key={`audio-${lifeCase.cas_numero}`}
         ref={audioRef}
         src={audioUrl}
-        preload="metadata"
-        onTimeUpdate={() => setCurrentTime(audioRef.current?.currentTime ?? 0)}
-        onLoadedMetadata={() => {
-          console.log('Audio metadata loaded, duration:', audioRef.current?.duration);
-          setDuration(audioRef.current?.duration ?? 0);
-        }}
-        onEnded={() => setIsPlaying(false)}
-        onError={(e) => console.error('Audio load error:', e)}
+        preload="auto"
+        crossOrigin="anonymous"
       />
 
       {/* Album Art */}
