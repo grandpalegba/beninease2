@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import DotIdeogram from "./DotIdeogram";
 import SwipeableCaseDeck from "./SwipeableCaseDeck";
 import AudioRecorder from "./AudioRecorder";
+import OkpeleConsultation from "./OkpeleConsultation";
 
 import {
   AlertDialog,
@@ -134,32 +135,13 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
           </motion.div>
         )}
 
-        {/* PHASE 2 : MATRICE (L'immensité) */}
+        {/* PHASE 2 : OKPELE (L'Oracle Présent) */}
         {phase === "matrix" && lifeCase && (
-          <motion.div
-            key="matrix"
-            initial={{ opacity: 0, scale: 1.05 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="fixed inset-0 z-50 bg-white flex flex-col items-center justify-center p-6"
-          >
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-serif mb-2">La Matrice des Choix</h2>
-              <p className="text-[10px] uppercase tracking-[0.3em] text-neutral-400 font-bold">
-                Touchez une case pour sceller votre destin
-              </p>
-            </div>
-
-            <div className="w-full max-w-[600px] aspect-square relative shadow-2xl border-[12px] border-neutral-50 rounded-xl overflow-hidden">
-              <LivingChoiceGrid onCellClick={handleCellClick} />
-            </div>
-
-            <button
-              onClick={() => setPhase("case")}
-              className="mt-10 px-8 py-3 rounded-full border border-neutral-100 text-[10px] font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-all"
-            >
-              Retourner aux situations
-            </button>
-          </motion.div>
+          <OkpeleConsultation 
+            caseData={lifeCase} 
+            onBack={() => setPhase("case")} 
+            onComplete={onComplete}
+          />
         )}
 
         {/* PHASE 3 : RÉVÉLATION (Split Panel) */}

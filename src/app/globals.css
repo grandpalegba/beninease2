@@ -71,4 +71,22 @@
   .text-balance {
     text-wrap: balance;
   }
+
+  /* Okpele Noix Styles */
+  .noix {
+    width: 32px;
+    height: 48px;
+    background: #5d3a1a;
+    border-radius: 40% 40% 50% 50%;
+    box-shadow: inset -4px -4px 10px rgba(0,0,0,0.4);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  .noix.spinning {
+    animation: spin var(--spin-duration) linear infinite;
+  }
+  @keyframes spin {
+    from { transform: rotateY(0deg); }
+    to { transform: rotateY(360deg); }
+  }
 }
+
