@@ -32,17 +32,12 @@ const CaseCard = ({ lifeCase, isActive }: Props) => {
     }
   }, [isActive]);
 
-  // Charge explicitement l'audio quand l'URL change
+  // Reset audio on case change
   useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    audio.pause();
-    audio.src = audioUrl;
-    audio.load();
     setIsPlaying(false);
     setCurrentTime(0);
     setDuration(0);
-  }, [audioUrl]);
+  }, [lifeCase.cas_numero]);
 
   const togglePlay = useCallback((e: React.MouseEvent | React.PointerEvent) => {
     e.stopPropagation();
@@ -79,11 +74,17 @@ const CaseCard = ({ lifeCase, isActive }: Props) => {
     <div className="relative w-full h-full bg-black overflow-hidden">
       {/* Hidden audio element */}
       <audio
+        key={`audio-${lifeCase.cas_numero}`}
         ref={audioRef}
         src={audioUrl}
+        preload="metadata"
         onTimeUpdate={() => setCurrentTime(audioRef.current?.currentTime ?? 0)}
-        onLoadedMetadata={() => setDuration(audioRef.current?.duration ?? 0)}
+        onLoadedMetadata={() => {
+          console.log('Audio metadata loaded, duration:', audioRef.current?.duration);
+          setDuration(audioRef.current?.duration ?? 0);
+        }}
         onEnded={() => setIsPlaying(false)}
+        onError={(e) => console.error('Audio load error:', e)}
       />
 
       {/* Album Art */}
