@@ -32,40 +32,42 @@ const CaseCard = ({ lifeCase, isActive }: Props) => {
     }
   }, [isActive]);
 
-  // Reset audio and set up listeners robustly
+  // Audio management using native Audio object for better reliability
   useEffect(() => {
     setIsPlaying(false);
     setCurrentTime(0);
     setDuration(0);
 
-    const audio = audioRef.current;
-    if (!audio) return;
+    const audio = new Audio(audioUrl);
+    audio.preload = "auto";
+    audioRef.current = audio;
 
-    // S'assure que le navigateur charge l'audio
-    audio.load();
-
-    const handleLoadedMetadata = () => setDuration(audio.duration);
+    const handleLoadedMetadata = () => {
+      if (audio.duration) setDuration(audio.duration);
+    };
     const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
     const handleEnded = () => setIsPlaying(false);
-    const handleError = (e: Event) => console.error('Audio load error:', e);
-
-    // Si les métadonnées sont déjà chargées
-    if (audio.readyState >= 1) {
-      handleLoadedMetadata();
-    }
+    const handleError = (e: any) => console.error('Audio load error:', e);
 
     audio.addEventListener('loadedmetadata', handleLoadedMetadata);
     audio.addEventListener('timeupdate', handleTimeUpdate);
     audio.addEventListener('ended', handleEnded);
     audio.addEventListener('error', handleError);
 
+    // Initial check if metadata already loaded
+    if (audio.readyState >= 1) {
+      handleLoadedMetadata();
+    }
+
     return () => {
+      audio.pause();
       audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
       audio.removeEventListener('timeupdate', handleTimeUpdate);
       audio.removeEventListener('ended', handleEnded);
       audio.removeEventListener('error', handleError);
+      audioRef.current = null;
     };
-  }, [lifeCase.cas_numero]);
+  }, [audioUrl]);
 
   const togglePlay = useCallback((e: React.MouseEvent | React.PointerEvent) => {
     e.stopPropagation();
@@ -100,13 +102,7 @@ const CaseCard = ({ lifeCase, isActive }: Props) => {
 
   return (
     <div className="relative w-full h-full bg-black overflow-hidden">
-      {/* Hidden audio element */}
-      <audio
-        key={`audio-${lifeCase.cas_numero}`}
-        ref={audioRef}
-        src={audioUrl}
-        preload="auto"
-      />
+      {/* Audio is managed imperatively via ref */}
 
       {/* Album Art */}
       <img

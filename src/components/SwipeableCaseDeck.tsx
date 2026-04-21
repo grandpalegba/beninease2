@@ -91,17 +91,7 @@ const SwipeableCaseDeck: React.FC<SwipeableCaseDeckProps> = ({ cases, initialCas
         </div>
       </div>
 
-      {/* FOOTER : Switcher d'application */}
-      <footer className="mt-12 md:mt-20 w-full flex flex-col items-center gap-8">
-        <div className="inline-flex p-1.5 bg-neutral-50 rounded-full border border-neutral-100 shadow-sm">
-          <button className="px-8 py-3 bg-[#1a1a1a] text-white rounded-full text-[10px] font-bold uppercase tracking-widest transition-transform active:scale-95 shadow-lg">
-            Matrice des choix
-          </button>
-          <button className="px-8 py-3 text-neutral-400 hover:text-black rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors">
-            Mur des consultations
-          </button>
-        </div>
-      </footer>
+
 
       {/* PANNEAU DE RÉVÉLATION (Drawer Swipe Haut) */}
       <AnimatePresence>
