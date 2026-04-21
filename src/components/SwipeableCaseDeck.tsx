@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
-import { ArrowLeft, ArrowRight, ChevronUp } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { LifeCase } from '@/features/consultation/useLifeCases';
 import CaseCard from './CaseCard';
 
@@ -27,8 +27,7 @@ const SwipeableCaseDeck: React.FC<SwipeableCaseDeckProps> = ({ cases, initialCas
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const currentCase = cases[currentIndex];
 
-  // URLs dynamiques basées sur l'ID du cas pour les buckets spécifiés
-  const audioUrl = `${STORAGE_BASE_URL}/casdevie/cas${currentCase?.id}.mp3`;
+
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -69,8 +68,7 @@ const SwipeableCaseDeck: React.FC<SwipeableCaseDeckProps> = ({ cases, initialCas
               isActive={!isDetailsOpen}
             />
 
-            {/* L'audio player invisible qui gère le son du cas */}
-            <AudioPlayer audioUrl={audioUrl} active={!isDetailsOpen} />
+
           </motion.div>
         </AnimatePresence>
 
@@ -157,19 +155,6 @@ const SwipeableCaseDeck: React.FC<SwipeableCaseDeckProps> = ({ cases, initialCas
   );
 };
 
-// COMPOSANT AUDIO INTERNE
-const AudioPlayer = ({ audioUrl, active }: { audioUrl: string, active: boolean }) => {
-  const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  useEffect(() => {
-    if (active) {
-      audioRef.current?.play().catch(() => { });
-    } else {
-      audioRef.current?.pause();
-    }
-  }, [active, audioUrl]);
-
-  return <audio ref={audioRef} src={audioUrl} loop />;
-};
 
 export default SwipeableCaseDeck;
