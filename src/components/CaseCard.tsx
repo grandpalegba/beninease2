@@ -10,14 +10,14 @@ interface Props {
   isActive: boolean;
 }
 
-const SUPABASE_PROJECT_ID = "wtjhkqkqmexddroqwawk";
-const STORAGE_BASE_URL = `https://${SUPABASE_PROJECT_ID}.supabase.co/storage/v1/object/public`;
+const STORAGE_BASE_URL = `https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public`;
 
 const BAR_HEIGHTS = [3, 5, 8, 12, 16, 14, 10, 13, 16, 11, 8, 14, 16, 12, 9, 6, 10, 14, 16, 13, 10, 8, 5, 3];
 
 const CaseCard = ({ lifeCase, isActive }: Props) => {
-  const photoUrl = `${STORAGE_BASE_URL}/images_casdevie/cas${lifeCase.id}.jpg`;
-  const audioUrl = `${STORAGE_BASE_URL}/casdevie/cas${lifeCase.id}.mp3`;
+  // Utilise les URLs déjà calculées par useLifeCases avec le bon cas_numero
+  const audioUrl = lifeCase.audioUrl || `${STORAGE_BASE_URL}/casdevie/cas${lifeCase.cas_numero}.mp3`;
+  const photoUrl = lifeCase.photoUrl || `${STORAGE_BASE_URL}/images_casdevie/cas${lifeCase.cas_numero}.jpg`;
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
