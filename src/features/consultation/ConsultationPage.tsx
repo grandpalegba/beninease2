@@ -95,40 +95,17 @@ export default function ConsultationPage() {
   }
 
   return (
-    <main className="h-[100dvh] bg-white text-black font-sans antialiased flex flex-col items-center justify-start pt-12 md:pt-20 overflow-hidden pb-20">
+    <main className="h-[100dvh] bg-white text-black font-sans antialiased flex flex-col items-center justify-start pt-6 md:pt-10 overflow-hidden pb-20">
       {/* Title Section */}
-      <div className="w-full text-center shrink-0 z-10 mb-6">
-        <h1 className="text-4xl md:text-5xl font-serif text-[#2d2f2f] mb-4">
+      <div className="w-full text-center shrink-0 z-10">
+        <h1 className="text-4xl md:text-5xl font-serif text-[#2d2f2f]">
           Sagesses du Bénin
         </h1>
 
-        {/* Tab Selector - Pill Style */}
-        <div className="bg-neutral-100 p-1 rounded-full flex gap-1 shadow-sm mx-auto w-fit">
-          <button
-            onClick={() => setActiveView('matrix')}
-            className={`px-6 py-2 rounded-full text-[10px] font-bold tracking-[0.05em] transition-all ${
-              activeView === 'matrix' 
-                ? 'bg-[#2d2f2f] text-white shadow-sm' 
-                : 'text-neutral-400 hover:text-neutral-600'
-            }`}
-          >
-            Matrice des choix
-          </button>
-          <button
-            onClick={() => setActiveView('wall')}
-            className={`px-6 py-2 rounded-full text-[10px] font-bold tracking-[0.05em] transition-all ${
-              activeView === 'wall' 
-                ? 'bg-[#2d2f2f] text-white shadow-sm' 
-                : 'text-neutral-400 hover:text-neutral-600'
-            }`}
-          >
-            Mur des consultations
-          </button>
-        </div>
       </div>
 
       {/* Content Area */}
-      <div className="w-full max-w-7xl px-4 md:px-12 flex-1 flex items-start justify-center min-h-0">
+      <div className="w-full max-w-7xl px-4 md:px-12 flex-1 flex items-start justify-center min-h-0 mt-8">
         <AnimatePresence mode="wait">
           {activeView === 'matrix' ? (
             <motion.div 
