@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Play, Pause } from "lucide-react";
+import { Howl } from 'howler';
 import type { LifeCase } from "@/features/consultation/useLifeCases";
 
 interface Props {
@@ -19,75 +20,82 @@ const CaseCard = ({ lifeCase, isActive }: Props) => {
   const photoUrl = `https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/images_casdevie/cas${lifeCase.cas_numero}.jpg`;
   const audioUrl = `https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/casdevie/cas${lifeCase.cas_numero}.mp3`;
 
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const howlRef = useRef<Howl | null>(null);
+  const timerRef = useRef<number | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
 
-  // Pause when card becomes inactive (swipe away)
-  useEffect(() => {
-    if (!isActive) {
-      audioRef.current?.pause();
-      setIsPlaying(false);
-    }
-  }, [isActive]);
-
-  // Audio management using native Audio object for better reliability
+  // Howler.js - Gestion audio ultra-robuste
   useEffect(() => {
     setIsPlaying(false);
     setCurrentTime(0);
     setDuration(0);
 
-    const audio = new Audio(audioUrl);
-    audio.preload = "auto";
-    audioRef.current = audio;
+    const sound = new Howl({
+      src: [audioUrl],
+      html5: true, // Crucial pour le streaming et éviter les erreurs de chargement bloquantes
+      preload: true,
+      onload: () => {
+        setDuration(sound.duration());
+      },
+      onplay: () => setIsPlaying(true),
+      onpause: () => setIsPlaying(false),
+      onstop: () => setIsPlaying(false),
+      onend: () => setIsPlaying(false),
+      onloaderror: (id, err) => console.error('Audio load error:', err),
+      onplayerror: (id, err) => {
+        console.error('Audio play error:', err);
+        sound.once('unlock', () => sound.play());
+      }
+    });
 
-    const handleLoadedMetadata = () => {
-      if (audio.duration) setDuration(audio.duration);
+    howlRef.current = sound;
+
+    // Timer pour la barre de progression
+    const updateProgress = () => {
+      if (sound.playing()) {
+        setCurrentTime(sound.seek());
+      }
+      timerRef.current = requestAnimationFrame(updateProgress);
     };
-    const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
-    const handleEnded = () => setIsPlaying(false);
-    const handleError = (e: any) => console.error('Audio load error:', e);
-
-    audio.addEventListener('loadedmetadata', handleLoadedMetadata);
-    audio.addEventListener('timeupdate', handleTimeUpdate);
-    audio.addEventListener('ended', handleEnded);
-    audio.addEventListener('error', handleError);
-
-    // Initial check if metadata already loaded
-    if (audio.readyState >= 1) {
-      handleLoadedMetadata();
-    }
+    timerRef.current = requestAnimationFrame(updateProgress);
 
     return () => {
-      audio.pause();
-      audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
-      audio.removeEventListener('timeupdate', handleTimeUpdate);
-      audio.removeEventListener('ended', handleEnded);
-      audio.removeEventListener('error', handleError);
-      audioRef.current = null;
+      sound.unload();
+      if (timerRef.current) cancelAnimationFrame(timerRef.current);
+      howlRef.current = null;
     };
   }, [audioUrl]);
 
+  // Pause quand la carte n'est plus active
+  useEffect(() => {
+    if (!isActive && howlRef.current) {
+      howlRef.current.pause();
+    }
+  }, [isActive]);
+
   const togglePlay = useCallback((e: React.MouseEvent | React.PointerEvent) => {
     e.stopPropagation();
-    if (!audioRef.current) return;
-    if (isPlaying) {
-      audioRef.current.pause();
-      setIsPlaying(false);
+    const sound = howlRef.current;
+    if (!sound) return;
+
+    if (sound.playing()) {
+      sound.pause();
     } else {
-      audioRef.current.play().catch((err) => console.error('Audio play error:', err));
-      setIsPlaying(true);
+      sound.play();
     }
-  }, [isPlaying]);
+  }, []);
 
   const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
-    if (!audioRef.current || !duration) return;
+    const sound = howlRef.current;
+    if (!sound || !duration) return;
+    
     const rect = e.currentTarget.getBoundingClientRect();
     const pct = (e.clientX - rect.left) / rect.width;
     const newTime = pct * duration;
-    audioRef.current.currentTime = newTime;
+    sound.seek(newTime);
     setCurrentTime(newTime);
   };
 
