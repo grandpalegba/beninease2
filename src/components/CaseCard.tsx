@@ -32,15 +32,17 @@ const CaseCard = ({ lifeCase, isActive }: Props) => {
     }
   }, [isActive]);
 
-  // Reset audio on case change
+  // Charge explicitement l'audio quand l'URL change
   useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.pause();
+    audio.src = audioUrl;
+    audio.load();
     setIsPlaying(false);
     setCurrentTime(0);
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-    }
-  }, [lifeCase.id]);
+    setDuration(0);
+  }, [audioUrl]);
 
   const togglePlay = useCallback((e: React.MouseEvent | React.PointerEvent) => {
     e.stopPropagation();
@@ -49,7 +51,7 @@ const CaseCard = ({ lifeCase, isActive }: Props) => {
       audioRef.current.pause();
       setIsPlaying(false);
     } else {
-      audioRef.current.play().catch(() => {});
+      audioRef.current.play().catch((err) => console.error('Audio play error:', err));
       setIsPlaying(true);
     }
   }, [isPlaying]);
