@@ -13,7 +13,12 @@ interface Props {
 
 const STORAGE_BASE_URL = `https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public`;
 
-const BAR_HEIGHTS = [3, 5, 8, 12, 16, 14, 10, 13, 16, 11, 8, 14, 16, 12, 9, 6, 10, 14, 16, 13, 10, 8, 5, 3];
+// Génère 60 hauteurs de barres aléatoires mais harmonieuses pour un visualiseur plus fin
+const BAR_HEIGHTS = [
+  4, 7, 10, 14, 18, 22, 19, 15, 12, 16, 20, 24, 21, 17, 13, 11, 15, 19, 23, 20, 16, 12, 8, 5,
+  6, 9, 13, 17, 21, 25, 22, 18, 14, 12, 16, 20, 24, 21, 17, 13, 9, 6, 10, 14, 18, 22, 19, 15,
+  12, 16, 20, 24, 21, 17, 13, 11, 15, 19, 23, 20
+];
 
 const CaseCard = ({ lifeCase, isActive }: Props) => {
   // URLs construites avec cas_numero (entier) qui correspond aux noms de fichiers : cas1.jpg, cas1.mp3...
@@ -177,18 +182,26 @@ const CaseCard = ({ lifeCase, isActive }: Props) => {
           <span>{formatTime(duration)}</span>
         </div>
 
-        {/* Waveform visualizer */}
-        <div className="flex items-end gap-[2.5px] h-5">
+        {/* Waveform visualizer - Plus fin et élégant */}
+        <div className="flex items-end justify-center gap-[1.5px] h-6 px-2">
           {BAR_HEIGHTS.map((h, i) => (
             <motion.span
               key={i}
               animate={isPlaying
-                ? { height: [h * 0.4, h, h * 0.6, h * 0.9, h * 0.4], opacity: [0.5, 1, 0.7, 1, 0.5] }
-                : { height: 2, opacity: 0.25 }
+                ? { 
+                    height: [h * 0.3, h, h * 0.5, h * 0.8, h * 0.3], 
+                    opacity: [0.4, 1, 0.6, 0.9, 0.4],
+                    backgroundColor: ["rgba(255,255,255,0.4)", "rgba(29,185,84,1)", "rgba(255,255,255,0.6)", "rgba(29,185,84,0.8)", "rgba(255,255,255,0.4)"]
+                  }
+                : { height: 2, opacity: 0.15, backgroundColor: "rgba(255,255,255,1)" }
               }
-              transition={{ repeat: Infinity, duration: 1.4, delay: i * 0.06, ease: "easeInOut" }}
-              className="flex-1 bg-[#1DB954] rounded-full"
-              style={{ minWidth: 2 }}
+              transition={{ 
+                repeat: Infinity, 
+                duration: 1.8 + (Math.random() * 0.4), 
+                delay: i * 0.03, 
+                ease: "easeInOut" 
+              }}
+              className="w-[1.5px] rounded-full shadow-[0_0_8px_rgba(29,185,84,0.3)]"
             />
           ))}
         </div>
