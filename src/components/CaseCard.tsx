@@ -106,7 +106,6 @@ const CaseCard = ({ lifeCase, isActive }: Props) => {
         ref={audioRef}
         src={audioUrl}
         preload="auto"
-        crossOrigin="anonymous"
       />
 
       {/* Album Art */}
@@ -142,8 +141,7 @@ const CaseCard = ({ lifeCase, isActive }: Props) => {
           <motion.button
             whileTap={{ scale: 0.88 }}
             whileHover={{ scale: 1.08 }}
-            onPointerDown={(e) => e.stopPropagation()}
-            onClick={togglePlay}
+            onPointerDown={togglePlay}
             className="w-[52px] h-[52px] shrink-0 bg-[#1DB954] rounded-full flex items-center justify-center shadow-2xl shadow-[#1DB954]/30"
           >
             {isPlaying
