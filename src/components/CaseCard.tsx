@@ -15,9 +15,9 @@ const STORAGE_BASE_URL = `https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/ob
 const BAR_HEIGHTS = [3, 5, 8, 12, 16, 14, 10, 13, 16, 11, 8, 14, 16, 12, 9, 6, 10, 14, 16, 13, 10, 8, 5, 3];
 
 const CaseCard = ({ lifeCase, isActive }: Props) => {
-  // Utilise les URLs déjà calculées par useLifeCases avec le bon cas_numero
-  const audioUrl = lifeCase.audioUrl || `${STORAGE_BASE_URL}/casdevie/cas${lifeCase.cas_numero}.mp3`;
-  const photoUrl = lifeCase.photoUrl || `${STORAGE_BASE_URL}/images_casdevie/cas${lifeCase.cas_numero}.jpg`;
+  // URLs construites avec cas_numero (entier) qui correspond aux noms de fichiers : cas1.jpg, cas1.mp3...
+  const photoUrl = `https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/images_casdevie/cas${lifeCase.cas_numero}.jpg`;
+  const audioUrl = `https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/casdevie/cas${lifeCase.cas_numero}.mp3`;
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
