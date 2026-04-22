@@ -244,11 +244,10 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
             <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
               <div className="text-center">
                 <h2 className="text-5xl font-bold text-[#303333] mb-4 tracking-tight">{detailsTrad.signe_nom}</h2>
-                <p className="text-xl font-medium italic text-[#a0412d]">"{detailsTrad.devise}"</p>
+                <p className="text-xl font-medium italic text-[#a0412d]">{detailsTrad.devise}</p>
               </div>
               
               <section>
-                <h3 className="text-xs font-bold uppercase tracking-widest text-[#b0b2b1] mb-4">Introduction</h3>
                 <p className="text-[#303333] leading-relaxed text-lg font-light">{detailsTrad.introduction}</p>
               </section>
 
@@ -281,7 +280,6 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
               </div>
 
               <section>
-                <h3 className="text-xs font-bold uppercase tracking-widest text-[#b0b2b1] mb-4">Le Récit</h3>
                 <p className="text-[#303333] leading-relaxed text-lg font-light">{detailsUniv.recit}</p>
               </section>
 
