@@ -77,11 +77,18 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
 
   const fetchFaDetails = async (nomTire: string) => {
     try {
-      const nomRecherche = nomTire.split(" ").pop() || nomTire;
+      // Normalisation pour recherche robuste (remplace 'e' par '_' pour gérer 'e'/'é')
+      const nomFiltre = nomTire.replace(/e/g, '_');
 
       const [tradResponse, univResponse] = await Promise.all([
-        supabase.from("signes_fa").select("*").ilike("signe_nom", `%${nomRecherche}%`).single(),
-        supabase.from("valeurs_universelles").select("*").ilike("signe_fa", `%${nomRecherche}%`).single()
+        supabase.from("signes_fa")
+          .select("*")
+          .ilike("signe_nom", `%${nomFiltre}%`)
+          .single(),
+        supabase.from("valeurs_universelles")
+          .select("*")
+          .ilike("signe_fa", `%${nomFiltre}%`)
+          .single()
       ]);
 
       if (tradResponse.data) {
@@ -101,7 +108,7 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
         setDetailsUniv(univResponse.data);
       } else {
         setDetailsUniv({
-          concept: `Principe de ${nomRecherche}`,
+          concept: nomTire,
           combinaison: nomTire,
           recit: "Le récit universel de ce signe nous parle de la transmission silencieuse des savoirs et de la force de l'intention.",
           revelation: "Chaque pas compte pour celui qui connaît sa direction.",
@@ -217,7 +224,7 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
                 onClick={() => setActiveVision("universelle")}
                 className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${activeVision === "universelle" ? "bg-[#006b60] text-white shadow-md" : "text-[#5d605f] hover:text-[#303333]"}`}
               >
-                Vision Universelle
+                Universalité
               </button>
             </div>
           </header>
