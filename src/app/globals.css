@@ -6,9 +6,8 @@
 
 @layer base {
   :root {
-    --background: 60 6% 97%;
-    /* #F9F9F7 - benin-cream */
-    --foreground: 0 0% 10%;
+    --background: 60 6% 97%; /* #F9F9F7 - benin-cream */
+    --foreground: 0 0% 10%; /* black/90 approximately */
 
     --card: 60 6% 97%;
     --card-foreground: 0 0% 10%;
@@ -16,19 +15,16 @@
     --popover: 60 6% 97%;
     --popover-foreground: 0 0% 10%;
 
-    --primary: 156 100% 26%;
-    /* #008751 - benin-green */
+    --primary: 156 100% 26%; /* #008751 - benin-green */
     --primary-foreground: 60 6% 97%;
 
-    --secondary: 167 100% 15%;
-    /* #004d3d - dark-green */
+    --secondary: 167 100% 15%; /* #004d3d - dark-green */
     --secondary-foreground: 60 6% 97%;
 
     --muted: 210 40% 96.1%;
-    --muted-foreground: 215 16% 47%;
+    --muted-foreground: 215 16% 47%; /* gray/600 approx */
 
-    --accent: 355 86% 49%;
-    /* #E8112D - benin-red */
+    --accent: 355 86% 49%; /* #E8112D - benin-red */
     --accent-foreground: 60 6% 97%;
 
     --destructive: 0 84.2% 60.2%;
@@ -39,7 +35,8 @@
     --ring: 156 100% 26%;
     --radius: 0.5rem;
 
-    --benin-ocre: 167 100% 15%;
+    /* Custom semantic colors */
+    --benin-ocre: 167 100% 15%; /* #004d3d - dark-green */
 
     --sidebar-background: 37 33% 96%;
     --sidebar-foreground: 15 8% 15%;
@@ -56,15 +53,10 @@
   * {
     @apply border-border;
   }
-
   body {
     @apply bg-background text-foreground font-sans antialiased;
   }
-
-  h1,
-  h2,
-  h3,
-  h4 {
+  h1, h2, h3, h4 {
     font-family: 'Playfair Display', serif;
   }
 }
@@ -73,60 +65,46 @@
   .font-display {
     font-family: 'Playfair Display', serif;
   }
-
   .font-body {
     font-family: 'Inter', sans-serif;
   }
-
   .text-balance {
     text-wrap: balance;
   }
 
-  /* MATÉRIEL : DESIGN DES NOIX (COQUE DE GRAINE ASYMÉTRIQUE)
-     Basé sur okpele noix eteintes.html 
-  */
+  /* --- DESIGN DE LA NOIX (COQUE ASYMÉTRIQUE CENTRÉE) --- */
   .noix {
     position: relative;
     width: 48px;
-    /* w-12 */
     height: 56px;
-    /* h-14 */
     background-color: #833321;
-    /* seed-brown */
-
-    /* Géométrie Pear-Seed Inverted exacte */
     border-radius: 50% 50% 45% 45% / 70% 70% 30% 30%;
-
-    /* Relief et Ombrage 3D */
+    margin-left: auto;
+    margin-right: auto;
+    left: 50%;
+    transform: translateX(-50%);
     box-shadow:
       inset -4px -4px 10px rgba(0, 0, 0, 0.5),
-      /* Ombre interne coque */
       0 6px 12px rgba(0, 0, 0, 0.3);
-    /* Ombre portée */
-
     transform-style: preserve-3d;
     transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
     overflow: hidden;
   }
 
-  /* Overlay de texture bois (effet grain de terre) */
   .noix::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.25));
+    background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.15), rgba(0, 0, 0, 0.3));
     z-index: 1;
   }
 
-  /* SPIRITUEL : ÉTAT ALLUMÉ (ACTIVATION DU FA)
-     Basé sur okpele noix allumees.html
-  */
+  /* --- ÉTAT ALLUMÉ : FENTE LUMINEUSE VERTICALE --- */
   .noix.lit {
     background-color: #833321;
     filter: drop-shadow(0 0 15px rgba(250, 204, 21, 0.6));
   }
 
-  /* La fente lumineuse centrale */
   .noix.lit::after {
     content: '';
     position: absolute;
@@ -134,68 +112,35 @@
     left: 50%;
     transform: translate(-50%, -50%);
     width: 4px;
-    /* Fente fine */
     height: 32px;
     background-color: #facc15;
-    /* yellow-400 */
     border-radius: 9999px;
-
-    /* Rayonnement de la fente */
     box-shadow:
       0 0 15px #facc15,
       0 0 5px #facc15;
-
     z-index: 2;
     animation: glow-pulse 2s infinite ease-in-out;
   }
 
   @keyframes glow-pulse {
-
-    0%,
-    100% {
-      opacity: 0.7;
-      filter: blur(1px);
-    }
-
-    50% {
-      opacity: 1;
-      filter: blur(0px);
-    }
+    0%, 100% { opacity: 0.7; filter: blur(0.5px); }
+    50% { opacity: 1; filter: blur(0px); }
   }
 
-  /* MOUVEMENT : ROTATION HORIZONTALE (VÉRACITÉ RITUELLE)
-  */
+  /* --- ANIMATIONS DE ROTATION HORIZONTALE --- */
   @keyframes noix-spin-y {
-    0% {
-      transform: rotateY(0deg);
-    }
-
-    100% {
-      transform: rotateY(360deg);
-    }
+    0% { transform: translateX(-50%) rotateY(0deg); }
+    100% { transform: translateX(-50%) rotateY(360deg); }
   }
 
   .noix.spinning {
     animation: noix-spin-y var(--spin-duration, 0.4s) linear infinite;
   }
 
-  /* Rebond de stabilisation sur l'axe Y */
   @keyframes settle-y {
-    0% {
-      transform: rotateY(720deg);
-    }
-
-    60% {
-      transform: rotateY(0deg);
-    }
-
-    80% {
-      transform: rotateY(-15deg);
-    }
-
-    100% {
-      transform: rotateY(0deg);
-    }
+    0% { transform: translateX(-50%) rotateY(720deg); }
+    60% { transform: translateX(-50%) rotateY(0deg); }
+    100% { transform: translateX(-50%) rotateY(0deg); }
   }
 
   .noix.settling {
