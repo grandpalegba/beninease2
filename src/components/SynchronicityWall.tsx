@@ -47,12 +47,6 @@ const SynchronicityWall = () => {
         transition={{ duration: 1.2 }}
         className={`flex flex-col items-center justify-center py-8 px-4 ${isLoading ? "opacity-50 pointer-events-none" : "opacity-100"}`}
       >
-        <div className="text-center mb-8 px-4">
-          <p className="font-headline italic text-sm md:text-base text-neutral-500">
-            Choisissez une photo pour écouter la guidance proposée par le bokônon.
-          </p>
-        </div>
-
         <div className="w-full flex justify-center mb-12">
           <BeninFrame
             className="w-[90vw] max-w-[550px] aspect-square"
