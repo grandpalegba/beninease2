@@ -19,7 +19,7 @@ const WallTile = memo(({ consultation, index, isSelected, onClick }: Props) => {
   if (!consultation) {
     return (
       <div
-        className="relative aspect-square overflow-hidden rounded-[2px] bg-[#E8D5B7] opacity-40"
+        className="relative aspect-square overflow-hidden rounded-[var(--radius-sm)] bg-secondary/50"
         style={{
           backgroundImage: `radial-gradient(circle at ${index % 4 * 25}% ${index % 3 * 30}%, rgba(0,0,0,0.05) 1px, transparent 1px)`,
           backgroundSize: '4px 4px'
@@ -43,7 +43,7 @@ const WallTile = memo(({ consultation, index, isSelected, onClick }: Props) => {
     <motion.button
       layout
       onClick={() => onClick?.(consultation)}
-      className="relative aspect-square overflow-hidden rounded-[4px] cursor-pointer group bg-neutral-800 select-none"
+      className="relative aspect-square overflow-hidden rounded-[var(--radius-sm)] cursor-pointer group bg-neutral-800 select-none border-[0.5px] border-border"
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{
         opacity: 1,
@@ -54,14 +54,18 @@ const WallTile = memo(({ consultation, index, isSelected, onClick }: Props) => {
         y: { duration: 6 + (index % 4), repeat: Infinity, ease: "easeInOut" },
         opacity: { duration: 0.5 }
       }}
-      whileHover={{ scale: 1.35, zIndex: 20 }}
+      whileHover={{ 
+        scale: 1.35, 
+        zIndex: 20,
+        boxShadow: "0 0 20px hsl(var(--ring) / 0.3)"
+      }}
       style={{ background: tileBg }}
     >
       <motion.img
         src={photo}
         alt={consultation.author}
         loading="lazy"
-        className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none sepia-[0.2] group-hover:sepia-0 transition-all duration-500"
+        className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none sepia-[0.1] saturate-[0.9] group-hover:sepia-0 group-hover:saturate-100 transition-all duration-500"
       />
 
       {/* Overlay de sélection ou au survol */}
@@ -75,7 +79,7 @@ const WallTile = memo(({ consultation, index, isSelected, onClick }: Props) => {
 
       {/* Nom au survol */}
       <div className="absolute inset-x-0 bottom-0 px-1 py-1 opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 backdrop-blur-[2px]">
-        <p className="text-white text-[8px] font-medium truncate uppercase tracking-tighter">
+        <p className="text-white text-[8px] font-headline font-medium truncate uppercase tracking-tighter">
           {consultation.author}
         </p>
       </div>

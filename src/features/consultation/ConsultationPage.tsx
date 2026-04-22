@@ -95,10 +95,10 @@ export default function ConsultationPage() {
   }
 
   return (
-    <main className="h-[100dvh] bg-white text-black font-sans antialiased flex flex-col items-center justify-start overflow-hidden pb-20">
+    <main className="h-[100dvh] bg-background text-foreground font-sans antialiased flex flex-col items-center justify-start overflow-hidden pb-20">
       {/* Title Section */}
       <div className="w-full text-center shrink-0 z-10 pt-10">
-        <h1 className="text-4xl md:text-5xl font-serif text-[#2d2f2f] mb-4">
+        <h1 className="text-4xl md:text-5xl font-display text-foreground mb-4">
           Sagesses du Bénin
         </h1>
 
@@ -156,12 +156,6 @@ export default function ConsultationPage() {
         </AnimatePresence>
       </div>
 
-      <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,400;1,700&display=swap');
-        .font-serif {
-          font-family: 'Playfair Display', serif;
-        }
-      `}</style>
 
       {/* Debug Trigger */}
       {process.env.NODE_ENV === 'development' && (

@@ -20,9 +20,9 @@ interface Props {
  * Mimics the uploaded "matrice.png" mockup.
  */
 const BeninFrame = ({ children, inset = 10, thickness = 6, className = "" }: Props) => {
-  const RED = "#e8112d";
-  const YELLOW = "#fcd116";
-  const GREEN = "#008751";
+  const RED = "var(--color-benin-red)";
+  const YELLOW = "var(--color-benin-yellow)";
+  const GREEN = "var(--color-benin-green)";
 
   return (
     <div
