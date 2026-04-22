@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase/client";
 import { genererTirage, type SigneFa, type DuMajeur } from "@/lib/fa-signes";
 import { useWoodSound } from "@/hooks/use-wood-sound";
-import { Mic, Send, RefreshCw, ArrowLeft } from "lucide-react";
+import { Mic, Send, RefreshCw, ArrowLeft, Play, Pause, CheckCircle2 } from "lucide-react";
 
 // --- SOUS-COMPOSANTS ---
 
@@ -62,17 +62,40 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
   const [detailsTrad, setDetailsTrad] = useState<any>(null);
   const [detailsUniv, setDetailsUniv] = useState<any>(null);
 
+  const [finalDecision, setFinalDecision] = useState<string | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [isTransmitting, setIsTransmitting] = useState(false);
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
 
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const { playSettle, ensureCtx } = useWoodSound();
 
   const handleTransmit = async () => {
+    if (!finalDecision) return;
     setIsTransmitting(true);
-    setTimeout(() => {
+    
+    try {
+      // Enregistrement de la décision finale dans Supabase
+      const { error } = await supabase
+        .from('consultations')
+        .update({ 
+          final_decision: finalDecision,
+          signe_fa: signe?.nom,
+          status: 'completed',
+          completed_at: new Date().toISOString()
+        })
+        .eq('id', caseData.id);
+
+      if (error) throw error;
+      
+      setTimeout(() => {
+        setIsTransmitting(false);
+        onComplete?.();
+      }, 1500);
+    } catch (err) {
+      console.error("Error sealing decision:", err);
       setIsTransmitting(false);
-      onComplete?.();
-    }, 1500);
+    }
   };
 
   const fetchFaDetails = async (nomTire: string) => {
@@ -112,6 +135,16 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
       }, 2500);
     }, 1500);
   }, [playSettle, ensureCtx]);
+
+  const toggleAudio = () => {
+    if (!audioRef.current) return;
+    if (isPlayingAudio) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play();
+    }
+    setIsPlayingAudio(!isPlayingAudio);
+  };
 
   return (
     <div className="flex min-h-screen w-full items-center justify-center bg-white font-sans fixed inset-0 z-[200]">
@@ -170,7 +203,7 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
         </div>
       )}
 
-      {/* BLOC 2 : LE SIGNE RÉVÉLÉ (Miroir - Fond Blanc) */}
+      {/* BLOC 2 : LE SIGNE RÉVÉLÉ */}
       {phase === "revealed" && (
         <div className="animate-in fade-in duration-1000 flex flex-col w-full max-w-3xl px-6 py-12 mx-auto overflow-y-auto custom-scrollbar h-full font-sans relative z-[205]">
           
@@ -181,7 +214,6 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
               <DuIdeogramme du={signe!.duDroite} large />
             </div>
             
-            {/* SÉLECTEUR D'ONGLETS */}
             <div className="flex bg-[#f4f3f2] p-1 rounded-full mt-10">
               <button 
                 onClick={() => setActiveVision("traditionnelle")}
@@ -262,30 +294,87 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
             </div>
           )}
 
-          {/* ACTION FOOTER */}
-          <footer className="mt-20 pt-10 border-t border-stone-100 flex flex-col items-center gap-8 pb-32 shrink-0">
-            <div className="flex items-center gap-8">
+          {/* MODULE : RAPPEL DU CAS (BOUCLE DE CONSULTATION) */}
+          <div className="mt-24 pt-16 border-t border-[#f4f3f2] space-y-12 pb-32">
+            <header className="text-center">
+              <h3 className="text-xs font-bold uppercase tracking-[0.3em] text-[#b0b2b1] mb-8">Ma Décision Finale</h3>
+              
+              <div className="flex justify-center items-center gap-6 mb-12">
+                <div className="w-24 h-24 rounded-2xl overflow-hidden shadow-lg border-2 border-white relative group">
+                  <img src={caseData.image} alt="Le Cas" className="w-full h-full object-cover" />
+                  <button 
+                    onClick={toggleAudio}
+                    className="absolute inset-0 bg-black/40 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    {isPlayingAudio ? <Pause size={24} /> : <Play size={24} />}
+                  </button>
+                  <audio ref={audioRef} src={caseData.audio} onEnded={() => setIsPlayingAudio(false)} className="hidden" />
+                </div>
+                <div className="text-left">
+                  <span className="text-[10px] font-bold text-[#a0412d] uppercase tracking-widest">Rappel du Cas</span>
+                  <p className="text-[#303333] font-medium leading-tight max-w-[200px] mt-1 line-clamp-2">"Consultation scellée par le Fâ"</p>
+                </div>
+              </div>
+            </header>
+
+            {/* LES 4 OPTIONS */}
+            <div className="grid grid-cols-1 gap-4">
+              {[1, 2, 3, 4].map((num) => {
+                const opt = caseData[`option${num}`];
+                if (!opt) return null;
+                const isIntuition = caseData.selectedOption === num;
+                const isSelected = finalDecision === opt;
+
+                return (
+                  <button 
+                    key={num}
+                    onClick={() => setFinalDecision(opt)}
+                    className={`p-6 rounded-2xl text-left transition-all relative overflow-hidden border-2 
+                      ${isSelected ? 'bg-[#303333] border-[#303333] text-white shadow-xl -translate-y-1' : 'bg-[#f4f3f2] border-transparent text-[#303333] hover:bg-stone-200'}
+                    `}
+                  >
+                    <div className="flex items-center justify-between gap-4">
+                      <span className="text-sm font-medium pr-10">{opt}</span>
+                      <div className="flex items-center gap-3">
+                        {isIntuition && (
+                          <span className={`text-[8px] font-bold uppercase tracking-widest px-3 py-1 rounded-full ${isSelected ? 'bg-white/20 text-white' : 'bg-amber-100 text-amber-700'}`}>
+                            Intuition
+                          </span>
+                        )}
+                        {isSelected && <CheckCircle2 size={20} className="text-amber-400" />}
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="pt-10 flex flex-col items-center gap-8">
               <button 
-                onClick={() => setIsRecording(!isRecording)}
-                className={`w-20 h-20 rounded-full flex items-center justify-center transition-all shadow-2xl ${isRecording ? 'bg-red-500 animate-pulse text-white ring-8 ring-red-50' : 'bg-[#303333] text-white hover:scale-110 hover:bg-black'}`}
+                onClick={handleTransmit}
+                disabled={!finalDecision || isTransmitting}
+                className={`w-full max-w-sm py-6 rounded-full font-bold text-sm uppercase tracking-[0.2em] transition-all shadow-2xl flex items-center justify-center gap-4
+                  ${!finalDecision ? 'bg-stone-100 text-stone-300 cursor-not-allowed' : 'bg-[#a0412d] text-white hover:bg-[#833321] hover:-translate-y-1 active:translate-y-0'}
+                `}
               >
-                <Mic size={32} />
+                {isTransmitting ? (
+                  <>
+                    <RefreshCw className="animate-spin" size={18} />
+                    <span>Scellage en cours...</span>
+                  </>
+                ) : (
+                  <>
+                    <Send size={18} />
+                    <span>Sceller la décision</span>
+                  </>
+                )}
               </button>
               
-              {isRecording && (
-                <button 
-                  onClick={handleTransmit}
-                  disabled={isTransmitting}
-                  className="flex items-center gap-4 bg-[#a0412d] text-white px-12 py-5 rounded-full font-bold shadow-2xl hover:bg-[#833321] transition-all hover:-translate-y-1 active:translate-y-0 disabled:opacity-50"
-                >
-                  <Send size={20} />
-                  <span className="text-[11px] uppercase tracking-[0.2em] font-sans">
-                    {isTransmitting ? "Scellage..." : "Transmettre"}
-                  </span>
-                </button>
-              )}
+              <p className="text-[10px] text-stone-300 uppercase tracking-widest text-center">
+                Une fois scellée, la sagesse du Fâ est immuable.
+              </p>
             </div>
-          </footer>
+          </div>
         </div>
       )}
 
