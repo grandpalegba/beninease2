@@ -105,7 +105,11 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
         .replace(/[\u0300-\u036f]/g, "")
         .trim();
 
-      console.log("Tentative de fetch pour :", searchKey);
+      console.log("Oracle searchKey :", searchKey);
+
+      // Logique de "Force Brute" : Recherche par segments avec jokers
+      const words = searchKey.split(' ');
+      const fuzzyPattern = `%${words.join('%')}%`;
 
       const [tradRes, univRes] = await Promise.all([
         supabase.from("signes_fa")
@@ -114,23 +118,23 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
           .single(),
         supabase.from("valeurs_universelles")
           .select("*")
-          .ilike("signe_fa", searchKey) // Recherche exacte insensible à la casse
-          .single()
+          .or(`signe_fa.ilike.${fuzzyPattern},valeur.ilike.${fuzzyPattern}`)
+          .limit(1)
       ]);
 
       if (tradRes.data) {
-        console.log("Tradition reçue :", tradRes.data.signe_nom);
+        console.log("Tradition OK :", tradRes.data.signe_nom);
         setDetailsTrad(tradRes.data);
       }
       
-      if (univRes.data) {
-        console.log("Universalité reçue :", univRes.data.valeur);
-        setDetailsUniv(univRes.data);
+      if (univRes.data && univRes.data.length > 0) {
+        console.log("Universalité OK (Fuzzy) :", univRes.data[0].valeur);
+        setDetailsUniv(univRes.data[0]);
       } else {
-        console.warn("Universalité vide pour :", searchKey, univRes.error);
+        console.warn("Table Universalité : Aucun résultat pour", fuzzyPattern, univRes.error);
       }
     } catch (err) {
-      console.error("Erreur critique fetch :", err);
+      console.error("Erreur critique Oracle :", err);
     }
   };
 
