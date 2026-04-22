@@ -72,19 +72,34 @@
     text-wrap: balance;
   }
 
-  /* Ancestral Minimal - Okpele Noix */
+  /* Material & Spiritual - Okpele Noix */
   .noix {
     position: relative;
     width: 32px;
-    height: 38px;
-    background: #833321;
-    border-radius: 48% 52% 42% 42% / 55% 55% 45% 45%;
-    box-shadow: inset -2px -2px 6px rgba(0, 0, 0, 0.4), 0 3px 6px rgba(0, 0, 0, 0.12);
+    height: 32px;
+    background-color: #7B3F00; /* Brun chaud, bois */
+    border-radius: 50%; /* Cercle parfait */
+    box-shadow: 
+      0 4px 6px rgba(0,0,0,0.3),          /* Ombre portée */
+      inset -3px -3px 8px rgba(0,0,0,0.5), /* Ombre interne (relief) */
+      inset 2px 2px 5px rgba(255,255,255,0.1); /* Reflet discret */
     transform-style: preserve-3d;
-    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
-  /* Rotation Horizontale (Vérité Physique) */
+  /* ÉTAT ALLUMÉ (Activation du Fa) */
+  .noix.lit {
+    /* Lueur interne (le cœur de la graine) */
+    background: radial-gradient(circle at center, #facc15 0%, #a0412d 70%, #7B3F00 100%);
+    border: 1px solid #facc15; /* Un liseré doré pour le contour */
+    
+    /* Lueur externe (drop-shadow teinté primary) */
+    filter: drop-shadow(0 0 15px rgba(160, 65, 45, 0.7)) brightness(1.2);
+    
+    transition: all 0.8s ease-out; /* Allumage plus progressif */
+  }
+
+  /* Animation de rotation horizontale */
   @keyframes noix-spin-y {
     0%   { transform: rotateY(0deg); }
     100% { transform: rotateY(360deg); }
@@ -105,15 +120,8 @@
   .noix.settling {
     animation: settle-y 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
   }
-
-  /* Design System - Surfaces */
-  .surface-container-low {
-    background-color: #fdfcfb;
-  }
-  .surface-variant {
-    background-color: #f5f3f0;
-  }
 }
+
 
 
 
