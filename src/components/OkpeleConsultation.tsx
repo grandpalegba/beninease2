@@ -75,7 +75,6 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
     setIsTransmitting(true);
     
     try {
-      // Enregistrement de la décision finale dans Supabase
       const { error } = await supabase
         .from('consultations')
         .update({ 
@@ -265,7 +264,7 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
           {activeVision === "universelle" && detailsUniv && (
             <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
               <div className="text-center">
-                <h2 className="text-5xl font-bold text-[#006b60] mb-4 tracking-tight">{detailsUniv.concept}</h2>
+                <h2 className="text-5xl font-bold text-[#006b60] mb-4 tracking-tight">{detailsUniv.valeur}</h2>
                 <p className="text-xs font-bold uppercase tracking-widest text-[#797b7a] opacity-60">
                   {detailsUniv.combinaison}
                 </p>
@@ -289,12 +288,12 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
 
               <section className="bg-[#151515] text-[#faf9f8] p-10 rounded-3xl relative overflow-hidden">
                 <h3 className="text-xs font-bold uppercase mb-4 text-[#b48224] tracking-widest">Inspiration</h3>
-                <p className="text-xl font-medium leading-relaxed italic">{detailsUniv.chant}</p>
+                <p className="text-xl font-medium leading-relaxed italic">{detailsUniv.inspiration}</p>
               </section>
             </div>
           )}
 
-          {/* MODULE : RAPPEL DU CAS (BOUCLE DE CONSULTATION) */}
+          {/* MODULE : MA DÉCISION FINALE */}
           <div className="mt-24 pt-16 border-t border-[#f4f3f2] space-y-12 pb-32">
             <header className="text-center">
               <h3 className="text-xs font-bold uppercase tracking-[0.3em] text-[#b0b2b1] mb-8">Ma Décision Finale</h3>
@@ -311,13 +310,13 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
                   <audio ref={audioRef} src={caseData.audio} onEnded={() => setIsPlayingAudio(false)} className="hidden" />
                 </div>
                 <div className="text-left">
-                  <span className="text-[10px] font-bold text-[#a0412d] uppercase tracking-widest">Rappel du Cas</span>
+                  <span className="text-[10px] font-bold text-[#a0412d] uppercase tracking-widest font-sans">Rappel du Cas</span>
                   <p className="text-[#303333] font-medium leading-tight max-w-[200px] mt-1 line-clamp-2">"Consultation scellée par le Fâ"</p>
                 </div>
               </div>
             </header>
 
-            {/* LES 4 OPTIONS */}
+            {/* OPTIONS DE DÉCISION */}
             <div className="grid grid-cols-1 gap-4">
               {[1, 2, 3, 4].map((num) => {
                 const opt = caseData[`option${num}`];
@@ -329,7 +328,7 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
                   <button 
                     key={num}
                     onClick={() => setFinalDecision(opt)}
-                    className={`p-6 rounded-2xl text-left transition-all relative overflow-hidden border-2 
+                    className={`p-6 rounded-2xl text-left transition-all relative overflow-hidden border-2 font-sans
                       ${isSelected ? 'bg-[#303333] border-[#303333] text-white shadow-xl -translate-y-1' : 'bg-[#f4f3f2] border-transparent text-[#303333] hover:bg-stone-200'}
                     `}
                   >
@@ -353,7 +352,7 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
               <button 
                 onClick={handleTransmit}
                 disabled={!finalDecision || isTransmitting}
-                className={`w-full max-w-sm py-6 rounded-full font-bold text-sm uppercase tracking-[0.2em] transition-all shadow-2xl flex items-center justify-center gap-4
+                className={`w-full max-w-sm py-6 rounded-full font-bold text-sm uppercase tracking-[0.2em] transition-all shadow-2xl flex items-center justify-center gap-4 font-sans
                   ${!finalDecision ? 'bg-stone-100 text-stone-300 cursor-not-allowed' : 'bg-[#a0412d] text-white hover:bg-[#833321] hover:-translate-y-1 active:translate-y-0'}
                 `}
               >
@@ -370,7 +369,7 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
                 )}
               </button>
               
-              <p className="text-[10px] text-stone-300 uppercase tracking-widest text-center">
+              <p className="text-[10px] text-stone-300 uppercase tracking-widest text-center font-sans">
                 Une fois scellée, la sagesse du Fâ est immuable.
               </p>
             </div>
