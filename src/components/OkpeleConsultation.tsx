@@ -137,7 +137,7 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
     <div className="flex min-h-screen w-full items-center justify-center bg-[#FAF9F6] font-sans fixed inset-0 z-[200]">
       
       <button onClick={onBack} className="absolute top-8 left-8 flex items-center gap-2 text-stone-300 hover:text-stone-800 transition-colors z-[210]">
-        <ArrowLeft size={20} /> <span className="text-[10px] font-bold uppercase tracking-widest text-sans font-semibold">Retour</span>
+        <ArrowLeft size={20} /> <span className="text-[10px] font-bold uppercase tracking-widest font-sans">Retour</span>
       </button>
 
       {/* BLOC 1 : L'OKPELE ET LE MESSAGE */}
