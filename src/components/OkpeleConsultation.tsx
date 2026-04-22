@@ -304,17 +304,20 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
             </div>
           )}
 
-          {/* MODULE : MA DÉCISION FINALE (Layout Split 50/50) */}
+          {/* MODULE : MA DÉCISION FINALE (Layout Miroir) */}
           <div className="mt-32 pt-20 border-t border-[#f4f3f2] pb-32">
             <h3 className="text-[10px] font-bold uppercase tracking-[0.4em] text-[#b0b2b1] mb-12 text-center">Ma Décision Finale</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
               
-              {/* COLONNE GAUCHE : LE RAPPEL */}
+              {/* À GAUCHE (Le Bloc de la Carte) */}
               <div className="space-y-8">
-                <div className="aspect-square w-full rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-stone-100 relative group">
-                  <img src={caseData.image} alt="Le Cas" className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-black/5"></div>
+                <div className="aspect-square w-full rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-stone-100">
+                  <img 
+                    src={caseData.image || caseData.photoUrl} 
+                    alt="Le Cas" 
+                    className="w-full h-full object-cover" 
+                  />
                 </div>
                 
                 <div className="bg-[#f4f3f2] p-6 rounded-2xl flex items-center gap-4">
@@ -328,26 +331,31 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
                     <p className="text-[10px] font-bold uppercase tracking-widest text-[#a0412d]">Votre récit</p>
                     <p className="text-xs text-[#303333] font-medium">(1 min max)</p>
                   </div>
-                  <audio ref={audioRef} src={caseData.audio} onEnded={() => setIsPlayingAudio(false)} className="hidden" />
+                  <audio 
+                    ref={audioRef} 
+                    src={caseData.audio || caseData.audioUrl} 
+                    onEnded={() => setIsPlayingAudio(false)} 
+                    className="hidden" 
+                  />
                 </div>
 
                 <div className="bg-stone-50 border border-stone-100 p-6 rounded-2xl">
                   <p className="text-[10px] font-bold uppercase tracking-widest text-[#797b7a] mb-2">Intuition de départ</p>
-                  <p className="text-sm text-[#303333] font-medium italic">"{caseData[`option${caseData.selectedOption}`]}"</p>
+                  <p className="text-sm text-[#303333] font-medium italic">
+                    "{caseData.options && caseData.selectedOption !== undefined ? caseData.options[caseData.selectedOption] : "Choix initial"}"
+                  </p>
                 </div>
               </div>
 
-              {/* COLONNE DROITE : L'ARBITRAGE */}
+              {/* À DROITE (Le Bloc d'Arbitrage) */}
               <div className="space-y-8">
                 <div className="grid grid-cols-1 gap-4">
-                  {[1, 2, 3, 4].map((num) => {
-                    const opt = caseData[`option${num}`];
-                    if (!opt) return null;
+                  {(caseData.options || []).map((opt: string, i: number) => {
                     const isSelected = finalDecision === opt;
 
                     return (
                       <button 
-                        key={num}
+                        key={i}
                         onClick={() => setFinalDecision(opt)}
                         className={`p-6 rounded-2xl text-left transition-all border-2 
                           ${isSelected 
