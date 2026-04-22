@@ -8,6 +8,8 @@ import { X, Play, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import CombinedTrace from "./CombinedTrace";
 import DotIdeogram from "./DotIdeogram";
 import SegmentedTrack from "./SegmentedTrack";
+import { useSubmitEvaluation } from "@/hooks/useSubmitEvaluation";
+import { toast } from "sonner";
 
 // Mock data placeholders - update these with actual data files later
 const PROFILE_PHOTOS: string[] = ["/assets/profile-aicha.jpg"];
@@ -26,6 +28,7 @@ const SWIPE_THRESHOLD = 60;
 const SWIPE_VELOCITY = 350;
 
 const ConsultationModal = ({ consultation, onClose }: Props) => {
+  const { mutate: submitEvaluation } = useSubmitEvaluation();
   const [view, setView] = useState<View>("case");
   const [relevance, setRelevance] = useState([50]);
   const [clarity, setClarity] = useState([50]);
@@ -33,7 +36,22 @@ const ConsultationModal = ({ consultation, onClose }: Props) => {
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = () => {
-    setSubmitted(true);
+    if (!consultation) return;
+    
+    submitEvaluation({
+      consultationId: consultation.id,
+      relevance: relevance[0],
+      clarity: clarity[0],
+      depth: depth[0]
+    }, {
+      onSuccess: () => {
+        setSubmitted(true);
+        toast.success("Merci pour votre évaluation !");
+      },
+      onError: (error: any) => {
+        toast.error(error.message || "Erreur lors de l'évaluation");
+      }
+    });
   };
 
   const handleClose = () => {

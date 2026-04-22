@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { RotateCcw } from "lucide-react";
-import { CONSULTATIONS, type Consultation } from "@/data/consultations";
+import { useConsultations } from "@/hooks/useConsultations";
 import WallTile from "./WallTile";
 import ConsultationModal from "./ConsultationModal";
 import BeninFrame from "./BeninFrame";
@@ -14,9 +14,10 @@ import { useLivingOrder } from "@/hooks/useLivingOrder";
  * Cells periodically swap positions to create a "living" community effect.
  */
 const SynchronicityWall = () => {
+  const { data: consultations = [] } = useConsultations();
   const [selected, setSelected] = useState<Consultation | null>(null);
   const [revealed, setRevealed] = useState<Set<string>>(new Set());
-  const order = useLivingOrder(CONSULTATIONS.length, 6, 2200);
+  const order = useLivingOrder(consultations.length, 6, 2200);
 
   const handleSelect = (c: Consultation) => {
     setSelected(c);
@@ -54,7 +55,7 @@ const SynchronicityWall = () => {
               style={{ gridTemplateColumns: "repeat(16, 1fr)" }}
             >
               {order.map((idx, slot) => {
-                const c = CONSULTATIONS[idx];
+                const c = consultations[idx];
                 if (!c) return null;
                 return (
                   <WallTile

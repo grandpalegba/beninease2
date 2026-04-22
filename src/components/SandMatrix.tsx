@@ -8,6 +8,7 @@ import { DYNAMICS_MATRIX, DYNAMICS_AXIS } from "@/data/dynamics";
 import { type LifeCase, useLifeCases } from "@/features/consultation/useLifeCases";
 import { supabase } from "@/lib/supabase/client";
 import { useLivingOrder } from "@/hooks/useLivingOrder";
+import { useCreateConsultation } from "@/hooks/useCreateConsultation";
 import { toast } from "sonner";
 
 // UI Components
@@ -41,6 +42,7 @@ interface RevealedCell {
 
 const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
   const { cases, loading: casesLoading } = useLifeCases();
+  const { mutateAsync: createConsultation } = useCreateConsultation();
   const [phase, setPhase] = useState<Phase>("case");
   const [lifeCase, setLifeCase] = useState<LifeCase | null>(null);
   const [intuitiveChoice, setIntuitiveChoice] = useState<number | null>(null);
@@ -85,28 +87,34 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
   }, [shuffledX, shuffledY]);
 
   const handleTransmitSagesse = async () => {
-    if (!lifeCase || finalChoice === null || !recordedBlob || !revealed) return;
+    if (!lifeCase || finalChoice === null || !revealed) return;
     setIsSubmitting(true);
     const toastId = toast.loading("Scellage de la sagesse...");
 
     try {
-      const fileName = `wisdom_${lifeCase.id}_${Date.now()}.webm`;
-      await supabase.storage.from('consultation_audios').upload(fileName, recordedBlob);
-      const { data: publicUrlData } = supabase.storage.from('consultation_audios').getPublicUrl(fileName);
+      // Get current user to use as profileId (assuming 1:1 mapping for this demo)
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Connexion requise pour transmettre une sagesse.");
 
-      await supabase.from('consultations').insert([{
-        case_id: lifeCase.id,
-        choix_intuitif: intuitiveChoice !== null ? lifeCase.options[intuitiveChoice] : null,
-        choix_definitif: lifeCase.options[finalChoice],
-        audio_url: publicUrlData.publicUrl,
-        signe_revele: `${revealed.signX.name} ${revealed.signY.name}`
-      }]);
+      await createConsultation({
+        rowIndex: revealed.row,
+        colIndex: revealed.col,
+        signXIndex: revealed.signX.index,
+        signYIndex: revealed.signY.index,
+        dynamicWord: revealed.dynamicWord,
+        lifeCaseId: lifeCase.id,
+        selectedOption: finalChoice,
+        reflection: lifeCase.verdicts[finalChoice] || "", // Using verdict as reflection fallback
+        profileId: user.id, // Using user.id as profileId
+        isAnonymous: false,
+        audioBlob: recordedBlob || undefined,
+      });
 
       toast.success("Votre sagesse a été scellée.", { id: toastId });
       onComplete?.();
       restart();
-    } catch (error) {
-      toast.error("Erreur de transmission", { id: toastId });
+    } catch (error: any) {
+      toast.error(error.message || "Erreur de transmission", { id: toastId });
     } finally {
       setIsSubmitting(false);
     }
