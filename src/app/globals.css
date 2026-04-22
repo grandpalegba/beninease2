@@ -6,58 +6,11 @@
 
 @layer base {
   :root {
-    --background: 60 6% 97%; /* #F9F9F7 - benin-cream */
-    --foreground: 0 0% 10%; /* black/90 approximately */
-
-    --card: 60 6% 97%;
-    --card-foreground: 0 0% 10%;
-
-    --popover: 60 6% 97%;
-    --popover-foreground: 0 0% 10%;
-
-    --primary: 156 100% 26%; /* #008751 - benin-green */
-    --primary-foreground: 60 6% 97%;
-
-    --secondary: 167 100% 15%; /* #004d3d - dark-green */
-    --secondary-foreground: 60 6% 97%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215 16% 47%; /* gray/600 approx */
-
-    --accent: 355 86% 49%; /* #E8112D - benin-red */
-    --accent-foreground: 60 6% 97%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
+    --background: 60 6% 97%;
+    --foreground: 0 0% 10%;
+    --primary: 156 100% 26%;
+    --secondary: 167 100% 15%;
     --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 156 100% 26%;
-    --radius: 0.5rem;
-
-    /* Custom semantic colors */
-    --benin-ocre: 167 100% 15%; /* #004d3d - dark-green */
-
-    --sidebar-background: 37 33% 96%;
-    --sidebar-foreground: 15 8% 15%;
-    --sidebar-primary: 17 51% 46%;
-    --sidebar-primary-foreground: 37 33% 97%;
-    --sidebar-accent: 37 20% 88%;
-    --sidebar-accent-foreground: 15 8% 15%;
-    --sidebar-border: 37 20% 82%;
-    --sidebar-ring: 17 51% 46%;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground font-sans antialiased;
-  }
-  h1, h2, h3, h4 {
-    font-family: 'Playfair Display', serif;
   }
 }
 
@@ -72,20 +25,20 @@
     text-wrap: balance;
   }
 
-  /* --- DESIGN DE LA NOIX (COQUE ASYMÉTRIQUE CENTRÉE) --- */
+  /* --- DESIGN PUR DE LA NOIX (SANS POSITIONNEMENT PARASITE) --- */
   .noix {
     position: relative;
-    width: 48px;
-    height: 56px;
+    width: 48px;  /* w-12 */
+    height: 56px; /* h-14 */
     background-color: #833321;
+    /* Géométrie asymétrique exacte */
     border-radius: 50% 50% 45% 45% / 70% 70% 30% 30%;
-    margin-left: auto;
-    margin-right: auto;
-    left: 50%;
-    transform: translateX(-50%);
-    box-shadow:
-      inset -4px -4px 10px rgba(0, 0, 0, 0.5),
-      0 6px 12px rgba(0, 0, 0, 0.3);
+    
+    /* Relief 3D */
+    box-shadow: 
+      inset -4px -4px 10px rgba(0,0,0,0.5),
+      0 6px 12px rgba(0,0,0,0.3);
+    
     transform-style: preserve-3d;
     transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
     overflow: hidden;
@@ -95,11 +48,11 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.15), rgba(0, 0, 0, 0.3));
+    background: linear-gradient(to bottom right, rgba(255,255,255,0.15), rgba(0,0,0,0.3));
     z-index: 1;
   }
 
-  /* --- ÉTAT ALLUMÉ : FENTE LUMINEUSE VERTICALE --- */
+  /* --- ÉTAT ALLUMÉ --- */
   .noix.lit {
     background-color: #833321;
     filter: drop-shadow(0 0 15px rgba(250, 204, 21, 0.6));
@@ -115,22 +68,15 @@
     height: 32px;
     background-color: #facc15;
     border-radius: 9999px;
-    box-shadow:
-      0 0 15px #facc15,
-      0 0 5px #facc15;
+    box-shadow: 0 0 15px #facc15, 0 0 5px #facc15;
     z-index: 2;
     animation: glow-pulse 2s infinite ease-in-out;
   }
 
-  @keyframes glow-pulse {
-    0%, 100% { opacity: 0.7; filter: blur(0.5px); }
-    50% { opacity: 1; filter: blur(0px); }
-  }
-
-  /* --- ANIMATIONS DE ROTATION HORIZONTALE --- */
+  /* --- ANIMATIONS --- */
   @keyframes noix-spin-y {
-    0% { transform: translateX(-50%) rotateY(0deg); }
-    100% { transform: translateX(-50%) rotateY(360deg); }
+    0%   { transform: rotateY(0deg); }
+    100% { transform: rotateY(360deg); }
   }
 
   .noix.spinning {
@@ -138,12 +84,16 @@
   }
 
   @keyframes settle-y {
-    0% { transform: translateX(-50%) rotateY(720deg); }
-    60% { transform: translateX(-50%) rotateY(0deg); }
-    100% { transform: translateX(-50%) rotateY(0deg); }
+    0%   { transform: rotateY(720deg); }
+    100% { transform: rotateY(0deg); }
   }
 
   .noix.settling {
     animation: settle-y 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  }
+
+  @keyframes glow-pulse {
+    0%, 100% { opacity: 0.7; filter: blur(0.5px); }
+    50% { opacity: 1; filter: blur(0px); }
   }
 }
