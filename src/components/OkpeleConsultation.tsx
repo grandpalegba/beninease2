@@ -22,14 +22,25 @@ function DuIdeogramme({ du }: { du: DuMajeur }) {
   );
 }
 
-function Noix({ phase, delay, spinDuration }: { phase: string; delay: number; spinDuration: string }) {
-  const isLit = phase === "revealed";
-  const cls = `noix ${phase === "brewing" ? "spinning" : phase === "settling" ? "settling" : ""} ${isLit ? "lit" : ""}`;
+// Le sous-composant Noix reproduit fidèlement le HTML Flexbox
+function Noix({ isLit, phase, delay }: { isLit: boolean, phase: string, delay: number }) {
+  let animClass = "";
+  if (phase === "brewing") animClass = "noix-spinning";
+  if (phase === "settling") animClass = "noix-settling";
+
   return (
     <div 
-      className={cls} 
-      style={{ "--spin-duration": spinDuration, animationDelay: `${delay}s` } as any} 
-    />
+      className={`w-12 h-14 pear-seed-inverted shadow-md relative overflow-hidden ring-1 ring-black/5 ${animClass}`} 
+      style={{ backgroundColor: "#833321", animationDelay: `${delay}s` }}
+    >
+      {/* Texture bois d'origine */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-black/30"></div>
+      
+      {/* Fente lumineuse UNIQUEMENT si la noix est "allumée" */}
+      {isLit && (
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-8 bg-yellow-400 rounded-full shadow-[0_0_10px_#facc15,0_0_4px_#facc15] z-10"></div>
+      )}
+    </div>
   );
 }
 
@@ -68,11 +79,11 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
         console.error("Erreur fetch signes_fa:", error);
         setDetails({
           signe_nom: nomComplet,
-          devise: "L'harmonie du monde repose sur le silence de l'esprit.",
-          introduction: "Ce signe évoque l'équilibre entre la terre et le ciel. Le Fa vous encourage à cultiver la sérénité face aux épreuves.",
-          avantages: "Clarté de vision, force tranquille, protection divine.",
-          defis: "Garder son calme dans le tumulte, éviter les jugements hâtifs.",
-          recommandation: "Allumez une bougie pour la paix et écoutez le chant du vent."
+          devise: "La vérité est le fruit de la patience.",
+          introduction: "Ce signe évoque l'équilibre parfait des forces de la nature. Le Fa vous invite à la réflexion avant l'action.",
+          avantages: "Protection accrue, clairvoyance spirituelle.",
+          defis: "Résistance au changement, doutes passagers.",
+          recommandation: "Honorez la terre et restez fidèle à votre parole."
         });
       } else {
         setDetails(data);
@@ -105,11 +116,13 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
     finalizeTirage();
   };
 
+  const isRevealed = phase === "revealed";
+
   return (
     <div className="flex h-screen w-full bg-[#fdfcfb] overflow-hidden font-sans fixed inset-0 z-[200]">
       
-      {/* ZONE GAUCHE : L'OKPELE (Activation du Fa) */}
-      <div className={`transition-all duration-1000 flex flex-col items-center justify-center relative ${phase === 'revealed' ? 'w-[40%] bg-stone-50/50' : 'w-full'}`}>
+      {/* ZONE GAUCHE : L'OKPELE (Structure Flexbox fidèle) */}
+      <div className={`transition-all duration-1000 flex flex-col items-center justify-center relative ${isRevealed ? 'w-[40%] bg-stone-50/50 border-r border-stone-100' : 'w-full'}`}>
         <button onClick={onBack} className="absolute top-8 left-8 flex items-center gap-2 text-stone-300 hover:text-stone-800 transition-colors z-20">
           <ArrowLeft size={20} /> <span className="text-[10px] font-bold uppercase tracking-widest">Retour</span>
         </button>
@@ -119,45 +132,45 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
           onPointerDown={onPointerDown} 
           onPointerUp={onPointerUp}
         >
-          {/* L'armature : l'arc doré en U inversé et CONTINU */}
-          <div className="relative" style={{ width: 120, height: 400 }}>
-            <svg
-              className="absolute inset-0 w-full h-full overflow-visible"
-              viewBox="0 0 120 400"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M20 380V60C20 27.9675 46.8629 2 80 2C113.137 2 140 27.9675 140 60V380"
-                stroke="#D4AF37"
-                strokeWidth="3"
-                strokeLinecap="round"
-                style={{ transform: 'translateX(-40px)' }}
-              />
-            </svg>
+          {/* Rendu de l'Okpele via Flexbox */}
+          <div className="flex flex-col items-center relative mt-14">
+            {/* L'Arc Supérieur */}
+            <div className="w-24 h-16 border-t-[3px] border-x-[3px] border-yellow-600/70 rounded-t-full absolute -top-14 left-1/2 -translate-x-1/2 z-0">
+              <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-yellow-600 rounded-full"></div>
+              <div className="absolute -bottom-1 -right-1 w-2 h-2 bg-yellow-600 rounded-full"></div>
+            </div>
 
-            {/* Noix : Activation du Fa (Lueur interne et externe) */}
-            <div className="absolute inset-0 flex justify-between px-2 py-20">
-              {/* Left Side */}
-              <div className="flex flex-col gap-12 -translate-x-[24px]">
-                {[0, 1, 2, 3].map(i => (
-                  <Noix key={`l-${i}`} phase={phase} delay={i * 0.1} spinDuration={phase === "brewing" ? "0.3s" : "1.2s"} />
-                ))}
+            {/* Les Colonnes (Flexbox) */}
+            <div className="flex gap-12 pb-8 relative z-10">
+              {/* Colonne Gauche */}
+              <div className="flex flex-col items-center">
+                <Noix isLit={isRevealed} phase={phase} delay={0} />
+                <div className="w-[2px] h-4 bg-gradient-to-b from-yellow-600 to-yellow-700 shadow-sm"></div>
+                <Noix isLit={isRevealed} phase={phase} delay={0.1} />
+                <div className="w-[2px] h-4 bg-gradient-to-b from-yellow-600 to-yellow-700 shadow-sm"></div>
+                <Noix isLit={isRevealed} phase={phase} delay={0.2} />
+                <div className="w-[2px] h-4 bg-gradient-to-b from-yellow-600 to-yellow-700 shadow-sm"></div>
+                <Noix isLit={isRevealed} phase={phase} delay={0.3} />
               </div>
-              {/* Right Side */}
-              <div className="flex flex-col gap-12 translate-x-[24px]">
-                {[0, 1, 2, 3].map(i => (
-                  <Noix key={`r-${i}`} phase={phase} delay={i * 0.1 + 0.2} spinDuration={phase === "brewing" ? "0.3s" : "1.2s"} />
-                ))}
+
+              {/* Colonne Droite */}
+              <div className="flex flex-col items-center">
+                <Noix isLit={isRevealed} phase={phase} delay={0} />
+                <div className="w-[2px] h-4 bg-gradient-to-b from-yellow-600 to-yellow-700 shadow-sm"></div>
+                <Noix isLit={isRevealed} phase={phase} delay={0.1} />
+                <div className="w-[2px] h-4 bg-gradient-to-b from-yellow-600 to-yellow-700 shadow-sm"></div>
+                <Noix isLit={isRevealed} phase={phase} delay={0.2} />
+                <div className="w-[2px] h-4 bg-gradient-to-b from-yellow-600 to-yellow-700 shadow-sm"></div>
+                <Noix isLit={isRevealed} phase={phase} delay={0.3} />
               </div>
             </div>
           </div>
 
           {phase === "idle" && (
-            <div className="absolute -bottom-16 left-0 right-0 flex flex-col items-center gap-3 animate-pulse">
+            <div className="absolute -bottom-12 left-0 right-0 flex flex-col items-center gap-3 animate-pulse">
               <RefreshCw className="text-stone-200" size={18} />
               <p className="text-[8px] font-bold uppercase tracking-[0.5em] text-stone-300">
-                Lancer la consultation
+                Lancer le rituel
               </p>
             </div>
           )}
@@ -165,7 +178,7 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
       </div>
 
       {/* ZONE DROITE : LA SAGESSE ET L'ACTION */}
-      {phase === "revealed" && details && (
+      {isRevealed && details && (
         <div className="w-[60%] bg-white flex flex-col animate-in slide-in-from-right duration-1000 ease-out">
           
           <div className="p-16 lg:p-24 flex-1 overflow-y-auto custom-scrollbar">
@@ -176,11 +189,11 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
                   <DuIdeogramme du={signe!.duDroite} />
                 </div>
                 <div>
-                  <span className="text-[9px] font-black uppercase tracking-[0.5em] text-amber-700 block mb-2 opacity-50">Sagesse Activée</span>
+                  <span className="text-[9px] font-black uppercase tracking-[0.5em] text-amber-700 block mb-2 opacity-50">Sagesse Déployée</span>
                   <h1 className="text-6xl font-serif text-stone-900 leading-tight">{details.signe_nom}</h1>
                 </div>
               </div>
-              <p className="text-3xl text-amber-700 italic font-serif leading-relaxed">
+              <p className="text-3xl text-stone-400 italic font-serif leading-relaxed">
                 "{details.devise}"
               </p>
             </header>
@@ -193,27 +206,26 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
               </section>
 
               <div className="grid grid-cols-2 gap-10">
-                <div className="p-8 bg-stone-50 rounded-[2rem] border border-stone-100/50">
-                  <h4 className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mb-4">Bénédictions</h4>
-                  <p className="text-stone-600 leading-relaxed text-sm italic">{details.avantages}</p>
+                <div className="space-y-4">
+                  <h4 className="text-[9px] font-bold text-stone-300 uppercase tracking-widest">Bénédictions</h4>
+                  <p className="text-stone-700 leading-relaxed text-sm">{details.avantages}</p>
                 </div>
-                <div className="p-8 bg-stone-50 rounded-[2rem] border border-stone-100/50">
-                  <h4 className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mb-4">Défis</h4>
-                  <p className="text-stone-600 leading-relaxed text-sm italic">{details.defis}</p>
+                <div className="space-y-4">
+                  <h4 className="text-[9px] font-bold text-stone-300 uppercase tracking-widest">Défis</h4>
+                  <p className="text-stone-700 leading-relaxed text-sm">{details.defis}</p>
                 </div>
               </div>
 
-              <section className="bg-stone-900 text-amber-400 p-12 rounded-[2.5rem] shadow-2xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 blur-3xl rounded-full -translate-y-1/2 translate-x-1/2" />
+              <section className="bg-stone-900 text-stone-100 p-12 rounded-[2.5rem] shadow-2xl relative">
                 <h3 className="text-[9px] font-bold uppercase mb-6 text-amber-500 tracking-widest">Prescription du Bokonon</h3>
-                <p className="text-2xl font-serif leading-relaxed italic text-white/90">
+                <p className="text-2xl font-serif leading-relaxed italic text-stone-200">
                   {details.recommandation}
                 </p>
               </section>
             </div>
           </div>
 
-          <footer className="p-12 border-stone-50 flex flex-col items-center gap-6">
+          <footer className="p-12 border-t border-stone-50 flex flex-col items-center gap-6">
             <div className="text-center">
               <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-stone-400 mb-2">Transmettre ma Sagesse</p>
             </div>
