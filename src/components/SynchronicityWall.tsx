@@ -19,7 +19,7 @@ const SynchronicityWall = () => {
   const [revealed, setRevealed] = useState<Set<string>>(new Set());
   
   // Le chef d'orchestre du mouvement
-  const order = useLivingOrder(256, 4, 2200);
+  const order = useLivingOrder(256, 6, 2200);
 
   // Diagnostic visuel
   console.log("Ordre du mur:", order.slice(0, 5), "...");

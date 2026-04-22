@@ -10,14 +10,13 @@
     --foreground: 0 0% 10%;
     --primary: 156 100% 26%;
     --secondary: 167 100% 15%;
-    --border: 214.3 31.8% 91.4%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --ring: 156 100% 26%;
     --radius: 0.75rem;
     
-    --color-benin-green: #008751;
-    --color-benin-yellow: #fcd116;
-    --color-benin-red: #e8112d;
+    --benin-green:  145 55% 38%;   /* ≈ #2C9A5A */
+    --benin-yellow: 45 95% 52%;    /* ≈ #FAC710 */
+    --benin-red:    358 75% 52%;   /* ≈ #E0312D */
+    --border:       40 15% 88%;    /* ≈ #E5E0D6 */
+    --muted:        40 20% 96%;    /* ≈ #F6F3EC */
   }
 }
 
