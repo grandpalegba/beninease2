@@ -72,21 +72,40 @@
     text-wrap: balance;
   }
 
-  /* Okpele Noix Styles */
+  /* Okpele Noix Styles - Terracotta Look */
   .noix {
+    position: relative;
     width: 32px;
-    height: 48px;
-    background: #5d3a1a;
-    border-radius: 40% 40% 50% 50%;
-    box-shadow: inset -4px -4px 10px rgba(0,0,0,0.4);
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    height: 36px;
+    background: #833321;
+    border-radius: 48% 52% 42% 42% / 55% 55% 45% 45%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), inset -2px -2px 6px rgba(0, 0, 0, 0.3);
+    transform-style: preserve-3d;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
+
+  /* Animation de rotation fluide */
+  @keyframes noix-flip {
+    0%   { transform: rotateX(0deg); }
+    100% { transform: rotateX(360deg); }
+  }
+
   .noix.spinning {
-    animation: spin var(--spin-duration) linear infinite;
+    animation: noix-flip var(--spin-duration, 0.4s) linear infinite;
   }
-  @keyframes spin {
-    from { transform: rotateY(0deg); }
-    to { transform: rotateY(360deg); }
+
+  /* L'effet de rebond quand l'Okpele s'arrête */
+  @keyframes settle {
+    0%   { transform: rotateX(720deg); }
+    60%  { transform: rotateX(0deg); }
+    75%  { transform: rotateX(-12deg); }
+    90%  { transform: rotateX(6deg); }
+    100% { transform: rotateX(0deg); }
+  }
+
+  .noix.settling {
+    animation: settle 1s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
   }
 }
+
 
