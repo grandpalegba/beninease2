@@ -12,23 +12,21 @@ interface Props {
   onClick?: (c: Consultation) => void;
 }
 
-const BENIN_ACCENTS = ["#008751", "#fcd116", "#e8112d"];
-
-const SAND_VARIANTS = [
-  "#f3eee3", // beige clair
-  "#e8d5b7", // tan
-  "#d4a574", // ocre
-  "#c5a059", // dark ocre
-  "#a8501f", // sienne brûlée
-  "#833321", // terracotta
-  "#f7f1e6", // cream
-  "#d2b48c", // tan soft
+const SACRED_COLORS = [
+  "#008751", // Vert Bénin (Forêt/Espoir)
+  "#fcd116", // Jaune Bénin (Soleil/Richesse)
+  "#e8112d", // Rouge Bénin (Force/Terre rouge)
+  "#0a2540", // Bleu profond (Indigo/Nuit sacrée)
+  "#d4a574", // Ocre (Sable)
+  "#a8501f", // Terre brûlée
+  "#f0e6d2", // Beige (Coton)
+  "#3a2a1c"  // Brun (Bois d'Ebène)
 ];
 
 const WallTile = memo(({ consultation, index, isSelected, onClick }: Props) => {
   // --- ÉTAT VIDE (Sable) ---
   if (!consultation) {
-    const sandColor = SAND_VARIANTS[index % SAND_VARIANTS.length];
+    const tileColor = SACRED_COLORS[index % SACRED_COLORS.length];
     return (
       <motion.div
         variants={{
@@ -42,14 +40,15 @@ const WallTile = memo(({ consultation, index, isSelected, onClick }: Props) => {
         transition={{
           y: { duration: 10 + (index % 10), repeat: Infinity, ease: "easeInOut", delay: (index % 15) * 0.5 },
           x: { duration: 15 + (index % 8), repeat: Infinity, ease: "easeInOut", delay: (index % 15) * 0.5 },
-          layout: { type: "spring", stiffness: 110, damping: 18 }
+          layout: { duration: 1.5, type: "spring" }
         }}
         layout
+        whileHover={{ opacity: 1, zIndex: 50, scale: 1.1 }}
         className="relative aspect-square overflow-hidden border-[0.5px] border-black/5"
-        style={{ backgroundColor: sandColor }}
+        style={{ backgroundColor: tileColor, opacity: 0.7 }}
       >
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-[2px] h-[2px] bg-[#d4a574] opacity-30 rounded-full" />
+          <div className="w-[2px] h-[2px] bg-white opacity-40 rounded-full" />
         </div>
       </motion.div>
     );
@@ -57,10 +56,7 @@ const WallTile = memo(({ consultation, index, isSelected, onClick }: Props) => {
 
   // --- ÉTAT PLEIN (Bokônon) ---
   const photo = PROFILE_PHOTOS[consultation.videoSeed % PROFILE_PHOTOS.length];
-  const accent = BENIN_ACCENTS[index % BENIN_ACCENTS.length];
-
-  // On utilise une couleur de fond "terreuse" par défaut si l'image met du temps à charger
-  const tileBg = "#d4a574";
+  const tileBg = SACRED_COLORS[index % SACRED_COLORS.length];
 
   return (
     <motion.button
@@ -78,16 +74,17 @@ const WallTile = memo(({ consultation, index, isSelected, onClick }: Props) => {
       transition={{
         y: { duration: 10 + (index % 10), repeat: Infinity, ease: "easeInOut", delay: (index % 15) * 0.5 },
         x: { duration: 15 + (index % 8), repeat: Infinity, ease: "easeInOut", delay: (index % 15) * 0.5 },
-        layout: { type: "spring", stiffness: 110, damping: 18 }
+        layout: { duration: 1.5, type: "spring" }
       }}
       whileHover={{ 
         scale: 1.3, 
-        zIndex: 20,
+        zIndex: 50,
+        opacity: 1,
         y: 0,
         x: 0,
         boxShadow: "0 10px 20px rgba(212, 175, 55, 0.2)"
       }}
-      style={{ background: tileBg }}
+      style={{ backgroundColor: tileBg, opacity: 1 }}
     >
       <motion.img
         src={photo}
@@ -102,7 +99,7 @@ const WallTile = memo(({ consultation, index, isSelected, onClick }: Props) => {
       <div
         className={`absolute inset-0 transition-opacity duration-300 pointer-events-none ${isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
         style={{
-          boxShadow: `inset 0 0 0 3px ${isSelected ? '#008751' : accent}`,
+          boxShadow: `inset 0 0 0 3px ${isSelected ? '#008751' : tileBg}`,
           background: isSelected ? 'rgba(0,135,81,0.2)' : 'transparent'
         }}
       />
