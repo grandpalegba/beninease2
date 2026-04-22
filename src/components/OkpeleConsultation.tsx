@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase/client";
 import { genererTirage, type SigneFa, type DuMajeur } from "@/lib/fa-signes";
 import { useWoodSound } from "@/hooks/use-wood-sound";
-import { Mic, Send, RefreshCw, ArrowLeft, Hand, Music, Activity } from "lucide-react";
+import { Mic, Send, RefreshCw, ArrowLeft } from "lucide-react";
 
 // --- SOUS-COMPOSANTS ---
 
@@ -71,20 +71,13 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
     }, 1500);
   };
 
-  const getUniverselTitle = (combinaison: string, concept: string) => {
-    if (!combinaison) return concept;
-    const parts = combinaison.split(' x ').map(s => s.trim());
-    const isDouble = parts.length === 2 && parts[0] === parts[1];
-    return isDouble ? concept : `${combinaison} = ${concept}`;
-  };
-
   const fetchFaDetails = async (nomTire: string) => {
     try {
       const nomRecherche = nomTire.split(" ").pop() || nomTire;
 
       const [tradResponse, univResponse] = await Promise.all([
         supabase.from("signes_fa").select("*").ilike("signe_nom", `%${nomRecherche}%`).single(),
-        supabase.from("valeurs_universelles").select("*").ilike("signe_label", `%${nomRecherche}%`).single()
+        supabase.from("valeurs_universelles").select("*").ilike("signe_fa", `%${nomRecherche}%`).single()
       ]);
 
       if (tradResponse.data) {
@@ -104,13 +97,11 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
         setDetailsUniv(univResponse.data);
       } else {
         setDetailsUniv({
-          concept: nomRecherche,
-          combinaison: `${nomRecherche} x ${nomRecherche}`,
-          rythme: "Stable / Ancestral",
+          concept: `Principe de ${nomRecherche}`,
+          combinaison: nomTire,
           recit: "Le récit universel de ce signe nous parle de la transmission silencieuse des savoirs et de la force de l'intention.",
           revelation: "Chaque pas compte pour celui qui connaît sa direction.",
           piege: "L'impatience et le mépris des petits commencements.",
-          geste: "Main posée sur le cœur en fermant les yeux.",
           chant: "Un murmure profond montant du plexus solaire."
         });
       }
@@ -146,7 +137,7 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
     <div className="flex min-h-screen w-full items-center justify-center bg-[#FAF9F6] font-sans fixed inset-0 z-[200]">
       
       <button onClick={onBack} className="absolute top-8 left-8 flex items-center gap-2 text-stone-300 hover:text-stone-800 transition-colors z-[210]">
-        <ArrowLeft size={20} /> <span className="text-[10px] font-bold uppercase tracking-widest">Retour</span>
+        <ArrowLeft size={20} /> <span className="text-[10px] font-bold uppercase tracking-widest text-sans font-semibold">Retour</span>
       </button>
 
       {/* BLOC 1 : L'OKPELE ET LE MESSAGE */}
@@ -192,26 +183,26 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
           </div>
 
           {phase === "idle" && (
-            <p className="mt-8 text-[8px] font-bold uppercase tracking-[0.4em] text-stone-300 animate-pulse">
+            <p className="mt-8 text-[8px] font-bold uppercase tracking-[0.4em] text-stone-300 animate-pulse font-sans">
               Touchez l'Okpele pour consulter
             </p>
           )}
         </div>
       )}
 
-      {/* BLOC 2 : LE SIGNE RÉVÉLÉ (Double Vision - Strict Sans-Serif) */}
+      {/* BLOC 2 : LE SIGNE RÉVÉLÉ (Mirror Structure) */}
       {phase === "revealed" && detailsTrad && detailsUniv && (
         <div className="animate-in fade-in duration-1000 flex flex-col w-full max-w-3xl px-6 py-12 mx-auto overflow-y-auto custom-scrollbar h-full font-sans relative z-[205]">
           
-          {/* HEADER COMMUN */}
-          <header className="flex flex-col items-center text-center mb-10">
+          {/* HEADER FIXE */}
+          <header className="flex flex-col items-center text-center mb-10 shrink-0">
             <div className="flex gap-4 mb-6 opacity-80">
               <DuIdeogramme du={signe!.duGauche} />
               <DuIdeogramme du={signe!.duDroite} />
             </div>
             <h1 className="text-5xl font-bold text-[#303333] mb-4 tracking-tight">{detailsTrad.signe_nom}</h1>
             
-            {/* EDITORIAL TOGGLE */}
+            {/* TOGGLE ONGLETS */}
             <div className="flex bg-[#f4f3f2] p-1 rounded-full mt-6">
               <button 
                 onClick={() => setActiveVision("traditionnelle")}
@@ -228,7 +219,7 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
             </div>
           </header>
 
-          {/* CONTENU : TRADITION DU FÂ */}
+          {/* CORPS MIROIR : TRADITION DU FÂ */}
           {activeVision === "traditionnelle" && (
             <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
               <div className="text-center">
@@ -241,35 +232,31 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
               </section>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-[#f4f3f2] p-6 rounded-2xl">
-                  <h4 className="text-xs font-bold text-[#006b60] uppercase mb-3">Avantages</h4>
-                  <p className="text-sm text-[#5d605f] leading-snug">{detailsTrad.avantages}</p>
+                <div className="bg-[#f4f3f2] p-8 rounded-2xl">
+                  <h4 className="text-xs font-bold text-[#006b60] uppercase tracking-widest mb-3">Avantages</h4>
+                  <p className="text-sm text-[#5d605f] leading-relaxed font-light">{detailsTrad.avantages}</p>
                 </div>
-                <div className="bg-[#f4f3f2] p-6 rounded-2xl">
-                  <h4 className="text-xs font-bold text-[#a0412d] uppercase mb-3">Défis</h4>
-                  <p className="text-sm text-[#5d605f] leading-snug">{detailsTrad.defis}</p>
+                <div className="bg-[#f4f3f2] p-8 rounded-2xl">
+                  <h4 className="text-xs font-bold text-[#a0412d] uppercase tracking-widest mb-3">Défis</h4>
+                  <p className="text-sm text-[#5d605f] leading-relaxed font-light">{detailsTrad.defis}</p>
                 </div>
               </div>
 
-              <section className="bg-[#151515] text-[#faf9f8] p-8 rounded-3xl relative overflow-hidden">
-                <h3 className="text-xs font-bold uppercase mb-4 text-[#b48224]">Recommandation du Fa</h3>
+              <section className="bg-[#151515] text-[#faf9f8] p-10 rounded-3xl relative overflow-hidden">
+                <h3 className="text-xs font-bold uppercase mb-4 text-[#b48224] tracking-widest">Recommandation</h3>
                 <p className="text-xl font-medium leading-relaxed italic">{detailsTrad.recommandation}</p>
               </section>
             </div>
           )}
 
-          {/* CONTENU : VISION UNIVERSELLE */}
+          {/* CORPS MIROIR : VISION UNIVERSELLE */}
           {activeVision === "universelle" && (
             <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
               <div className="text-center">
-                <h2 className="text-3xl font-bold text-[#006b60] tracking-tight">
-                  {getUniverselTitle(detailsUniv.combinaison, detailsUniv.concept)}
-                </h2>
-                {detailsUniv.rythme && (
-                  <div className="flex justify-center gap-4 mt-3 text-xs uppercase tracking-widest text-[#797b7a]">
-                    <span>Rythme: {detailsUniv.rythme}</span>
-                  </div>
-                )}
+                <p className="text-2xl font-medium italic text-[#006b60]">"{detailsUniv.concept}"</p>
+                <p className="mt-2 text-xs font-bold uppercase tracking-widest text-[#797b7a] opacity-60">
+                  {detailsUniv.combinaison}
+                </p>
               </div>
 
               <section>
@@ -278,45 +265,25 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
               </section>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-[#eefbff] p-6 rounded-2xl">
-                  <h4 className="text-xs font-bold text-[#2e5b65] uppercase mb-3">Révélation</h4>
-                  <p className="text-sm text-[#38666f] leading-snug">{detailsUniv.revelation}</p>
+                <div className="bg-[#f4f3f2] p-8 rounded-2xl">
+                  <h4 className="text-xs font-bold text-[#006b60] uppercase tracking-widest mb-3">Révélation</h4>
+                  <p className="text-sm text-[#5d605f] leading-relaxed font-light">{detailsUniv.revelation}</p>
                 </div>
-                <div className="bg-[#fff7f6] p-6 rounded-2xl">
-                  <h4 className="text-xs font-bold text-[#721f0f] uppercase mb-3">Piège</h4>
-                  <p className="text-sm text-[#913523] leading-snug">{detailsUniv.piege}</p>
+                <div className="bg-[#f4f3f2] p-8 rounded-2xl">
+                  <h4 className="text-xs font-bold text-[#a0412d] uppercase tracking-widest mb-3">Piège</h4>
+                  <p className="text-sm text-[#5d605f] leading-relaxed font-light">{detailsUniv.piege}</p>
                 </div>
               </div>
 
-              <section className="flex flex-col gap-4">
-                {detailsUniv.geste && (
-                  <div className="bg-[#f4f3f2] p-6 rounded-xl flex items-start gap-4">
-                    <Hand className="text-[#a0412d] mt-1" size={20} />
-                    <div>
-                      <h4 className="text-xs font-bold uppercase mb-1 text-[#5d605f]">Le Geste</h4>
-                      <p className="text-sm text-[#303333] font-light">{detailsUniv.geste}</p>
-                    </div>
-                  </div>
-                )}
-                {detailsUniv.chant && (
-                  <div className="bg-[#f4f3f2] p-6 rounded-xl flex items-start gap-4">
-                    <Music className="text-[#006b60] mt-1" size={20} />
-                    <div>
-                      <h4 className="text-xs font-bold uppercase mb-1 text-[#5d605f]">Le Chant</h4>
-                      <p className="text-sm text-[#303333] font-light">{detailsUniv.chant}</p>
-                    </div>
-                  </div>
-                )}
+              <section className="bg-[#151515] text-[#faf9f8] p-10 rounded-3xl relative overflow-hidden">
+                <h3 className="text-xs font-bold uppercase mb-4 text-[#b48224] tracking-widest">Inspiration</h3>
+                <p className="text-xl font-medium leading-relaxed italic">{detailsUniv.chant}</p>
               </section>
             </div>
           )}
 
           {/* ACTION FOOTER */}
-          <footer className="mt-20 pt-10 border-t border-stone-100 flex flex-col items-center gap-8 pb-32">
-            <div className="text-center">
-              <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-stone-300 mb-2">Sceller ma Sagesse</p>
-            </div>
-            
+          <footer className="mt-20 pt-10 border-t border-stone-100 flex flex-col items-center gap-8 pb-32 shrink-0">
             <div className="flex items-center gap-8">
               <button 
                 onClick={() => setIsRecording(!isRecording)}
@@ -332,7 +299,7 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
                   className="flex items-center gap-4 bg-[#a0412d] text-white px-12 py-5 rounded-full font-bold shadow-2xl hover:bg-[#833321] transition-all hover:-translate-y-1 active:translate-y-0 disabled:opacity-50"
                 >
                   <Send size={20} />
-                  <span className="text-[11px] uppercase tracking-[0.2em]">
+                  <span className="text-[11px] uppercase tracking-[0.2em] font-sans">
                     {isTransmitting ? "Scellage..." : "Transmettre"}
                   </span>
                 </button>
