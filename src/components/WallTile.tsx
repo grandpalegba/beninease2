@@ -75,12 +75,15 @@ const WallTile = memo(({ data, index, isSelected, onClick }: Props) => {
     
   const videoSeed = isProfile ? (data as Profile).photoIndex : (data as Consultation).videoSeed;
   
-  // Logique d'URL d'image : storage, public ou fallback statique
+  // Logique d'URL d'image : storage Supabase
+  const storageBaseUrl = "https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/profile-photos/";
   let imageUrl = isProfile && (data as Profile).imageUrl ? (data as Profile).imageUrl : "";
-  if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
-    imageUrl = `/profiles/${imageUrl}`;
-  }
-  if (!imageUrl) {
+  
+  if (imageUrl) {
+    if (!imageUrl.startsWith('http')) {
+      imageUrl = `${storageBaseUrl}${imageUrl}`;
+    }
+  } else {
     imageUrl = PROFILE_PHOTOS[videoSeed % PROFILE_PHOTOS.length];
   }
 

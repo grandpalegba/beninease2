@@ -65,9 +65,21 @@ const ConsultationModal = ({ consultation, onClose }: Props) => {
     }, 300);
   };
 
-  const bokononPhoto = consultation
-    ? PROFILE_PHOTOS[consultation.videoSeed % PROFILE_PHOTOS.length]
-    : null;
+  const isProfile = consultation && 'firstName' in consultation;
+  const storageBaseUrl = "https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/profile-photos/";
+  
+  let bokononPhoto = null;
+  if (consultation) {
+    if (isProfile && consultation.imageUrl) {
+      bokononPhoto = consultation.imageUrl.startsWith('http') 
+        ? consultation.imageUrl 
+        : `${storageBaseUrl}${consultation.imageUrl}`;
+    } else {
+      const videoSeed = isProfile ? consultation.photoIndex : consultation.videoSeed;
+      bokononPhoto = PROFILE_PHOTOS[videoSeed % PROFILE_PHOTOS.length];
+    }
+  }
+  
   const casePhoto = consultation?.lifeCase?.photoUrl ?? null;
 
   const handleDragEnd = (_: unknown, info: PanInfo) => {

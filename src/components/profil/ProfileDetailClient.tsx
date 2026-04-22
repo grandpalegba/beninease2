@@ -27,12 +27,14 @@ export default function ProfileDetailClient({ profile }: { profile: Profile }) {
   const fullName = `${profile.firstName} ${profile.lastName}`.trim() || "Profil BeninEase";
   
   // Image path logic
-// ... (imageUrl logic stays the same)
+  const storageBaseUrl = "https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/profile-photos/";
   let profilePhoto = profile.imageUrl || "";
-  if (profilePhoto && !profilePhoto.startsWith('http') && !profilePhoto.startsWith('/')) {
-    profilePhoto = `/profiles/${profilePhoto}`;
-  }
-  if (!profilePhoto) {
+  
+  if (profilePhoto) {
+    if (!profilePhoto.startsWith('http')) {
+      profilePhoto = `${storageBaseUrl}${profilePhoto}`;
+    }
+  } else {
     profilePhoto = PROFILE_PHOTOS[profile.photoIndex % PROFILE_PHOTOS.length];
   }
 
