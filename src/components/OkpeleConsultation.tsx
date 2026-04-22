@@ -318,8 +318,8 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
           )}
 
           {/* MODULE : ARBITRAGE FINAL (Compact Single-Screen) */}
-          <div className="mt-32 pt-20 border-t border-[#f4f3f2] pb-32">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-stretch">
+          <div className="mt-32 pt-16 border-t border-[#f4f3f2] pb-32">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-stretch">
               
               {/* À GAUCHE (La Carte Originale) */}
               <div className="flex flex-col h-full">
@@ -329,7 +329,7 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
               </div>
 
               {/* À DROITE (Arbitrage final) */}
-              <div className="flex flex-col h-full space-y-4">
+              <div className="flex flex-col h-full space-y-3">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Arbitrage final</p>
                 
                 <div className="grid grid-cols-1 gap-2">
@@ -340,14 +340,14 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
                       <button 
                         key={i}
                         onClick={() => setFinalDecision(opt)}
-                        className={`p-4 rounded-2xl text-left transition-all border-2 flex items-center justify-between relative
+                        className={`p-3.5 rounded-xl text-left transition-all border-2 flex items-center justify-between relative
                           ${isSelected 
                             ? 'bg-white border-[#22C55E] shadow-sm' 
                             : 'bg-[#f4f3f2] border-transparent opacity-60 hover:opacity-100'}
                         `}
                       >
                         <span className="text-sm font-semibold text-[#303333]">{opt}</span>
-                        {isSelected && <CheckCircle2 size={16} className="text-[#22C55E]" />}
+                        {isSelected && <CheckCircle2 size={14} className="text-[#22C55E]" />}
                       </button>
                     );
                   })}
@@ -355,7 +355,7 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
 
                 <div 
                   onClick={() => fileInputRef.current?.click()}
-                  className="bg-[#f4f3f2] border-2 border-dashed border-stone-200 rounded-3xl p-4 flex items-center gap-4 group cursor-pointer hover:border-[#b48224] transition-colors relative"
+                  className="bg-[#f4f3f2] border-2 border-dashed border-stone-200 rounded-2xl p-3.5 flex items-center gap-4 group cursor-pointer hover:border-[#b48224] transition-colors relative"
                 >
                   <input 
                     type="file" 
@@ -365,31 +365,26 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
                     className="hidden" 
                   />
                   
-                  <div className={`w-10 h-10 rounded-full bg-white flex items-center justify-center transition-colors shadow-sm ${videoUrl ? 'text-[#22C55E]' : 'text-stone-400 group-hover:text-[#b48224]'}`}>
+                  <div className={`w-9 h-9 rounded-full bg-white flex items-center justify-center transition-colors shadow-sm ${videoUrl ? 'text-[#22C55E]' : 'text-stone-400 group-hover:text-[#b48224]'}`}>
                     {isUploading ? (
-                      <RefreshCw className="animate-spin" size={20} />
+                      <RefreshCw className="animate-spin" size={18} />
                     ) : videoUrl ? (
-                      <Check size={20} />
+                      <Check size={18} />
                     ) : (
-                      <Video size={20} />
+                      <Video size={18} />
                     )}
                   </div>
                   <div className="flex-1">
                     <p className="text-[10px] font-bold text-[#303333] uppercase tracking-widest">Partager votre sagesse</p>
                     <p className="text-[9px] text-stone-400 mt-0.5">{videoUrl ? "Vidéo prête" : "Vidéo courte"}</p>
                   </div>
-                  {videoUrl && (
-                    <div className="bg-[#22C55E] p-1 rounded-full text-white">
-                      <Check size={12} />
-                    </div>
-                  )}
                 </div>
 
-                <div className="mt-auto pt-4">
+                <div className="mt-auto pt-2">
                   <button 
                     onClick={handleTransmit}
                     disabled={!canSubmit || isTransmitting}
-                    className={`w-full py-5 rounded-full font-bold text-[10px] uppercase tracking-[0.3em] transition-all shadow-xl flex items-center justify-center gap-4
+                    className={`w-full py-4 rounded-full font-bold text-[10px] uppercase tracking-[0.3em] transition-all shadow-xl flex items-center justify-center gap-4
                       ${!canSubmit ? 'bg-stone-100 text-stone-300 cursor-not-allowed' : 'bg-[#b48224] text-white hover:opacity-90 hover:-translate-y-0.5 active:translate-y-0'}
                     `}
                   >
@@ -408,7 +403,7 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
             </div>
           </div>
         </div>
-      )}
+      );
 
       <style jsx>{`
         .custom-scrollbar::-webkit-scrollbar {
