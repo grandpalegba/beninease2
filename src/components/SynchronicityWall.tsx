@@ -53,7 +53,18 @@ const SynchronicityWall = () => {
             inset={8}
             thickness={2}
           >
-            <div
+            <motion.div
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.005,
+                  }
+                }
+              }}
+              initial="hidden"
+              animate="visible"
               className="grid w-full h-full bg-background gap-[1px]"
               style={{ gridTemplateColumns: "repeat(16, 1fr)" }}
             >
@@ -66,7 +77,7 @@ const SynchronicityWall = () => {
                   onClick={cell.consultation ? handleSelect : undefined}
                 />
               ))}
-            </div>
+            </motion.div>
           </BeninFrame>
         </div>
 

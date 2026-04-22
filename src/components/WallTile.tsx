@@ -14,23 +14,37 @@ interface Props {
 
 const BENIN_ACCENTS = ["#008751", "#fcd116", "#e8112d"];
 
+const SAND_VARIANTS = [
+  "#f3eee3", // beige clair
+  "#e8d5b7", // tan
+  "#d4a574", // ocre
+  "#c5a059", // dark ocre
+  "#a8501f", // sienne brûlée
+  "#833321", // terracotta
+  "#f7f1e6", // cream
+  "#d2b48c", // tan soft
+];
+
 const WallTile = memo(({ consultation, index, isSelected, onClick }: Props) => {
   // --- ÉTAT VIDE (Sable) ---
   if (!consultation) {
+    const sandColor = SAND_VARIANTS[index % SAND_VARIANTS.length];
     return (
       <motion.div
-        initial={{ opacity: 0, scale: 0.5 }}
+        variants={{
+          hidden: { opacity: 0, scale: 0.5 },
+          visible: { opacity: 1, scale: 1 }
+        }}
         animate={{ 
-          opacity: 1, 
-          scale: 1,
-          backgroundColor: ["#f3eee3", "#e8d5b7", "#d4a574", "#f3eee3"]
+          y: [0, -2.5, 0, 2.5, 0],
+          x: [0, 1.2, 0, -1.2, 0]
         }}
         transition={{
-          opacity: { duration: 0.5, delay: index * 0.01 },
-          scale: { duration: 0.5, delay: index * 0.01 },
-          backgroundColor: { duration: 15, repeat: Infinity, ease: "linear" }
+          y: { duration: 12 + (index % 7), repeat: Infinity, ease: "easeInOut", delay: (index % 10) * 0.45 },
+          x: { duration: 14 + (index % 6), repeat: Infinity, ease: "easeInOut", delay: (index % 10) * 0.45 },
         }}
         className="relative aspect-square overflow-hidden border-[0.5px] border-black/5"
+        style={{ backgroundColor: sandColor }}
       >
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="w-[2px] h-[2px] bg-[#d4a574] opacity-30 rounded-full" />
@@ -49,23 +63,22 @@ const WallTile = memo(({ consultation, index, isSelected, onClick }: Props) => {
   return (
     <motion.button
       layout
+      variants={{
+        hidden: { opacity: 0, scale: 0.5 },
+        visible: { opacity: 1, scale: 1 }
+      }}
       onClick={() => onClick?.(consultation)}
       className="relative aspect-square overflow-hidden rounded-[2px] cursor-pointer group bg-neutral-800 select-none border-[0.5px] border-border shadow-none"
-      initial={{ opacity: 0, scale: 0.5 }}
       animate={{
-        opacity: 1,
-        scale: 1,
-        y: [0, -2, 0, 2, 0],
-        x: [0, 1, 0, -1, 0]
+        y: [0, -2.5, 0, 2.5, 0],
+        x: [0, 1.2, 0, -1.2, 0]
       }}
       transition={{
-        y: { duration: 10 + (index % 10), repeat: Infinity, ease: "easeInOut", delay: index * 0.01 },
-        x: { duration: 12 + (index % 8), repeat: Infinity, ease: "easeInOut", delay: index * 0.01 },
-        opacity: { duration: 0.5, delay: index * 0.01 },
-        scale: { duration: 0.5, delay: index * 0.01 }
+        y: { duration: 12 + (index % 7), repeat: Infinity, ease: "easeInOut", delay: (index % 10) * 0.45 },
+        x: { duration: 14 + (index % 6), repeat: Infinity, ease: "easeInOut", delay: (index % 10) * 0.45 },
       }}
       whileHover={{ 
-        scale: 1.2, 
+        scale: 1.3, 
         zIndex: 20,
         y: 0,
         x: 0,
@@ -77,7 +90,7 @@ const WallTile = memo(({ consultation, index, isSelected, onClick }: Props) => {
         src={photo}
         alt={consultation.author}
         loading="lazy"
-        animate={{ scale: [1, 1.05, 1] }}
+        animate={{ scale: [1, 1.04, 1] }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
         className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none sepia-[0.1] saturate-[0.9] group-hover:sepia-0 group-hover:saturate-100 transition-all duration-500"
       />
