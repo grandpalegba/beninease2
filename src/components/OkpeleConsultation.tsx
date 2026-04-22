@@ -99,11 +99,13 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
 
   const fetchFaDetails = async (nomTire: string) => {
     try {
-      // Nettoyage radical : enlève les accents éventuels du générateur et les espaces superflus
+      // Normalisation radicale pour correspondre à la base (sans accents)
       const searchKey = nomTire
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "")
         .trim();
+
+      console.log("Tentative de fetch pour :", searchKey);
 
       const [tradRes, univRes] = await Promise.all([
         supabase.from("signes_fa")
@@ -112,14 +114,23 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
           .single(),
         supabase.from("valeurs_universelles")
           .select("*")
-          .ilike("signe_fa", searchKey)
+          .ilike("signe_fa", searchKey) // Recherche exacte insensible à la casse
           .single()
       ]);
 
-      if (tradRes.data) setDetailsTrad(tradRes.data);
-      if (univRes.data) setDetailsUniv(univRes.data);
+      if (tradRes.data) {
+        console.log("Tradition reçue :", tradRes.data.signe_nom);
+        setDetailsTrad(tradRes.data);
+      }
+      
+      if (univRes.data) {
+        console.log("Universalité reçue :", univRes.data.valeur);
+        setDetailsUniv(univRes.data);
+      } else {
+        console.warn("Universalité vide pour :", searchKey, univRes.error);
+      }
     } catch (err) {
-      console.error("Fetch error:", err);
+      console.error("Erreur critique fetch :", err);
     }
   };
 
@@ -129,6 +140,7 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
     setSigne(result);
     setPhase("brewing");
 
+    // Déclenchement immédiat de la récupération
     await fetchFaDetails(result.nom);
 
     setTimeout(() => {
