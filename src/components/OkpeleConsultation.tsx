@@ -8,13 +8,17 @@ import { Mic, Send, RefreshCw, ArrowLeft } from "lucide-react";
 
 // --- SOUS-COMPOSANTS ---
 
-function DuIdeogramme({ du }: { du: DuMajeur }) {
+function DuIdeogramme({ du, large = false }: { du: DuMajeur, large?: boolean }) {
+  const dotSize = large ? "w-2.5 h-2.5" : "w-1.5 h-1.5";
+  const gapSize = large ? "gap-2.5" : "gap-1.5";
+  const rowHeight = large ? "h-4" : "h-2.5";
+
   return (
-    <div className="flex flex-col gap-1.5 items-center">
+    <div className={`flex flex-col ${gapSize} items-center`}>
       {du.pattern.map((v, i) => (
-        <div key={i} className="flex gap-1.5 items-center justify-center h-2.5">
+        <div key={i} className={`flex ${gapSize} items-center justify-center ${rowHeight}`}>
           {Array.from({ length: v }).map((_, j) => (
-            <span key={j} className="w-1.5 h-1.5 rounded-full bg-[#303333]" />
+            <span key={j} className={`${dotSize} rounded-full bg-[#303333]`} />
           ))}
         </div>
       ))}
@@ -190,20 +194,19 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
         </div>
       )}
 
-      {/* BLOC 2 : LE SIGNE RÉVÉLÉ (Mirror Structure) */}
+      {/* BLOC 2 : LE SIGNE RÉVÉLÉ (Épuration du Header & Miroir Restructuré) */}
       {phase === "revealed" && detailsTrad && detailsUniv && (
         <div className="animate-in fade-in duration-1000 flex flex-col w-full max-w-3xl px-6 py-12 mx-auto overflow-y-auto custom-scrollbar h-full font-sans relative z-[205]">
           
-          {/* HEADER FIXE */}
+          {/* HEADER FIXE (Idéogrammes Uniquement) */}
           <header className="flex flex-col items-center text-center mb-10 shrink-0">
-            <div className="flex gap-4 mb-6 opacity-80">
-              <DuIdeogramme du={signe!.duGauche} />
-              <DuIdeogramme du={signe!.duDroite} />
+            <div className="flex gap-8 mb-4 opacity-100 scale-[1.35]">
+              <DuIdeogramme du={signe!.duGauche} large />
+              <DuIdeogramme du={signe!.duDroite} large />
             </div>
-            <h1 className="text-5xl font-bold text-[#303333] mb-4 tracking-tight">{detailsTrad.signe_nom}</h1>
             
-            {/* TOGGLE ONGLETS */}
-            <div className="flex bg-[#f4f3f2] p-1 rounded-full mt-6">
+            {/* SÉLECTEUR D'ONGLETS */}
+            <div className="flex bg-[#f4f3f2] p-1 rounded-full mt-10">
               <button 
                 onClick={() => setActiveVision("traditionnelle")}
                 className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${activeVision === "traditionnelle" ? "bg-[#a0412d] text-white shadow-md" : "text-[#5d605f] hover:text-[#303333]"}`}
@@ -219,11 +222,12 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
             </div>
           </header>
 
-          {/* CORPS MIROIR : TRADITION DU FÂ */}
+          {/* CONTENU : TRADITION DU FÂ */}
           {activeVision === "traditionnelle" && (
             <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
               <div className="text-center">
-                <p className="text-2xl font-medium italic text-[#a0412d]">"{detailsTrad.devise}"</p>
+                <h2 className="text-5xl font-bold text-[#303333] mb-4 tracking-tight">{detailsTrad.signe_nom}</h2>
+                <p className="text-xl font-medium italic text-[#a0412d]">"{detailsTrad.devise}"</p>
               </div>
               
               <section>
@@ -249,12 +253,12 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
             </div>
           )}
 
-          {/* CORPS MIROIR : VISION UNIVERSELLE */}
+          {/* CONTENU : VISION UNIVERSELLE */}
           {activeVision === "universelle" && (
             <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
               <div className="text-center">
-                <p className="text-2xl font-medium italic text-[#006b60]">"{detailsUniv.concept}"</p>
-                <p className="mt-2 text-xs font-bold uppercase tracking-widest text-[#797b7a] opacity-60">
+                <h2 className="text-5xl font-bold text-[#006b60] mb-4 tracking-tight">{detailsUniv.concept}</h2>
+                <p className="text-xs font-bold uppercase tracking-widest text-[#797b7a] opacity-60">
                   {detailsUniv.combinaison}
                 </p>
               </div>
