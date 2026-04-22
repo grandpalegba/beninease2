@@ -104,6 +104,9 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
         .replace(/[\u0300-\u036f]/g, "")
         .trim();
 
+      const words = searchKey.split(' ');
+      const fuzzyPattern = `%${words.join('%')}%`;
+
       const [tradRes, univRes] = await Promise.all([
         supabase.from("signes_fa")
           .select("*")
@@ -111,12 +114,12 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
           .single(),
         supabase.from("valeurs_universelles")
           .select("*")
-          .ilike("signe_fa", searchKey)
-          .single()
+          .or(`signe_fa.ilike.${fuzzyPattern},valeur.ilike.${fuzzyPattern}`)
+          .limit(1)
       ]);
 
       if (tradRes.data) setDetailsTrad(tradRes.data);
-      if (univRes.data) setDetailsUniv(univRes.data);
+      if (univRes.data && univRes.data.length > 0) setDetailsUniv(univRes.data[0]);
     } catch (err) {
       console.error("Fetch error:", err);
     }
@@ -214,7 +217,7 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
 
       {/* BLOC 2 : LE SIGNE RÉVÉLÉ */}
       {phase === "revealed" && (
-        <div className="animate-in fade-in duration-1000 flex flex-col w-full max-w-3xl px-6 py-12 mx-auto overflow-y-auto custom-scrollbar h-full font-sans relative z-[205]">
+        <div className="animate-in fade-in duration-1000 flex flex-col w-full max-w-4xl px-6 py-12 mx-auto overflow-y-auto custom-scrollbar h-full font-sans relative z-[205]">
           
           {/* HEADER FIXE */}
           <header className="flex flex-col items-center text-center mb-10 shrink-0">
@@ -301,84 +304,88 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
             </div>
           )}
 
-          {/* MODULE : MA DÉCISION FINALE */}
-          <div className="mt-24 pt-16 border-t border-[#f4f3f2] space-y-12 pb-32">
-            <header className="text-center">
-              <h3 className="text-xs font-bold uppercase tracking-[0.3em] text-[#b0b2b1] mb-8">Ma Décision Finale</h3>
+          {/* MODULE : MA DÉCISION FINALE (Layout Split 50/50) */}
+          <div className="mt-32 pt-20 border-t border-[#f4f3f2] pb-32">
+            <h3 className="text-[10px] font-bold uppercase tracking-[0.4em] text-[#b0b2b1] mb-12 text-center">Ma Décision Finale</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
               
-              <div className="flex justify-center items-center gap-6 mb-12">
-                <div className="w-24 h-24 rounded-2xl overflow-hidden shadow-lg border-2 border-white relative group">
+              {/* COLONNE GAUCHE : LE RAPPEL */}
+              <div className="space-y-8">
+                <div className="aspect-square w-full rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-stone-100 relative group">
                   <img src={caseData.image} alt="Le Cas" className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-black/5"></div>
+                </div>
+                
+                <div className="bg-[#f4f3f2] p-6 rounded-2xl flex items-center gap-4">
                   <button 
                     onClick={toggleAudio}
-                    className="absolute inset-0 bg-black/40 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="w-12 h-12 rounded-full bg-[#303333] text-white flex items-center justify-center hover:scale-110 transition-transform"
                   >
-                    {isPlayingAudio ? <Pause size={24} /> : <Play size={24} />}
+                    {isPlayingAudio ? <Pause size={20} /> : <Play size={20} />}
                   </button>
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-[#a0412d]">Votre récit</p>
+                    <p className="text-xs text-[#303333] font-medium">(1 min max)</p>
+                  </div>
                   <audio ref={audioRef} src={caseData.audio} onEnded={() => setIsPlayingAudio(false)} className="hidden" />
                 </div>
-                <div className="text-left">
-                  <span className="text-[10px] font-bold text-[#a0412d] uppercase tracking-widest font-sans">Rappel du Cas</span>
-                  <p className="text-[#303333] font-medium leading-tight max-w-[200px] mt-1 line-clamp-2">"Consultation scellée par le Fâ"</p>
+
+                <div className="bg-stone-50 border border-stone-100 p-6 rounded-2xl">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-[#797b7a] mb-2">Intuition de départ</p>
+                  <p className="text-sm text-[#303333] font-medium italic">"{caseData[`option${caseData.selectedOption}`]}"</p>
                 </div>
               </div>
-            </header>
 
-            <div className="grid grid-cols-1 gap-4">
-              {[1, 2, 3, 4].map((num) => {
-                const opt = caseData[`option${num}`];
-                if (!opt) return null;
-                const isIntuition = caseData.selectedOption === num;
-                const isSelected = finalDecision === opt;
+              {/* COLONNE DROITE : L'ARBITRAGE */}
+              <div className="space-y-8">
+                <div className="grid grid-cols-1 gap-4">
+                  {[1, 2, 3, 4].map((num) => {
+                    const opt = caseData[`option${num}`];
+                    if (!opt) return null;
+                    const isSelected = finalDecision === opt;
 
-                return (
-                  <button 
-                    key={num}
-                    onClick={() => setFinalDecision(opt)}
-                    className={`p-6 rounded-2xl text-left transition-all relative overflow-hidden border-2 font-sans
-                      ${isSelected ? 'bg-[#303333] border-[#303333] text-white shadow-xl -translate-y-1' : 'bg-[#f4f3f2] border-transparent text-[#303333] hover:bg-stone-200'}
-                    `}
-                  >
-                    <div className="flex items-center justify-between gap-4">
-                      <span className="text-sm font-medium pr-10">{opt}</span>
-                      <div className="flex items-center gap-3">
-                        {isIntuition && (
-                          <span className={`text-[8px] font-bold uppercase tracking-widest px-3 py-1 rounded-full ${isSelected ? 'bg-white/20 text-white' : 'bg-amber-100 text-amber-700'}`}>
-                            Intuition
-                          </span>
-                        )}
-                        {isSelected && <CheckCircle2 size={20} className="text-amber-400" />}
-                      </div>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
+                    return (
+                      <button 
+                        key={num}
+                        onClick={() => setFinalDecision(opt)}
+                        className={`p-6 rounded-2xl text-left transition-all border-2 
+                          ${isSelected 
+                            ? 'bg-white border-[#b48224] text-[#303333] shadow-lg -translate-y-1 scale-[1.02]' 
+                            : 'bg-[#f4f3f2] border-transparent text-[#303333]/60 hover:bg-stone-200'}
+                        `}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className={`text-sm font-semibold ${isSelected ? 'text-[#303333]' : ''}`}>{opt}</span>
+                          {isSelected && <CheckCircle2 size={18} className="text-[#b48224]" />}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
 
-            <div className="pt-10 flex flex-col items-center gap-8">
-              <button 
-                onClick={handleTransmit}
-                disabled={!finalDecision || isTransmitting}
-                className={`w-full max-w-sm py-6 rounded-full font-bold text-sm uppercase tracking-[0.2em] transition-all shadow-2xl flex items-center justify-center gap-4 font-sans
-                  ${!finalDecision ? 'bg-stone-100 text-stone-300 cursor-not-allowed' : 'bg-[#a0412d] text-white hover:bg-[#833321] hover:-translate-y-1 active:translate-y-0'}
-                `}
-              >
-                {isTransmitting ? (
-                  <>
-                    <RefreshCw className="animate-spin" size={18} />
-                    <span>Scellage en cours...</span>
-                  </>
-                ) : (
-                  <>
-                    <Send size={18} />
-                    <span>Sceller la décision</span>
-                  </>
-                )}
-              </button>
-              
-              <p className="text-[10px] text-stone-300 uppercase tracking-widest text-center font-sans">
-                Une fois scellée, la sagesse du Fâ est immuable.
-              </p>
+                <button 
+                  onClick={handleTransmit}
+                  disabled={!finalDecision || isTransmitting}
+                  className={`w-full py-8 rounded-full font-bold text-xs uppercase tracking-[0.3em] transition-all shadow-2xl flex items-center justify-center gap-4
+                    ${!finalDecision ? 'bg-stone-100 text-stone-300 cursor-not-allowed' : 'bg-[#a0412d] text-white hover:bg-[#833321] hover:-translate-y-1 active:translate-y-0'}
+                  `}
+                >
+                  {isTransmitting ? (
+                    <RefreshCw className="animate-spin" size={20} />
+                  ) : (
+                    <>
+                      <Send size={20} />
+                      <span>Sceller la décision</span>
+                    </>
+                  )}
+                </button>
+                
+                <p className="text-[9px] text-stone-400 uppercase tracking-widest text-center">
+                  L'oracle a parlé. Votre chemin est tracé.
+                </p>
+              </div>
+
             </div>
           </div>
         </div>
