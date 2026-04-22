@@ -317,8 +317,17 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
             </div>
           )}
 
-          {/* MODULE : ARBITRAGE FINAL (Compact Single-Screen) */}
-          <div className="mt-32 pt-16 border-t border-[#f4f3f2] pb-32 flex flex-col items-center">
+          {/* MODULE : CONSULTATION (Arbitrage Final) */}
+          <div className="mt-32 pt-16 border-t border-[#f4f3f2] pb-32">
+            
+            {/* TITRES DE SECTION */}
+            <div className="flex flex-col items-center mb-16 text-center">
+              <h3 className="text-3xl font-bold text-[#303333] mb-2 tracking-tight">Consultation</h3>
+              <p className="text-sm text-stone-500 font-light max-w-md">
+                Au regard du signe révélé, déterminez l'orientation la plus juste pour ce cas.
+              </p>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-stretch w-full">
               
               {/* À GAUCHE (La Carte Originale) */}
@@ -328,9 +337,10 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
                 </div>
               </div>
 
-              {/* À DROITE (L'Arbitrage Épuré) */}
-              <div className="flex flex-col h-full justify-between py-2">
+              {/* À DROITE (Les 6 Éléments de l'Arbitrage) */}
+              <div className="flex flex-col h-full justify-between">
                 
+                {/* LES 4 OPTIONS */}
                 <div className="flex flex-col gap-2.5">
                   {caseData.options.map((opt: string, i: number) => {
                     const isSelected = finalDecision === opt;
@@ -352,9 +362,10 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
                   })}
                 </div>
 
+                {/* ZONE VIDÉO (TÉLÉCHARGER) */}
                 <div 
                   onClick={() => fileInputRef.current?.click()}
-                  className="bg-[#f4f3f2] border-2 border-dashed border-stone-200 rounded-[1.2rem] p-3.5 flex items-center gap-4 group cursor-pointer hover:border-[#b48224] transition-colors relative"
+                  className="bg-[#f4f3f2] border-2 border-dashed border-stone-200 rounded-[1.2rem] p-3 flex items-center gap-4 group cursor-pointer hover:border-[#b48224] transition-colors relative"
                 >
                   <input 
                     type="file" 
@@ -364,41 +375,40 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
                     className="hidden" 
                   />
                   
-                  <div className={`w-9 h-9 rounded-full bg-white flex items-center justify-center transition-colors shadow-sm ${videoUrl ? 'text-[#22C55E]' : 'text-stone-400 group-hover:text-[#b48224]'}`}>
+                  <div className={`w-8 h-8 rounded-full bg-white flex items-center justify-center transition-colors shadow-sm ${videoUrl ? 'text-[#22C55E]' : 'text-stone-400 group-hover:text-[#b48224]'}`}>
                     {isUploading ? (
-                      <RefreshCw className="animate-spin" size={18} />
+                      <RefreshCw className="animate-spin" size={16} />
                     ) : videoUrl ? (
-                      <Check size={18} />
+                      <Check size={16} />
                     ) : (
-                      <Video size={18} />
+                      <Video size={16} />
                     )}
                   </div>
                   <div className="flex-1">
-                    <p className="text-[10px] font-bold text-[#303333] uppercase tracking-widest">Télécharger</p>
-                    <p className="text-[9px] text-stone-400 mt-0.5">{videoUrl ? "Vidéo prête" : "Video de 64 secondes maximum"}</p>
+                    <p className="text-[9px] font-bold text-[#303333] uppercase tracking-widest">Télécharger</p>
+                    <p className="text-[8px] text-stone-400 mt-0.5">{videoUrl ? "Vidéo prête" : "Video de 64 secondes maximum"}</p>
                   </div>
                 </div>
-              </div>
-            </div>
 
-            {/* BOUTON FINAL CENTRÉ EN BAS */}
-            <div className="mt-16 w-full max-w-md">
-              <button 
-                onClick={handleTransmit}
-                disabled={!canSubmit || isTransmitting}
-                className={`w-full py-6 rounded-full font-bold text-[10px] uppercase tracking-[0.3em] transition-all shadow-xl flex items-center justify-center gap-4
-                  ${!canSubmit ? 'bg-stone-100 text-stone-300 cursor-not-allowed' : 'bg-[#b48224] text-white hover:opacity-90 hover:-translate-y-1 active:translate-y-0'}
-                `}
-              >
-                {isTransmitting ? (
-                  <RefreshCw className="animate-spin" size={18} />
-                ) : (
-                  <>
-                    <Send size={18} />
-                    <span>Transmettre ma sagesse</span>
-                  </>
-                )}
-              </button>
+                {/* BOUTON FINAL */}
+                <button 
+                  onClick={handleTransmit}
+                  disabled={!canSubmit || isTransmitting}
+                  className={`w-full py-5 rounded-full font-bold text-[10px] uppercase tracking-[0.3em] transition-all shadow-xl flex items-center justify-center gap-4
+                    ${!canSubmit ? 'bg-stone-100 text-stone-300 cursor-not-allowed' : 'bg-[#b48224] text-white hover:opacity-90 hover:-translate-y-1 active:translate-y-0'}
+                  `}
+                >
+                  {isTransmitting ? (
+                    <RefreshCw className="animate-spin" size={18} />
+                  ) : (
+                    <>
+                      <Send size={18} />
+                      <span>Transmettre ma guidance</span>
+                    </>
+                  )}
+                </button>
+
+              </div>
             </div>
           </div>
         </div>
