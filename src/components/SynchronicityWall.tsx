@@ -3,38 +3,29 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { RotateCcw } from "lucide-react";
-import { useConsultations } from "@/hooks/useConsultations";
+import { useProfiles, type Profile } from "@/hooks/useProfiles";
 import { useLivingOrder } from "@/hooks/useLivingOrder";
 import WallTile from "./WallTile";
 import ConsultationModal from "./ConsultationModal";
 import BeninFrame from "./BeninFrame";
 
 /**
- * SynchronicityWall - A living gallery of consultations.
- * Cells periodically swap positions to create a "living" community effect.
+ * SynchronicityWall - A living gallery of profiles.
+ * Displays 64 profiles repeated 4 times to fill a 16x16 grid.
  */
 const SynchronicityWall = () => {
-  const { data: consultations = [], isLoading } = useConsultations();
-  const [selected, setSelected] = useState<Consultation | null>(null);
+  const { data: profiles = [], isLoading } = useProfiles();
+  const [selected, setSelected] = useState<any | null>(null);
   const [revealed, setRevealed] = useState<Set<string>>(new Set());
   
   // Le chef d'orchestre du mouvement
   const order = useLivingOrder(256, 6, 2200);
 
-  // Diagnostic visuel
-  console.log("Ordre du mur:", order.slice(0, 5), "...");
-
-  // Optimisation du rendu : on crée une Map pour un accès rapide aux consultations par coordonnées
-  const consultationMap = new Map<string, Consultation>();
-  consultations.forEach(c => {
-    consultationMap.set(`${c.rowIndex}-${c.colIndex}`, c);
-  });
-
-  const handleSelect = (c: Consultation) => {
-    setSelected(c);
+  const handleSelect = (data: any) => {
+    setSelected(data);
     setRevealed((prev) => {
       const next = new Set(prev);
-      next.add(c.id);
+      next.add(data.id);
       return next;
     });
   };
@@ -71,17 +62,16 @@ const SynchronicityWall = () => {
               style={{ gridTemplateColumns: "repeat(16, 1fr)" }}
             >
               {order.map((originalIndex) => {
-                const row = Math.floor(originalIndex / 16);
-                const col = originalIndex % 16;
-                const consultation = consultationMap.get(`${row}-${col}`) || null;
+                // Modulo ensures 64 profiles are repeated 4 times to fill 256 slots
+                const profile = profiles.length > 0 ? profiles[originalIndex % profiles.length] : null;
 
                 return (
                   <WallTile
                     key={`tile-${originalIndex}`}
-                    consultation={consultation}
+                    data={profile}
                     index={originalIndex}
-                    isSelected={consultation ? revealed.has(consultation.id) : false}
-                    onClick={consultation ? handleSelect : undefined}
+                    isSelected={profile ? revealed.has(profile.id) : false}
+                    onClick={profile ? handleSelect : undefined}
                   />
                 );
               })}

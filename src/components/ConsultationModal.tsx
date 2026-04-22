@@ -306,42 +306,51 @@ const CaseView = ({ photo, consultation }: { photo: string | null; consultation:
   </div>
 );
 
-const BokononView = ({ photo, consultation, submitted, onSubmit, relevance, setRelevance, clarity, setClarity, depth, setDepth }: any) => (
-  <div className="grid md:grid-cols-2 gap-0">
-    <PhotoPanel photo={photo} caption={consultation.author} ariaLabel="Écouter la parole" animate />
-    <div className="p-5 md:p-7 flex flex-col" style={{ background: "#ffffff" }}>
-      <p className="font-label text-[10px] uppercase tracking-[0.2em] font-bold mb-2" style={{ color: "#5a5c5c" }}>Sa parole</p>
-      <blockquote className="font-headline italic text-base md:text-lg leading-relaxed pl-4 mb-5" style={{ borderLeft: "3px solid #fbd115", color: "rgba(45, 47, 47, 0.9)" }}>
-        "{consultation.reflection}"
-      </blockquote>
-      {!submitted ? (
-        <div className="space-y-4 pt-4" style={{ borderTop: "1px solid #ececec" }}>
-          <p className="font-label text-[10px] uppercase tracking-[0.2em] font-bold text-center" style={{ color: "#5a5c5c" }}>Votre évaluation</p>
-          <SegmentedTrack label="Pertinence" value={relevance[0]} onChange={(v: number) => setRelevance([v])} />
-          <SegmentedTrack label="Clarté" value={clarity[0]} onChange={(v: number) => setClarity([v])} />
-          <SegmentedTrack label="Profondeur" value={depth[0]} onChange={(v: number) => setDepth([v])} />
-          <button onClick={onSubmit} className="w-full py-3 rounded-md text-sm font-bold uppercase tracking-[0.15em] text-white transition-all" style={{ background: "#00693e" }}>Valider l'évaluation</button>
-        </div>
-      ) : (
-        <BokononCard photo={photo} consultation={consultation} relevance={relevance[0]} clarity={clarity[0]} depth={depth[0]} />
-      )}
+const BokononView = ({ photo, consultation, submitted, onSubmit, relevance, setRelevance, clarity, setClarity, depth, setDepth }: any) => {
+  const isProfile = consultation && 'firstName' in consultation;
+  const reflection = isProfile ? "La sagesse est un voyage, pas une destination." : consultation?.reflection;
+
+  return (
+    <div className="grid md:grid-cols-2 gap-0">
+      <PhotoPanel photo={photo} caption={isProfile ? `${consultation.firstName} ${consultation.lastName}` : consultation?.author} ariaLabel="Écouter la parole" animate />
+      <div className="p-5 md:p-7 flex flex-col" style={{ background: "#ffffff" }}>
+        <p className="font-label text-[10px] uppercase tracking-[0.2em] font-bold mb-2" style={{ color: "#5a5c5c" }}>Sa parole</p>
+        <blockquote className="font-headline italic text-base md:text-lg leading-relaxed pl-4 mb-5" style={{ borderLeft: "3px solid #fbd115", color: "rgba(45, 47, 47, 0.9)" }}>
+          "{reflection}"
+        </blockquote>
+        {!submitted ? (
+          <div className="space-y-4 pt-4" style={{ borderTop: "1px solid #ececec" }}>
+            <p className="font-label text-[10px] uppercase tracking-[0.2em] font-bold text-center" style={{ color: "#5a5c5c" }}>Votre évaluation</p>
+            <SegmentedTrack label="Pertinence" value={relevance[0]} onChange={(v: number) => setRelevance([v])} />
+            <SegmentedTrack label="Clarté" value={clarity[0]} onChange={(v: number) => setClarity([v])} />
+            <SegmentedTrack label="Profondeur" value={depth[0]} onChange={(v: number) => setDepth([v])} />
+            <button onClick={onSubmit} className="w-full py-3 rounded-md text-sm font-bold uppercase tracking-[0.15em] text-white transition-all" style={{ background: "#00693e" }}>Valider l'évaluation</button>
+          </div>
+        ) : (
+          <BokononCard photo={photo} consultation={consultation} relevance={relevance[0]} clarity={clarity[0]} depth={depth[0]} />
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const BokononCard = ({ photo, consultation, relevance, clarity, depth }: any) => {
-  const profile = PROFILES[0];
+  const isProfile = consultation && 'firstName' in consultation;
+  const firstName = isProfile ? consultation.firstName : (consultation?.author?.split(' ')[0] || "Bokônon");
+  const lastName = isProfile ? consultation.lastName : (consultation?.author?.split(' ').slice(1).join(' ') || "");
+  const profileId = isProfile ? consultation.id : (consultation?.profileId || "1");
+
   return (
     <div className="pt-5" style={{ borderTop: "1px solid #ececec" }}>
       <p className="font-label text-[10px] uppercase tracking-[0.2em] font-bold text-center mb-4" style={{ color: "#00693e" }}>✦ Fiche du bokônon</p>
       <div className="flex items-center gap-3 mb-5">
         {photo && <img src={photo} alt="Bokonon" className="w-14 h-14 rounded-full object-cover shrink-0" />}
         <div className="min-w-0 flex-1">
-          <p className="font-headline text-base font-bold truncate">{profile.firstName} {profile.lastName}</p>
-          <p className="text-[11px] italic truncate">{profile.activity} · {profile.location}</p>
+          <p className="font-headline text-base font-bold truncate">{firstName} {lastName}</p>
+          <p className="text-[11px] italic truncate">{isProfile ? (consultation.archetype || "Guide Spirituel") : "Guide Spirituel"}</p>
         </div>
       </div>
-      <Link href={`/profil/${profile.id}`} className="flex items-center justify-center gap-2 w-full py-3 rounded-md text-sm font-bold uppercase tracking-[0.15em] text-white transition-all" style={{ background: "#00693e" }}>
+      <Link href={`/profil/${profileId}`} className="flex items-center justify-center gap-2 w-full py-3 rounded-md text-sm font-bold uppercase tracking-[0.15em] text-white transition-all" style={{ background: "#00693e" }}>
         Voir le profil complet <ArrowRight size={16} />
       </Link>
     </div>

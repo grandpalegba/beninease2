@@ -4,12 +4,13 @@ import { memo } from "react";
 import { motion } from "framer-motion";
 import { PROFILE_PHOTOS } from "@/assets/profiles";
 import type { Consultation } from "@/data/consultations";
+import type { Profile } from "@/hooks/useProfiles";
 
 interface Props {
-  consultation?: Consultation | null; // Rendu optionnel
+  data?: Consultation | Profile | null; // Rendu optionnel
   index: number;
   isSelected?: boolean;
-  onClick?: (c: Consultation) => void;
+  onClick?: (d: any) => void;
 }
 
 const TILE_BACKGROUNDS = [
@@ -33,9 +34,9 @@ const BENIN_ACCENTS = [
   "hsl(var(--benin-red))",
 ];
 
-const WallTile = memo(({ consultation, index, isSelected, onClick }: Props) => {
+const WallTile = memo(({ data, index, isSelected, onClick }: Props) => {
   // --- ÉTAT VIDE (Sable) ---
-  if (!consultation) {
+  if (!data) {
     const tileBg = TILE_BACKGROUNDS[index % TILE_BACKGROUNDS.length];
     return (
       <motion.div
@@ -65,7 +66,24 @@ const WallTile = memo(({ consultation, index, isSelected, onClick }: Props) => {
   }
 
   // --- ÉTAT PLEIN (Bokônon) ---
-  const photo = PROFILE_PHOTOS[consultation.videoSeed % PROFILE_PHOTOS.length];
+  const isProfile = 'firstName' in data;
+  
+  // Mapping des données (Profil ou Consultation)
+  const author = isProfile 
+    ? `${(data as Profile).firstName} ${(data as Profile).lastName}`.trim() 
+    : (data as Consultation).author;
+    
+  const videoSeed = isProfile ? (data as Profile).photoIndex : (data as Consultation).videoSeed;
+  
+  // Logique d'URL d'image : storage, public ou fallback statique
+  let imageUrl = isProfile && (data as Profile).imageUrl ? (data as Profile).imageUrl : "";
+  if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+    imageUrl = `/profiles/${imageUrl}`;
+  }
+  if (!imageUrl) {
+    imageUrl = PROFILE_PHOTOS[videoSeed % PROFILE_PHOTOS.length];
+  }
+
   const tileBg = TILE_BACKGROUNDS[index % TILE_BACKGROUNDS.length];
   const accent = BENIN_ACCENTS[index % BENIN_ACCENTS.length];
 
@@ -76,7 +94,7 @@ const WallTile = memo(({ consultation, index, isSelected, onClick }: Props) => {
         hidden: { opacity: 0, scale: 0.5 },
         visible: { opacity: 1, scale: 1 }
       }}
-      onClick={() => onClick?.(consultation)}
+      onClick={() => onClick?.(data)}
       className="relative aspect-square overflow-hidden rounded-[2px] cursor-pointer group bg-neutral-800 select-none border-[0.5px] border-border shadow-none"
       animate={{
         y: [0, -1.5, 0, 1.5, 0],
@@ -97,8 +115,8 @@ const WallTile = memo(({ consultation, index, isSelected, onClick }: Props) => {
       style={{ backgroundColor: tileBg, opacity: 1 }}
     >
       <motion.img
-        src={photo}
-        alt={consultation.author}
+        src={imageUrl}
+        alt={author}
         loading="lazy"
         animate={{ scale: [1, 1.04, 1] }}
         transition={{ duration: 5 + (index % 4), repeat: Infinity, ease: "easeInOut" }}
@@ -122,7 +140,7 @@ const WallTile = memo(({ consultation, index, isSelected, onClick }: Props) => {
       {/* Nom au survol */}
       <div className="absolute inset-x-0 bottom-0 px-1 py-1 opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-t from-black/85 to-transparent">
         <p className="text-white text-[8px] font-headline font-medium truncate uppercase tracking-tighter" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.6)' }}>
-          {consultation.author}
+          {author}
         </p>
       </div>
     </motion.button>
