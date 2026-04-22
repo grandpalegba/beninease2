@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { RotateCcw } from "lucide-react";
 import { useConsultations } from "@/hooks/useConsultations";
+import { useLivingOrder } from "@/hooks/useLivingOrder";
 import WallTile from "./WallTile";
 import ConsultationModal from "./ConsultationModal";
 import BeninFrame from "./BeninFrame";
@@ -16,6 +17,9 @@ const SynchronicityWall = () => {
   const { data: consultations = [], isLoading } = useConsultations();
   const [selected, setSelected] = useState<Consultation | null>(null);
   const [revealed, setRevealed] = useState<Set<string>>(new Set());
+  
+  // Le chef d'orchestre du mouvement
+  const order = useLivingOrder(256, 4, 2200);
 
   const handleSelect = (c: Consultation) => {
     setSelected(c);
@@ -27,17 +31,6 @@ const SynchronicityWall = () => {
   };
 
   const resetWall = () => setRevealed(new Set());
-
-  // Génération des 256 cases de la matrice 16x16
-  const gridCells = Array.from({ length: 256 }, (_, i) => {
-    const row = Math.floor(i / 16);
-    const col = i % 16;
-    // Cherche la consultation correspondante aux coordonnées
-    const consultation = consultations.find(
-      (c) => c.rowIndex === row && c.colIndex === col
-    );
-    return { i, row, col, consultation };
-  });
 
   return (
     <>
@@ -68,15 +61,23 @@ const SynchronicityWall = () => {
               className="grid w-full h-full bg-background gap-[1px]"
               style={{ gridTemplateColumns: "repeat(16, 1fr)" }}
             >
-              {gridCells.map((cell) => (
-                <WallTile
-                  key={cell.i}
-                  consultation={cell.consultation}
-                  index={cell.i}
-                  isSelected={cell.consultation ? revealed.has(cell.consultation.id) : false}
-                  onClick={cell.consultation ? handleSelect : undefined}
-                />
-              ))}
+              {order.map((originalIndex) => {
+                const row = Math.floor(originalIndex / 16);
+                const col = originalIndex % 16;
+                const consultation = consultations.find(
+                  (c) => c.rowIndex === row && c.colIndex === col
+                );
+
+                return (
+                  <WallTile
+                    key={originalIndex}
+                    consultation={consultation}
+                    index={originalIndex}
+                    isSelected={consultation ? revealed.has(consultation.id) : false}
+                    onClick={consultation ? handleSelect : undefined}
+                  />
+                );
+              })}
             </motion.div>
           </BeninFrame>
         </div>
