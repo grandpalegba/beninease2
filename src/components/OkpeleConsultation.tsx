@@ -77,47 +77,16 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
 
   const fetchFaDetails = async (nomTire: string) => {
     try {
-      // Normalisation pour recherche robuste (remplace 'e' par '_' pour gérer 'e'/'é')
-      const nomFiltre = nomTire.replace(/e/g, '_');
-
-      const [tradResponse, univResponse] = await Promise.all([
-        supabase.from("signes_fa")
-          .select("*")
-          .ilike("signe_nom", `%${nomFiltre}%`)
-          .single(),
-        supabase.from("valeurs_universelles")
-          .select("*")
-          .ilike("signe_fa", `%${nomFiltre}%`)
-          .single()
+      const cleanName = nomTire.trim();
+      const [tradRes, univRes] = await Promise.all([
+        supabase.from("signes_fa").select("*").ilike("signe_nom", `%${cleanName}%`).single(),
+        supabase.from("valeurs_universelles").select("*").ilike("signe_fa", `%${cleanName}%`).single()
       ]);
 
-      if (tradResponse.data) {
-        setDetailsTrad(tradResponse.data);
-      } else {
-        setDetailsTrad({
-          signe_nom: nomTire,
-          devise: "La vérité est le fruit de la patience.",
-          introduction: "Ce signe évoque l'équilibre parfait des forces de la nature. Le Fa vous invite à la réflexion avant l'action.",
-          avantages: "Protection accrue, clairvoyance spirituelle.",
-          defis: "Résistance au changement, doutes passagers.",
-          recommandation: "Honorez la terre et restez fidèle à votre parole."
-        });
-      }
-
-      if (univResponse.data) {
-        setDetailsUniv(univResponse.data);
-      } else {
-        setDetailsUniv({
-          concept: nomTire,
-          combinaison: nomTire,
-          recit: "Le récit universel de ce signe nous parle de la transmission silencieuse des savoirs et de la force de l'intention.",
-          revelation: "Chaque pas compte pour celui qui connaît sa direction.",
-          piege: "L'impatience et le mépris des petits commencements.",
-          chant: "Un murmure profond montant du plexus solaire."
-        });
-      }
+      if (tradRes.data) setDetailsTrad(tradRes.data);
+      if (univRes.data) setDetailsUniv(univRes.data);
     } catch (err) {
-      console.error(err);
+      console.error("Fetch error:", err);
     }
   };
 
@@ -145,7 +114,7 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
   }, [playSettle, ensureCtx]);
 
   return (
-    <div className="flex min-h-screen w-full items-center justify-center bg-[#FAF9F6] font-sans fixed inset-0 z-[200]">
+    <div className="flex min-h-screen w-full items-center justify-center bg-white font-sans fixed inset-0 z-[200]">
       
       <button onClick={onBack} className="absolute top-8 left-8 flex items-center gap-2 text-stone-300 hover:text-stone-800 transition-colors z-[210]">
         <ArrowLeft size={20} /> <span className="text-[10px] font-bold uppercase tracking-widest font-sans">Retour</span>
@@ -201,11 +170,11 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
         </div>
       )}
 
-      {/* BLOC 2 : LE SIGNE RÉVÉLÉ (Épuration du Header & Miroir Restructuré) */}
-      {phase === "revealed" && detailsTrad && detailsUniv && (
+      {/* BLOC 2 : LE SIGNE RÉVÉLÉ (Miroir - Fond Blanc) */}
+      {phase === "revealed" && (
         <div className="animate-in fade-in duration-1000 flex flex-col w-full max-w-3xl px-6 py-12 mx-auto overflow-y-auto custom-scrollbar h-full font-sans relative z-[205]">
           
-          {/* HEADER FIXE (Idéogrammes Uniquement) */}
+          {/* HEADER FIXE */}
           <header className="flex flex-col items-center text-center mb-10 shrink-0">
             <div className="flex gap-8 mb-4 opacity-100 scale-[1.35]">
               <DuIdeogramme du={signe!.duGauche} large />
@@ -230,7 +199,7 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
           </header>
 
           {/* CONTENU : TRADITION DU FÂ */}
-          {activeVision === "traditionnelle" && (
+          {activeVision === "traditionnelle" && detailsTrad && (
             <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
               <div className="text-center">
                 <h2 className="text-5xl font-bold text-[#303333] mb-4 tracking-tight">{detailsTrad.signe_nom}</h2>
@@ -243,13 +212,13 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
               </section>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-[#f4f3f2] p-8 rounded-2xl">
+                <div className="bg-[#f4f3f2] p-8 rounded-2xl shadow-sm">
                   <h4 className="text-xs font-bold text-[#006b60] uppercase tracking-widest mb-3">Avantages</h4>
-                  <p className="text-sm text-[#5d605f] leading-relaxed font-light">{detailsTrad.avantages}</p>
+                  <p className="text-sm text-[#303333] leading-relaxed font-light">{detailsTrad.avantages}</p>
                 </div>
-                <div className="bg-[#f4f3f2] p-8 rounded-2xl">
+                <div className="bg-[#f4f3f2] p-8 rounded-2xl shadow-sm">
                   <h4 className="text-xs font-bold text-[#a0412d] uppercase tracking-widest mb-3">Défis</h4>
-                  <p className="text-sm text-[#5d605f] leading-relaxed font-light">{detailsTrad.defis}</p>
+                  <p className="text-sm text-[#303333] leading-relaxed font-light">{detailsTrad.defis}</p>
                 </div>
               </div>
 
@@ -260,8 +229,8 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
             </div>
           )}
 
-          {/* CONTENU : VISION UNIVERSELLE */}
-          {activeVision === "universelle" && (
+          {/* CONTENU : UNIVERSALITÉ */}
+          {activeVision === "universelle" && detailsUniv && (
             <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
               <div className="text-center">
                 <h2 className="text-5xl font-bold text-[#006b60] mb-4 tracking-tight">{detailsUniv.concept}</h2>
@@ -276,13 +245,13 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
               </section>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-[#f4f3f2] p-8 rounded-2xl">
+                <div className="bg-[#f4f3f2] p-8 rounded-2xl shadow-sm">
                   <h4 className="text-xs font-bold text-[#006b60] uppercase tracking-widest mb-3">Révélation</h4>
-                  <p className="text-sm text-[#5d605f] leading-relaxed font-light">{detailsUniv.revelation}</p>
+                  <p className="text-sm text-[#303333] leading-relaxed font-light">{detailsUniv.revelation}</p>
                 </div>
-                <div className="bg-[#f4f3f2] p-8 rounded-2xl">
+                <div className="bg-[#f4f3f2] p-8 rounded-2xl shadow-sm">
                   <h4 className="text-xs font-bold text-[#a0412d] uppercase tracking-widest mb-3">Piège</h4>
-                  <p className="text-sm text-[#5d605f] leading-relaxed font-light">{detailsUniv.piege}</p>
+                  <p className="text-sm text-[#303333] leading-relaxed font-light">{detailsUniv.piege}</p>
                 </div>
               </div>
 
