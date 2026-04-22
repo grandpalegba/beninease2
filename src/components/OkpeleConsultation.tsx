@@ -65,7 +65,6 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
 
   const [finalDecision, setFinalDecision] = useState<string | null>(null);
   const [isTransmitting, setIsTransmitting] = useState(false);
-  const [videoFile, setVideoFile] = useState<File | null>(null);
 
   const { playSettle, ensureCtx } = useWoodSound();
 
@@ -293,9 +292,8 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
             </div>
           )}
 
-          {/* MODULE : MA DÉCISION FINALE (Layout Miroir Synchrone) */}
+          {/* MODULE : MA DÉCISION FINALE (Arbitrage final) */}
           <div className="mt-32 pt-20 border-t border-[#f4f3f2] pb-32">
-            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-stretch">
               
               {/* À GAUCHE (La Carte Originale) */}
@@ -303,76 +301,71 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
                 <div className="w-full aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-2xl bg-black border-4 border-white">
                   <CaseCard lifeCase={caseData} isActive={true} />
                 </div>
-                <div className="mt-6 px-4">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-[#a0412d] mb-2">Intuition de départ</p>
-                  <p className="text-sm text-[#303333] font-medium bg-[#f4f3f2] p-4 rounded-xl border border-stone-100">
-                    "{caseData.options[caseData.selectedOption] || "Choix initial"}"
-                  </p>
-                </div>
               </div>
 
-              {/* À DROITE (L'Arbitrage & Sagesse) */}
-              <div className="flex flex-col h-full space-y-10">
-                <div className="space-y-4">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Arbitrage final</p>
-                  <div className="grid grid-cols-1 gap-4">
-                    {caseData.options.map((opt: string, i: number) => {
-                      const isIntuition = i === caseData.selectedOption;
-                      const isSelected = finalDecision === opt;
-
-                      return (
-                        <button 
-                          key={i}
-                          onClick={() => setFinalDecision(opt)}
-                          className={`p-5 rounded-2xl text-left transition-all border-2 flex items-center justify-between
-                            ${isSelected 
-                              ? 'bg-white border-[#1DB954] shadow-lg -translate-y-1' 
-                              : isIntuition 
-                                ? 'bg-[#f4f3f2] border-[#fcd116] opacity-100' 
-                                : 'bg-[#f4f3f2] border-transparent opacity-60 hover:opacity-100'}
-                          `}
-                        >
-                          <span className={`text-sm font-semibold ${isSelected ? 'text-[#303333]' : 'text-[#303333]'}`}>{opt}</span>
-                          {isSelected && <CheckCircle2 size={18} className="text-[#1DB954]" />}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div className="space-y-4 flex-1">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Transmettre ma Sagesse</p>
-                  <div className="bg-[#f4f3f2] border-2 border-dashed border-stone-200 rounded-3xl p-8 flex flex-col items-center justify-center text-center gap-4 group cursor-pointer hover:border-[#b48224] transition-colors">
-                    <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center text-stone-400 group-hover:text-[#b48224] transition-colors shadow-sm">
-                      <Video size={32} />
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold text-[#303333]">Upload Vidéo (Facultatif)</p>
-                      <p className="text-[10px] text-stone-400 mt-1">Partagez votre visage et votre voix</p>
-                    </div>
-                  </div>
-                </div>
-
-                <button 
-                  onClick={handleTransmit}
-                  disabled={!finalDecision || isTransmitting}
-                  className={`w-full py-6 rounded-full font-bold text-xs uppercase tracking-[0.3em] transition-all shadow-2xl flex items-center justify-center gap-4
-                    ${!finalDecision ? 'bg-stone-100 text-stone-300 cursor-not-allowed' : 'bg-[#b48224] text-white hover:opacity-90 hover:-translate-y-1 active:translate-y-0'}
-                  `}
-                >
-                  {isTransmitting ? (
-                    <RefreshCw className="animate-spin" size={20} />
-                  ) : (
-                    <>
-                      <Send size={20} />
-                      <span>Transmettre ma Sagesse</span>
-                    </>
-                  )}
-                </button>
+              {/* À DROITE (Arbitrage final) */}
+              <div className="flex flex-col h-full space-y-4">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Arbitrage final</p>
                 
-                <p className="text-[9px] text-stone-400 uppercase tracking-widest text-center">
-                  La sagesse transmise est un héritage pour le Bénin.
-                </p>
+                <div className="grid grid-cols-1 gap-2">
+                  {caseData.options.map((opt: string, i: number) => {
+                    const isIntuition = i === caseData.selectedOption;
+                    const isSelected = finalDecision === opt;
+
+                    return (
+                      <button 
+                        key={i}
+                        onClick={() => setFinalDecision(opt)}
+                        className={`p-4 rounded-2xl text-left transition-all border-2 flex items-center justify-between relative
+                          ${isSelected 
+                            ? 'bg-white border-[#22C55E] shadow-sm' 
+                            : isIntuition 
+                              ? 'bg-white border-[#FACC15]' 
+                              : 'bg-[#f4f3f2] border-transparent opacity-60 hover:opacity-100'}
+                        `}
+                      >
+                        <span className="text-sm font-semibold text-[#303333]">{opt}</span>
+                        <div className="flex items-center gap-2">
+                          {isIntuition && (
+                            <span className="text-[8px] font-bold uppercase tracking-widest px-2 py-1 bg-[#FACC15] text-white rounded-md">
+                              Intuition
+                            </span>
+                          )}
+                          {isSelected && <CheckCircle2 size={16} className="text-[#22C55E]" />}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <div className="bg-[#f4f3f2] border-2 border-dashed border-stone-200 rounded-3xl p-4 flex items-center gap-4 group cursor-pointer hover:border-[#b48224] transition-colors">
+                  <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-stone-400 group-hover:text-[#b48224] transition-colors shadow-sm">
+                    <Video size={20} />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold text-[#303333] uppercase tracking-widest">Partager votre sagesse</p>
+                    <p className="text-[9px] text-stone-400 mt-0.5">Vidéo courte</p>
+                  </div>
+                </div>
+
+                <div className="mt-auto pt-4">
+                  <button 
+                    onClick={handleTransmit}
+                    disabled={!finalDecision || isTransmitting}
+                    className={`w-full py-5 rounded-full font-bold text-[10px] uppercase tracking-[0.3em] transition-all shadow-xl flex items-center justify-center gap-4
+                      ${!finalDecision ? 'bg-stone-100 text-stone-300 cursor-not-allowed' : 'bg-[#b48224] text-white hover:opacity-90 hover:-translate-y-0.5 active:translate-y-0'}
+                    `}
+                  >
+                    {isTransmitting ? (
+                      <RefreshCw className="animate-spin" size={18} />
+                    ) : (
+                      <>
+                        <Send size={18} />
+                        <span>Transmettre ma guidance</span>
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
 
             </div>
