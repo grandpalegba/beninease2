@@ -31,14 +31,21 @@ function Noix({ isLit, phase, delay }: { isLit: boolean, phase: string, delay: n
   return (
     <div 
       className={`w-12 h-14 pear-seed-inverted shadow-md relative overflow-hidden ring-1 ring-black/5 ${animClass}`} 
-      style={{ backgroundColor: "#833321", animationDelay: `${delay}s` }}
+      style={{ 
+        backgroundColor: "#833321", 
+        animationDelay: `${delay}s`,
+        boxShadow: "inset -4px -4px 10px rgba(0,0,0,0.5), 0 6px 12px rgba(0,0,0,0.3)" 
+      }}
     >
       {/* Texture bois d'origine */}
       <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-black/30"></div>
       
       {/* Fente lumineuse UNIQUEMENT si la noix est "allumée" */}
       {isLit && (
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-8 bg-yellow-400 rounded-full shadow-[0_0_10px_#facc15,0_0_4px_#facc15] z-10"></div>
+        <div 
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-8 bg-yellow-400 rounded-full shadow-[0_0_10px_#facc15,0_0_4px_#facc15] z-10"
+          style={{ animation: 'glow-pulse 2s infinite ease-in-out' }}
+        ></div>
       )}
     </div>
   );
