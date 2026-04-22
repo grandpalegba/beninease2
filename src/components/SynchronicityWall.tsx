@@ -45,19 +45,19 @@ const SynchronicityWall = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1.2 }}
-        className={isLoading ? "opacity-50 pointer-events-none" : "opacity-100"}
+        className={`flex flex-col items-center justify-center py-8 px-4 ${isLoading ? "opacity-50 pointer-events-none" : "opacity-100"}`}
       >
-        <div className="text-center mb-5 px-4">
+        <div className="text-center mb-8 px-4">
           <p className="font-headline italic text-sm md:text-base text-neutral-500">
             Choisissez une photo pour écouter la guidance proposée par le bokônon.
           </p>
         </div>
 
-        <div className="overflow-x-auto pb-8">
+        <div className="w-full flex justify-center mb-12">
           <BeninFrame
-            className="mx-auto w-[95vw] max-w-[800px] aspect-square"
-            inset={8}
-            thickness={4}
+            className="w-[90vw] max-w-[550px] aspect-square"
+            inset={6}
+            thickness={3}
           >
             <div
               className="grid w-full h-full bg-neutral-900 gap-[1px]"
