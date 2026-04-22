@@ -98,44 +98,27 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
   };
 
   const fetchFaDetails = async (nomTire: string) => {
-    console.log("--- DÉBUT DU TEST DE DIAGNOSTIC ---");
-    
-    // TEST 1 : Récupérer n'importe quoi dans la table sans filtre
-    const { data: testAll, error: errAll } = await supabase
-      .from("valeurs_universelles")
-      .select("signe_fa")
-      .limit(5);
-    
-    console.log("TEST 1 (5 premiers noms en base) :", testAll);
-    if (errAll) console.error("ERREUR TEST 1 :", errAll);
+    try {
+      const searchKey = nomTire
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
 
-    // TEST 2 : Recherche avec le nom du tirage
-    const searchKey = nomTire.trim();
-    const { data: testResult, error: errResult } = await supabase
-      .from("valeurs_universelles")
-      .select("*")
-      .ilike("signe_fa", `%${searchKey}%`);
+      const [tradRes, univRes] = await Promise.all([
+        supabase.from("signes_fa")
+          .select("*")
+          .ilike("signe_nom", `%${searchKey}%`)
+          .single(),
+        supabase.from("valeurs_universelles")
+          .select("*")
+          .ilike("signe_fa", searchKey)
+          .single()
+      ]);
 
-    console.log("TEST 2 (Résultat pour " + searchKey + ") :", testResult);
-    
-    // Récupération Traditionnelle (Normale)
-    const { data: tradData } = await supabase
-      .from("signes_fa")
-      .select("*")
-      .ilike("signe_nom", `%${searchKey.normalize("NFD").replace(/[\u0300-\u036f]/g, "")}%`)
-      .single();
-    if (tradData) setDetailsTrad(tradData);
-
-    if (testResult && testResult.length > 0) {
-      setDetailsUniv(testResult[0]);
-    } else {
-      // FALLBACK DE SECOURS : Si rien n'est trouvé, on force l'affichage du premier signe 
-      // pour vérifier que le rendu JSX fonctionne.
-      if (testAll && testAll.length > 0) {
-        console.warn("Recherche échouée, chargement forcé du premier signe pour test.");
-        const { data: fallback } = await supabase.from("valeurs_universelles").select("*").limit(1).single();
-        setDetailsUniv(fallback);
-      }
+      if (tradRes.data) setDetailsTrad(tradRes.data);
+      if (univRes.data) setDetailsUniv(univRes.data);
+    } catch (err) {
+      console.error("Fetch error:", err);
     }
   };
 
@@ -320,7 +303,7 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
             </div>
           )}
 
-          {/* MODULE : MA DÉCISION FINALE (Affichage Forcé) */}
+          {/* MODULE : MA DÉCISION FINALE */}
           <div className="mt-24 pt-16 border-t border-[#f4f3f2] space-y-12 pb-32">
             <header className="text-center">
               <h3 className="text-xs font-bold uppercase tracking-[0.3em] text-[#b0b2b1] mb-8">Ma Décision Finale</h3>
