@@ -99,10 +99,21 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
 
   const fetchFaDetails = async (nomTire: string) => {
     try {
-      const cleanName = nomTire.trim();
+      // Nettoyage radical : enlève les accents éventuels du générateur et les espaces superflus
+      const searchKey = nomTire
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
+
       const [tradRes, univRes] = await Promise.all([
-        supabase.from("signes_fa").select("*").ilike("signe_nom", `%${cleanName}%`).single(),
-        supabase.from("valeurs_universelles").select("*").ilike("signe_fa", `%${cleanName}%`).single()
+        supabase.from("signes_fa")
+          .select("*")
+          .ilike("signe_nom", `%${searchKey}%`)
+          .single(),
+        supabase.from("valeurs_universelles")
+          .select("*")
+          .ilike("signe_fa", searchKey)
+          .single()
       ]);
 
       if (tradRes.data) setDetailsTrad(tradRes.data);
@@ -316,7 +327,6 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
               </div>
             </header>
 
-            {/* OPTIONS DE DÉCISION */}
             <div className="grid grid-cols-1 gap-4">
               {[1, 2, 3, 4].map((num) => {
                 const opt = caseData[`option${num}`];
