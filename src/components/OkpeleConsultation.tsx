@@ -403,7 +403,7 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
             </div>
           </div>
         </div>
-      );
+      )}
 
       <style jsx>{`
         .custom-scrollbar::-webkit-scrollbar {
