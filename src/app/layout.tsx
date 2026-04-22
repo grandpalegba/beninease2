@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import "@/app/globals.css";
 import ConditionalHeader from "@/components/ConditionalHeader";
 import BodyWrapper from "@/components/BodyWrapper";
+import Providers from "@/components/Providers";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
@@ -28,10 +29,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="fr" className="scroll-smooth">
       <body className="min-h-screen antialiased bg-[#F9F9F7]">
-        <ConditionalHeader />
-        <BodyWrapper>
-          {children}
-        </BodyWrapper>
+        <Providers>
+          <ConditionalHeader />
+          <BodyWrapper>
+            {children}
+          </BodyWrapper>
+        </Providers>
         <Toaster position="top-center" richColors />
       </body>
     </html>
