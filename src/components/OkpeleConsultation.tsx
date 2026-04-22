@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase/client";
 import { genererTirage, type SigneFa, type DuMajeur } from "@/lib/fa-signes";
 import { useWoodSound } from "@/hooks/use-wood-sound";
-import { Mic, Send, RefreshCw, ArrowLeft, Play, Pause, CheckCircle2, Video, Upload } from "lucide-react";
+import { Mic, Send, RefreshCw, ArrowLeft, Play, Pause, CheckCircle2, Video, Check } from "lucide-react";
 import CaseCard from "./CaseCard";
 
 // --- SOUS-COMPOSANTS ---
@@ -65,11 +65,33 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
 
   const [finalDecision, setFinalDecision] = useState<string | null>(null);
   const [isTransmitting, setIsTransmitting] = useState(false);
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { playSettle, ensureCtx } = useWoodSound();
 
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      const fileName = `guidance_${caseData.id}_${Date.now()}.mp4`;
+      const { error } = await supabase.storage.from('consultation_videos').upload(fileName, file);
+      if (error) throw error;
+
+      const { data } = supabase.storage.from('consultation_videos').getPublicUrl(fileName);
+      setVideoUrl(data.publicUrl);
+    } catch (err) {
+      console.error("Video upload error:", err);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   const handleTransmit = async () => {
-    if (!finalDecision) return;
+    if (!finalDecision || !videoUrl) return;
     setIsTransmitting(true);
     
     try {
@@ -79,6 +101,7 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
           final_decision: finalDecision,
           signe_fa: signe?.nom,
           status: 'completed',
+          video_url: videoUrl,
           completed_at: new Date().toISOString()
         })
         .eq('id', caseData.id);
@@ -145,6 +168,8 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
       }, 2500);
     }, 1500);
   }, [playSettle, ensureCtx]);
+
+  const canSubmit = finalDecision !== null && videoUrl !== null;
 
   return (
     <div className="flex min-h-screen w-full items-center justify-center bg-white font-sans fixed inset-0 z-[200]">
@@ -292,7 +317,7 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
             </div>
           )}
 
-          {/* MODULE : MA DÉCISION FINALE (Arbitrage final) */}
+          {/* MODULE : ARBITRAGE FINAL (Compact Single-Screen) */}
           <div className="mt-32 pt-20 border-t border-[#f4f3f2] pb-32">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-stretch">
               
@@ -309,7 +334,6 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
                 
                 <div className="grid grid-cols-1 gap-2">
                   {caseData.options.map((opt: string, i: number) => {
-                    const isIntuition = i === caseData.selectedOption;
                     const isSelected = finalDecision === opt;
 
                     return (
@@ -319,41 +343,54 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
                         className={`p-4 rounded-2xl text-left transition-all border-2 flex items-center justify-between relative
                           ${isSelected 
                             ? 'bg-white border-[#22C55E] shadow-sm' 
-                            : isIntuition 
-                              ? 'bg-white border-[#FACC15]' 
-                              : 'bg-[#f4f3f2] border-transparent opacity-60 hover:opacity-100'}
+                            : 'bg-[#f4f3f2] border-transparent opacity-60 hover:opacity-100'}
                         `}
                       >
                         <span className="text-sm font-semibold text-[#303333]">{opt}</span>
-                        <div className="flex items-center gap-2">
-                          {isIntuition && (
-                            <span className="text-[8px] font-bold uppercase tracking-widest px-2 py-1 bg-[#FACC15] text-white rounded-md">
-                              Intuition
-                            </span>
-                          )}
-                          {isSelected && <CheckCircle2 size={16} className="text-[#22C55E]" />}
-                        </div>
+                        {isSelected && <CheckCircle2 size={16} className="text-[#22C55E]" />}
                       </button>
                     );
                   })}
                 </div>
 
-                <div className="bg-[#f4f3f2] border-2 border-dashed border-stone-200 rounded-3xl p-4 flex items-center gap-4 group cursor-pointer hover:border-[#b48224] transition-colors">
-                  <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-stone-400 group-hover:text-[#b48224] transition-colors shadow-sm">
-                    <Video size={20} />
+                <div 
+                  onClick={() => fileInputRef.current?.click()}
+                  className="bg-[#f4f3f2] border-2 border-dashed border-stone-200 rounded-3xl p-4 flex items-center gap-4 group cursor-pointer hover:border-[#b48224] transition-colors relative"
+                >
+                  <input 
+                    type="file" 
+                    ref={fileInputRef} 
+                    onChange={handleVideoUpload} 
+                    accept="video/*" 
+                    className="hidden" 
+                  />
+                  
+                  <div className={`w-10 h-10 rounded-full bg-white flex items-center justify-center transition-colors shadow-sm ${videoUrl ? 'text-[#22C55E]' : 'text-stone-400 group-hover:text-[#b48224]'}`}>
+                    {isUploading ? (
+                      <RefreshCw className="animate-spin" size={20} />
+                    ) : videoUrl ? (
+                      <Check size={20} />
+                    ) : (
+                      <Video size={20} />
+                    )}
                   </div>
-                  <div>
+                  <div className="flex-1">
                     <p className="text-[10px] font-bold text-[#303333] uppercase tracking-widest">Partager votre sagesse</p>
-                    <p className="text-[9px] text-stone-400 mt-0.5">Vidéo courte</p>
+                    <p className="text-[9px] text-stone-400 mt-0.5">{videoUrl ? "Vidéo prête" : "Vidéo courte"}</p>
                   </div>
+                  {videoUrl && (
+                    <div className="bg-[#22C55E] p-1 rounded-full text-white">
+                      <Check size={12} />
+                    </div>
+                  )}
                 </div>
 
                 <div className="mt-auto pt-4">
                   <button 
                     onClick={handleTransmit}
-                    disabled={!finalDecision || isTransmitting}
+                    disabled={!canSubmit || isTransmitting}
                     className={`w-full py-5 rounded-full font-bold text-[10px] uppercase tracking-[0.3em] transition-all shadow-xl flex items-center justify-center gap-4
-                      ${!finalDecision ? 'bg-stone-100 text-stone-300 cursor-not-allowed' : 'bg-[#b48224] text-white hover:opacity-90 hover:-translate-y-0.5 active:translate-y-0'}
+                      ${!canSubmit ? 'bg-stone-100 text-stone-300 cursor-not-allowed' : 'bg-[#b48224] text-white hover:opacity-90 hover:-translate-y-0.5 active:translate-y-0'}
                     `}
                   >
                     {isTransmitting ? (
