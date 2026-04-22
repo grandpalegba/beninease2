@@ -98,18 +98,20 @@ export default function ConsultationPage() {
     <main className="h-[100dvh] bg-background text-foreground font-sans antialiased flex flex-col items-center justify-start overflow-hidden pb-20">
       {/* Title Section */}
       <div className="w-full text-center shrink-0 z-10 pt-10">
-        <h1 className="text-4xl md:text-5xl font-display text-foreground mb-4">
+        <h1 
+          className="text-4xl md:text-5xl font-headline font-bold text-[#1a1a1a] mb-6 tracking-[-0.02em]"
+        >
           Sagesses du Bénin
         </h1>
 
         {/* Tab Selector - Pill Style */}
-        <div className="bg-neutral-100 p-1 rounded-full flex gap-1 shadow-sm mx-auto w-fit">
+        <div className="bg-[#f0f1f1] p-1 rounded-full flex gap-1 shadow-none mx-auto w-fit">
           <button
             onClick={() => setActiveView('matrix')}
             className={`px-6 py-2 rounded-full text-[10px] font-bold tracking-[0.05em] transition-all ${
               activeView === 'matrix' 
-                ? 'bg-[#2d2f2f] text-white shadow-sm' 
-                : 'text-neutral-400 hover:text-neutral-600'
+                ? 'bg-[#1a1a1a] text-white' 
+                : 'text-[#666] hover:text-[#1a1a1a]'
             }`}
           >
             Matrice des choix
@@ -118,8 +120,8 @@ export default function ConsultationPage() {
             onClick={() => setActiveView('wall')}
             className={`px-6 py-2 rounded-full text-[10px] font-bold tracking-[0.05em] transition-all ${
               activeView === 'wall' 
-                ? 'bg-[#2d2f2f] text-white shadow-sm' 
-                : 'text-neutral-400 hover:text-neutral-600'
+                ? 'bg-[#1a1a1a] text-white' 
+                : 'text-[#666] hover:text-[#1a1a1a]'
             }`}
           >
             Mur des consultations

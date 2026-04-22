@@ -18,17 +18,24 @@ const WallTile = memo(({ consultation, index, isSelected, onClick }: Props) => {
   // --- ÉTAT VIDE (Sable) ---
   if (!consultation) {
     return (
-      <div
-        className="relative aspect-square overflow-hidden rounded-[var(--radius-sm)] bg-secondary/50"
-        style={{
-          backgroundImage: `radial-gradient(circle at ${index % 4 * 25}% ${index % 3 * 30}%, rgba(0,0,0,0.05) 1px, transparent 1px)`,
-          backgroundSize: '4px 4px'
+      <motion.div
+        initial={{ opacity: 0, scale: 0.5 }}
+        animate={{ 
+          opacity: 1, 
+          scale: 1,
+          backgroundColor: ["#f3eee3", "#e8d5b7", "#d4a574", "#f3eee3"]
         }}
+        transition={{
+          opacity: { duration: 0.5, delay: index * 0.01 },
+          scale: { duration: 0.5, delay: index * 0.01 },
+          backgroundColor: { duration: 15, repeat: Infinity, ease: "linear" }
+        }}
+        className="relative aspect-square overflow-hidden border-[0.5px] border-black/5"
       >
-        <div className="absolute inset-0 flex items-center justify-center opacity-10">
-          <div className="w-1 h-1 bg-black rounded-full" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-[2px] h-[2px] bg-[#d4a574] opacity-30 rounded-full" />
         </div>
-      </div>
+      </motion.div>
     );
   }
 
@@ -43,21 +50,26 @@ const WallTile = memo(({ consultation, index, isSelected, onClick }: Props) => {
     <motion.button
       layout
       onClick={() => onClick?.(consultation)}
-      className="relative aspect-square overflow-hidden rounded-[var(--radius-sm)] cursor-pointer group bg-neutral-800 select-none border-[0.5px] border-border"
-      initial={{ opacity: 0, scale: 0.8 }}
+      className="relative aspect-square overflow-hidden rounded-[2px] cursor-pointer group bg-neutral-800 select-none border-[0.5px] border-border shadow-none"
+      initial={{ opacity: 0, scale: 0.5 }}
       animate={{
         opacity: 1,
         scale: 1,
-        y: [0, -1.2, 0, 1.2, 0]
+        y: [0, -2, 0, 2, 0],
+        x: [0, 1, 0, -1, 0]
       }}
       transition={{
-        y: { duration: 6 + (index % 4), repeat: Infinity, ease: "easeInOut" },
-        opacity: { duration: 0.5 }
+        y: { duration: 10 + (index % 10), repeat: Infinity, ease: "easeInOut", delay: index * 0.01 },
+        x: { duration: 12 + (index % 8), repeat: Infinity, ease: "easeInOut", delay: index * 0.01 },
+        opacity: { duration: 0.5, delay: index * 0.01 },
+        scale: { duration: 0.5, delay: index * 0.01 }
       }}
       whileHover={{ 
-        scale: 1.35, 
+        scale: 1.2, 
         zIndex: 20,
-        boxShadow: "0 0 20px hsl(var(--ring) / 0.3)"
+        y: 0,
+        x: 0,
+        boxShadow: "0 10px 20px rgba(212, 175, 55, 0.2)"
       }}
       style={{ background: tileBg }}
     >
@@ -65,6 +77,8 @@ const WallTile = memo(({ consultation, index, isSelected, onClick }: Props) => {
         src={photo}
         alt={consultation.author}
         loading="lazy"
+        animate={{ scale: [1, 1.05, 1] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
         className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none sepia-[0.1] saturate-[0.9] group-hover:sepia-0 group-hover:saturate-100 transition-all duration-500"
       />
 

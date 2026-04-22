@@ -50,11 +50,11 @@ const SynchronicityWall = () => {
         <div className="w-full flex justify-center mb-12">
           <BeninFrame
             className="w-[90vw] max-w-[550px] aspect-square"
-            inset={6}
-            thickness={3}
+            inset={8}
+            thickness={2}
           >
             <div
-              className="grid w-full h-full bg-neutral-900 gap-[1px]"
+              className="grid w-full h-full bg-background gap-[1px]"
               style={{ gridTemplateColumns: "repeat(16, 1fr)" }}
             >
               {gridCells.map((cell) => (
