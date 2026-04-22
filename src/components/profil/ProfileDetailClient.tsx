@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Briefcase, ShoppingBag, MapPin, Calendar, ExternalLink, X } from "lucide-react";
