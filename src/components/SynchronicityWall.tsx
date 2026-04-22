@@ -21,6 +21,15 @@ const SynchronicityWall = () => {
   // Le chef d'orchestre du mouvement
   const order = useLivingOrder(256, 4, 2200);
 
+  // Diagnostic visuel
+  console.log("Ordre du mur:", order.slice(0, 5), "...");
+
+  // Optimisation du rendu : on crée une Map pour un accès rapide aux consultations par coordonnées
+  const consultationMap = new Map<string, Consultation>();
+  consultations.forEach(c => {
+    consultationMap.set(`${c.rowIndex}-${c.colIndex}`, c);
+  });
+
   const handleSelect = (c: Consultation) => {
     setSelected(c);
     setRevealed((prev) => {
@@ -64,13 +73,11 @@ const SynchronicityWall = () => {
               {order.map((originalIndex) => {
                 const row = Math.floor(originalIndex / 16);
                 const col = originalIndex % 16;
-                const consultation = consultations.find(
-                  (c) => c.rowIndex === row && c.colIndex === col
-                );
+                const consultation = consultationMap.get(`${row}-${col}`) || null;
 
                 return (
                   <WallTile
-                    key={originalIndex}
+                    key={`tile-${originalIndex}`}
                     consultation={consultation}
                     index={originalIndex}
                     isSelected={consultation ? revealed.has(consultation.id) : false}

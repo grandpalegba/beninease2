@@ -36,11 +36,11 @@ const WallTile = memo(({ consultation, index, isSelected, onClick }: Props) => {
           visible: { opacity: 1, scale: 1 }
         }}
         animate={{ 
-          y: [0, -1.5, 0, 1.5, 0],
-          x: [0, 1, 0, -1, 0]
+          y: [0, -2, 0],
+          x: [0, 1.2, 0, -1.2, 0]
         }}
         transition={{
-          y: { duration: 12 + (index % 10), repeat: Infinity, ease: "easeInOut", delay: (index % 15) * 0.5 },
+          y: { duration: 10 + (index % 10), repeat: Infinity, ease: "easeInOut", delay: (index % 15) * 0.5 },
           x: { duration: 15 + (index % 8), repeat: Infinity, ease: "easeInOut", delay: (index % 15) * 0.5 },
           layout: { type: "spring", stiffness: 110, damping: 18 }
         }}
@@ -72,11 +72,11 @@ const WallTile = memo(({ consultation, index, isSelected, onClick }: Props) => {
       onClick={() => onClick?.(consultation)}
       className="relative aspect-square overflow-hidden rounded-[2px] cursor-pointer group bg-neutral-800 select-none border-[0.5px] border-border shadow-none"
       animate={{
-        y: [0, -1.5, 0, 1.5, 0],
-        x: [0, 1, 0, -1, 0]
+        y: [0, -2, 0],
+        x: [0, 1.2, 0, -1.2, 0]
       }}
       transition={{
-        y: { duration: 12 + (index % 10), repeat: Infinity, ease: "easeInOut", delay: (index % 15) * 0.5 },
+        y: { duration: 10 + (index % 10), repeat: Infinity, ease: "easeInOut", delay: (index % 15) * 0.5 },
         x: { duration: 15 + (index % 8), repeat: Infinity, ease: "easeInOut", delay: (index % 15) * 0.5 },
         layout: { type: "spring", stiffness: 110, damping: 18 }
       }}

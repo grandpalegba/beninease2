@@ -5,16 +5,17 @@ import { useState, useEffect } from 'react';
  * that periodically swaps nearby elements to create a "living" effect.
  */
 export function useLivingOrder(total: number, swapCount: number = 4, interval: number = 2200) {
-  const [order, setOrder] = useState<number[]>([]);
+  const [order, setOrder] = useState<number[]>(() => 
+    Array.from({ length: total }, (_, i) => i)
+  );
 
   useEffect(() => {
-    // Initial order: 0, 1, 2, ..., 255
-    setOrder(Array.from({ length: total }, (_, i) => i));
+    if (total !== order.length) {
+      setOrder(Array.from({ length: total }, (_, i) => i));
+    }
   }, [total]);
 
   useEffect(() => {
-    if (order.length === 0) return;
-
     const timer = setInterval(() => {
       setOrder((prev) => {
         const next = [...prev];
