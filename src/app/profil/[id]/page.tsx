@@ -27,6 +27,7 @@ export default async function ProfilePage({ params }: { params: { id: string } }
     lastName: profile.last_name || '',
     photoIndex: profile.photo_index || 0,
     imageUrl: profile.image_url,
+    email: profile.email,
     products: (profile as any).products || [],
     projects: (profile as any).projects || [],
     age: profile.age,

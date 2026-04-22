@@ -1,9 +1,9 @@
-'use client';
-
-import { motion } from "framer-motion";
-import { ArrowLeft, Briefcase, ShoppingBag, MapPin, Calendar, ExternalLink } from "lucide-react";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowLeft, Briefcase, ShoppingBag, MapPin, Calendar, ExternalLink, X } from "lucide-react";
 import Link from "next/link";
 import { PROFILE_PHOTOS } from "@/assets/profiles";
+import ContactForm from "./ContactForm";
 
 interface Profile {
   id: string;
@@ -11,6 +11,7 @@ interface Profile {
   lastName: string;
   photoIndex: number;
   imageUrl?: string;
+  email?: string;
   products: string[];
   projects: string[];
   age?: number;
@@ -22,9 +23,11 @@ interface Profile {
  * Features smooth animations, glassmorphism, and elegant typography.
  */
 export default function ProfileDetailClient({ profile }: { profile: Profile }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const fullName = `${profile.firstName} ${profile.lastName}`.trim() || "Profil BeninEase";
   
   // Image path logic
+// ... (imageUrl logic stays the same)
   let profilePhoto = profile.imageUrl || "";
   if (profilePhoto && !profilePhoto.startsWith('http') && !profilePhoto.startsWith('/')) {
     profilePhoto = `/profiles/${profilePhoto}`;
@@ -175,13 +178,53 @@ export default function ProfileDetailClient({ profile }: { profile: Profile }) {
           {/* Action Button */}
           <footer className="pt-6">
             <button 
+              onClick={() => setIsModalOpen(true)}
               className="w-full md:w-auto px-10 py-5 bg-[#1a1a1a] text-white rounded-2xl text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-[#008751] transition-all shadow-xl hover:shadow-[#008751]/20 active:scale-[0.98]"
             >
-              Solliciter une consultation
+              Prendre contact
             </button>
           </footer>
         </motion.div>
       </div>
+
+      {/* Contact Modal */}
+      <AnimatePresence>
+        {isModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/40 backdrop-blur-sm"
+            onClick={() => setIsModalOpen(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative w-full max-w-md bg-[#F5F5F4] rounded-[2rem] p-8 md:p-10 shadow-2xl"
+            >
+              <button 
+                onClick={() => setIsModalOpen(false)}
+                className="absolute top-6 right-6 p-2 rounded-full hover:bg-zinc-200 transition-colors"
+              >
+                <X size={20} className="text-[#5a5c5c]" />
+              </button>
+              
+              <div className="mb-8">
+                <h2 className="text-2xl font-headline font-bold text-[#1a1a1a] mb-2">Prendre contact</h2>
+                <p className="text-sm text-[#5a5c5c]">Envoyez un message direct à {profile.firstName}.</p>
+              </div>
+
+              <ContactForm 
+                recipientEmail={profile.email || ""} 
+                recipientName={profile.firstName} 
+                onClose={() => setIsModalOpen(false)} 
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }
