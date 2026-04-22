@@ -328,11 +328,10 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
                 </div>
               </div>
 
-              {/* À DROITE (Arbitrage final) */}
-              <div className="flex flex-col h-full space-y-3">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Arbitrage final</p>
+              {/* À DROITE (L'Arbitrage Épuré) */}
+              <div className="flex flex-col h-full justify-between py-2">
                 
-                <div className="grid grid-cols-1 gap-2">
+                <div className="flex flex-col gap-3">
                   {caseData.options.map((opt: string, i: number) => {
                     const isSelected = finalDecision === opt;
 
@@ -340,52 +339,52 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
                       <button 
                         key={i}
                         onClick={() => setFinalDecision(opt)}
-                        className={`p-3.5 rounded-xl text-left transition-all border-2 flex items-center justify-between relative
+                        className={`p-5 rounded-[1.5rem] text-left transition-all border-2 flex items-center justify-between relative
                           ${isSelected 
                             ? 'bg-white border-[#22C55E] shadow-sm' 
-                            : 'bg-[#f4f3f2] border-transparent opacity-60 hover:opacity-100'}
+                            : 'bg-[#f4f3f2] border-transparent opacity-60 hover:opacity-100 hover:bg-stone-100'}
                         `}
                       >
-                        <span className="text-sm font-semibold text-[#303333]">{opt}</span>
-                        {isSelected && <CheckCircle2 size={14} className="text-[#22C55E]" />}
+                        <span className="text-[13px] font-medium text-[#303333] leading-snug">{opt}</span>
+                        {isSelected && <CheckCircle2 size={18} className="text-[#22C55E]" />}
                       </button>
                     );
                   })}
                 </div>
 
-                <div 
-                  onClick={() => fileInputRef.current?.click()}
-                  className="bg-[#f4f3f2] border-2 border-dashed border-stone-200 rounded-2xl p-3.5 flex items-center gap-4 group cursor-pointer hover:border-[#b48224] transition-colors relative"
-                >
-                  <input 
-                    type="file" 
-                    ref={fileInputRef} 
-                    onChange={handleVideoUpload} 
-                    accept="video/*" 
-                    className="hidden" 
-                  />
-                  
-                  <div className={`w-9 h-9 rounded-full bg-white flex items-center justify-center transition-colors shadow-sm ${videoUrl ? 'text-[#22C55E]' : 'text-stone-400 group-hover:text-[#b48224]'}`}>
-                    {isUploading ? (
-                      <RefreshCw className="animate-spin" size={18} />
-                    ) : videoUrl ? (
-                      <Check size={18} />
-                    ) : (
-                      <Video size={18} />
-                    )}
+                <div className="space-y-3">
+                  <div 
+                    onClick={() => fileInputRef.current?.click()}
+                    className="bg-[#f4f3f2] border-2 border-dashed border-stone-200 rounded-[1.5rem] p-4 flex items-center gap-4 group cursor-pointer hover:border-[#b48224] transition-colors relative"
+                  >
+                    <input 
+                      type="file" 
+                      ref={fileInputRef} 
+                      onChange={handleVideoUpload} 
+                      accept="video/*" 
+                      className="hidden" 
+                    />
+                    
+                    <div className={`w-10 h-10 rounded-full bg-white flex items-center justify-center transition-colors shadow-sm ${videoUrl ? 'text-[#22C55E]' : 'text-stone-400 group-hover:text-[#b48224]'}`}>
+                      {isUploading ? (
+                        <RefreshCw className="animate-spin" size={20} />
+                      ) : videoUrl ? (
+                        <Check size={20} />
+                      ) : (
+                        <Video size={20} />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-[10px] font-bold text-[#303333] uppercase tracking-widest">Partager votre sagesse</p>
+                      <p className="text-[9px] text-stone-400 mt-0.5">{videoUrl ? "Vidéo prête" : "Vidéo courte"}</p>
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <p className="text-[10px] font-bold text-[#303333] uppercase tracking-widest">Partager votre sagesse</p>
-                    <p className="text-[9px] text-stone-400 mt-0.5">{videoUrl ? "Vidéo prête" : "Vidéo courte"}</p>
-                  </div>
-                </div>
 
-                <div className="mt-auto pt-2">
                   <button 
                     onClick={handleTransmit}
                     disabled={!canSubmit || isTransmitting}
-                    className={`w-full py-4 rounded-full font-bold text-[10px] uppercase tracking-[0.3em] transition-all shadow-xl flex items-center justify-center gap-4
-                      ${!canSubmit ? 'bg-stone-100 text-stone-300 cursor-not-allowed' : 'bg-[#b48224] text-white hover:opacity-90 hover:-translate-y-0.5 active:translate-y-0'}
+                    className={`w-full py-6 rounded-full font-bold text-[10px] uppercase tracking-[0.3em] transition-all shadow-xl flex items-center justify-center gap-4
+                      ${!canSubmit ? 'bg-stone-100 text-stone-300 cursor-not-allowed' : 'bg-[#b48224] text-white hover:opacity-90 hover:-translate-y-1 active:translate-y-0'}
                     `}
                   >
                     {isTransmitting ? (
