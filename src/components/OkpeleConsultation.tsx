@@ -71,6 +71,13 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
     }, 1500);
   };
 
+  const getUniverselTitle = (combinaison: string, concept: string) => {
+    if (!combinaison) return concept;
+    const parts = combinaison.split(' x ').map(s => s.trim());
+    const isDouble = parts.length === 2 && parts[0] === parts[1];
+    return isDouble ? concept : `${combinaison} = ${concept}`;
+  };
+
   const fetchFaDetails = async (nomTire: string) => {
     try {
       const nomRecherche = nomTire.split(" ").pop() || nomTire;
@@ -83,7 +90,6 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
       if (tradResponse.data) {
         setDetailsTrad(tradResponse.data);
       } else {
-        // Fallback Trad
         setDetailsTrad({
           signe_nom: nomTire,
           devise: "La vérité est le fruit de la patience.",
@@ -97,10 +103,9 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
       if (univResponse.data) {
         setDetailsUniv(univResponse.data);
       } else {
-        // Fallback Univ
         setDetailsUniv({
-          concept: `Principe de ${nomRecherche}`,
-          combinaison: nomTire,
+          concept: nomRecherche,
+          combinaison: `${nomRecherche} x ${nomRecherche}`,
           rythme: "Stable / Ancestral",
           recit: "Le récit universel de ce signe nous parle de la transmission silencieuse des savoirs et de la force de l'intention.",
           revelation: "Chaque pas compte pour celui qui connaît sa direction.",
@@ -181,7 +186,7 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
           </div>
           
           <div className={`mt-12 h-8 transition-opacity duration-700 ${phase === "guided" || phase === "fading" ? "opacity-100" : "opacity-0"}`}>
-            <p className="text-xl font-serif italic text-[#833321] tracking-wide animate-pulse text-center px-6">
+            <p className="text-xl font-sans italic font-light text-[#833321] tracking-wide text-center px-6">
               Les Ancêtres vous guident.
             </p>
           </div>
@@ -194,66 +199,61 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
         </div>
       )}
 
-      {/* BLOC 2 : LE SIGNE RÉVÉLÉ (Double Vision) */}
+      {/* BLOC 2 : LE SIGNE RÉVÉLÉ (Double Vision - Strict Sans-Serif) */}
       {phase === "revealed" && detailsTrad && detailsUniv && (
-        <div className="animate-in fade-in duration-1000 flex flex-col w-full max-w-3xl px-6 py-12 mx-auto overflow-y-auto custom-scrollbar h-full relative z-[205]">
+        <div className="animate-in fade-in duration-1000 flex flex-col w-full max-w-3xl px-6 py-12 mx-auto overflow-y-auto custom-scrollbar h-full font-sans relative z-[205]">
           
           {/* HEADER COMMUN */}
           <header className="flex flex-col items-center text-center mb-10">
-            <div className="flex gap-6 mb-8 opacity-80 scale-125">
+            <div className="flex gap-4 mb-6 opacity-80">
               <DuIdeogramme du={signe!.duGauche} />
               <DuIdeogramme du={signe!.duDroite} />
             </div>
-            <h1 className="text-6xl font-serif text-[#303333] mb-4 tracking-tight">{detailsTrad.signe_nom}</h1>
+            <h1 className="text-5xl font-bold text-[#303333] mb-4 tracking-tight">{detailsTrad.signe_nom}</h1>
             
-            {/* EDITORIAL TOGGLE (Earth & Ether Style) */}
+            {/* EDITORIAL TOGGLE */}
             <div className="flex bg-[#f4f3f2] p-1 rounded-full mt-6">
               <button 
                 onClick={() => setActiveVision("traditionnelle")}
-                className={`px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 ${activeVision === "traditionnelle" ? "bg-[#a0412d] text-white shadow-lg" : "text-[#5d605f] hover:text-[#303333]"}`}
+                className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${activeVision === "traditionnelle" ? "bg-[#a0412d] text-white shadow-md" : "text-[#5d605f] hover:text-[#303333]"}`}
               >
-                Tradition (256 Signes)
+                Tradition du Fâ
               </button>
               <button 
                 onClick={() => setActiveVision("universelle")}
-                className={`px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 ${activeVision === "universelle" ? "bg-[#006b60] text-white shadow-lg" : "text-[#5d605f] hover:text-[#303333]"}`}
+                className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${activeVision === "universelle" ? "bg-[#006b60] text-white shadow-md" : "text-[#5d605f] hover:text-[#303333]"}`}
               >
-                Universel (256 Valeurs)
+                Vision Universelle
               </button>
             </div>
           </header>
 
-          {/* CONTENU : VISION TRADITIONNELLE */}
+          {/* CONTENU : TRADITION DU FÂ */}
           {activeVision === "traditionnelle" && (
             <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
               <div className="text-center">
-                <p className="text-2xl font-serif italic text-[#a0412d] leading-relaxed max-w-xl mx-auto">"{detailsTrad.devise}"</p>
+                <p className="text-2xl font-medium italic text-[#a0412d]">"{detailsTrad.devise}"</p>
               </div>
               
               <section>
-                <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#b0b2b1] mb-6 text-center">L'Essence du Signe</h3>
-                <p className="text-[#303333] leading-relaxed text-lg font-light text-center max-w-2xl mx-auto italic border-l-2 border-[#f4f3f2] pl-8 py-2">
-                  {detailsTrad.introduction}
-                </p>
+                <h3 className="text-xs font-bold uppercase tracking-widest text-[#b0b2b1] mb-4">Introduction</h3>
+                <p className="text-[#303333] leading-relaxed text-lg font-light">{detailsTrad.introduction}</p>
               </section>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-[#f4f3f2] p-8 rounded-3xl">
-                  <h4 className="text-[10px] font-bold text-[#006b60] uppercase tracking-widest mb-4">Bénédictions</h4>
-                  <p className="text-sm text-[#5d605f] leading-relaxed font-light">{detailsTrad.avantages}</p>
+                <div className="bg-[#f4f3f2] p-6 rounded-2xl">
+                  <h4 className="text-xs font-bold text-[#006b60] uppercase mb-3">Avantages</h4>
+                  <p className="text-sm text-[#5d605f] leading-snug">{detailsTrad.avantages}</p>
                 </div>
-                <div className="bg-[#f4f3f2] p-8 rounded-3xl">
-                  <h4 className="text-[10px] font-bold text-[#a0412d] uppercase tracking-widest mb-4">Défis</h4>
-                  <p className="text-sm text-[#5d605f] leading-relaxed font-light">{detailsTrad.defis}</p>
+                <div className="bg-[#f4f3f2] p-6 rounded-2xl">
+                  <h4 className="text-xs font-bold text-[#a0412d] uppercase mb-3">Défis</h4>
+                  <p className="text-sm text-[#5d605f] leading-snug">{detailsTrad.defis}</p>
                 </div>
               </div>
 
-              <section className="bg-[#151515] text-[#faf9f8] p-10 rounded-[2.5rem] shadow-2xl relative overflow-hidden text-center group">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 blur-3xl rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-1000" />
-                <h3 className="text-[10px] font-bold uppercase mb-6 text-[#b48224] tracking-widest">Recommandation du Fa</h3>
-                <p className="text-2xl font-serif italic leading-relaxed text-white/90">
-                  {detailsTrad.recommandation}
-                </p>
+              <section className="bg-[#151515] text-[#faf9f8] p-8 rounded-3xl relative overflow-hidden">
+                <h3 className="text-xs font-bold uppercase mb-4 text-[#b48224]">Recommandation du Fa</h3>
+                <p className="text-xl font-medium leading-relaxed italic">{detailsTrad.recommandation}</p>
               </section>
             </div>
           )}
@@ -262,51 +262,48 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
           {activeVision === "universelle" && (
             <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
               <div className="text-center">
-                <h2 className="text-4xl font-serif text-[#006b60] mb-4 tracking-tight">{detailsUniv.concept}</h2>
-                <div className="flex justify-center gap-4 text-[9px] font-bold uppercase tracking-widest text-[#797b7a] opacity-60">
-                  <span>Combinaison: {detailsUniv.combinaison}</span>
-                  <span>•</span>
-                  <span>Rythme: {detailsUniv.rythme}</span>
-                </div>
+                <h2 className="text-3xl font-bold text-[#006b60] tracking-tight">
+                  {getUniverselTitle(detailsUniv.combinaison, detailsUniv.concept)}
+                </h2>
+                {detailsUniv.rythme && (
+                  <div className="flex justify-center gap-4 mt-3 text-xs uppercase tracking-widest text-[#797b7a]">
+                    <span>Rythme: {detailsUniv.rythme}</span>
+                  </div>
+                )}
               </div>
 
-              <section className="bg-white/40 p-10 rounded-[3rem] shadow-inner border border-white/20">
-                <p className="text-[#303333] leading-relaxed text-lg font-light text-center italic">
-                  {detailsUniv.recit}
-                </p>
+              <section>
+                <h3 className="text-xs font-bold uppercase tracking-widest text-[#b0b2b1] mb-4">Le Récit</h3>
+                <p className="text-[#303333] leading-relaxed text-lg font-light">{detailsUniv.recit}</p>
               </section>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-[#eefbff] p-8 rounded-3xl shadow-sm">
-                  <h4 className="text-[10px] font-bold text-[#2e5b65] uppercase tracking-widest mb-4">Révélation</h4>
-                  <p className="text-sm text-[#38666f] leading-relaxed font-light">{detailsUniv.revelation}</p>
+                <div className="bg-[#eefbff] p-6 rounded-2xl">
+                  <h4 className="text-xs font-bold text-[#2e5b65] uppercase mb-3">Révélation</h4>
+                  <p className="text-sm text-[#38666f] leading-snug">{detailsUniv.revelation}</p>
                 </div>
-                <div className="bg-[#fff7f6] p-8 rounded-3xl shadow-sm">
-                  <h4 className="text-[10px] font-bold text-[#721f0f] uppercase tracking-widest mb-4">Piège</h4>
-                  <p className="text-sm text-[#913523] leading-relaxed font-light">{detailsUniv.piege}</p>
+                <div className="bg-[#fff7f6] p-6 rounded-2xl">
+                  <h4 className="text-xs font-bold text-[#721f0f] uppercase mb-3">Piège</h4>
+                  <p className="text-sm text-[#913523] leading-snug">{detailsUniv.piege}</p>
                 </div>
               </div>
 
               <section className="flex flex-col gap-4">
                 {detailsUniv.geste && (
-                  <div className="bg-[#f4f3f2] p-8 rounded-[2rem] flex items-center gap-8 group hover:bg-white transition-colors duration-500 shadow-sm">
-                    <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-md text-[#a0412d] group-hover:scale-110 transition-transform">
-                      <Hand size={20} />
-                    </div>
+                  <div className="bg-[#f4f3f2] p-6 rounded-xl flex items-start gap-4">
+                    <Hand className="text-[#a0412d] mt-1" size={20} />
                     <div>
-                      <h4 className="text-[10px] font-bold uppercase mb-1 text-[#5d605f] tracking-widest opacity-50">Le Geste</h4>
-                      <p className="text-sm text-[#303333] font-serif italic leading-relaxed">{detailsUniv.geste}</p>
+                      <h4 className="text-xs font-bold uppercase mb-1 text-[#5d605f]">Le Geste</h4>
+                      <p className="text-sm text-[#303333] font-light">{detailsUniv.geste}</p>
                     </div>
                   </div>
                 )}
                 {detailsUniv.chant && (
-                  <div className="bg-[#f4f3f2] p-8 rounded-[2rem] flex items-center gap-8 group hover:bg-white transition-colors duration-500 shadow-sm">
-                    <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-md text-[#006b60] group-hover:scale-110 transition-transform">
-                      <Music size={20} />
-                    </div>
+                  <div className="bg-[#f4f3f2] p-6 rounded-xl flex items-start gap-4">
+                    <Music className="text-[#006b60] mt-1" size={20} />
                     <div>
-                      <h4 className="text-[10px] font-bold uppercase mb-1 text-[#5d605f] tracking-widest opacity-50">Le Chant</h4>
-                      <p className="text-sm text-[#303333] font-serif italic leading-relaxed">{detailsUniv.chant}</p>
+                      <h4 className="text-xs font-bold uppercase mb-1 text-[#5d605f]">Le Chant</h4>
+                      <p className="text-sm text-[#303333] font-light">{detailsUniv.chant}</p>
                     </div>
                   </div>
                 )}
@@ -314,8 +311,8 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
             </div>
           )}
 
-          {/* FOOTER ACTION (Toujours présent dans la révélation) */}
-          <footer className="mt-20 pt-12 border-t border-stone-100 flex flex-col items-center gap-8 pb-32">
+          {/* ACTION FOOTER */}
+          <footer className="mt-20 pt-10 border-t border-stone-100 flex flex-col items-center gap-8 pb-32">
             <div className="text-center">
               <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-stone-300 mb-2">Sceller ma Sagesse</p>
             </div>
