@@ -7,17 +7,15 @@ import { useConsultations } from "@/hooks/useConsultations";
 import WallTile from "./WallTile";
 import ConsultationModal from "./ConsultationModal";
 import BeninFrame from "./BeninFrame";
-import { useLivingOrder } from "@/hooks/useLivingOrder";
 
 /**
  * SynchronicityWall - A living gallery of consultations.
  * Cells periodically swap positions to create a "living" community effect.
  */
 const SynchronicityWall = () => {
-  const { data: consultations = [] } = useConsultations();
+  const { data: consultations = [], isLoading } = useConsultations();
   const [selected, setSelected] = useState<Consultation | null>(null);
   const [revealed, setRevealed] = useState<Set<string>>(new Set());
-  const order = useLivingOrder(consultations.length, 6, 2200);
 
   const handleSelect = (c: Consultation) => {
     setSelected(c);
@@ -30,43 +28,50 @@ const SynchronicityWall = () => {
 
   const resetWall = () => setRevealed(new Set());
 
+  // Génération des 256 cases de la matrice 16x16
+  const gridCells = Array.from({ length: 256 }, (_, i) => {
+    const row = Math.floor(i / 16);
+    const col = i % 16;
+    // Cherche la consultation correspondante aux coordonnées
+    const consultation = consultations.find(
+      (c) => c.rowIndex === row && c.colIndex === col
+    );
+    return { i, row, col, consultation };
+  });
+
   return (
     <>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1.2 }}
+        className={isLoading ? "opacity-50 pointer-events-none" : "opacity-100"}
       >
         <div className="text-center mb-5 px-4">
-          <p
-            className="font-headline italic text-sm md:text-base text-neutral-500"
-          >
+          <p className="font-headline italic text-sm md:text-base text-neutral-500">
             Choisissez une photo pour écouter la guidance proposée par le bokônon.
           </p>
         </div>
-        <div className="overflow-x-auto">
+
+        <div className="overflow-x-auto pb-8">
           <BeninFrame
-            className="mx-auto max-w-[640px] md:max-w-[820px] lg:max-w-[920px]"
-            inset={12}
-            thickness={6}
+            className="mx-auto w-[95vw] max-w-[800px] aspect-square"
+            inset={8}
+            thickness={4}
           >
             <div
-              className="grid gap-[2px] bg-white"
+              className="grid w-full h-full bg-neutral-900 gap-[1px]"
               style={{ gridTemplateColumns: "repeat(16, 1fr)" }}
             >
-              {order.map((idx, slot) => {
-                const c = consultations[idx];
-                if (!c) return null;
-                return (
-                  <WallTile
-                    key={c.id}
-                    consultation={c}
-                    index={slot}
-                    isSelected={revealed.has(c.id)}
-                    onClick={handleSelect}
-                  />
-                );
-              })}
+              {gridCells.map((cell) => (
+                <WallTile
+                  key={cell.i}
+                  consultation={cell.consultation}
+                  index={cell.i}
+                  isSelected={cell.consultation ? revealed.has(cell.consultation.id) : false}
+                  onClick={cell.consultation ? handleSelect : undefined}
+                />
+              ))}
             </div>
           </BeninFrame>
         </div>
@@ -88,7 +93,10 @@ const SynchronicityWall = () => {
         )}
       </motion.div>
 
-      <ConsultationModal consultation={selected} onClose={() => setSelected(null)} />
+      <ConsultationModal
+        consultation={selected}
+        onClose={() => setSelected(null)}
+      />
     </>
   );
 };

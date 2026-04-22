@@ -23,6 +23,8 @@ export function mapConsultationRow(
 
   return {
     id: `${row.row_index}-${row.col_index}`,
+    rowIndex: row.row_index,
+    colIndex: row.col_index,
     signX,
     signY,
     dynamicWord: row.dynamic_word,

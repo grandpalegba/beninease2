@@ -1,5 +1,7 @@
 export interface Consultation {
   id: string;
+  rowIndex: number;
+  colIndex: number;
   author: string;
   reflection: string;
   videoSeed: number;
