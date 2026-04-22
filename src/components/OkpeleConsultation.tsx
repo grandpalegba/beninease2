@@ -318,8 +318,8 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
           )}
 
           {/* MODULE : ARBITRAGE FINAL (Compact Single-Screen) */}
-          <div className="mt-32 pt-16 border-t border-[#f4f3f2] pb-32">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-stretch">
+          <div className="mt-32 pt-16 border-t border-[#f4f3f2] pb-32 flex flex-col items-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-stretch w-full">
               
               {/* À GAUCHE (La Carte Originale) */}
               <div className="flex flex-col h-full">
@@ -331,7 +331,7 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
               {/* À DROITE (L'Arbitrage Épuré) */}
               <div className="flex flex-col h-full justify-between py-2">
                 
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-2.5">
                   {caseData.options.map((opt: string, i: number) => {
                     const isSelected = finalDecision === opt;
 
@@ -339,66 +339,66 @@ export default function OkpeleConsultation({ caseData, onBack, onComplete }: { c
                       <button 
                         key={i}
                         onClick={() => setFinalDecision(opt)}
-                        className={`p-5 rounded-[1.5rem] text-left transition-all border-2 flex items-center justify-between relative
+                        className={`p-4 rounded-[1.2rem] text-left transition-all border-2 flex items-center justify-between relative
                           ${isSelected 
                             ? 'bg-white border-[#22C55E] shadow-sm' 
                             : 'bg-[#f4f3f2] border-transparent opacity-60 hover:opacity-100 hover:bg-stone-100'}
                         `}
                       >
-                        <span className="text-[13px] font-medium text-[#303333] leading-snug">{opt}</span>
-                        {isSelected && <CheckCircle2 size={18} className="text-[#22C55E]" />}
+                        <span className="text-[12px] font-medium text-[#303333] leading-snug">{opt}</span>
+                        {isSelected && <CheckCircle2 size={16} className="text-[#22C55E]" />}
                       </button>
                     );
                   })}
                 </div>
 
-                <div className="space-y-3">
-                  <div 
-                    onClick={() => fileInputRef.current?.click()}
-                    className="bg-[#f4f3f2] border-2 border-dashed border-stone-200 rounded-[1.5rem] p-4 flex items-center gap-4 group cursor-pointer hover:border-[#b48224] transition-colors relative"
-                  >
-                    <input 
-                      type="file" 
-                      ref={fileInputRef} 
-                      onChange={handleVideoUpload} 
-                      accept="video/*" 
-                      className="hidden" 
-                    />
-                    
-                    <div className={`w-10 h-10 rounded-full bg-white flex items-center justify-center transition-colors shadow-sm ${videoUrl ? 'text-[#22C55E]' : 'text-stone-400 group-hover:text-[#b48224]'}`}>
-                      {isUploading ? (
-                        <RefreshCw className="animate-spin" size={20} />
-                      ) : videoUrl ? (
-                        <Check size={20} />
-                      ) : (
-                        <Video size={20} />
-                      )}
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-[10px] font-bold text-[#303333] uppercase tracking-widest">Partager votre sagesse</p>
-                      <p className="text-[9px] text-stone-400 mt-0.5">{videoUrl ? "Vidéo prête" : "Vidéo courte"}</p>
-                    </div>
-                  </div>
-
-                  <button 
-                    onClick={handleTransmit}
-                    disabled={!canSubmit || isTransmitting}
-                    className={`w-full py-6 rounded-full font-bold text-[10px] uppercase tracking-[0.3em] transition-all shadow-xl flex items-center justify-center gap-4
-                      ${!canSubmit ? 'bg-stone-100 text-stone-300 cursor-not-allowed' : 'bg-[#b48224] text-white hover:opacity-90 hover:-translate-y-1 active:translate-y-0'}
-                    `}
-                  >
-                    {isTransmitting ? (
+                <div 
+                  onClick={() => fileInputRef.current?.click()}
+                  className="bg-[#f4f3f2] border-2 border-dashed border-stone-200 rounded-[1.2rem] p-3.5 flex items-center gap-4 group cursor-pointer hover:border-[#b48224] transition-colors relative"
+                >
+                  <input 
+                    type="file" 
+                    ref={fileInputRef} 
+                    onChange={handleVideoUpload} 
+                    accept="video/*" 
+                    className="hidden" 
+                  />
+                  
+                  <div className={`w-9 h-9 rounded-full bg-white flex items-center justify-center transition-colors shadow-sm ${videoUrl ? 'text-[#22C55E]' : 'text-stone-400 group-hover:text-[#b48224]'}`}>
+                    {isUploading ? (
                       <RefreshCw className="animate-spin" size={18} />
+                    ) : videoUrl ? (
+                      <Check size={18} />
                     ) : (
-                      <>
-                        <Send size={18} />
-                        <span>Transmettre ma guidance</span>
-                      </>
+                      <Video size={18} />
                     )}
-                  </button>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-[10px] font-bold text-[#303333] uppercase tracking-widest">Télécharger</p>
+                    <p className="text-[9px] text-stone-400 mt-0.5">{videoUrl ? "Vidéo prête" : "Video de 64 secondes maximum"}</p>
+                  </div>
                 </div>
               </div>
+            </div>
 
+            {/* BOUTON FINAL CENTRÉ EN BAS */}
+            <div className="mt-16 w-full max-w-md">
+              <button 
+                onClick={handleTransmit}
+                disabled={!canSubmit || isTransmitting}
+                className={`w-full py-6 rounded-full font-bold text-[10px] uppercase tracking-[0.3em] transition-all shadow-xl flex items-center justify-center gap-4
+                  ${!canSubmit ? 'bg-stone-100 text-stone-300 cursor-not-allowed' : 'bg-[#b48224] text-white hover:opacity-90 hover:-translate-y-1 active:translate-y-0'}
+                `}
+              >
+                {isTransmitting ? (
+                  <RefreshCw className="animate-spin" size={18} />
+                ) : (
+                  <>
+                    <Send size={18} />
+                    <span>Transmettre ma sagesse</span>
+                  </>
+                )}
+              </button>
             </div>
           </div>
         </div>
