@@ -121,9 +121,10 @@ const WallTile = memo(({ data, index, isSelected, onClick }: Props) => {
         src={imageUrl}
         alt={author}
         loading="lazy"
-        animate={{ scale: [1, 1.04, 1] }}
+        animate={{ scale: [1, 1.05, 1] }}
         transition={{ duration: 5 + (index % 4), repeat: Infinity, ease: "easeInOut" }}
-        className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none sepia-[0.1] saturate-[0.9] group-hover:sepia-0 group-hover:saturate-100 transition-all duration-500"
+        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+        className="absolute top-0 left-0 pointer-events-none select-none sepia-[0.1] saturate-[0.9] group-hover:sepia-0 group-hover:saturate-100 transition-all duration-500"
       />
 
       {/* Overlay de sélection ou au survol */}
