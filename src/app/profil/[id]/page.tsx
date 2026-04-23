@@ -3,10 +3,10 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import ProfileDetailClient from "@/components/profil/ProfileDetailClient";
 
 /**
- * ProfilePage - Server Component
+ * SagessesPage - Server Component
  * Fetches a single profile from Supabase by ID.
  */
-export default async function ProfilePage({ params }: { params: { id: string } }) {
+export default async function SagessesPage({ params }: { params: { id: string } }) {
   const { id } = params;
   if (!id) return notFound();
 

@@ -51,7 +51,7 @@ export function VoteHistory({ votantId }: VoteHistoryProps) {
       <div className="p-8 text-center bg-white rounded-3xl border border-dashed border-gray-200">
         <Heart className="w-8 h-8 text-gray-300 mx-auto mb-3" />
         <p className="text-gray-500 text-sm">Vous n&apos;avez pas encore soutenu d'ambassadeur.</p>
-        <Link href="/referent" className="text-[#008751] font-bold text-sm mt-4 inline-block hover:underline">
+        <Link href="/batisseurs" className="text-[#008751] font-bold text-sm mt-4 inline-block hover:underline">
           Découvrir les ambassadeurs
         </Link>
       </div>

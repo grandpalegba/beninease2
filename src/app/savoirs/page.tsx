@@ -116,7 +116,7 @@ const AwaleMini = ({ seedsCount, isWrong }: { seedsCount: number, isWrong: boole
   </motion.div>
 );
 
-export default function MysteresPage() {
+export default function SavoirsPage() {
   const [loading, setLoading] = useState(true);
   const [mysteres, setMysteres] = useState<any[]>([]);
   const [themes, setThemes] = useState<Record<string, string>>({});

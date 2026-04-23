@@ -124,7 +124,7 @@ export default function ConsultationPage() {
                 : 'text-[#666] hover:text-[#1a1a1a]'
             }`}
           >
-            Mur des consultations
+            Mur des sagesses
           </button>
         </div>
       </div>

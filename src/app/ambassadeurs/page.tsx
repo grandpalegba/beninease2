@@ -166,8 +166,8 @@ const TalentsContent = () => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: "BeninEase - L'Espace béninois",
-          text: "Découvrez les Trésors, les Ambassadeurs et les Talents du patrimoine du Bénin.",
+          title: "BeninEase - Ambassadeurs du Bénin",
+          text: "Découvrez les Trésors, les Bâtisseurs et les Ambassadeurs du patrimoine du Bénin.",
           url: shareUrl,
         });
       } catch (err) {
@@ -245,7 +245,7 @@ const TalentsContent = () => {
       {/* Header Section: Title + Pill */}
       <div className="flex flex-col items-center justify-center gap-6 shrink-0 w-full">
         <span className="text-[#B8860B] font-display text-[11px] font-bold tracking-[0.3em] uppercase">
-          TALENTS DU BÉNIN
+          AMBASSADEURS DU BÉNIN
         </span>
         <div className="flex items-center gap-4 bg-white text-[#1a1c1c] border border-zinc-100 px-6 py-2 rounded-full shadow-sm">
           <CategoryPattern id={pair.categoryId} />
@@ -406,7 +406,7 @@ const VideoModal = ({ url, onClose }: { url: string, onClose: () => void }) => {
   );
 };
 
-const TalentsPage = () => {
+const AmbassadeursPage = () => {
   return (
     <Suspense fallback={<div className="h-screen w-full flex items-center justify-center bg-white"><Loader2 className="w-8 h-8 animate-spin text-zinc-900" /></div>}>
       <TalentsContent />
@@ -414,4 +414,4 @@ const TalentsPage = () => {
   );
 };
 
-export default TalentsPage;
+export default AmbassadeursPage;

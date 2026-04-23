@@ -1,9 +1,9 @@
 import ConsultationPage from '@/features/consultation/ConsultationPage';
 
 /**
- * Consultation Route
+ * Sagesses Route
  * 
- * This page serves as the entry point for the /consultation URL.
+ * This page serves as the entry point for the /sagesses URL.
  * It leverages the ConsultationPage feature component to maintain
  * a clean separation between routing and business logic.
  */

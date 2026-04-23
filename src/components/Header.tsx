@@ -33,7 +33,7 @@ type UserProfile = {
 
 const Header = () => {
   const pathname = usePathname();
-  const isBottomNav = pathname === "/referent" || pathname === "/tresors" || pathname === "/duel" || pathname === "/talents" || pathname === "/mysteres" || pathname === "/consultation" || pathname?.startsWith("/referent/");
+  const isBottomNav = pathname === "/batisseurs" || pathname === "/tresors" || pathname === "/duel" || pathname === "/ambassadeurs" || pathname === "/savoirs" || pathname === "/sagesses" || pathname?.startsWith("/batisseurs/");
 
   const [scrolled, setScrolled] = useState(false);
   const [user, setUser] = useState<User | null>(null);
@@ -126,9 +126,10 @@ const Header = () => {
         <div className="flex items-center gap-4 md:gap-8">
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-6">
-            <Link href="/referent" className={cn(navLinkClasses, pathname === "/referent" && "text-[#FFD700]")}>Référents</Link>
-            <Link href="/mysteres" className={cn(navLinkClasses, pathname === "/mysteres" && "text-[#FFD700]")}>Mystères</Link>
-            <Link href="/talents" className={cn(navLinkClasses, pathname === "/talents" && "text-[#FFD700]")}>Talents</Link>
+            <Link href="/sagesses" className={cn(navLinkClasses, pathname === "/sagesses" && "text-[#FFD700]")}>Sagesses</Link>
+            <Link href="/batisseurs" className={cn(navLinkClasses, pathname === "/batisseurs" && "text-[#FFD700]")}>Bâtisseurs</Link>
+            <Link href="/savoirs" className={cn(navLinkClasses, pathname === "/savoirs" && "text-[#FFD700]")}>Savoirs</Link>
+            <Link href="/ambassadeurs" className={cn(navLinkClasses, pathname === "/ambassadeurs" && "text-[#FFD700]")}>Ambassadeurs</Link>
             <Link href="/tresors" className={cn(navLinkClasses, pathname === "/tresors" && "text-[#FFD700]")}>Trésors</Link>
           </div>
           
@@ -221,25 +222,32 @@ const Header = () => {
           <div className="p-8 flex flex-col gap-6">
 
             <Link 
-              href="/referent" 
+              href="/sagesses" 
               onClick={() => setIsMobileMenuOpen(false)}
               className="text-3xl font-display font-black text-white flex items-center justify-between"
             >
-              Référents <ChevronDown size={20} className="-rotate-90 text-white/30" />
+              Sagesses <ChevronDown size={20} className="-rotate-90 text-white/30" />
             </Link>
             <Link 
-              href="/mysteres" 
+              href="/batisseurs" 
               onClick={() => setIsMobileMenuOpen(false)}
               className="text-3xl font-display font-black text-white flex items-center justify-between"
             >
-              Mystères <ChevronDown size={20} className="-rotate-90 text-white/30" />
+              Bâtisseurs <ChevronDown size={20} className="-rotate-90 text-white/30" />
             </Link>
             <Link 
-              href="/talents" 
+              href="/savoirs" 
               onClick={() => setIsMobileMenuOpen(false)}
               className="text-3xl font-display font-black text-white flex items-center justify-between"
             >
-              Talents <ChevronDown size={20} className="-rotate-90 text-white/30" />
+              Savoirs <ChevronDown size={20} className="-rotate-90 text-white/30" />
+            </Link>
+            <Link 
+              href="/ambassadeurs" 
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="text-3xl font-display font-black text-white flex items-center justify-between"
+            >
+              Ambassadeurs <ChevronDown size={20} className="-rotate-90 text-white/30" />
             </Link>
             <Link 
               href="/tresors" 

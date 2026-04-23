@@ -45,7 +45,7 @@ export default function ProfileDetailClient({ profile }: { profile: Profile }) {
       {/* Navigation Bar */}
       <nav className="fixed top-0 inset-x-0 h-20 px-6 flex items-center justify-between z-50 bg-white/50 backdrop-blur-md border-b border-zinc-100">
         <Link 
-          href="/consultation" 
+          href="/sagesses" 
           className="group flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.2em] text-[#5a5c5c] hover:text-[#1a1a1a] transition-all"
         >
           <div className="w-8 h-8 rounded-full bg-white border border-zinc-200 flex items-center justify-center group-hover:bg-[#1a1a1a] group-hover:text-white transition-all shadow-sm">

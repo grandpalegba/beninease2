@@ -10,7 +10,7 @@ export default function NotFound() {
         Désolé, nous n'avons pas pu trouver le profil que vous recherchez.
       </p>
       <Link
-        href="/talents"
+        href="/ambassadeurs"
         className="rounded-full bg-[#008751] px-8 py-3 text-sm font-bold uppercase tracking-widest text-white transition-all hover:bg-[#006B3F] active:scale-95 shadow-lg"
       >
         Retour aux talents
