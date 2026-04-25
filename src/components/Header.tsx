@@ -33,7 +33,7 @@ type UserProfile = {
 
 const Header = () => {
   const pathname = usePathname();
-  const isBottomNav = pathname === "/batisseurs" || pathname === "/tresors" || pathname === "/duel" || pathname === "/ambassadeurs" || pathname === "/savoirs" || pathname === "/sagesses" || pathname?.startsWith("/batisseurs/");
+  const isBottomNav = pathname === "/batisseurs" || pathname === "/tresors" || pathname === "/duel" || pathname === "/ambassadeurs" || pathname === "/savoirs" || pathname === "/sagesses" || pathname === "/histoires" || pathname?.startsWith("/batisseurs/");
 
   const [scrolled, setScrolled] = useState(false);
   const [user, setUser] = useState<User | null>(null);
@@ -129,6 +129,7 @@ const Header = () => {
             <Link href="/sagesses" className={cn(navLinkClasses, pathname === "/sagesses" && "text-[#FFD700]")}>Sagesses</Link>
             <Link href="/batisseurs" className={cn(navLinkClasses, pathname === "/batisseurs" && "text-[#FFD700]")}>Bâtisseurs</Link>
             <Link href="/savoirs" className={cn(navLinkClasses, pathname === "/savoirs" && "text-[#FFD700]")}>Savoirs</Link>
+            <Link href="/histoires" className={cn(navLinkClasses, pathname === "/histoires" && "text-[#FFD700]")}>Histoires</Link>
             <Link href="/ambassadeurs" className={cn(navLinkClasses, pathname === "/ambassadeurs" && "text-[#FFD700]")}>Ambassadeurs</Link>
             <Link href="/tresors" className={cn(navLinkClasses, pathname === "/tresors" && "text-[#FFD700]")}>Trésors</Link>
           </div>
@@ -241,6 +242,13 @@ const Header = () => {
               className="text-3xl font-display font-black text-white flex items-center justify-between"
             >
               Savoirs <ChevronDown size={20} className="-rotate-90 text-white/30" />
+            </Link>
+            <Link 
+              href="/histoires" 
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="text-3xl font-display font-black text-white flex items-center justify-between"
+            >
+              Histoires <ChevronDown size={20} className="-rotate-90 text-white/30" />
             </Link>
             <Link 
               href="/ambassadeurs" 
