@@ -1,115 +1,21 @@
 "use client";
 
-/**
- * src/app/histoires/page.tsx
- *
- * Page Histoires — Section Beninease
- * Architecture calquée sur batisseurs/page.tsx :
- *  - useEffect / fetch Supabase via useHistoires()
- *  - Carrousel horizontal Embla par série
- *  - Navigation vers /profil/$profilId au clic
- *  - Loading / error states cohérents avec le reste du projet
- */
-
-import { useMemo } from "react";
 import { useHistoires } from "@/hooks/useHistoires";
 import { ProfileCard } from "@/components/histoires/ProfileCard";
 import useEmblaCarousel from "embla-carousel-react";
-import { Loader2, AlertCircle, BookOpen, ChevronLeft, ChevronRight } from "lucide-react";
-import type { ProfilAvecSerie } from "@/data/series";
+import { Loader2, AlertCircle } from "lucide-react";
+import { useEffect } from "react";
 
-/* ──────────────────────────────────────────────
-   Carrousel par série (une rangée Embla par série)
-────────────────────────────────────────────── */
-function SerieCarousel({ titre, profils }: { titre: string; profils: ProfilAvecSerie[] }) {
-  const [emblaRef, emblaApi] = useEmblaCarousel({
-    axis: "x",
-    align: "start",
-    containScroll: "trimSnaps",
-    dragFree: true,
-  });
-
-  return (
-    <section className="mb-12">
-      {/* En-tête de série */}
-      <div className="flex items-center justify-between px-5 mb-4">
-        <div className="flex items-center gap-2">
-          <BookOpen className="h-4 w-4 text-[#008751]" />
-          <h2 className="text-base font-black uppercase tracking-widest text-gray-900">
-            {titre}
-          </h2>
-          <span className="text-[10px] text-gray-400 font-medium ml-1">
-            {profils.length} profil{profils.length > 1 ? "s" : ""}
-          </span>
-        </div>
-
-        {/* Boutons de navigation Embla */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => emblaApi?.scrollPrev()}
-            className="w-7 h-7 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-[#008751] hover:border-[#008751] transition-all"
-            aria-label="Précédent"
-          >
-            <ChevronLeft size={14} />
-          </button>
-          <button
-            onClick={() => emblaApi?.scrollNext()}
-            className="w-7 h-7 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-[#008751] hover:border-[#008751] transition-all"
-            aria-label="Suivant"
-          >
-            <ChevronRight size={14} />
-          </button>
-        </div>
-      </div>
-
-      {/* Piste Embla */}
-      <div className="overflow-hidden" ref={emblaRef}>
-        <div className="flex gap-4 pl-5 pr-5">
-          {profils.map((profil) => (
-            <ProfileCard
-              key={profil.id}
-              profil={profil}
-              serie={profil.serie}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Question de l'épisode (si disponible depuis la série) */}
-      {profils[0]?.serie?.episode_question && (
-        <p className="px-5 mt-4 text-xs text-gray-400 italic">
-          « {profils[0].serie.episode_question} »
-        </p>
-      )}
-    </section>
-  );
-}
-
-/* ──────────────────────────────────────────────
-   Page principale Histoires
-────────────────────────────────────────────── */
 export default function HistoiresPage() {
   const { profils, loading, error, refetch } = useHistoires();
 
-  /* Grouper les profils par série */
-  const grouped = useMemo(() => {
-    const map = new Map<string, { titre: string; items: ProfilAvecSerie[] }>();
-
-    profils.forEach((p) => {
-      const key = p.series_id;
-      const titre = p.serie?.titre ?? "Histoires sans titre";
-      if (!map.has(key)) {
-        map.set(key, { titre, items: [] });
-      }
-      map.get(key)!.items.push(p);
-    });
-
-    return Array.from(map.entries()).map(([id, { titre, items }]) => ({
-      id,
-      titre,
-      items,
-    }));
-  }, [profils]);
+  const [emblaRef] = useEmblaCarousel({
+    axis: "x",
+    align: "center",
+    loop: true,
+    containScroll: false,
+    dragFree: true,
+  });
 
   /* ── État : chargement ── */
   if (loading) {
@@ -149,7 +55,6 @@ export default function HistoiresPage() {
     return (
       <div className="min-h-[80vh] flex items-center justify-center p-6">
         <div className="text-center max-w-sm">
-          <BookOpen className="w-12 h-12 text-gray-300 mx-auto mb-4" />
           <h2 className="text-xl font-bold mb-2 text-gray-700">
             Aucune histoire disponible
           </h2>
@@ -163,28 +68,25 @@ export default function HistoiresPage() {
 
   /* ── Rendu principal ── */
   return (
-    <div className="min-h-screen bg-[#F9F9F7] pb-32">
-      {/* ── Hero ── */}
-      <div className="pt-24 pb-8 px-5">
-        <p className="text-[10px] uppercase tracking-[0.3em] text-[#008751] font-bold mb-2">
-          Section
-        </p>
+    <div className="min-h-screen bg-[#F9F9F7] flex flex-col pt-24 pb-32">
+      {/* ── Titre Centré ── */}
+      <div className="text-center mb-8 px-5">
         <h1 className="text-3xl font-black text-gray-900 leading-tight">
-          Histoires
+          Histoires du Bénin
         </h1>
-        <p className="text-gray-400 text-sm mt-2 max-w-sm">
-          Investissez en Noix Bénies dans les profils qui vous inspirent.
-        </p>
       </div>
 
-      {/* ── Carrousels par série ── */}
-      {grouped.map((group) => (
-        <SerieCarousel
-          key={group.id}
-          titre={group.titre}
-          profils={group.items}
-        />
-      ))}
+      {/* ── Carrousel Infini ── */}
+      <div className="flex-1 flex flex-col justify-center overflow-hidden" ref={emblaRef}>
+        <div className="flex gap-4 sm:gap-6 pl-[5vw] sm:pl-[50vw] sm:-ml-[170px]">
+          {profils.map((profil) => (
+            <ProfileCard
+              key={profil.id}
+              profil={profil}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

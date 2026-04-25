@@ -61,6 +61,12 @@ export function useHistoires() {
         };
       });
 
+      // Fisher-Yates shuffle
+      for (let i = enriched.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [enriched[i], enriched[j]] = [enriched[j], enriched[i]];
+      }
+
       setProfils(enriched);
     } catch (err: any) {
       console.error("❌ useHistoires error:", err);
