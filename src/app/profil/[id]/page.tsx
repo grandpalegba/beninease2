@@ -30,34 +30,24 @@ export default function ProfilHistoirePage() {
         setLoading(true);
         const { data, error } = await supabase
           .from("profiles_histoires")
-          .select(`
-            id,
-            series_id,
-            nom_complet,
-            age,
-            profession,
-            bio_courte,
-            photo_url,
-            valeur_noix_benies,
-            video_urls,
-            total_investisseurs,
-            numero_profil,
-            series_histoires (
-              id,
-              titre,
-              synopsis,
-              affiche_url,
-              episode_numero,
-              episode_titre,
-              episode_question
-            )
-          `)
+          .select("*")
           .eq("id", id)
           .single();
 
         if (error) throw error;
 
         if (data) {
+          // Fetch serie separately to avoid FK join issues
+          let serieData = null;
+          if (data.series_id) {
+            const { data: sData } = await supabase
+              .from("series_histoires")
+              .select("*")
+              .eq("id", data.series_id)
+              .single();
+            serieData = sData;
+          }
+
           const rawVideos = data.video_urls ?? [];
           const video_urls: Episode[] = Array.isArray(rawVideos)
             ? rawVideos.map((v: any) => ({
@@ -79,7 +69,7 @@ export default function ProfilHistoirePage() {
             video_urls,
             total_investisseurs: data.total_investisseurs ?? 0,
             numero_profil: data.numero_profil ?? null,
-            serie: data.series_histoires as any,
+            serie: serieData as any,
           });
         }
       } catch (err) {

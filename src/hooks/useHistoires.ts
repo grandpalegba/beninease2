@@ -17,40 +17,23 @@ export function useHistoires() {
       setLoading(true);
       setError(null);
 
-      const { data, error: supabaseError } = await supabase
+      // 1. Fetch profiles
+      const { data: profilesData, error: profilesError } = await supabase
         .from("profiles_histoires")
-        .select(
-          `
-          id,
-          series_id,
-          nom_complet,
-          age,
-          profession,
-          bio_courte,
-          photo_url,
-          valeur_noix_benies,
-          video_urls,
-          total_investisseurs,
-          numero_profil,
-          series_histoires (
-            id,
-            titre,
-            synopsis,
-            affiche_url,
-            episode_numero,
-            episode_titre,
-            episode_question,
-            created_at
-          )
-        `
-        )
+        .select("*")
         .order("numero_profil", { ascending: true });
 
-      if (supabaseError) throw supabaseError;
+      if (profilesError) throw profilesError;
 
-      // Mapper les données brutes → types stricts
-      const enriched: ProfilAvecSerie[] = (data ?? []).map((row: any) => {
-        // video_urls est stocké en JSONB → peut être null ou tableau
+      // 2. Fetch series
+      const { data: seriesData, error: seriesError } = await supabase
+        .from("series_histoires")
+        .select("*");
+
+      if (seriesError) throw seriesError;
+
+      // 3. Map manually
+      const enriched: ProfilAvecSerie[] = (profilesData ?? []).map((row: any) => {
         const rawVideos = row.video_urls ?? [];
         const video_urls: Episode[] = Array.isArray(rawVideos)
           ? rawVideos.map((v: any) => ({
@@ -59,6 +42,8 @@ export function useHistoires() {
               video_url: v.video_url ?? v.url ?? "",
             }))
           : [];
+
+        const serie = seriesData?.find((s: any) => s.id === row.series_id) as Serie | undefined;
 
         return {
           id: row.id,
@@ -72,9 +57,7 @@ export function useHistoires() {
           video_urls,
           total_investisseurs: row.total_investisseurs ?? 0,
           numero_profil: row.numero_profil ?? null,
-          serie: row.series_histoires
-            ? (row.series_histoires as Serie)
-            : null,
+          serie: serie ?? null,
         };
       });
 
