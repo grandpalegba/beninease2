@@ -20,7 +20,8 @@ export default function ProfilHistoirePage() {
 
   // Zustand Store
   const storePrice = useWallet((s) => s.effectivePrice(id));
-  const sparklineData = useWallet((s) => s.getSparkline(id, profil || undefined));
+  const getSparkline = useWallet((s) => s.getSparkline);
+  const sparklineData = getSparkline(id, profil || undefined);
 
   useEffect(() => {
     if (!id) return;

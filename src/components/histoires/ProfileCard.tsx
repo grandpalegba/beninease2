@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import type { Profil, Serie } from "@/data/series";
 import { useWallet } from "@/store/wallet";
@@ -12,16 +13,37 @@ interface ProfileCardProps {
 }
 
 export function ProfileCard({ profil }: ProfileCardProps) {
+  const router = useRouter();
   const storePrice = useWallet((s) => s.effectivePrice(profil.id));
   const displayPrice = storePrice > 0 ? storePrice : profil.valeur_noix_benies;
 
+  // Swipe up logic
+  let touchStartY = 0;
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartY = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const touchEndY = e.changedTouches[0].clientY;
+    if (touchStartY - touchEndY > 50) {
+      router.push(`/profil/${profil.id}`);
+    }
+  };
+
+  const handleClick = () => {
+    router.push(`/profil/${profil.id}`);
+  };
+
   return (
-    <Link
-      href={`/profil/${profil.id}`}
-      className="group flex w-[85vw] max-w-[340px] h-[65vh] max-h-[600px] shrink-0 snap-start flex-col rounded-3xl bg-white border border-gray-100 overflow-hidden shadow-xl transition-all duration-300 mx-auto"
+    <div
+      onClick={handleClick}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      className="group cursor-pointer flex w-[85vw] max-w-[340px] h-[65vh] max-h-[600px] shrink-0 snap-start flex-col rounded-3xl bg-white border border-gray-100 overflow-hidden shadow-xl transition-all duration-300 mx-auto"
     >
       {/* ── Photo ── */}
-      <div className="relative flex-1 w-full overflow-hidden bg-gray-100">
+      <div className="relative flex-1 w-full overflow-hidden bg-gray-100 pointer-events-none">
         {profil.photo_url ? (
           <Image
             src={profil.photo_url}
@@ -43,7 +65,7 @@ export function ProfileCard({ profil }: ProfileCardProps) {
       </div>
 
       {/* ── Contenu Minimaliste ── */}
-      <div className="flex flex-col p-6 bg-white gap-4 relative z-10">
+      <div className="flex flex-col p-6 bg-white gap-4 relative z-10 pointer-events-none">
         <div>
           <h3 className="font-bold text-2xl text-gray-900 leading-tight truncate">
             {profil.nom_complet}
@@ -68,7 +90,7 @@ export function ProfileCard({ profil }: ProfileCardProps) {
           </span>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
 
