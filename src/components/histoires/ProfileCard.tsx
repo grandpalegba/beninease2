@@ -73,5 +73,3 @@ export function ProfileCard({ profil }: ProfileCardProps) {
 }
 
 export default ProfileCard;
-
-export default ProfileCard;
