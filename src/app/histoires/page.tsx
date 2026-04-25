@@ -68,9 +68,9 @@ export default function HistoiresPage() {
 
   /* ── Rendu principal ── */
   return (
-    <div className="min-h-screen bg-[#F9F9F7] flex flex-col pt-24 pb-32">
+    <div className="min-h-screen bg-[#F9F9F7] flex flex-col pt-16 pb-32">
       {/* ── Titre Centré ── */}
-      <div className="text-center mb-8 px-5">
+      <div className="text-center mb-6 px-5">
         <h1 className="text-3xl font-black text-gray-900 leading-tight">
           Histoires du Bénin
         </h1>
