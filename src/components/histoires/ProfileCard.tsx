@@ -12,7 +12,7 @@ interface ProfileCardProps {
   serie?: Serie | null;
 }
 
-export function ProfileCard({ profil }: ProfileCardProps) {
+export function ProfileCard({ profil, serie }: ProfileCardProps) {
   const router = useRouter();
   const storePrice = useWallet((s) => s.effectivePrice(profil.id));
   const displayPrice = storePrice > 0 ? storePrice : profil.valeur_noix_benies;
@@ -40,55 +40,77 @@ export function ProfileCard({ profil }: ProfileCardProps) {
       onClick={handleClick}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
-      className="group cursor-pointer flex w-[85vw] max-w-[340px] h-[65vh] max-h-[600px] shrink-0 snap-start flex-col rounded-3xl bg-white border border-gray-100 overflow-hidden shadow-xl transition-all duration-300 mx-auto"
+      className="group cursor-pointer flex w-full h-full shrink-0 flex-col rounded-3xl bg-white border border-gray-100 overflow-hidden shadow-xl transition-all duration-300 relative"
     >
-      {/* ── Photo ── */}
-      <div className="relative flex-1 w-full overflow-hidden bg-gray-100 pointer-events-none">
+      {/* ── Photo avec masque dégradé (Look Ibrahim Sow) ── */}
+      <div className="absolute inset-0 w-full h-[65%] overflow-hidden bg-gray-50 pointer-events-none">
         {profil.photo_url ? (
           <Image
             src={profil.photo_url}
             alt={profil.nom_complet}
             fill
-            sizes="(max-width: 640px) 85vw, 340px"
-            className="object-cover transition-transform duration-700 group-hover:scale-105"
+            sizes="(max-width: 640px) 85vw, 400px"
+            className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
             draggable={false}
             priority
+            style={{ maskImage: "linear-gradient(to bottom, black 60%, transparent 100%)", WebkitMaskImage: "linear-gradient(to bottom, black 60%, transparent 100%)" }}
           />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center bg-[#008751]/10 text-[#008751] font-serif text-5xl font-bold">
+          <div className="absolute inset-0 flex items-center justify-center text-[#008751] font-serif text-5xl font-bold opacity-20">
             {profil.nom_complet[0]}
           </div>
         )}
-
-        {/* Gradient bas de carte */}
-        <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/60 via-black/20 to-transparent pointer-events-none" />
       </div>
 
-      {/* ── Contenu Minimaliste ── */}
-      <div className="flex flex-col p-6 bg-white gap-4 relative z-10 pointer-events-none">
-        <div>
-          <h3 className="font-bold text-2xl text-gray-900 leading-tight truncate">
+      {/* ── Contenu ── */}
+      <div className="flex flex-col p-6 mt-auto bg-transparent relative z-10 pointer-events-none justify-end h-full">
+        <div className="mb-4">
+          <h3 className="font-serif font-black text-4xl text-gray-900 leading-tight tracking-tight">
             {profil.nom_complet}
           </h3>
           {profil.profession && (
-            <p className="text-xs text-gray-400 uppercase tracking-[0.2em] mt-1 truncate">
+            <p className="text-sm font-medium text-gray-500 mt-2">
               {profil.profession}
             </p>
           )}
         </div>
 
-        <div className="flex items-center justify-between rounded-xl bg-[#008751]/5 border border-[#008751]/10 px-4 py-3">
-          <span className="text-xs uppercase tracking-wider text-gray-400 font-medium">
+        <div className="flex items-center justify-between rounded-2xl bg-gray-50 border border-gray-100 px-5 py-4 mb-4">
+          <span className="text-[10px] uppercase tracking-widest text-gray-400 font-bold">
             Cours
           </span>
-          <span className="flex items-center gap-1.5 font-bold text-base tabular-nums text-[#008751]">
-            <Sparkles className="h-4 w-4" />
+          <span className="flex items-center gap-1.5 font-black text-xl tabular-nums text-gray-900">
+            <Sparkles className="h-5 w-5 text-amber-500" />
             {displayPrice.toFixed(2)}
-            <span className="text-xs font-normal text-gray-400 ml-0.5">
+            <span className="text-xs font-bold text-gray-400 ml-0.5">
               NB
             </span>
           </span>
         </div>
+
+        {/* ── Miniature de la Série ── */}
+        {serie && (
+          <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
+            <div className="h-12 w-9 relative rounded overflow-hidden shadow-sm bg-gray-100 shrink-0">
+              {serie.affiche_url && (
+                <Image
+                  src={serie.affiche_url}
+                  alt={serie.titre}
+                  fill
+                  className="object-cover"
+                />
+              )}
+            </div>
+            <div>
+              <p className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">
+                Série
+              </p>
+              <h4 className="text-sm font-bold text-gray-900">
+                {serie.titre}
+              </h4>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

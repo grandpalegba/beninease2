@@ -61,7 +61,7 @@ export default function HistoiresPage() {
               key={profil.id}
               className="relative flex-[0_0_85%] sm:flex-[0_0_400px] px-4 h-[75vh]"
             >
-              <ProfileCard profil={profil} />
+              <ProfileCard profil={profil} serie={profil.serie} />
             </div>
           ))}
         </div>
