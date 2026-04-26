@@ -207,12 +207,9 @@ export default function ProfilHistoirePage() {
                   </span>
                   <span className="text-sm font-bold text-gray-400">Noix Bénies</span>
                 </div>
-                <div className="-mx-1">
-                  <PriceChart data={sparklineData} currentPrice={displayPrice} />
-                </div>
               </div>
               
-              <div className="mt-4 pt-4 border-t border-gray-100">
+              <div className="mt-auto pt-4 border-t border-gray-100">
                 <button
                   onClick={() => setOpen(true)}
                   className="w-full rounded-2xl bg-gray-900 text-white font-bold text-lg py-4 shadow-lg hover:bg-gray-800 active:scale-[0.99] transition"
@@ -230,22 +227,12 @@ export default function ProfilHistoirePage() {
 
       {/* Épisodes */}
       <section className="mx-auto max-w-7xl px-6 py-14">
-        <div className="flex flex-col mb-8">
-          <span className="text-[#008751] font-bold uppercase tracking-widest text-xs mb-2">Témoignages</span>
-          <h2 className="text-3xl font-serif font-black text-gray-900">Plonger dans son histoire</h2>
-        </div>
         <EpisodeCarousel episodes={profil.video_urls} profilNom={profil.nom_complet} profilId={profil.id} />
       </section>
 
       {/* Suggestions */}
       {suggestions.length > 0 && (
         <section className="mx-auto max-w-7xl px-6 pb-20">
-          <div className="flex items-end justify-between mb-8">
-            <div>
-              <p className="text-[11px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-2">Suggestions</p>
-              <h2 className="font-serif text-2xl font-black text-gray-900">Les autres voix de cette série</h2>
-            </div>
-          </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {suggestions.map((p) => (
               <div 
