@@ -4,12 +4,11 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/utils/supabase/client";
 import { EpisodeCarousel } from "@/components/histoires/EpisodeCarousel";
-import { PriceChart } from "@/components/histoires/PriceChart";
-import { ProfileCard } from "@/components/histoires/ProfileCard";
+import { HistogrammeBeninois } from "@/components/histoires/HistogrammeBeninois";
 import type { ProfilAvecSerie, Episode } from "@/data/series";
 import { useWallet } from "@/store/wallet";
 import Image from "next/image";
-import { ChevronLeft, Loader2, Sparkles, TrendingUp, TrendingDown, X } from "lucide-react";
+import { ChevronLeft, Loader2, Sparkles, TrendingUp, TrendingDown, X, MessageSquare } from "lucide-react";
 
 function getYoutubeID(url: string) {
   if (!url) return null;
@@ -37,6 +36,14 @@ export default function ProfilHistoirePage() {
   const [open, setOpen] = useState(false);
   const [montant, setMontant] = useState(50);
   const [feedback, setFeedback] = useState<{ type: "ok" | "err"; msg: string } | null>(null);
+  
+  const [stats, setStats] = useState({
+    volume: 2.5,
+    originalite: 2.5,
+    authenticite: 2.5,
+    impact: 2.5,
+    count: 0
+  });
 
   // Swipe Up -> Retour (Simulation simplifiée)
   useEffect(() => {
@@ -100,6 +107,32 @@ export default function ProfilHistoirePage() {
           serie: serieData as any,
         } as any);
 
+        // Fetch Evaluation Stats
+        const { data: evals } = await supabase
+          .from("evaluations_histoires")
+          .select("originalite, authenticite, impact")
+          .eq("profil_id", id);
+
+        if (evals && evals.length > 0) {
+          const avg = evals.reduce((acc, curr) => ({
+            originalite: acc.originalite + curr.originalite,
+            authenticite: acc.authenticite + curr.authenticite,
+            impact: acc.impact + curr.impact
+          }), { originalite: 0, authenticite: 0, impact: 0 });
+
+          const count = evals.length;
+          // Volume mapping: 0 -> 1, 50+ -> 5
+          const volumeScore = Math.min(5, 1 + (count / 10)); 
+
+          setStats({
+            volume: volumeScore,
+            originalite: avg.originalite / count,
+            authenticite: avg.authenticite / count,
+            impact: avg.impact / count,
+            count
+          });
+        }
+
       } catch (err) {
         console.error("Error", err);
       } finally {
@@ -110,7 +143,7 @@ export default function ProfilHistoirePage() {
   }, [id]);
 
   if (loading) return (
-    <div className="h-screen w-full flex items-center justify-center bg-[#F9F9F7]">
+    <div className="h-screen w-full flex items-center justify-center bg-[#F9F9F7] font-sans">
       <Loader2 className="w-8 h-8 animate-spin text-[#008751]" />
     </div>
   );
@@ -161,13 +194,13 @@ export default function ProfilHistoirePage() {
             </div>
             
             <div className="flex-1 min-w-0">
-              <p className="text-[11px] uppercase tracking-[0.22em] text-gray-400 font-bold mb-1.5">
+              <p className="text-[11px] uppercase tracking-[0.22em] text-gray-400 font-black mb-1.5 font-sans">
                 {profil.serie?.titre || "Série Inconnue"}
               </p>
-              <h1 className="font-serif text-4xl sm:text-5xl font-black text-gray-900 tracking-[-0.02em] leading-tight text-balance">
+              <h1 className="font-sans text-4xl sm:text-5xl font-black text-gray-900 tracking-[-0.04em] leading-tight text-balance uppercase">
                 {profil.nom_complet}
               </h1>
-              <p className="mt-2.5 text-gray-600 font-medium text-[15px]">
+              <p className="mt-2.5 text-gray-600 font-bold text-[15px] font-sans">
                 {profil.profession} {profil.age ? `· ${profil.age} ans` : ""}
               </p>
             </div>
@@ -182,13 +215,13 @@ export default function ProfilHistoirePage() {
             )}
           </div>
 
-          <div className="grid lg:grid-cols-[1fr_400px] gap-10">
-            {/* Vidéo principale */}
-            <div className="aspect-video w-full rounded-[20px] overflow-hidden bg-black border border-gray-200 shadow-md">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Vidéo principale - Section 1 Gauche */}
+            <div className="aspect-video w-full rounded-[32px] overflow-hidden bg-black border-4 border-white shadow-2xl">
               {profil.video_urls[0]?.video_url && getYoutubeID(profil.video_urls[0].video_url) ? (
                 <iframe
                   src={`https://www.youtube.com/embed/${getYoutubeID(profil.video_urls[0].video_url)}`}
-                  className="h-full w-full object-cover"
+                  className="h-full w-full"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                 />
@@ -203,38 +236,44 @@ export default function ProfilHistoirePage() {
               )}
             </div>
 
-            {/* Carte Investissement */}
-            <div className="rounded-[20px] bg-white border border-gray-200 shadow-lg p-6 flex flex-col justify-between">
-              <div>
-                <div className="flex items-baseline justify-between mb-2">
-                  <span className="text-[10.5px] uppercase tracking-[0.22em] text-gray-400 font-bold">
+            {/* Carte Investissement - Section 1 Droite */}
+            <div className="flex flex-col gap-8">
+              <div className="bg-white p-8 rounded-[32px] shadow-sm border border-gray-100">
+                <div className="flex items-baseline justify-between mb-4 font-sans">
+                  <span className="text-[11px] uppercase tracking-[0.2em] text-gray-400 font-black">
                     Valeur des Noix Bénies
                   </span>
-                  <div className={`flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full ${
+                  <div className={`flex items-center gap-1 text-xs font-black px-3 py-1.5 rounded-full ${
                     positive ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
                   }`}>
                     {positive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                     {variation >= 0 ? "+" : ""}{variation.toFixed(1)}%
                   </div>
                 </div>
-                <div className="flex items-baseline gap-2 mb-4">
-                  <span className="font-serif text-[56px] font-black tabular-nums tracking-[-0.03em] leading-none text-gray-900">
+                <div className="flex items-baseline gap-3 mb-8">
+                  <span className="font-sans text-[64px] font-black tabular-nums tracking-[-0.05em] leading-none text-black">
                     {displayPrice.toFixed(2)}
                   </span>
-                  <span className="text-sm font-bold text-gray-400">Noix Bénies</span>
+                  <span className="text-sm font-black text-gray-300 uppercase tracking-widest">Noix</span>
+                </div>
+
+                {/* Histogramme Béninois */}
+                <div className="pt-6 border-t border-gray-50 flex items-center gap-10">
+                  <HistogrammeBeninois stats={stats} totalAvis={stats.count} />
                 </div>
               </div>
-              
-              <div className="mt-auto pt-4 border-t border-gray-100">
+
+              <div className="flex flex-col gap-4">
                 <button
                   onClick={() => setOpen(true)}
-                  className="w-full rounded-2xl bg-gray-900 text-white font-bold text-lg py-4 shadow-lg hover:bg-gray-800 active:scale-[0.99] transition"
+                  className="w-full rounded-2xl bg-[#0F172A] text-white font-black text-lg py-5 shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all uppercase tracking-widest"
                 >
-                  Investir des Noix Bénies
+                  Investir Maintenant
                 </button>
-                <p className="mt-3 text-center text-xs font-medium text-gray-500">
-                  Solde · <span className="tabular-nums text-gray-900 font-bold">{solde.toFixed(0)}</span> Noix
-                </p>
+                <div className="flex items-center justify-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
+                  <Sparkles className="h-3 w-3" />
+                  Solde actuel · {solde.toFixed(0)} Noix
+                </div>
               </div>
             </div>
           </div>
@@ -272,12 +311,12 @@ export default function ProfilHistoirePage() {
       {/* Sticky invest bar — mobile */}
       <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 border-t border-gray-200 bg-white/95 backdrop-blur-md shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
         <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between gap-4">
-          <div className="flex-1 min-w-0">
-            <p className="text-[10px] uppercase tracking-[0.18em] text-gray-400 font-bold leading-none mb-1">Cours</p>
-            <p className="font-serif text-2xl font-black tabular-nums leading-tight flex items-center gap-1.5 text-gray-900">
+          <div className="flex-1 min-w-0 font-sans">
+            <p className="text-[10px] uppercase tracking-[0.18em] text-gray-400 font-black leading-none mb-1">Cours Actuel</p>
+            <p className="text-2xl font-black tabular-nums leading-tight flex items-center gap-1.5 text-black">
               <Sparkles className="h-4 w-4 text-amber-500" />
               {displayPrice.toFixed(2)}
-              <span className={`ml-1 text-xs font-bold ${positive ? "text-green-600" : "text-red-600"}`}>
+              <span className={`ml-1 text-xs font-black ${positive ? "text-green-600" : "text-red-600"}`}>
                 {variation >= 0 ? "+" : ""}{variation.toFixed(1)}%
               </span>
             </p>
@@ -297,25 +336,25 @@ export default function ProfilHistoirePage() {
           className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
           onClick={() => setOpen(false)}
         >
-          <div className="w-full max-w-md rounded-3xl bg-white shadow-2xl p-8 relative animate-in fade-in zoom-in-95" onClick={(e) => e.stopPropagation()}>
+          <div className="w-full max-w-md rounded-3xl bg-white shadow-2xl p-8 relative animate-in fade-in zoom-in-95 font-sans" onClick={(e) => e.stopPropagation()}>
             <button
               onClick={() => setOpen(false)}
               className="absolute top-5 right-5 h-8 w-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition-colors"
             >
               <X className="h-4 w-4" />
             </button>
-            <p className="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-2">Investir dans</p>
-            <h3 className="font-serif text-3xl font-black text-gray-900 mb-6">{profil.nom_complet}</h3>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-black mb-2">Investir dans</p>
+            <h3 className="text-3xl font-black text-black mb-6 uppercase tracking-tight">{profil.nom_complet}</h3>
 
             <label className="block mb-6">
-              <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Montant (Noix Bénies)</span>
+              <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Montant (Noix Bénies)</span>
               <input
                 type="number"
                 min={1}
                 max={solde}
                 value={montant}
                 onChange={(e) => setMontant(Number(e.target.value))}
-                className="mt-2 w-full rounded-2xl border border-gray-200 bg-gray-50 px-5 py-4 text-3xl font-serif font-black tabular-nums focus:outline-none focus:ring-2 focus:ring-gray-900 text-gray-900"
+                className="mt-2 w-full rounded-2xl border border-gray-100 bg-gray-50 px-6 py-5 text-4xl font-black tabular-nums focus:outline-none focus:ring-4 focus:ring-black/5 text-black"
               />
             </label>
             <div className="flex gap-2 mb-8">
@@ -324,37 +363,33 @@ export default function ProfilHistoirePage() {
                   key={v}
                   onClick={() => setMontant(v)}
                   disabled={v > solde}
-                  className="flex-1 text-sm font-bold rounded-xl border border-gray-200 bg-white py-2.5 hover:bg-gray-50 disabled:opacity-40 transition-colors"
+                  className="flex-1 text-xs font-black uppercase tracking-widest rounded-xl border border-gray-100 bg-white py-3 hover:bg-gray-50 disabled:opacity-30 transition-all active:scale-95"
                 >
                   {v}
                 </button>
               ))}
             </div>
 
-            <div className="rounded-2xl bg-gray-50 p-5 text-sm space-y-3 border border-gray-100">
+            <div className="rounded-2xl bg-gray-50 p-6 text-sm space-y-4 border border-gray-100">
               <div className="flex justify-between items-center">
-                <span className="font-medium text-gray-500">Cours d'entrée</span>
-                <span className="tabular-nums font-black text-gray-900 flex items-center gap-1">
+                <span className="font-bold text-gray-400 uppercase text-[10px] tracking-widest">Cours d'entrée</span>
+                <span className="tabular-nums font-black text-black flex items-center gap-1">
                   <Sparkles className="h-3.5 w-3.5 text-amber-500" />
                   {displayPrice.toFixed(2)}
                 </span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="font-medium text-gray-500">Parts acquises</span>
-                <span className="tabular-nums font-bold text-gray-900">{(montant / displayPrice).toFixed(3)}</span>
-              </div>
-              <div className="flex justify-between items-center border-t border-gray-200 pt-3 mt-1">
-                <span className="font-medium text-gray-500">Solde après</span>
-                <span className="tabular-nums font-bold text-gray-900">{(solde - montant).toFixed(0)} Noix</span>
+              <div className="flex justify-between items-center border-t border-gray-200/50 pt-4 mt-2">
+                <span className="font-bold text-gray-400 uppercase text-[10px] tracking-widest">Solde après</span>
+                <span className="tabular-nums font-black text-black">{(solde - montant).toFixed(0)} Noix</span>
               </div>
             </div>
 
             <button
               onClick={handleInvest}
               disabled={montant <= 0 || montant > solde}
-              className="mt-8 w-full rounded-2xl bg-gray-900 text-white font-bold text-lg py-4 shadow-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className="mt-8 w-full rounded-2xl bg-[#0F172A] text-white font-black text-lg py-5 shadow-xl hover:scale-[1.01] active:scale-[0.98] disabled:opacity-30 disabled:cursor-not-allowed transition-all uppercase tracking-widest"
             >
-              Confirmer l'investissement
+              Confirmer
             </button>
 
             {feedback && (

@@ -20,6 +20,7 @@ export type Episode = {
   id: string;
   titre: string;
   video_url: string;
+  episode_question?: string | null;
 };
 
 export type Profil = {
