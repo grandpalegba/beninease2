@@ -53,7 +53,7 @@ const Header = () => {
   };
 
   // List of main pages where we show the HeaderSwipe
-  const isMainPage = ["/sagesses", "/savoirs", "/histoires", "/ambassadeurs", "/tresors"].includes(pathname);
+  const isMainPage = ["/", "/sagesses", "/savoirs", "/histoires", "/ambassadeurs", "/tresors"].includes(pathname);
 
   return (
     <>

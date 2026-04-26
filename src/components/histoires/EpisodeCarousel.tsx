@@ -7,9 +7,13 @@ import { EvaluationModule } from "./EvaluationModule";
 interface EpisodeCarouselProps {
   episodes: Episode[];
   profilId?: string;
+  seriesInfo?: {
+    episode_titre?: string | null;
+    episode_question?: string | null;
+  } | null;
 }
 
-export function EpisodeCarousel({ episodes, profilId }: EpisodeCarouselProps) {
+export function EpisodeCarousel({ episodes, profilId, seriesInfo }: EpisodeCarouselProps) {
   const [emblaRef] = useEmblaCarousel({ loop: false, align: "center" });
 
   if (!episodes || episodes.length === 0) {
@@ -25,7 +29,7 @@ export function EpisodeCarousel({ episodes, profilId }: EpisodeCarouselProps) {
       <div className="flex">
         {episodes.map((ep, idx) => (
           <div key={ep.id || idx} className="flex-[0_0_100%] min-w-0 pr-4">
-            <EvaluationModule episode={ep} profilId={profilId || ""} />
+            <EvaluationModule episode={ep} profilId={profilId || ""} seriesInfo={seriesInfo} />
           </div>
         ))}
       </div>

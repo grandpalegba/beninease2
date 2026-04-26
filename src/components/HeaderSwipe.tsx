@@ -17,7 +17,7 @@ export const HeaderSwipe = () => {
   const pathname = usePathname();
   const router = useRouter();
   const [emblaRef, emblaApi] = useEmblaCarousel({ 
-    loop: false, 
+    loop: true, 
     align: "center",
     containScroll: false
   });
@@ -25,8 +25,12 @@ export const HeaderSwipe = () => {
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
     const selectedIndex = emblaApi.selectedScrollSnap();
-    const targetPage = PAGES[selectedIndex];
-    if (pathname !== targetPage.href) {
+    // With loop: true, we need to handle the index properly if it wraps
+    const engine = emblaApi.internalEngine();
+    const index = engine.index.get();
+    const targetPage = PAGES[index % PAGES.length];
+    
+    if (pathname !== targetPage.href && pathname !== "/") {
       router.push(targetPage.href);
     }
   }, [emblaApi, pathname, router]);
@@ -35,10 +39,12 @@ export const HeaderSwipe = () => {
     if (!emblaApi) return;
     emblaApi.on("select", onSelect);
     
-    // Initial scroll to active page
-    const activeIndex = PAGES.findIndex(p => p.href === pathname);
-    if (activeIndex !== -1) {
-      emblaApi.scrollTo(activeIndex, true);
+    // Initial scroll to active page (if not on home)
+    if (pathname !== "/") {
+      const activeIndex = PAGES.findIndex(p => p.href === pathname);
+      if (activeIndex !== -1) {
+        emblaApi.scrollTo(activeIndex, true);
+      }
     }
     
     return () => {
@@ -66,10 +72,10 @@ export const HeaderSwipe = () => {
               onClick={() => handleTitleClick(i, page.href)}
             >
               <span className={cn(
-                "text-2xl uppercase tracking-[0.2em] transition-all duration-700 block whitespace-nowrap",
+                "text-lg uppercase tracking-[0.2em] transition-all duration-700 block whitespace-nowrap",
                 pathname === page.href 
                   ? "text-black font-black scale-110 opacity-100" 
-                  : "text-gray-300 font-medium scale-90 opacity-40 blur-[0.3px]"
+                  : "text-gray-300 font-medium scale-90 opacity-60 blur-[0.2px]"
               )}>
                 {page.name}
               </span>

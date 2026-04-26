@@ -31,8 +31,8 @@ export function HistogrammeBeninois({ stats, totalAvis }: HistogrammeBeninoisPro
         ))}
       </div>
       <div className="flex items-center gap-2">
-        <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">
-          {totalAvis} {totalAvis > 1 ? "avis" : "avis"}
+        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
+          {totalAvis} avis investi
         </span>
       </div>
     </div>

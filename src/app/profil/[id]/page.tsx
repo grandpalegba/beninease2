@@ -282,7 +282,7 @@ export default function ProfilHistoirePage() {
 
       {/* Épisodes */}
       <section className="mx-auto max-w-7xl px-6 py-14">
-        <EpisodeCarousel episodes={profil.video_urls} profilNom={profil.nom_complet} profilId={profil.id} />
+        <EpisodeCarousel episodes={profil.video_urls} profilId={profil.id} seriesInfo={profil.serie} />
       </section>
 
       {/* Suggestions */}
