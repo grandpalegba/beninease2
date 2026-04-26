@@ -97,12 +97,7 @@ export default function ConsultationPage() {
   return (
     <main className="h-[100dvh] bg-background text-foreground font-sans antialiased flex flex-col items-center justify-start overflow-hidden pb-20">
       {/* Title Section */}
-      <div className="w-full text-center shrink-0 z-10 pt-10">
-        <h1 
-          className="text-4xl md:text-5xl font-headline font-bold text-[#1a1a1a] mb-6 tracking-[-0.02em]"
-        >
-          Sagesses du Bénin
-        </h1>
+      <div className="w-full text-center shrink-0 z-10 pt-16">
 
         {/* Tab Selector - Pill Style */}
         <div className="bg-[#f0f1f1] p-1 rounded-full flex gap-1 shadow-none mx-auto w-fit">
@@ -130,7 +125,7 @@ export default function ConsultationPage() {
       </div>
 
       {/* Content Area */}
-      <div className="w-full max-w-7xl px-4 md:px-12 flex-1 flex items-start justify-center min-h-0 mt-8">
+      <div className="w-full max-w-7xl px-4 md:px-12 flex-1 flex items-start justify-center min-h-0 mt-4">
         <AnimatePresence mode="wait">
           {activeView === 'matrix' ? (
             <motion.div 

@@ -151,15 +151,15 @@ export default function ProfilHistoirePage() {
 
   return (
     <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -100 }}
-      drag="y"
-      dragConstraints={{ top: 0, bottom: 0 }}
-      dragElastic={0.2}
+      initial={{ opacity: 0, x: 50 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -50 }}
+      drag="x"
+      dragConstraints={{ left: 0, right: 0 }}
+      dragElastic={0.1}
       onDragEnd={(_, info) => {
-        // Si on swipe vers le haut (info.offset.y est négatif)
-        if (info.offset.y < -150) {
+        // Si on swipe horizontalement (gauche ou droite)
+        if (Math.abs(info.offset.x) > 150) {
           router.push('/histoires');
         }
       }}

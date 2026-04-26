@@ -35,13 +35,7 @@ export default function HistoiresPage() {
   }
 
   return (
-    <div className="h-screen w-full bg-white flex flex-col overflow-hidden">
-      {/* --- TITRE --- */}
-      <div className="pt-12 pb-2 text-center z-10">
-        <h1 className="text-2xl font-sans font-black text-gray-900">
-          Histoires du Bénin
-        </h1>
-      </div>
+    <div className="h-screen w-full bg-white flex flex-col overflow-hidden pt-12">
 
       {/* --- CARROUSEL FAÇON TINDER/BUMBLE --- */}
       <div className="flex-1 overflow-hidden">

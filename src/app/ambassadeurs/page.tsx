@@ -231,7 +231,7 @@ const TalentsContent = () => {
 
   return (
     <div
-      className="w-full bg-white flex flex-col items-center text-[#1a1c1c] overflow-hidden relative select-none pt-6 pb-6 px-4"
+      className="w-full bg-white flex flex-col items-center text-[#1a1c1c] overflow-hidden relative select-none pt-12 pb-6 px-4"
       style={{
         height: "calc(100svh - 72px)",
         cursor: isDragging ? "grabbing" : "grab"
@@ -244,9 +244,6 @@ const TalentsContent = () => {
 
       {/* Header Section: Title + Pill */}
       <div className="flex flex-col items-center justify-center gap-6 shrink-0 w-full">
-        <span className="text-[#B8860B] font-display text-[11px] font-bold tracking-[0.3em] uppercase">
-          AMBASSADEURS DU BÉNIN
-        </span>
         <div className="flex items-center gap-4 bg-white text-[#1a1c1c] border border-zinc-100 px-6 py-2 rounded-full shadow-sm">
           <CategoryPattern id={pair.categoryId} />
           <span className="font-display text-[10px] font-bold tracking-[0.2em] uppercase whitespace-nowrap">
