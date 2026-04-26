@@ -175,7 +175,7 @@ export default function ProfilHistoirePage() {
             )}
           </div>
 
-          <div className="grid lg:grid-cols-[1fr_400px] gap-10 items-start">
+          <div className="grid lg:grid-cols-[1fr_400px] gap-10">
             {/* Vidéo principale */}
             <div className="aspect-video w-full rounded-[20px] overflow-hidden bg-black border border-gray-200 shadow-md">
               <video
@@ -188,36 +188,41 @@ export default function ProfilHistoirePage() {
             </div>
 
             {/* Carte Investissement */}
-            <div className="rounded-[20px] bg-white border border-gray-200 shadow-lg p-7 flex flex-col">
-              <div className="flex items-baseline justify-between mb-2">
-                <span className="text-[10.5px] uppercase tracking-[0.22em] text-gray-400 font-bold">
-                  Valeur des Noix Bénies
-                </span>
-                <div className={`flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full ${
-                  positive ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
-                }`}>
-                  {positive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
-                  {variation >= 0 ? "+" : ""}{variation.toFixed(1)}%
+            <div className="rounded-[20px] bg-white border border-gray-200 shadow-lg p-6 flex flex-col justify-between">
+              <div>
+                <div className="flex items-baseline justify-between mb-2">
+                  <span className="text-[10.5px] uppercase tracking-[0.22em] text-gray-400 font-bold">
+                    Valeur des Noix Bénies
+                  </span>
+                  <div className={`flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full ${
+                    positive ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+                  }`}>
+                    {positive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+                    {variation >= 0 ? "+" : ""}{variation.toFixed(1)}%
+                  </div>
+                </div>
+                <div className="flex items-baseline gap-2 mb-4">
+                  <span className="font-serif text-[56px] font-black tabular-nums tracking-[-0.03em] leading-none text-gray-900">
+                    {displayPrice.toFixed(2)}
+                  </span>
+                  <span className="text-sm font-bold text-gray-400">Noix Bénies</span>
+                </div>
+                <div className="-mx-1">
+                  <PriceChart data={sparklineData} currentPrice={displayPrice} />
                 </div>
               </div>
-              <div className="flex items-baseline gap-2">
-                <span className="font-serif text-[56px] font-black tabular-nums tracking-[-0.03em] leading-none text-gray-900">
-                  {displayPrice.toFixed(2)}
-                </span>
-                <span className="text-sm font-bold text-gray-400">Noix Bénies</span>
+              
+              <div className="mt-4 pt-4 border-t border-gray-100">
+                <button
+                  onClick={() => setOpen(true)}
+                  className="w-full rounded-2xl bg-gray-900 text-white font-bold text-lg py-4 shadow-lg hover:bg-gray-800 active:scale-[0.99] transition"
+                >
+                  Investir des Noix Bénies
+                </button>
+                <p className="mt-3 text-center text-xs font-medium text-gray-500">
+                  Solde · <span className="tabular-nums text-gray-900 font-bold">{solde.toFixed(0)}</span> Noix
+                </p>
               </div>
-              <div className="mt-5 -mx-1">
-                <PriceChart data={sparklineData} currentPrice={displayPrice} />
-              </div>
-              <button
-                onClick={() => setOpen(true)}
-                className="mt-6 w-full rounded-2xl bg-gray-900 text-white font-bold text-lg py-4 shadow-lg hover:bg-gray-800 active:scale-[0.99] transition"
-              >
-                Investir des Noix Bénies
-              </button>
-              <p className="mt-4 text-center text-xs font-medium text-gray-500">
-                Solde · <span className="tabular-nums text-gray-900 font-bold">{solde.toFixed(0)}</span> Noix
-              </p>
             </div>
           </div>
         </div>
@@ -241,9 +246,21 @@ export default function ProfilHistoirePage() {
               <h2 className="font-serif text-2xl font-black text-gray-900">Les autres voix de cette série</h2>
             </div>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 h-[500px]">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {suggestions.map((p) => (
-              <ProfileCard key={p.id} profil={p} serie={p.serie} />
+              <div 
+                key={p.id} 
+                className="cursor-pointer bg-white border border-gray-100 rounded-2xl p-4 flex items-center gap-4 hover:shadow-md transition-shadow" 
+                onClick={() => router.push(`/profil/${p.id}`)}
+              >
+                <div className="relative h-[60px] w-[60px] rounded-xl overflow-hidden bg-gray-100 shrink-0">
+                  <Image src={p.photo_url || ""} alt={p.nom_complet} fill className="object-cover" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h4 className="font-bold text-gray-900 truncate text-base">{p.nom_complet}</h4>
+                  <p className="text-xs text-gray-500 truncate font-medium mt-0.5">{p.profession}</p>
+                </div>
+              </div>
             ))}
           </div>
         </section>
