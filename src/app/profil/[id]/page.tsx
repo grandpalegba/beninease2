@@ -90,27 +90,14 @@ export default function ProfilHistoirePage() {
           serie: serieData as any,
         } as any);
 
-        const { data: evals } = await supabase
-          .from("evaluations_histoires")
-          .select("originalite, authenticite, impact")
-          .eq("profil_id", id);
-
-        if (evals && evals.length > 0) {
-          const avg = evals.reduce((acc, curr) => ({
-            originalite: acc.originalite + curr.originalite,
-            authenticite: acc.authenticite + curr.authenticite,
-            impact: acc.impact + curr.impact
-          }), { originalite: 0, authenticite: 0, impact: 0 });
-
-          const count = evals.length;
-          setStats({
-            volume: Math.min(5, 1 + (count / 10)),
-            originalite: avg.originalite / count,
-            authenticite: avg.authenticite / count,
-            impact: avg.impact / count,
-            count
-          });
-        }
+        // Prioritize new columns from profiles_histoires
+        setStats({
+          volume: 2.5, // Default or unused for now
+          originalite: pData.moyenne_originalite ?? 2.5,
+          authenticite: pData.moyenne_authenticite ?? 2.5,
+          impact: pData.moyenne_impact ?? 2.5,
+          count: pData.total_avis ?? 0
+        });
 
       } catch (err) {
         console.error("Error", err);
@@ -170,29 +157,42 @@ export default function ProfilHistoirePage() {
       <main className="max-w-7xl mx-auto space-y-6">
         
         {/* Header Block */}
-        <header className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center gap-6">
-          <div className="relative w-16 h-16 rounded-2xl overflow-hidden shadow-inner bg-gray-50 border border-gray-100">
-            {profil.photo_url && (
-              <Image src={profil.photo_url} alt={profil.nom_complet} fill className="object-cover object-top" />
-            )}
+        <header className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center justify-between gap-6">
+          <div className="flex items-center gap-6">
+            <div className="relative w-16 h-16 rounded-2xl overflow-hidden shadow-inner bg-gray-50 border border-gray-100 select-none shrink-0">
+              {profil.photo_url && (
+                <Image src={profil.photo_url} alt={profil.nom_complet} fill className="object-cover object-top pointer-events-none" draggable={false} />
+              )}
+            </div>
+            <div>
+              <h1 className="text-3xl font-black text-gray-900 tracking-tighter leading-none mb-1">{profil.nom_complet}</h1>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">{profil.profession}</p>
+            </div>
           </div>
-          <h1 className="text-3xl font-black text-gray-900 tracking-tighter leading-none">{profil.nom_complet}</h1>
+
+          {profil.bio_courte && (
+            <div className="flex-1 max-w-xl hidden md:block">
+              <p className="text-sm font-medium text-gray-500 italic text-center leading-relaxed">
+                « {profil.bio_courte} »
+              </p>
+            </div>
+          )}
         </header>
 
         {/* Hero Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
           {/* Main Video Block (6 columns) */}
-          <div className="lg:col-span-6 bg-black rounded-[2.5rem] relative aspect-video overflow-hidden group shadow-xl border border-gray-100">
+          <div className="lg:col-span-6 bg-black rounded-[2.5rem] relative aspect-video overflow-hidden group shadow-xl border border-gray-100 select-none">
             {mainVideoId ? (
               <iframe 
                 src={`https://www.youtube.com/embed/${mainVideoId}`} 
-                className="w-full h-full" 
+                className="w-full h-full pointer-events-auto" 
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               />
             ) : (
-              <video src={profil.video_urls[0]?.video_url} className="w-full h-full object-cover" />
+              <video src={profil.video_urls[0]?.video_url} className="w-full h-full object-cover pointer-events-none" draggable={false} />
             )}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none group-hover:opacity-0 transition-opacity">
               <div className="w-16 h-16 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center text-white">
@@ -206,9 +206,9 @@ export default function ProfilHistoirePage() {
           </div>
 
           {/* Serie Poster Block (3 columns) */}
-          <div className="lg:col-span-3 rounded-[2.5rem] overflow-hidden relative shadow-lg border-4 border-white group">
+          <div className="lg:col-span-3 rounded-[2.5rem] overflow-hidden relative shadow-lg border-4 border-white group select-none">
             {profil.serie?.affiche_url ? (
-              <Image src={profil.serie.affiche_url} alt="Serie" fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
+              <Image src={profil.serie.affiche_url} alt="Serie" fill className="object-cover transition-transform duration-700 group-hover:scale-110 pointer-events-none" draggable={false} />
             ) : (
               <div className="w-full h-full bg-gray-200" />
             )}
@@ -222,7 +222,7 @@ export default function ProfilHistoirePage() {
                 <div>
                   <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] mb-2">Valeur de Noix bénies</p>
                   <p className="text-3xl font-black text-black leading-none tabular-nums tracking-tighter">
-                    {displayPrice.toFixed(2)}
+                    {profil.valeur_noix_benies.toFixed(2)}
                   </p>
                 </div>
               </div>
@@ -233,7 +233,12 @@ export default function ProfilHistoirePage() {
                 </div>
                 <div>
                   <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] mb-2">Nb d&apos;investisseurs</p>
-                  <p className="text-3xl font-black text-black leading-none tabular-nums tracking-tighter">1,482</p>
+                  <p className="text-3xl font-black text-black leading-none tabular-nums tracking-tighter">
+                    {profil.total_investisseurs ?? 0}
+                  </p>
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-2">
+                    {stats.count} avis investis
+                  </p>
                 </div>
               </div>
             </div>
@@ -262,8 +267,8 @@ export default function ProfilHistoirePage() {
                 onClick={() => router.push(`/profil/${p.id}`)}
                 className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex items-center gap-4 hover:shadow-md transition-all cursor-pointer group"
               >
-                <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-gray-100 group-hover:scale-105 transition-transform">
-                  {p.photo_url && <Image src={p.photo_url} alt={p.nom_complet} fill className="object-cover" />}
+                <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-gray-100 group-hover:scale-105 transition-transform select-none">
+                  {p.photo_url && <Image src={p.photo_url} alt={p.nom_complet} fill className="object-cover pointer-events-none" draggable={false} />}
                 </div>
                 <div>
                   <p className="font-black text-gray-900 tracking-tight">{p.nom_complet}</p>

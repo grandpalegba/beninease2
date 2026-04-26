@@ -26,18 +26,22 @@ interface EvaluationModuleProps {
 }
 
 export function EvaluationModule({ episode, profilId, seriesInfo }: EvaluationModuleProps) {
-  const [scores, setScores] = useState({ originalite: 3, authenticite: 3, impact: 3 });
+  // On utilise une échelle de 0 à 100 pour la fluidité
+  const [scores, setScores] = useState({ originalite: 50, authenticite: 50, impact: 50 });
   const [loading, setLoading] = useState(false);
 
   const submitEvaluation = async () => {
     setLoading(true);
     try {
+      // Conversion 0-100 vers 1-5 pour la base de données
+      const toScale5 = (val: number) => Math.round((val / 25) + 1);
+
       const { error } = await supabase.from("evaluations_histoires").insert({
         video_url: episode.video_url,
         profil_id: profilId,
-        originalite: scores.originalite,
-        authenticite: scores.authenticite,
-        impact: scores.impact,
+        originalite: toScale5(scores.originalite),
+        authenticite: toScale5(scores.authenticite),
+        impact: toScale5(scores.impact),
       });
       if (error) throw error;
       alert("Évaluation enregistrée !");
@@ -93,12 +97,12 @@ export function EvaluationModule({ episode, profilId, seriesInfo }: EvaluationMo
               <div className="flex justify-between items-end font-black">
                 <span className="text-[8px] uppercase tracking-[0.3em] text-gray-400">{c.label}</span>
                 <span className={cn("text-base", c.color)}>
-                  {(scores[c.key as keyof typeof scores] - 1) * 25}%
+                  {Math.round(scores[c.key as keyof typeof scores])}%
                 </span>
               </div>
               <div className="relative flex items-center">
                 <input 
-                  type="range" min="1" max="5" 
+                  type="range" min="0" max="100" step="1"
                   value={scores[c.key as keyof typeof scores]}
                   onChange={(e) => setScores({...scores, [c.key]: parseInt(e.target.value)})}
                   className={cn("w-full range-slider h-1", c.className)}
