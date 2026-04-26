@@ -9,6 +9,7 @@ import type { ProfilAvecSerie, Episode } from "@/data/series";
 import { useWallet } from "@/store/wallet";
 import Image from "next/image";
 import { ChevronLeft, Loader2, Sparkles, TrendingUp, TrendingDown, X, MessageSquare } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 function getYoutubeID(url: string) {
   if (!url) return null;
