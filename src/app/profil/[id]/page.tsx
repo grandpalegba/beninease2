@@ -11,6 +11,13 @@ import { useWallet } from "@/store/wallet";
 import Image from "next/image";
 import { ChevronLeft, Loader2, Sparkles, TrendingUp, TrendingDown, X } from "lucide-react";
 
+function getYoutubeID(url: string) {
+  if (!url) return null;
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11) ? match[2] : null;
+}
+
 export default function ProfilHistoirePage() {
   const params = useParams();
   const router = useRouter();
@@ -178,13 +185,22 @@ export default function ProfilHistoirePage() {
           <div className="grid lg:grid-cols-[1fr_400px] gap-10">
             {/* Vidéo principale */}
             <div className="aspect-video w-full rounded-[20px] overflow-hidden bg-black border border-gray-200 shadow-md">
-              <video
-                src={profil.video_urls[0]?.video_url}
-                controls
-                playsInline
-                preload="metadata"
-                className="h-full w-full object-cover"
-              />
+              {profil.video_urls[0]?.video_url && getYoutubeID(profil.video_urls[0].video_url) ? (
+                <iframe
+                  src={`https://www.youtube.com/embed/${getYoutubeID(profil.video_urls[0].video_url)}`}
+                  className="h-full w-full object-cover"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
+                <video
+                  src={profil.video_urls[0]?.video_url}
+                  controls
+                  playsInline
+                  preload="metadata"
+                  className="h-full w-full object-cover"
+                />
+              )}
             </div>
 
             {/* Carte Investissement */}
