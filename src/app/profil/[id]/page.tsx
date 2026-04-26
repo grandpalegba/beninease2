@@ -47,6 +47,7 @@ export default function ProfilHistoirePage() {
     if (!id) return;
     async function fetchFullData() {
       try {
+        let serieData = null;
         setLoading(true);
         const { data: pData, error: pError } = await supabase
           .from("profiles_histoires")
