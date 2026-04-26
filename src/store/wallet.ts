@@ -34,10 +34,12 @@ type WalletState = {
    * Utilise valeur_noix_benies comme point de départ si peu de données.
    */
   getSparkline: (profilId: string, profil?: Profil) => number[];
+  /** Simule un investissement */
+  investir: (profilId: string, montant: number) => { ok: boolean; error?: string };
 };
 
 export const useWallet = create<WalletState>((set, get) => ({
-  solde: 100,
+  solde: 1000,
   history: [],
 
   addSnap: (profilId, valeur) => {
@@ -47,6 +49,14 @@ export const useWallet = create<WalletState>((set, get) => ({
         { profilId, valeur, timestamp: Date.now() },
       ],
     }));
+  },
+
+  investir: (profilId, montant) => {
+    const solde = get().solde;
+    if (montant <= 0) return { ok: false, error: "Montant invalide" };
+    if (montant > solde) return { ok: false, error: "Solde insuffisant" };
+    set({ solde: solde - montant });
+    return { ok: true };
   },
 
   effectivePrice: (profilId) => {
