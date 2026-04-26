@@ -2,28 +2,18 @@
 
 import { useHistoires } from "@/hooks/useHistoires";
 import { ProfileCard } from "@/components/histoires/ProfileCard";
-import useEmblaCarousel from "embla-carousel-react";
+import CardDeck from "@/components/ui/CardDeck";
 import { Loader2, AlertCircle } from "lucide-react";
 import { useMemo } from "react";
 
 export default function HistoiresPage() {
   const { profils, loading, error, refetch } = useHistoires();
 
-  // 1. SHUFFLE : On mélange les profils une seule fois grâce à useMemo 
-  // pour éviter la boucle infinie de rendus (Error #185).
+  // SHUFFLE : On mélange les profils une seule fois grâce à useMemo
   const shuffledProfils = useMemo(() => {
     if (!profils) return [];
     return [...profils].sort(() => Math.random() - 0.5);
   }, [profils]);
-
-  // 2. CONFIG EMBLA : "align: center" + "containScroll: false" pour une seule carte à la fois
-  const [emblaRef] = useEmblaCarousel({
-    axis: "x",
-    align: "center",
-    loop: true,
-    skipSnaps: false,
-    dragFree: false, // On force l'arrêt sur une carte (snap)
-  });
 
   if (loading) {
     return (
@@ -47,26 +37,23 @@ export default function HistoiresPage() {
   return (
     <div className="h-screen w-full bg-white flex flex-col overflow-hidden">
       {/* --- TITRE --- */}
-      <div className="pt-12 pb-6 text-center z-10">
+      <div className="pt-12 pb-2 text-center z-10">
         <h1 className="text-2xl font-serif font-black text-gray-900">
           Histoires du Bénin
         </h1>
       </div>
 
-      {/* --- CARROUSEL PLEIN ÉCRAN --- */}
-      <div className="flex-1 flex items-center justify-center" ref={emblaRef}>
-        <div className="flex h-full items-center">
-          {shuffledProfils.map((profil) => (
-            <div
-              key={profil.id}
-              className="relative flex-[0_0_85%] sm:flex-[0_0_400px] px-4 h-[75vh]"
-            >
-              <ProfileCard profil={profil} serie={profil.serie} />
-            </div>
-          ))}
-        </div>
+      {/* --- CARROUSEL FAÇON TINDER/BUMBLE --- */}
+      <div className="flex-1 overflow-hidden">
+        <CardDeck
+          items={shuffledProfils}
+          className="bg-white h-full"
+          renderItem={(profil) => (
+            <ProfileCard profil={profil} serie={profil.serie} />
+          )}
+        />
       </div>
-
+      
       {/* INDICATION DE SWIPE */}
       <div className="pb-12 text-center">
         <p className="text-[10px] uppercase tracking-[0.3em] text-gray-300 animate-pulse">
