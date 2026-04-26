@@ -80,10 +80,10 @@ export function EvaluationModule({ episode, profilId, seriesInfo }: EvaluationMo
       <div className="p-10 md:p-12 flex flex-col justify-between min-h-full bg-white">
         <div>
           <h2 className="text-2xl font-black text-black tracking-tighter leading-none mb-2">
-            {seriesInfo?.episode_titre || episode.titre}
+            {episode.titre}
           </h2>
           <p className="text-gray-400 font-medium italic text-xs leading-relaxed">
-            {seriesInfo?.episode_question || episode.episode_question || "Analyse de la souveraineté culturelle"}
+            {episode.episode_question || "Analyse de la souveraineté culturelle"}
           </p>
         </div>
 
