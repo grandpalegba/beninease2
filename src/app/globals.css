@@ -87,9 +87,9 @@
   /* Specific Colors for tracks */
   .range-green::-webkit-slider-runnable-track { @apply bg-[#008751]; }
   .range-yellow::-webkit-slider-runnable-track { @apply bg-[#FCD116]; }
-  .range-orange::-webkit-slider-runnable-track { @apply bg-[#F97316]; }
+  .range-red::-webkit-slider-runnable-track { @apply bg-[#E8112D]; }
 
   .range-green::-moz-range-track { @apply bg-[#008751]; }
   .range-yellow::-moz-range-track { @apply bg-[#FCD116]; }
-  .range-orange::-moz-range-track { @apply bg-[#F97316]; }
+  .range-red::-moz-range-track { @apply bg-[#E8112D]; }
 }

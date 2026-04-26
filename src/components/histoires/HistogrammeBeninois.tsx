@@ -12,7 +12,6 @@ interface HistogrammeBeninoisProps {
 
 export function HistogrammeBeninois({ stats, totalAvis }: HistogrammeBeninoisProps) {
   const bars = [
-    { color: "bg-black", value: stats.volume, label: "Volume" },
     { color: "bg-[#008751]", value: stats.originalite, label: "Originalité" },
     { color: "bg-[#FCD116]", value: stats.authenticite, label: "Authenticité" },
     { color: "bg-[#E8112D]", value: stats.impact, label: "Impact" },

@@ -172,108 +172,98 @@ export default function ProfilHistoirePage() {
 
   return (
     <div className="pb-24 lg:pb-0 bg-[#F9F9F7] min-h-screen">
-      {/* Hero Section */}
-      <section className="border-b border-gray-200 bg-white">
-        <div className="mx-auto max-w-7xl px-6 pt-8 pb-10">
-          <button
-            onClick={() => router.back()}
-            className="inline-flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-gray-900 transition mb-8"
-          >
-            <ChevronLeft className="h-5 w-5" />
-            Retour
-          </button>
+      {/* Unified Hero Block */}
+      <section className="mx-auto max-w-7xl px-6 pt-10 pb-8">
+        <button
+          onClick={() => router.back()}
+          className="inline-flex items-center gap-2 text-sm font-bold text-gray-400 hover:text-gray-900 transition mb-10"
+        >
+          <ChevronLeft className="h-5 w-5" />
+          Retour
+        </button>
 
-          <div className="flex items-start gap-5 mb-10">
-            {/* Avatar */}
-            <div className="relative h-[88px] w-[88px] rounded-full overflow-hidden bg-gray-100 shrink-0 border border-gray-200">
-              {profil.photo_url ? (
-                <Image src={profil.photo_url} alt={profil.nom_complet} fill className="object-cover object-top" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-gray-400 font-sans text-3xl">{profil.nom_complet[0]}</div>
-              )}
-            </div>
-            
-            <div className="flex-1 min-w-0">
-              <p className="text-[11px] uppercase tracking-[0.22em] text-gray-400 font-black mb-1.5 font-sans">
-                {profil.serie?.titre || "Série Inconnue"}
-              </p>
-              <h1 className="font-sans text-4xl sm:text-5xl font-black text-gray-900 tracking-[-0.04em] leading-tight text-balance uppercase">
-                {profil.nom_complet}
-              </h1>
-              <p className="mt-2.5 text-gray-600 font-bold text-[15px] font-sans">
-                {profil.profession} {profil.age ? `· ${profil.age} ans` : ""}
-              </p>
-            </div>
-            
-            {/* Affiche série */}
-            {profil.serie?.affiche_url && (
-              <div className="hidden sm:block shrink-0">
-                <div className="h-32 w-24 overflow-hidden rounded-[6px] border border-gray-200 shadow-sm bg-gray-100 relative">
-                  <Image src={profil.serie.affiche_url} alt={profil.serie.titre} fill className="object-cover" />
+        <div className="bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.02)] border border-gray-100 overflow-hidden">
+          <div className="p-10">
+            {/* Header info */}
+            <div className="flex items-start justify-between mb-12">
+              <div className="flex items-center gap-6">
+                <div className="relative h-20 w-20 rounded-full overflow-hidden bg-gray-50 border border-gray-100">
+                  {profil.photo_url && <Image src={profil.photo_url} alt={profil.nom_complet} fill className="object-cover object-top" />}
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase tracking-[0.25em] text-gray-400 font-black mb-1 font-sans">
+                    {profil.serie?.titre || "Série Inconnue"}
+                  </p>
+                  <h1 className="font-sans text-4xl font-black text-gray-900 tracking-tight uppercase leading-none">
+                    {profil.nom_complet}
+                  </h1>
                 </div>
               </div>
-            )}
-          </div>
-
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Vidéo principale - Section 1 Gauche */}
-            <div className="aspect-video w-full rounded-[32px] overflow-hidden bg-black border-4 border-white shadow-2xl">
-              {profil.video_urls[0]?.video_url && getYoutubeID(profil.video_urls[0].video_url) ? (
-                <iframe
-                  src={`https://www.youtube.com/embed/${getYoutubeID(profil.video_urls[0].video_url)}`}
-                  className="h-full w-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              ) : (
-                <video
-                  src={profil.video_urls[0]?.video_url}
-                  controls
-                  playsInline
-                  preload="metadata"
-                  className="h-full w-full object-cover"
-                />
-              )}
-            </div>
-
-            {/* Carte Investissement - Section 1 Droite */}
-            <div className="flex flex-col gap-8">
-              <div className="bg-white p-8 rounded-[32px] shadow-sm border border-gray-100">
-                <div className="flex items-baseline justify-between mb-4 font-sans">
-                  <span className="text-[11px] uppercase tracking-[0.2em] text-gray-400 font-black">
-                    Valeur des Noix Bénies
-                  </span>
-                  <div className={`flex items-center gap-1 text-xs font-black px-3 py-1.5 rounded-full ${
-                    positive ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
-                  }`}>
-                    {positive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
-                    {variation >= 0 ? "+" : ""}{variation.toFixed(1)}%
+              
+              {/* Poster & Solde */}
+              <div className="flex items-center gap-8">
+                <div className="flex flex-col items-end">
+                  <p className="text-[9px] uppercase tracking-widest text-gray-400 font-black mb-1">Solde Actuel</p>
+                  <div className="flex items-center gap-2 text-[#008751] font-black text-xl">
+                    <Sparkles className="h-4 w-4" />
+                    {solde.toFixed(0)} <span className="text-[10px] uppercase tracking-widest opacity-50 ml-1">Noix</span>
                   </div>
                 </div>
-                <div className="flex items-baseline gap-3 mb-8">
-                  <span className="font-sans text-[64px] font-black tabular-nums tracking-[-0.05em] leading-none text-black">
-                    {displayPrice.toFixed(2)}
-                  </span>
-                  <span className="text-sm font-black text-gray-300 uppercase tracking-widest">Noix</span>
-                </div>
+                {profil.serie?.affiche_url && (
+                  <div className="h-24 w-16 overflow-hidden rounded-xl border border-gray-100 shadow-sm relative">
+                    <Image src={profil.serie.affiche_url} alt={profil.serie.titre} fill className="object-cover" />
+                  </div>
+                )}
+              </div>
+            </div>
 
-                {/* Histogramme Béninois */}
-                <div className="pt-6 border-t border-gray-50 flex items-center gap-10">
-                  <HistogrammeBeninois stats={stats} totalAvis={stats.count} />
-                </div>
+            <div className="grid lg:grid-cols-2 gap-16 items-center">
+              {/* Vidéo YouTube */}
+              <div className="aspect-video w-full rounded-[2.5rem] overflow-hidden bg-black border-[6px] border-gray-50 shadow-xl">
+                {profil.video_urls[0]?.video_url && getYoutubeID(profil.video_urls[0].video_url) ? (
+                  <iframe
+                    src={`https://www.youtube.com/embed/${getYoutubeID(profil.video_urls[0].video_url)}`}
+                    className="h-full w-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : (
+                  <video src={profil.video_urls[0]?.video_url} controls className="h-full w-full object-cover" />
+                )}
               </div>
 
-              <div className="flex flex-col gap-4">
+              {/* Finance UI */}
+              <div className="space-y-10">
+                <div>
+                  <div className="flex items-center gap-4 mb-4">
+                    <span className="text-[10px] uppercase tracking-[0.3em] text-gray-400 font-black">
+                      Valeur des Noix Bénies
+                    </span>
+                    <div className={cn(
+                      "px-3 py-1 rounded-full text-[10px] font-black tracking-widest",
+                      positive ? "bg-green-50 text-green-600" : "bg-red-50 text-red-600"
+                    )}>
+                      {positive ? "+" : ""}{variation.toFixed(1)}%
+                    </div>
+                  </div>
+                  <div className="flex items-baseline gap-3">
+                    <span className="text-5xl font-black tabular-nums tracking-tighter text-black">
+                      {displayPrice.toFixed(2)}
+                    </span>
+                    <span className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em]">Noix</span>
+                  </div>
+                </div>
+
+                <div className="pt-8 border-t border-gray-50">
+                  <HistogrammeBeninois stats={stats} totalAvis={stats.count} />
+                </div>
+
                 <button
                   onClick={() => setOpen(true)}
-                  className="w-full rounded-2xl bg-[#0F172A] text-white font-black text-lg py-5 shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all uppercase tracking-widest"
+                  className="w-full rounded-[20px] bg-[#0F172A] text-white font-black text-sm py-5 shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all uppercase tracking-[0.2em]"
                 >
-                  Investir Maintenant
+                  Investir maintenant
                 </button>
-                <div className="flex items-center justify-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
-                  <Sparkles className="h-3 w-3" />
-                  Solde actuel · {solde.toFixed(0)} Noix
-                </div>
               </div>
             </div>
           </div>

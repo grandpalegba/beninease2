@@ -28,7 +28,7 @@ export function EpisodeCarousel({ episodes, profilId, seriesInfo }: EpisodeCarou
     <div className="overflow-hidden" ref={emblaRef}>
       <div className="flex">
         {episodes.map((ep, idx) => (
-          <div key={ep.id || idx} className="flex-[0_0_100%] min-w-0 pr-4">
+          <div key={ep.id || idx} className="flex-[0_0_100%] min-w-0 pr-10">
             <EvaluationModule episode={ep} profilId={profilId || ""} seriesInfo={seriesInfo} />
           </div>
         ))}
