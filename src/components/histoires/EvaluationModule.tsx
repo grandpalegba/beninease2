@@ -53,9 +53,9 @@ export function EvaluationModule({ episode, profilId, seriesInfo }: EvaluationMo
   const embedUrl = videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=0` : episode.video_url;
 
   return (
-    <div className="bg-white rounded-[2.5rem] overflow-hidden border border-gray-100 shadow-sm grid grid-cols-1 lg:grid-cols-2 font-sans">
+    <div className="bg-white rounded-[2.5rem] overflow-hidden border border-gray-100 shadow-sm grid grid-cols-1 lg:grid-cols-2 items-center font-sans">
       {/* GAUCHE : VIDÉO */}
-      <div className="bg-black relative aspect-video flex items-center justify-center group">
+      <div className="bg-black relative aspect-video flex items-center justify-center group self-center lg:self-auto">
         {videoId ? (
           <iframe 
             src={embedUrl} 
@@ -73,12 +73,12 @@ export function EvaluationModule({ episode, profilId, seriesInfo }: EvaluationMo
       </div>
 
       {/* DROITE : ÉVALUATION */}
-      <div className="p-10 md:p-12 flex flex-col justify-between h-full bg-white">
+      <div className="p-10 md:p-12 flex flex-col justify-between min-h-full bg-white">
         <div>
-          <h2 className="text-3xl font-black text-black uppercase tracking-tighter leading-none mb-1">
+          <h2 className="text-2xl font-black text-black uppercase tracking-tighter leading-none mb-2">
             {episode.titre}
           </h2>
-          <p className="text-gray-400 font-medium italic text-sm">
+          <p className="text-gray-400 font-medium italic text-xs leading-relaxed">
             {episode.episode_question || "Analyse de la souveraineté culturelle"}
           </p>
         </div>

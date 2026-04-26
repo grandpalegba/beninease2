@@ -10,6 +10,7 @@ import { useWallet } from "@/store/wallet";
 import Image from "next/image";
 import { ChevronLeft, Loader2, Sparkles, TrendingUp, TrendingDown, X, Play, ArrowRight, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { motion, useDragControls } from "framer-motion";
 
 function getYoutubeID(url: string) {
   if (!url) return null;
@@ -68,6 +69,7 @@ export default function ProfilHistoirePage() {
           const { data: suggData } = await supabase
             .from("profiles_histoires")
             .select("*")
+            .eq("series_id", pData.series_id)
             .neq("id", id)
             .limit(3);
           if (suggData) setSuggestions(suggData as any);
@@ -148,10 +150,24 @@ export default function ProfilHistoirePage() {
   const mainVideoId = getYoutubeID(profil.video_urls[0]?.video_url);
 
   return (
-    <div className="min-h-screen bg-[#F9F9F7] font-sans p-6 md:p-12 relative overflow-x-hidden">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -100 }}
+      drag="y"
+      dragConstraints={{ top: 0, bottom: 0 }}
+      dragElastic={0.2}
+      onDragEnd={(_, info) => {
+        // Si on swipe vers le haut (info.offset.y est négatif)
+        if (info.offset.y < -150) {
+          router.push('/histoires');
+        }
+      }}
+      className="min-h-screen bg-[#F9F9F7] font-sans p-6 pt-4 md:pt-6 md:p-12 relative overflow-x-hidden"
+    >
       <div className="fixed inset-0 pattern-bg -z-10"></div>
 
-      <main className="max-w-7xl mx-auto space-y-8">
+      <main className="max-w-7xl mx-auto space-y-6">
         
         {/* Header Block */}
         <header className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center gap-6">
@@ -160,7 +176,7 @@ export default function ProfilHistoirePage() {
               <Image src={profil.photo_url} alt={profil.nom_complet} fill className="object-cover object-top" />
             )}
           </div>
-          <h1 className="text-3xl font-black text-gray-900 uppercase tracking-tighter leading-none">{profil.nom_complet}</h1>
+          <h1 className="text-3xl font-black text-gray-900 tracking-tighter leading-none">{profil.nom_complet}</h1>
         </header>
 
         {/* Hero Grid */}
@@ -196,11 +212,6 @@ export default function ProfilHistoirePage() {
             ) : (
               <div className="w-full h-full bg-gray-200" />
             )}
-            <div className="absolute top-6 left-6 bg-white p-4 rounded-2xl shadow-xl max-w-[120px]">
-              <h2 className="font-black text-xl leading-tight uppercase tracking-tighter">
-                {profil.serie?.titre.split(' ').map((word, i) => <span key={i} className="block">{word}</span>)}
-              </h2>
-            </div>
           </div>
 
           {/* Finance & Action Block (3 columns) */}
@@ -209,10 +220,10 @@ export default function ProfilHistoirePage() {
               <div className="flex items-start gap-4">
                 <HistogrammeBeninois stats={stats} totalAvis={stats.count} />
                 <div>
-                  <p className="text-4xl font-black text-black leading-none tabular-nums tracking-tighter">
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] mb-2">Valeur de Noix bénies</p>
+                  <p className="text-3xl font-black text-black leading-none tabular-nums tracking-tighter">
                     {displayPrice.toFixed(2)}
                   </p>
-                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2">Noix Bénies</p>
                 </div>
               </div>
               
@@ -221,8 +232,8 @@ export default function ProfilHistoirePage() {
                   <Users size={24} />
                 </div>
                 <div>
-                  <p className="text-4xl font-black text-black leading-none tabular-nums tracking-tighter">1,482</p>
-                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2">Active Shares</p>
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] mb-2">Nb d&apos;investisseurs</p>
+                  <p className="text-3xl font-black text-black leading-none tabular-nums tracking-tighter">1,482</p>
                 </div>
               </div>
             </div>
@@ -255,7 +266,7 @@ export default function ProfilHistoirePage() {
                   {p.photo_url && <Image src={p.photo_url} alt={p.nom_complet} fill className="object-cover" />}
                 </div>
                 <div>
-                  <p className="font-black text-gray-900 uppercase tracking-tight">{p.nom_complet}</p>
+                  <p className="font-black text-gray-900 tracking-tight">{p.nom_complet}</p>
                   <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">{p.profession}</p>
                 </div>
               </div>
@@ -330,6 +341,6 @@ export default function ProfilHistoirePage() {
           </div>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }
