@@ -56,14 +56,26 @@ export default function ProfilHistoirePage() {
 
         if (pError) throw pError;
 
-        let serieData = null;
+        let allEpisodes: any[] = [];
         if (pData.series_id) {
-          const { data: sData } = await supabase
+          // 1. On récupère la série actuelle pour avoir le titre de référence
+          const { data: currentSerie } = await supabase
             .from("series_histoires")
             .select("*")
             .eq("id", pData.series_id)
             .single();
-          serieData = sData;
+          
+          if (currentSerie) {
+            serieData = currentSerie;
+            // 2. On récupère TOUS les épisodes de cette même série (par titre)
+            const { data: epData } = await supabase
+              .from("series_histoires")
+              .select("*")
+              .eq("titre", currentSerie.titre)
+              .order("episode_numero", { ascending: true });
+            
+            if (epData) allEpisodes = epData;
+          }
 
           const { data: suggData } = await supabase
             .from("profiles_histoires")
@@ -74,13 +86,18 @@ export default function ProfilHistoirePage() {
           if (suggData) setSuggestions(suggData as any);
         }
 
+        // On mappe les vidéos du profil aux épisodes de la série par index
         const video_urls: Episode[] = Array.isArray(pData.video_urls)
-          ? pData.video_urls.map((v: any) => ({
-            id: v.id ?? "",
-            titre: v.titre ?? "",
-            video_url: v.video_url ?? "",
-            numero: v.numero ?? 1
-          }))
+          ? pData.video_urls.map((v: any, index: number) => {
+            const dbEpisode = allEpisodes[index]; // On prend l'épisode correspondant à l'index (1er -> Ep 1, etc.)
+            return {
+              id: v.id ?? dbEpisode?.id ?? "",
+              titre: dbEpisode?.episode_titre || v.titre || "Épisode " + (index + 1),
+              video_url: v.video_url ?? "",
+              numero: dbEpisode?.episode_numero || (index + 1),
+              episode_question: dbEpisode?.episode_question || null
+            };
+          })
           : [];
 
         setProfil({
@@ -188,7 +205,7 @@ export default function ProfilHistoirePage() {
         </header>
 
         {/* --- HERO GRID --- */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
           
           {/* Main Video Block (6 columns) */}
           <div className="lg:col-span-6 bg-black rounded-[2.5rem] relative aspect-video overflow-hidden group shadow-xl border border-gray-100 select-none">

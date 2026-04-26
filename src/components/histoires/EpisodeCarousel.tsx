@@ -26,9 +26,9 @@ export function EpisodeCarousel({ episodes, profilId, seriesInfo }: EpisodeCarou
 
   return (
     <div className="overflow-hidden" ref={emblaRef}>
-      <div className="flex">
+      <div className="flex -ml-6">
         {episodes.map((ep, idx) => (
-          <div key={ep.id || idx} className="flex-[0_0_100%] min-w-0 pr-10">
+          <div key={ep.id || idx} className="flex-[0_0_100%] min-w-0 pl-6">
             <EvaluationModule episode={ep} profilId={profilId || ""} seriesInfo={seriesInfo} />
           </div>
         ))}
