@@ -10,7 +10,7 @@ import { useWallet } from "@/store/wallet";
 import Image from "next/image";
 import { ChevronLeft, Loader2, Sparkles, TrendingUp, TrendingDown, X, Play, ArrowRight, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { motion, useDragControls } from "framer-motion";
+import { motion } from "framer-motion";
 
 function getYoutubeID(url: string) {
   if (!url) return null;
@@ -37,7 +37,6 @@ export default function ProfilHistoirePage() {
   const [feedback, setFeedback] = useState<{ type: "ok" | "err"; msg: string } | null>(null);
   
   const [stats, setStats] = useState({
-    volume: 2.5,
     originalite: 2.5,
     authenticite: 2.5,
     impact: 2.5,
@@ -90,9 +89,7 @@ export default function ProfilHistoirePage() {
           serie: serieData as any,
         } as any);
 
-        // Prioritize new columns from profiles_histoires
         setStats({
-          volume: 2.5, // Default or unused for now
           originalite: pData.moyenne_originalite ?? 2.5,
           authenticite: pData.moyenne_authenticite ?? 2.5,
           impact: pData.moyenne_impact ?? 2.5,
@@ -114,14 +111,7 @@ export default function ProfilHistoirePage() {
     </div>
   );
 
-  if (!profil) return (
-    <div className="mx-auto max-w-7xl px-6 py-24 text-center">
-      <p className="text-gray-500">Profil introuvable.</p>
-      <button onClick={() => router.back()} className="mt-4 inline-block text-sm underline font-sans">Retour</button>
-    </div>
-  );
-
-  const displayPrice = storePrice > 0 ? storePrice : profil.valeur_noix_benies;
+  if (!profil) return null;
 
   function handleInvest() {
     if (!profil) return;
@@ -138,48 +128,66 @@ export default function ProfilHistoirePage() {
 
   return (
     <motion.div 
-      initial={{ opacity: 0, x: 50 }}
+      initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -50 }}
-      drag="x"
-      dragConstraints={{ left: 0, right: 0 }}
-      dragElastic={0.1}
-      onDragEnd={(_, info) => {
-        // Si on swipe horizontalement (gauche ou droite)
-        if (Math.abs(info.offset.x) > 150) {
-          router.push('/histoires');
-        }
-      }}
+      exit={{ opacity: 0, x: -20 }}
       className="min-h-screen bg-[#F9F9F7] font-sans p-6 pt-4 md:pt-6 md:p-12 relative overflow-x-hidden"
     >
       <div className="fixed inset-0 pattern-bg -z-10"></div>
 
       <main className="max-w-7xl mx-auto space-y-6">
         
-        {/* Header Block */}
-        <header className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center justify-between gap-6">
-          <div className="flex items-center gap-6">
+        {/* --- HEADER BLOCK : Symétrie Nom | Bio | Valeur --- */}
+        <header className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center justify-between gap-8 relative">
+          {/* Bouton Retour Flottant */}
+          <button 
+            onClick={() => router.push('/histoires')}
+            className="absolute -left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white border border-gray-100 rounded-full shadow-lg flex items-center justify-center text-gray-400 hover:text-black transition-all hover:scale-110 z-20"
+            title="Retour aux cartes"
+          >
+            <ChevronLeft size={24} />
+          </button>
+
+          {/* GAUCHE : Identité */}
+          <div className="flex items-center gap-6 pl-6">
             <div className="relative w-16 h-16 rounded-2xl overflow-hidden shadow-inner bg-gray-50 border border-gray-100 select-none shrink-0">
               {profil.photo_url && (
                 <Image src={profil.photo_url} alt={profil.nom_complet} fill className="object-cover object-top pointer-events-none" draggable={false} />
               )}
             </div>
-            <div>
+            <div className="shrink-0">
               <h1 className="text-3xl font-black text-gray-900 tracking-tighter leading-none mb-1">{profil.nom_complet}</h1>
               <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">{profil.profession}</p>
             </div>
           </div>
 
+          {/* CENTRE : Bio (visible sur MD+) */}
           {profil.bio_courte && (
-            <div className="flex-1 max-w-xl hidden md:block">
+            <div className="flex-1 max-w-lg hidden lg:block">
               <p className="text-sm font-medium text-gray-500 italic text-center leading-relaxed">
                 « {profil.bio_courte} »
               </p>
             </div>
           )}
+
+          {/* DROITE : Valeur Financière */}
+          <div className="flex items-center gap-4 text-right">
+            <div>
+              <p className="text-[9px] font-black text-gray-300 uppercase tracking-[0.2em] mb-1">Valeur Actuelle</p>
+              <div className="flex items-center justify-end gap-2">
+                <p className="text-2xl font-black text-black leading-none tracking-tighter tabular-nums">
+                  {profil.valeur_noix_benies.toFixed(2)}
+                  <span className="text-xs ml-1 text-gray-400">NB</span>
+                </p>
+                <span className="px-2 py-1 rounded-full bg-green-50 text-[10px] font-black text-green-600 border border-green-100">
+                  +0.0%
+                </span>
+              </div>
+            </div>
+          </div>
         </header>
 
-        {/* Hero Grid */}
+        {/* --- HERO GRID --- */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
           {/* Main Video Block (6 columns) */}
@@ -195,18 +203,14 @@ export default function ProfilHistoirePage() {
               <video src={profil.video_urls[0]?.video_url} className="w-full h-full object-cover pointer-events-none" draggable={false} />
             )}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none group-hover:opacity-0 transition-opacity">
-              <div className="w-16 h-16 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center text-white">
+              <div className="w-16 h-16 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center text-white border border-white/20">
                 <Play fill="currentColor" size={32} />
               </div>
             </div>
-            <div className="absolute bottom-6 left-8 text-white pointer-events-none group-hover:opacity-0 transition-opacity">
-              <p className="font-bold text-lg uppercase tracking-tight">{profil.video_urls[0]?.titre || "Vision Ancestrale"}</p>
-              <p className="text-sm opacity-70">Cinématique • 03:20</p>
-            </div>
           </div>
 
-          {/* Serie Poster Block (3 columns) */}
-          <div className="lg:col-span-3 rounded-[2.5rem] overflow-hidden relative shadow-lg border-4 border-white group select-none">
+          {/* Serie Poster Block (2 columns) */}
+          <div className="lg:col-span-2 rounded-[2.5rem] overflow-hidden relative shadow-lg border-4 border-white group select-none aspect-[2/3]">
             {profil.serie?.affiche_url ? (
               <Image src={profil.serie.affiche_url} alt="Serie" fill className="object-cover transition-transform duration-700 group-hover:scale-110 pointer-events-none" draggable={false} />
             ) : (
@@ -214,50 +218,38 @@ export default function ProfilHistoirePage() {
             )}
           </div>
 
-          {/* Finance & Action Block (3 columns) */}
-          <div className="lg:col-span-3 bg-[#F2F1EC] p-8 rounded-[2.5rem] flex flex-col justify-between border border-gray-200 shadow-sm">
-            <div className="space-y-10">
-              <div className="flex items-start gap-4">
-                <HistogrammeBeninois stats={stats} totalAvis={stats.count} />
-                <div>
-                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] mb-2">Valeur de Noix bénies</p>
-                  <p className="text-3xl font-black text-black leading-none tabular-nums tracking-tighter">
-                    {profil.valeur_noix_benies.toFixed(2)}
-                  </p>
-                </div>
-              </div>
-              
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-white/50 backdrop-blur-sm border border-white rounded-xl flex items-center justify-center text-gray-600 shadow-sm">
-                  <Users size={24} />
-                </div>
-                <div>
-                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] mb-2">Nb d&apos;investisseurs</p>
-                  <p className="text-3xl font-black text-black leading-none tabular-nums tracking-tighter">
-                    {profil.total_investisseurs ?? 0}
-                  </p>
-                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-2">
-                    {stats.count} avis investis
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <button 
-              onClick={() => setOpen(true)}
-              className="w-full bg-[#3b6934] text-white py-6 rounded-2xl font-black uppercase tracking-[0.2em] text-xs flex items-center justify-center hover:bg-[#2d5027] transition-all shadow-xl shadow-[#3b6934]/20 active:scale-95"
-            >
-              Investir
-            </button>
+          {/* Finance Block : Horizontal Histogram (4 columns) */}
+          <div className="lg:col-span-4">
+            <HistogrammeBeninois stats={stats} />
           </div>
         </div>
 
-        {/* Evaluation & Episodes Carousel Section */}
+        {/* --- ACTIONS SECTION --- */}
+        <div className="flex flex-col md:flex-row gap-6 items-center justify-between bg-white/50 p-4 rounded-[2rem] border border-gray-100">
+           <div className="flex items-center gap-4 px-6">
+              <div className="w-12 h-12 bg-white border border-gray-100 rounded-xl flex items-center justify-center text-gray-400 shadow-sm">
+                <Users size={24} />
+              </div>
+              <div>
+                <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Nb d&apos;investisseurs</p>
+                <p className="text-2xl font-black text-black leading-none tracking-tighter">{profil.total_investisseurs ?? 0}</p>
+              </div>
+           </div>
+
+           <button 
+              onClick={() => setOpen(true)}
+              className="w-full md:w-[300px] bg-[#3b6934] text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-xs hover:bg-[#2d5027] transition-all shadow-xl shadow-[#3b6934]/20 active:scale-95"
+            >
+              Investir Maintenant
+            </button>
+        </div>
+
+        {/* --- EVALUATION MODULE --- */}
         <section className="space-y-8">
           <EpisodeCarousel episodes={profil.video_urls} profilId={profil.id} seriesInfo={profil.serie} />
         </section>
 
-        {/* Suggestions Section */}
+        {/* --- SUGGESTIONS SECTION --- */}
         <section className="mt-8 space-y-6 pb-20">
           <h3 className="text-sm font-black uppercase tracking-[0.3em] ml-2 text-gray-400">Suggestions</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -280,7 +272,7 @@ export default function ProfilHistoirePage() {
         </section>
       </main>
 
-      {/* Invest Modal */}
+      {/* --- INVEST MODAL --- */}
       {open && (
         <div className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-300" onClick={() => setOpen(false)}>
           <div className="w-full max-w-md rounded-[2.5rem] bg-white p-8 relative shadow-2xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
@@ -291,7 +283,7 @@ export default function ProfilHistoirePage() {
             </div>
             
             <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-2">Acquisition</p>
-            <h3 className="text-3xl font-black text-black uppercase tracking-tighter mb-8">{profil.nom_complet}</h3>
+            <h3 className="text-3xl font-black text-black tracking-tighter mb-8">{profil.nom_complet}</h3>
 
             <div className="space-y-6">
               <div className="space-y-2">
@@ -322,7 +314,7 @@ export default function ProfilHistoirePage() {
               <div className="p-6 bg-gray-50 rounded-2xl space-y-3">
                 <div className="flex justify-between text-xs font-bold text-gray-400 uppercase">
                   <span>Cours actuel</span>
-                  <span className="text-black">{displayPrice.toFixed(2)} NB</span>
+                  <span className="text-black">{profil.valeur_noix_benies.toFixed(2)} NB</span>
                 </div>
                 <div className="flex justify-between text-xs font-bold text-gray-400 uppercase">
                   <span>Solde disponible</span>
