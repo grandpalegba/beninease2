@@ -10,30 +10,22 @@ interface HistogrammeBeninoisProps {
   totalAvis: number;
 }
 
-export function HistogrammeBeninois({ stats, totalAvis }: HistogrammeBeninoisProps) {
+export function HistogrammeBeninois({ stats }: HistogrammeBeninoisProps) {
   const bars = [
-    { color: "bg-[#008751]", value: stats.originalite, label: "Originalité" },
-    { color: "bg-[#FCD116]", value: stats.authenticite, label: "Authenticité" },
-    { color: "bg-[#E8112D]", value: stats.impact, label: "Impact" },
+    { color: "bg-[#008751]", value: stats.originalite },
+    { color: "bg-[#FCD116]", value: stats.authenticite },
+    { color: "bg-[#E8112D]", value: stats.impact },
   ];
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-end gap-3 h-32 w-full max-w-[200px]">
-        {bars.map((bar, i) => (
-          <div key={i} className="flex-1 flex flex-col items-center gap-2 h-full justify-end">
-            <div 
-              className={`${bar.color} w-full rounded-t-sm transition-all duration-500 ease-out`}
-              style={{ height: `${bar.value * 20}%` }}
-            />
-          </div>
-        ))}
-      </div>
-      <div className="flex items-center gap-2">
-        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
-          {totalAvis} avis investi
-        </span>
-      </div>
+    <div className="flex items-end gap-1 h-12 pt-2">
+      {bars.map((bar, i) => (
+        <div 
+          key={i} 
+          className={cn(bar.color, "w-3 rounded-sm transition-all duration-700 ease-out")}
+          style={{ height: `${Math.max(20, bar.value * 20)}%` }}
+        />
+      ))}
     </div>
   );
 }

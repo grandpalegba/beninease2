@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { supabase } from "@/utils/supabase/client";
 import { cn } from "@/lib/utils";
+import { Play } from "lucide-react";
 
 function getYoutubeID(url: string) {
   if (!url) return null;
@@ -50,67 +51,69 @@ export function EvaluationModule({ episode, profilId, seriesInfo }: EvaluationMo
   };
 
   const videoId = getYoutubeID(episode.video_url);
-  const embedUrl = videoId ? `https://www.youtube.com/embed/${videoId}` : episode.video_url;
+  const embedUrl = videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=0` : episode.video_url;
 
   return (
-    <div className="bg-white p-12 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.02)] border border-gray-50 font-sans">
-      <div className="flex flex-col lg:flex-row gap-16 items-center">
-        {/* GAUCHE : VIDÉO */}
-        <div className="w-full lg:w-1/2 aspect-video bg-black rounded-[2rem] overflow-hidden shadow-xl border-[6px] border-gray-50">
-          {videoId ? (
-            <iframe 
-              src={embedUrl} 
-              className="w-full h-full" 
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          ) : (
-            <video src={episode.video_url} controls className="w-full h-full object-cover" />
-          )}
+    <div className="bg-white rounded-[2.5rem] overflow-hidden border border-gray-100 shadow-sm grid grid-cols-1 lg:grid-cols-2 font-sans">
+      {/* GAUCHE : VIDÉO */}
+      <div className="bg-black relative aspect-video flex items-center justify-center group">
+        {videoId ? (
+          <iframe 
+            src={embedUrl} 
+            className="w-full h-full" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        ) : (
+          <video src={episode.video_url} controls className="w-full h-full object-cover" />
+        )}
+        <div className="absolute bottom-6 left-8 text-white pointer-events-none group-hover:opacity-0 transition-opacity">
+          <p className="font-semibold text-lg">{seriesInfo?.episode_titre || episode.titre}</p>
+          <p className="text-sm opacity-70">Documentaire • 12:45</p>
+        </div>
+      </div>
+
+      {/* DROITE : ÉVALUATION */}
+      <div className="p-10 md:p-16 flex flex-col justify-center space-y-10">
+        <div>
+          <h2 className="text-4xl font-black mb-2 uppercase tracking-tighter">Évaluation</h2>
+          <p className="text-gray-400 font-medium italic">
+            {seriesInfo?.episode_question || episode.episode_question || "Analyse de la souveraineté culturelle"}
+          </p>
         </div>
 
-        {/* DROITE : ÉVALUATION */}
-        <div className="w-full lg:w-1/2 space-y-10">
-          <div>
-            <h2 className="text-3xl font-black text-black uppercase tracking-tight">
-              {seriesInfo?.episode_titre || episode.titre}
-            </h2>
-            <p className="text-gray-400 italic mt-2 font-medium text-base">
-              {seriesInfo?.episode_question || episode.episode_question || "Qu'avez-vous pensé de cet épisode ?"}
-            </p>
-          </div>
-
-          <div className="space-y-10">
-            {[
-              { label: "Originalité", key: "originalite", className: "range-green" },
-              { label: "Authenticité", key: "authenticite", className: "range-yellow" },
-              { label: "Impact", key: "impact", className: "range-red" }
-            ].map((c) => (
-              <div key={c.key} className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <label className="text-black text-[10px] font-black uppercase tracking-[0.3em]">{c.label}</label>
-                  <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest">{scores[c.key as keyof typeof scores] * 20}%</span>
-                </div>
-                <div className="relative flex items-center">
-                  <input 
-                    type="range" min="1" max="5" 
-                    value={scores[c.key as keyof typeof scores]}
-                    onChange={(e) => setScores({...scores, [c.key]: parseInt(e.target.value)})}
-                    className={cn("w-full range-slider", c.className)}
-                  />
-                </div>
+        <div className="space-y-8">
+          {[
+            { label: "Originalité", key: "originalite", className: "range-green", color: "text-[#008751]" },
+            { label: "Authenticité", key: "authenticite", className: "range-yellow", color: "text-[#FCD116]" },
+            { label: "Impact", key: "impact", className: "range-red", color: "text-[#E8112D]" }
+          ].map((c) => (
+            <div key={c.key} className="space-y-4">
+              <div className="flex justify-between items-end font-black">
+                <span className="text-[10px] uppercase tracking-[0.3em] text-black mb-1">{c.label}</span>
+                <span className={cn("text-2xl", c.color)}>
+                  {(scores[c.key as keyof typeof scores] - 1) * 25}%
+                </span>
               </div>
-            ))}
-          </div>
-
-          <button 
-            onClick={submitEvaluation}
-            disabled={loading}
-            className="w-full bg-[#0F172A] text-white py-5 rounded-[20px] font-black uppercase tracking-[0.2em] text-sm shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
-          >
-            {loading ? "Transmission..." : "Valider l'évaluation"}
-          </button>
+              <div className="relative flex items-center">
+                <input 
+                  type="range" min="1" max="5" 
+                  value={scores[c.key as keyof typeof scores]}
+                  onChange={(e) => setScores({...scores, [c.key]: parseInt(e.target.value)})}
+                  className={cn("w-full range-slider", c.className)}
+                />
+              </div>
+            </div>
+          ))}
         </div>
+
+        <button 
+          onClick={submitEvaluation}
+          disabled={loading}
+          className="w-full bg-[#0F172A] text-white py-5 rounded-[20px] font-black uppercase tracking-[0.2em] text-sm shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 mt-4"
+        >
+          {loading ? "Transmission..." : "Valider l'évaluation"}
+        </button>
       </div>
     </div>
   );

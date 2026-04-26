@@ -8,7 +8,7 @@ import { HistogrammeBeninois } from "@/components/histoires/HistogrammeBeninois"
 import type { ProfilAvecSerie, Episode } from "@/data/series";
 import { useWallet } from "@/store/wallet";
 import Image from "next/image";
-import { ChevronLeft, Loader2, Sparkles, TrendingUp, TrendingDown, X, MessageSquare } from "lucide-react";
+import { ChevronLeft, Loader2, Sparkles, TrendingUp, TrendingDown, X, Play, ArrowRight, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 function getYoutubeID(url: string) {
@@ -27,10 +27,7 @@ export default function ProfilHistoirePage() {
   const [loading, setLoading] = useState(true);
   const [suggestions, setSuggestions] = useState<ProfilAvecSerie[]>([]);
 
-  // Zustand Store
   const storePrice = useWallet((s) => s.effectivePrice(id));
-  const getSparkline = useWallet((s) => s.getSparkline);
-  const sparklineData = getSparkline(id, profil || undefined);
   const solde = useWallet((s) => s.solde);
   const investir = useWallet((s) => s.investir);
 
@@ -45,22 +42,6 @@ export default function ProfilHistoirePage() {
     impact: 2.5,
     count: 0
   });
-
-  // Swipe Up -> Retour (Simulation simplifiée)
-  useEffect(() => {
-    let touchStartY = 0;
-    const handleTouchStart = (e: TouchEvent) => { touchStartY = e.touches[0].clientY; };
-    const handleTouchEnd = (e: TouchEvent) => {
-      const touchEndY = e.changedTouches[0].clientY;
-      if (touchStartY - touchEndY > 50 && !open) router.back();
-    };
-    window.addEventListener("touchstart", handleTouchStart);
-    window.addEventListener("touchend", handleTouchEnd);
-    return () => {
-      window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchend", handleTouchEnd);
-    };
-  }, [open, router]);
 
   useEffect(() => {
     if (!id) return;
@@ -87,7 +68,6 @@ export default function ProfilHistoirePage() {
           const { data: suggData } = await supabase
             .from("profiles_histoires")
             .select("*")
-            .eq("series_id", pData.series_id)
             .neq("id", id)
             .limit(3);
           if (suggData) setSuggestions(suggData as any);
@@ -108,7 +88,6 @@ export default function ProfilHistoirePage() {
           serie: serieData as any,
         } as any);
 
-        // Fetch Evaluation Stats
         const { data: evals } = await supabase
           .from("evaluations_histoires")
           .select("originalite, authenticite, impact")
@@ -122,11 +101,8 @@ export default function ProfilHistoirePage() {
           }), { originalite: 0, authenticite: 0, impact: 0 });
 
           const count = evals.length;
-          // Volume mapping: 0 -> 1, 50+ -> 5
-          const volumeScore = Math.min(5, 1 + (count / 10)); 
-
           setStats({
-            volume: volumeScore,
+            volume: Math.min(5, 1 + (count / 10)),
             originalite: avg.originalite / count,
             authenticite: avg.authenticite / count,
             impact: avg.impact / count,
@@ -152,13 +128,11 @@ export default function ProfilHistoirePage() {
   if (!profil) return (
     <div className="mx-auto max-w-7xl px-6 py-24 text-center">
       <p className="text-gray-500">Profil introuvable.</p>
-      <button onClick={() => router.back()} className="mt-4 inline-block text-sm underline">Retour</button>
+      <button onClick={() => router.back()} className="mt-4 inline-block text-sm underline font-sans">Retour</button>
     </div>
   );
 
   const displayPrice = storePrice > 0 ? storePrice : profil.valeur_noix_benies;
-  const variation = ((displayPrice - profil.valeur_noix_benies) / profil.valeur_noix_benies) * 100;
-  const positive = variation >= 0;
 
   function handleInvest() {
     if (!profil) return;
@@ -171,223 +145,202 @@ export default function ProfilHistoirePage() {
     }
   }
 
-  return (
-    <div className="pb-24 lg:pb-0 bg-[#F9F9F7] min-h-screen">
-      {/* Unified Hero Block */}
-      <section className="mx-auto max-w-7xl px-6 pt-10 pb-8">
-        <button
-          onClick={() => router.back()}
-          className="inline-flex items-center gap-2 text-sm font-bold text-gray-400 hover:text-gray-900 transition mb-10"
-        >
-          <ChevronLeft className="h-5 w-5" />
-          Retour
-        </button>
+  const mainVideoId = getYoutubeID(profil.video_urls[0]?.video_url);
 
-        <div className="bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.02)] border border-gray-100 overflow-hidden">
-          <div className="p-10">
-            {/* Header info */}
-            <div className="flex items-start justify-between mb-12">
-              <div className="flex items-center gap-6">
-                <div className="relative h-20 w-20 rounded-full overflow-hidden bg-gray-50 border border-gray-100">
-                  {profil.photo_url && <Image src={profil.photo_url} alt={profil.nom_complet} fill className="object-cover object-top" />}
-                </div>
+  return (
+    <div className="min-h-screen bg-[#F9F9F7] font-sans p-6 md:p-12 relative overflow-x-hidden">
+      <div className="fixed inset-0 pattern-bg -z-10"></div>
+
+      <main className="max-w-7xl mx-auto space-y-8">
+        
+        {/* Header Block */}
+        <header className="bg-white p-4 rounded-[2rem] shadow-sm border border-gray-100 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="relative w-16 h-16 rounded-2xl overflow-hidden shadow-inner bg-gray-50">
+              {profil.photo_url && (
+                <Image src={profil.photo_url} alt={profil.nom_complet} fill className="object-cover object-top" />
+              )}
+            </div>
+            <h1 className="text-2xl font-black text-gray-900 uppercase tracking-tighter">{profil.nom_complet}</h1>
+          </div>
+          <button 
+            onClick={() => router.back()}
+            className="p-3 rounded-2xl bg-gray-50 text-gray-400 hover:text-black transition-colors"
+          >
+            <ChevronLeft size={24} />
+          </button>
+        </header>
+
+        {/* Hero Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          {/* Main Video Block (6 columns) */}
+          <div className="lg:col-span-6 bg-black rounded-[2.5rem] relative aspect-video overflow-hidden group shadow-xl">
+            {mainVideoId ? (
+              <iframe 
+                src={`https://www.youtube.com/embed/${mainVideoId}`} 
+                className="w-full h-full" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            ) : (
+              <video src={profil.video_urls[0]?.video_url} className="w-full h-full object-cover" />
+            )}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none group-hover:opacity-0 transition-opacity">
+              <div className="w-16 h-16 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center text-white">
+                <Play fill="currentColor" size={32} />
+              </div>
+            </div>
+            <div className="absolute bottom-6 left-8 text-white pointer-events-none group-hover:opacity-0 transition-opacity">
+              <p className="font-bold text-lg uppercase tracking-tight">{profil.video_urls[0]?.titre || "Vision Ancestrale"}</p>
+              <p className="text-sm opacity-70">Cinématique • 03:20</p>
+            </div>
+          </div>
+
+          {/* Serie Poster Block (3 columns) */}
+          <div className="lg:col-span-3 rounded-[2.5rem] overflow-hidden relative shadow-lg border-4 border-white group">
+            {profil.serie?.affiche_url ? (
+              <Image src={profil.serie.affiche_url} alt="Serie" fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
+            ) : (
+              <div className="w-full h-full bg-gray-200" />
+            )}
+            <div className="absolute top-6 left-6 bg-white p-4 rounded-2xl shadow-xl max-w-[120px]">
+              <h2 className="font-black text-xl leading-tight uppercase tracking-tighter">
+                {profil.serie?.titre.split(' ').map((word, i) => <span key={i} className="block">{word}</span>)}
+              </h2>
+            </div>
+            <div className="absolute bottom-6 left-6 text-white font-black text-[9px] tracking-[0.3em] uppercase">
+              Ancestralewona • Safe Work
+            </div>
+          </div>
+
+          {/* Finance & Action Block (3 columns) */}
+          <div className="lg:col-span-3 bg-[#F2F1EC] p-8 rounded-[2.5rem] flex flex-col justify-between border border-gray-200 shadow-sm">
+            <div className="space-y-10">
+              <div className="flex items-start gap-4">
+                <HistogrammeBeninois stats={stats} totalAvis={stats.count} />
                 <div>
-                  <p className="text-[10px] uppercase tracking-[0.25em] text-gray-400 font-black mb-1 font-sans">
-                    {profil.serie?.titre || "Série Inconnue"}
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] mb-1">Asset Value</p>
+                  <p className="text-4xl font-black text-black leading-none tabular-nums tracking-tighter">
+                    {displayPrice.toFixed(2)}
+                    <span className="text-xs font-black text-gray-300 uppercase tracking-widest ml-1">NB</span>
                   </p>
-                  <h1 className="font-sans text-4xl font-black text-gray-900 tracking-tight uppercase leading-none">
-                    {profil.nom_complet}
-                  </h1>
+                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-1">Noix Bénies</p>
                 </div>
               </div>
               
-              {/* Poster & Solde */}
-              <div className="flex items-center gap-8">
-                <div className="flex flex-col items-end">
-                  <p className="text-[9px] uppercase tracking-widest text-gray-400 font-black mb-1">Solde Actuel</p>
-                  <div className="flex items-center gap-2 text-[#008751] font-black text-xl">
-                    <Sparkles className="h-4 w-4" />
-                    {solde.toFixed(0)} <span className="text-[10px] uppercase tracking-widest opacity-50 ml-1">Noix</span>
-                  </div>
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-white/50 backdrop-blur-sm border border-white rounded-xl flex items-center justify-center text-gray-600 shadow-sm">
+                  <Users size={24} />
                 </div>
-                {profil.serie?.affiche_url && (
-                  <div className="h-24 w-16 overflow-hidden rounded-xl border border-gray-100 shadow-sm relative">
-                    <Image src={profil.serie.affiche_url} alt={profil.serie.titre} fill className="object-cover" />
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
-              {/* Vidéo YouTube */}
-              <div className="aspect-video w-full rounded-[2.5rem] overflow-hidden bg-black border-[6px] border-gray-50 shadow-xl">
-                {profil.video_urls[0]?.video_url && getYoutubeID(profil.video_urls[0].video_url) ? (
-                  <iframe
-                    src={`https://www.youtube.com/embed/${getYoutubeID(profil.video_urls[0].video_url)}`}
-                    className="h-full w-full"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                ) : (
-                  <video src={profil.video_urls[0]?.video_url} controls className="h-full w-full object-cover" />
-                )}
-              </div>
-
-              {/* Finance UI */}
-              <div className="space-y-10">
                 <div>
-                  <div className="flex items-center gap-4 mb-4">
-                    <span className="text-[10px] uppercase tracking-[0.3em] text-gray-400 font-black">
-                      Valeur des Noix Bénies
-                    </span>
-                    <div className={cn(
-                      "px-3 py-1 rounded-full text-[10px] font-black tracking-widest",
-                      positive ? "bg-green-50 text-green-600" : "bg-red-50 text-red-600"
-                    )}>
-                      {positive ? "+" : ""}{variation.toFixed(1)}%
-                    </div>
-                  </div>
-                  <div className="flex items-baseline gap-3">
-                    <span className="text-5xl font-black tabular-nums tracking-tighter text-black">
-                      {displayPrice.toFixed(2)}
-                    </span>
-                    <span className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em]">Noix</span>
-                  </div>
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] mb-1">Investors</p>
+                  <p className="text-4xl font-black text-black leading-none tabular-nums tracking-tighter">1,482</p>
+                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-1">Active Shares</p>
                 </div>
-
-                <div className="pt-8 border-t border-gray-50">
-                  <HistogrammeBeninois stats={stats} totalAvis={stats.count} />
-                </div>
-
-                <button
-                  onClick={() => setOpen(true)}
-                  className="w-full rounded-[20px] bg-[#0F172A] text-white font-black text-sm py-5 shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all uppercase tracking-[0.2em]"
-                >
-                  Investir maintenant
-                </button>
               </div>
             </div>
+
+            <button 
+              onClick={() => setOpen(true)}
+              className="w-full bg-[#3b6934] text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-2 hover:bg-[#2d5027] transition-all shadow-xl shadow-[#3b6934]/20 active:scale-95"
+            >
+              Investir <ArrowRight size={16} />
+            </button>
           </div>
         </div>
-      </section>
 
-      {/* Épisodes */}
-      <section className="mx-auto max-w-7xl px-6 py-14">
-        <EpisodeCarousel episodes={profil.video_urls} profilId={profil.id} seriesInfo={profil.serie} />
-      </section>
+        {/* Evaluation & Episodes Carousel Section */}
+        <section className="space-y-8">
+          <EpisodeCarousel episodes={profil.video_urls} profilId={profil.id} seriesInfo={profil.serie} />
+        </section>
 
-      {/* Suggestions */}
-      {suggestions.length > 0 && (
-        <section className="mx-auto max-w-7xl px-6 pb-20">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {suggestions.map((p) => (
+        {/* Suggestions Section */}
+        <section className="space-y-8">
+          <h3 className="text-2xl font-black uppercase tracking-tighter ml-2">Suggestions</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {suggestions.map((p, i) => (
               <div 
                 key={p.id} 
-                className="cursor-pointer bg-white border border-gray-100 rounded-2xl p-4 flex items-center gap-4 hover:shadow-md transition-shadow" 
                 onClick={() => router.push(`/profil/${p.id}`)}
+                className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex items-center gap-4 hover:shadow-md transition-all cursor-pointer group"
               >
-                <div className="relative h-[60px] w-[60px] rounded-xl overflow-hidden bg-gray-100 shrink-0">
-                  <Image src={p.photo_url || ""} alt={p.nom_complet} fill className="object-cover" />
+                <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-gray-100 group-hover:scale-105 transition-transform">
+                  {p.photo_url && <Image src={p.photo_url} alt={p.nom_complet} fill className="object-cover" />}
                 </div>
-                <div className="min-w-0 flex-1">
-                  <h4 className="font-bold text-gray-900 truncate text-base">{p.nom_complet}</h4>
-                  <p className="text-xs text-gray-500 truncate font-medium mt-0.5">{p.profession}</p>
+                <div>
+                  <p className="font-black text-gray-900 uppercase tracking-tight">{p.nom_complet}</p>
+                  <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">{p.profession}</p>
                 </div>
               </div>
             ))}
           </div>
         </section>
-      )}
-
-      {/* Sticky invest bar — mobile */}
-      <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 border-t border-gray-200 bg-white/95 backdrop-blur-md shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
-        <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between gap-4">
-          <div className="flex-1 min-w-0 font-sans">
-            <p className="text-[10px] uppercase tracking-[0.18em] text-gray-400 font-black leading-none mb-1">Cours Actuel</p>
-            <p className="text-2xl font-black tabular-nums leading-tight flex items-center gap-1.5 text-black">
-              <Sparkles className="h-4 w-4 text-amber-500" />
-              {displayPrice.toFixed(2)}
-              <span className={`ml-1 text-xs font-black ${positive ? "text-green-600" : "text-red-600"}`}>
-                {variation >= 0 ? "+" : ""}{variation.toFixed(1)}%
-              </span>
-            </p>
-          </div>
-          <button
-            onClick={() => setOpen(true)}
-            className="rounded-xl bg-gray-900 text-white font-bold text-sm px-6 py-3.5 shadow-lg active:scale-[0.98] transition whitespace-nowrap"
-          >
-            Investir
-          </button>
-        </div>
-      </div>
+      </main>
 
       {/* Invest Modal */}
       {open && (
-        <div
-          className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
-          onClick={() => setOpen(false)}
-        >
-          <div className="w-full max-w-md rounded-3xl bg-white shadow-2xl p-8 relative animate-in fade-in zoom-in-95 font-sans" onClick={(e) => e.stopPropagation()}>
-            <button
-              onClick={() => setOpen(false)}
-              className="absolute top-5 right-5 h-8 w-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition-colors"
-            >
-              <X className="h-4 w-4" />
-            </button>
-            <p className="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-black mb-2">Investir dans</p>
-            <h3 className="text-3xl font-black text-black mb-6 uppercase tracking-tight">{profil.nom_complet}</h3>
-
-            <label className="block mb-6">
-              <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Montant (Noix Bénies)</span>
-              <input
-                type="number"
-                min={1}
-                max={solde}
-                value={montant}
-                onChange={(e) => setMontant(Number(e.target.value))}
-                className="mt-2 w-full rounded-2xl border border-gray-100 bg-gray-50 px-6 py-5 text-4xl font-black tabular-nums focus:outline-none focus:ring-4 focus:ring-black/5 text-black"
-              />
-            </label>
-            <div className="flex gap-2 mb-8">
-              {[25, 50, 100, 250].map((v) => (
-                <button
-                  key={v}
-                  onClick={() => setMontant(v)}
-                  disabled={v > solde}
-                  className="flex-1 text-xs font-black uppercase tracking-widest rounded-xl border border-gray-100 bg-white py-3 hover:bg-gray-50 disabled:opacity-30 transition-all active:scale-95"
-                >
-                  {v}
-                </button>
-              ))}
+        <div className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-300" onClick={() => setOpen(false)}>
+          <div className="w-full max-w-md rounded-[2.5rem] bg-white p-8 relative shadow-2xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            <div className="absolute top-0 right-0 p-8">
+              <button onClick={() => setOpen(false)} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-black transition-colors">
+                <X size={20} />
+              </button>
             </div>
+            
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-2">Acquisition</p>
+            <h3 className="text-3xl font-black text-black uppercase tracking-tighter mb-8">{profil.nom_complet}</h3>
 
-            <div className="rounded-2xl bg-gray-50 p-6 text-sm space-y-4 border border-gray-100">
-              <div className="flex justify-between items-center">
-                <span className="font-bold text-gray-400 uppercase text-[10px] tracking-widest">Cours d'entrée</span>
-                <span className="tabular-nums font-black text-black flex items-center gap-1">
-                  <Sparkles className="h-3.5 w-3.5 text-amber-500" />
-                  {displayPrice.toFixed(2)}
-                </span>
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Montant (NB)</p>
+                <input 
+                  type="number" 
+                  value={montant}
+                  onChange={(e) => setMontant(Number(e.target.value))}
+                  className="w-full bg-gray-50 rounded-2xl p-5 text-4xl font-black focus:outline-none border-2 border-transparent focus:border-[#3b6934] transition-all"
+                />
               </div>
-              <div className="flex justify-between items-center border-t border-gray-200/50 pt-4 mt-2">
-                <span className="font-bold text-gray-400 uppercase text-[10px] tracking-widest">Solde après</span>
-                <span className="tabular-nums font-black text-black">{(solde - montant).toFixed(0)} Noix</span>
+
+              <div className="grid grid-cols-4 gap-2">
+                {[25, 50, 100, 250].map(v => (
+                  <button 
+                    key={v}
+                    onClick={() => setMontant(v)}
+                    className={cn(
+                      "py-3 rounded-xl font-black text-xs transition-all",
+                      montant === v ? "bg-[#3b6934] text-white" : "bg-gray-50 text-gray-400 hover:bg-gray-100"
+                    )}
+                  >
+                    {v}
+                  </button>
+                ))}
               </div>
+
+              <div className="p-6 bg-gray-50 rounded-2xl space-y-3">
+                <div className="flex justify-between text-xs font-bold text-gray-400 uppercase">
+                  <span>Cours actuel</span>
+                  <span className="text-black">{displayPrice.toFixed(2)} NB</span>
+                </div>
+                <div className="flex justify-between text-xs font-bold text-gray-400 uppercase">
+                  <span>Solde disponible</span>
+                  <span className="text-[#008751]">{solde.toFixed(0)} NB</span>
+                </div>
+              </div>
+
+              <button 
+                onClick={handleInvest}
+                className="w-full bg-[#0F172A] text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-sm shadow-xl active:scale-95 transition-all"
+              >
+                Confirmer l'achat
+              </button>
+              
+              {feedback && (
+                <p className={cn("text-center text-xs font-bold uppercase", feedback.type === 'ok' ? 'text-green-600' : 'text-red-600')}>
+                  {feedback.msg}
+                </p>
+              )}
             </div>
-
-            <button
-              onClick={handleInvest}
-              disabled={montant <= 0 || montant > solde}
-              className="mt-8 w-full rounded-2xl bg-[#0F172A] text-white font-black text-lg py-5 shadow-xl hover:scale-[1.01] active:scale-[0.98] disabled:opacity-30 disabled:cursor-not-allowed transition-all uppercase tracking-widest"
-            >
-              Confirmer
-            </button>
-
-            {feedback && (
-              <p className={`mt-4 text-center text-sm font-bold ${feedback.type === "ok" ? "text-green-600" : "text-red-600"}`}>
-                {feedback.msg}
-              </p>
-            )}
           </div>
         </div>
       )}
