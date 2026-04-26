@@ -8,7 +8,7 @@ import { PriceChart } from "@/components/histoires/PriceChart";
 import type { ProfilAvecSerie, Episode } from "@/data/series";
 import { useWallet } from "@/store/wallet";
 import Image from "next/image";
-import { ChevronLeft, Loader2, Users } from "lucide-react";
+import { ChevronLeft, Loader2, Sparkles, MapPin, TrendingUp } from "lucide-react";
 
 export default function ProfilHistoirePage() {
   const params = useParams();
@@ -17,175 +17,198 @@ export default function ProfilHistoirePage() {
 
   const [profil, setProfil] = useState<ProfilAvecSerie | null>(null);
   const [loading, setLoading] = useState(true);
+  const [suggestions, setSuggestions] = useState<ProfilAvecSerie[]>([]);
 
-  // Zustand Store
   const storePrice = useWallet((s) => s.effectivePrice(id));
   const getSparkline = useWallet((s) => s.getSparkline);
   const sparklineData = getSparkline(id, profil || undefined);
 
   useEffect(() => {
     if (!id) return;
-    
-    async function fetchProfil() {
+
+    async function fetchFullData() {
       try {
         setLoading(true);
-        const { data, error } = await supabase
+        // 1. Fetch Profil
+        const { data: pData, error: pError } = await supabase
           .from("profiles_histoires")
           .select("*")
           .eq("id", id)
           .single();
 
-        if (error) throw error;
+        if (pError) throw pError;
 
-        if (data) {
-          // Fetch serie separately to avoid FK join issues
-          let serieData = null;
-          if (data.series_id) {
-            const { data: sData } = await supabase
-              .from("series_histoires")
-              .select("*")
-              .eq("id", data.series_id)
-              .single();
-            serieData = sData;
-          }
+        // 2. Fetch Serie
+        let serieData = null;
+        if (pData.series_id) {
+          const { data: sData } = await supabase
+            .from("series_histoires")
+            .select("*")
+            .eq("id", pData.series_id)
+            .single();
+          serieData = sData;
 
-          const rawVideos = data.video_urls ?? [];
-          const video_urls: Episode[] = Array.isArray(rawVideos)
-            ? rawVideos.map((v: any) => ({
-                id: v.id ?? "",
-                titre: v.titre ?? "",
-                video_url: v.video_url ?? v.url ?? "",
-              }))
-            : [];
-
-          setProfil({
-            id: data.id,
-            series_id: data.series_id,
-            nom_complet: data.nom_complet ?? "",
-            age: data.age ?? null,
-            profession: data.profession ?? null,
-            bio_courte: data.bio_courte ?? null,
-            photo_url: data.photo_url ?? null,
-            valeur_noix_benies: data.valeur_noix_benies ?? 0,
-            video_urls,
-            total_investisseurs: data.total_investisseurs ?? 0,
-            numero_profil: data.numero_profil ?? null,
-            serie: serieData as any,
-          });
+          // 3. Fetch Suggestions (même série)
+          const { data: suggData } = await supabase
+            .from("profiles_histoires")
+            .select("*")
+            .eq("series_id", pData.series_id)
+            .neq("id", id)
+            .limit(3);
+          if (suggData) setSuggestions(suggData as any);
         }
+
+        const video_urls: Episode[] = Array.isArray(pData.video_urls)
+          ? pData.video_urls.map((v: any) => ({
+            id: v.id ?? "",
+            titre: v.titre ?? "",
+            video_url: v.video_url ?? "",
+            numero: v.numero ?? 1
+          }))
+          : [];
+
+        setProfil({
+          ...pData,
+          video_urls,
+          serie: serieData as any,
+        } as any);
+
       } catch (err) {
-        console.error("Error fetching profil", err);
+        console.error("Error", err);
       } finally {
         setLoading(false);
       }
     }
 
-    fetchProfil();
+    fetchFullData();
   }, [id]);
 
-  if (loading) {
-    return (
-      <div className="h-screen w-full flex items-center justify-center bg-[#F4F4F2]">
-        <Loader2 className="w-10 h-10 animate-spin text-[#008751]" />
-      </div>
-    );
-  }
+  if (loading) return (
+    <div className="h-screen w-full flex items-center justify-center bg-white">
+      <Loader2 className="w-8 h-8 animate-spin text-primary" />
+    </div>
+  );
 
-  if (!profil) {
-    return (
-      <div className="h-screen w-full flex flex-col items-center justify-center bg-[#F4F4F2]">
-        <h1 className="text-2xl font-bold mb-4">Profil introuvable</h1>
-        <button onClick={() => router.back()} className="text-[#008751] hover:underline font-bold">
-          Retour
-        </button>
-      </div>
-    );
-  }
+  if (!profil) return null;
 
   const displayPrice = storePrice > 0 ? storePrice : profil.valeur_noix_benies;
+  const variation = ((displayPrice - profil.valeur_noix_benies) / profil.valeur_noix_benies) * 100;
 
   return (
-    <div className="min-h-screen bg-[#F9F9F7] pb-32">
-      {/* Header court */}
-      <div className="pt-24 px-5 pb-6">
-        <button 
-          onClick={() => router.back()}
-          className="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors mb-6"
-        >
-          <ChevronLeft className="w-4 h-4" />
-          Retour
+    <div className="min-h-screen bg-white pb-20">
+      {/* HEADER NAVIGATION */}
+      <nav className="fixed top-0 z-50 w-full px-6 py-4 flex items-center justify-between bg-gradient-to-b from-white/80 to-transparent backdrop-blur-sm">
+        <button onClick={() => router.back()} className="p-2 rounded-full bg-white/50 shadow-sm border border-white/20">
+          <ChevronLeft className="w-6 h-6 text-gray-800" />
         </button>
+      </nav>
 
-        <div className="flex flex-col md:flex-row gap-8">
-          {/* Section Gauche : Photo & Infos de base */}
-          <div className="w-full md:w-1/3">
-            <div className="relative aspect-[4/5] w-full rounded-2xl overflow-hidden bg-gray-100 shadow-lg">
-              {profil.photo_url ? (
-                <Image
-                  src={profil.photo_url}
-                  alt={profil.nom_complet}
-                  fill
-                  className="object-cover"
-                  priority
-                />
-              ) : (
-                <div className="absolute inset-0 flex items-center justify-center bg-[#008751]/10 text-[#008751] font-serif text-6xl">
-                  {profil.nom_complet[0]}
-                </div>
-              )}
-            </div>
-            
-            <div className="mt-6">
-              <h1 className="text-3xl font-black text-gray-900 leading-tight">
-                {profil.nom_complet}
-              </h1>
-              {profil.profession && (
-                <p className="text-sm text-[#008751] font-bold uppercase tracking-widest mt-1">
-                  {profil.profession} {profil.age ? `· ${profil.age} ans` : ""}
-                </p>
-              )}
-              {profil.bio_courte && (
-                <p className="mt-4 text-gray-600 leading-relaxed">
-                  {profil.bio_courte}
-                </p>
-              )}
-
-              <div className="flex items-center gap-2 mt-6 text-sm text-gray-500 font-medium">
-                <Users className="w-4 h-4" />
-                <span>{profil.total_investisseurs} investisseurs au total</span>
-              </div>
+      {/* HERO SECTION - LOOK IBRAHIM SOW */}
+      <section className="relative w-full h-[70vh] overflow-hidden bg-gray-50">
+        {profil.photo_url && (
+          <div className="relative w-full h-full">
+            <Image
+              src={profil.photo_url}
+              alt={profil.nom_complet}
+              fill
+              className="object-cover object-top"
+              priority
+              style={{ maskImage: 'linear-gradient(to bottom, black 75%, transparent 100%)' }}
+            />
+            {/* Badge Performance */}
+            <div className="absolute top-24 left-8 bg-green-500/90 text-white px-3 py-1.5 rounded-full flex items-center gap-1.5 text-sm font-bold shadow-lg backdrop-blur-md">
+              <TrendingUp className="w-4 h-4" />
+              {variation >= 0 ? '+' : ''}{variation.toFixed(1)}%
             </div>
           </div>
+        )}
 
-          {/* Section Droite : Graphique & Vidéos */}
-          <div className="w-full md:w-2/3 flex flex-col gap-8">
-            <PriceChart data={sparklineData} currentPrice={displayPrice} />
-
-            <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">Épisodes ({profil.video_urls.length})</h2>
-              <EpisodeCarousel episodes={profil.video_urls} />
+        <div className="absolute bottom-12 left-0 w-full px-8">
+          <h1 className="text-5xl font-serif font-black text-gray-900 tracking-tight">
+            {profil.nom_complet}
+          </h1>
+          <div className="flex items-center gap-4 mt-3">
+            <p className="text-lg font-medium text-gray-600">
+              {profil.profession} · {profil.age} ans
+            </p>
+            <div className="flex items-center gap-1 text-gray-400 text-sm">
+              <MapPin className="w-4 h-4" />
+              <span>Bénin</span>
             </div>
-            
-            {profil.serie && (
-              <div className="bg-[#008751]/5 border border-[#008751]/10 rounded-2xl p-6">
-                <h2 className="text-sm font-bold text-[#008751] uppercase tracking-widest mb-2">
-                  Série : {profil.serie.titre}
-                </h2>
-                {profil.serie.synopsis && (
-                  <p className="text-gray-700 text-sm leading-relaxed mb-4">
-                    {profil.serie.synopsis}
-                  </p>
-                )}
-                {profil.serie.episode_question && (
-                  <p className="text-gray-900 font-bold italic text-lg">
-                    « {profil.serie.episode_question} »
-                  </p>
-                )}
-              </div>
-            )}
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* BANDEAU VALEUR BÉNIE */}
+      <section className="px-8 -mt-6 relative z-10">
+        <div className="bg-gray-50/50 backdrop-blur-xl border border-gray-100 rounded-3xl p-8 flex flex-col md:flex-row items-center justify-between shadow-xl shadow-gray-200/50">
+          <div className="flex flex-col">
+            <span className="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-1">
+              Valeur des Noix Bénies
+            </span>
+            <div className="flex items-center gap-3">
+              <Sparkles className="w-6 h-6 text-amber-500" />
+              <span className="text-4xl font-black text-gray-900 tabular-nums">
+                {displayPrice.toFixed(2)}
+              </span>
+            </div>
+          </div>
+
+          <button className="mt-6 md:mt-0 bg-gray-900 text-white px-10 py-4 rounded-2xl font-bold text-lg hover:scale-[1.02] transition-transform shadow-lg shadow-gray-900/20">
+            Investir maintenant
+          </button>
+        </div>
+      </section>
+
+      <main className="max-w-6xl mx-auto px-8 mt-16 space-y-24">
+
+        {/* CARROUSEL ÉPISODES & ÉVALUATIONS */}
+        <section>
+          <div className="flex flex-col mb-10">
+            <span className="text-primary font-bold uppercase tracking-widest text-xs mb-2">Témoignages</span>
+            <h2 className="text-3xl font-serif font-bold">Plonger dans son histoire</h2>
+          </div>
+          <EpisodeCarousel
+            episodes={profil.video_urls}
+            profilNom={profil.nom_complet}
+            profilId={profil.id}
+          />
+        </section>
+
+        {/* ANALYSE TECHNIQUE (Graphique) */}
+        <section className="py-12 border-y border-gray-100">
+          <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-8">Analyse de la courbe</h3>
+          <div className="h-[300px]">
+            <PriceChart data={sparklineData} currentPrice={displayPrice} />
+          </div>
+        </section>
+
+        {/* SUGGESTIONS DE LA SÉRIE */}
+        {suggestions.length > 0 && (
+          <section className="pb-20">
+            <div className="flex items-center gap-4 mb-8">
+              <div className="h-12 w-8 relative rounded overflow-hidden shadow-sm">
+                {profil.serie?.affiche_url && <Image src={profil.serie.affiche_url} alt="serie" fill className="object-cover" />}
+              </div>
+              <div>
+                <p className="text-xs text-gray-400 uppercase font-bold tracking-widest">Dans la même série</p>
+                <h4 className="text-xl font-serif font-bold">{profil.serie?.titre}</h4>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {suggestions.map((s) => (
+                <div key={s.id} className="cursor-pointer group" onClick={() => router.push(`/profil/${s.id}`)}>
+                  <div className="relative aspect-square rounded-2xl overflow-hidden mb-3">
+                    <Image src={s.photo_url || ''} alt={s.nom_complet} fill className="object-cover transition-transform group-hover:scale-110" />
+                  </div>
+                  <p className="font-bold text-gray-900">{s.nom_complet}</p>
+                  <p className="text-xs text-gray-400">{s.profession}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+      </main>
     </div>
   );
 }
