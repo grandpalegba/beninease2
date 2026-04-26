@@ -14,7 +14,7 @@ interface EpisodeCarouselProps {
 }
 
 export function EpisodeCarousel({ episodes, profilId, seriesInfo }: EpisodeCarouselProps) {
-  const [emblaRef] = useEmblaCarousel({ loop: false, align: "center" });
+  const [emblaRef] = useEmblaCarousel({ loop: true, align: "center" });
 
   if (!episodes || episodes.length === 0) {
     return (
