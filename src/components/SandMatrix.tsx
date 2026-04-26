@@ -169,7 +169,7 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <div className="absolute bottom-6 left-6 text-white">
                     <span className="text-[10px] font-bold uppercase tracking-widest opacity-70 block mb-1">{lifeCase.label}</span>
-                    <h3 className="text-2xl font-serif">{lifeCase.persona}</h3>
+                    <h3 className="text-2xl font-sans">{lifeCase.persona}</h3>
                   </div>
                 </div>
 
@@ -207,7 +207,7 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
                     <DotIdeogram leftCode={revealed.signX.code} rightCode={revealed.signY.code} size={50} color="#00693e" />
                   </div>
                   <div>
-                    <h4 className="text-3xl font-serif text-[#00693e] mb-2">{revealed.signX.name} {revealed.signY.name}</h4>
+                    <h4 className="text-3xl font-sans text-[#00693e] mb-2">{revealed.signX.name} {revealed.signY.name}</h4>
                     <p className="text-sm font-light text-neutral-500 leading-relaxed">
                       L'union de ces deux énergies révèle une dynamique de <span className="font-bold text-black">{revealed.dynamicWord}</span>.
                     </p>
@@ -252,7 +252,7 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
       <AlertDialog open={confirmCloseOpen} onOpenChange={setConfirmCloseOpen}>
         <AlertDialogContent className="rounded-[2.5rem] p-12">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-3xl font-serif text-center">Interrompre le rituel ?</AlertDialogTitle>
+            <AlertDialogTitle className="text-3xl font-sans text-center">Interrompre le rituel ?</AlertDialogTitle>
             <AlertDialogDescription className="text-center text-neutral-400">
               Votre progression dans cette consultation sera perdue.
             </AlertDialogDescription>

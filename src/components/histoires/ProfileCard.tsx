@@ -56,7 +56,7 @@ export function ProfileCard({ profil, serie }: ProfileCardProps) {
             style={{ maskImage: "linear-gradient(to bottom, black 60%, transparent 100%)", WebkitMaskImage: "linear-gradient(to bottom, black 60%, transparent 100%)" }}
           />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center text-[#008751] font-serif text-5xl font-bold opacity-20">
+          <div className="absolute inset-0 flex items-center justify-center text-[#008751] font-sans text-5xl font-bold opacity-20">
             {profil.nom_complet[0]}
           </div>
         )}
@@ -65,7 +65,7 @@ export function ProfileCard({ profil, serie }: ProfileCardProps) {
       {/* ── Contenu ── */}
       <div className="flex flex-col p-6 mt-auto bg-transparent relative z-10 pointer-events-none justify-end h-full">
         <div className="mb-4">
-          <h3 className="font-serif font-black text-4xl text-gray-900 leading-tight tracking-tight">
+          <h3 className="font-sans font-black text-4xl text-gray-900 leading-tight tracking-tight">
             {profil.nom_complet}
           </h3>
           {profil.profession && (

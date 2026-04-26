@@ -1,49 +1,43 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { supabase } from "@/utils/supabase/client";
 import type { User } from "@supabase/supabase-js";
-import { User as UserIcon, LogOut, LayoutDashboard, ChevronDown, Trophy, UserCheck, Settings, Menu, X } from "lucide-react";
+import { User as UserIcon, LogOut, ChevronDown, Search } from "lucide-react";
 import Image from "next/image";
-import { calculateVoterStatus } from "@/lib/voter-logic";
 import { cn } from "@/lib/utils";
-
 import UserBadge from "./UserBadge";
-
-type UserStats = {
-  voter_id: string;
-  total_votes: number;
-};
+import { HeaderSwipe } from "./HeaderSwipe";
 
 type UserProfile = {
   id: string;
   prenom: string | null;
-  nom: string | null;
   avatar_url: string | null;
-  role?: string;
-  full_name?: string;
   total_points: number;
-  player_grade: string;
-  power_multiplier: number;
   voter_status: string;
   voter_weight: number;
+  power_multiplier: number;
 };
 
 const Header = () => {
   const pathname = usePathname();
-  const isBottomNav = pathname === "/batisseurs" || pathname === "/tresors" || pathname === "/duel" || pathname === "/ambassadeurs" || pathname === "/savoirs" || pathname === "/sagesses" || pathname === "/histoires" || pathname?.startsWith("/batisseurs/");
-
-  const [scrolled, setScrolled] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [isAmbassadeur, setIsAmbassadeur] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // 👉 fermer dropdown
   useEffect(() => {
+    const init = async () => {
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      setUser(currentUser);
+      if (currentUser) {
+        const { data } = await supabase.from("profiles").select("*").eq("id", currentUser.id).maybeSingle();
+        if (data) setProfile(data);
+      }
+    };
+    init();
+
     const handleClickOutside = (event: MouseEvent) => {
       if (showDropdown && !(event.target as Element).closest('.user-menu-container')) {
         setShowDropdown(false);
@@ -53,225 +47,80 @@ const Header = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showDropdown]);
 
-  // ✅ USEEFFECT CORRIGÉ
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", onScroll);
-
-    const loadUserData = async (currentUser: User | null) => {
-      if (!currentUser) {
-        setProfile(null);
-        setIsAmbassadeur(false);
-        return;
-      }
-
-      try {
-        const [profileRes, ambassadeurRes] = await Promise.all([
-          supabase.from("profiles").select("*").eq("id", currentUser.id).maybeSingle(),
-          supabase.from("ambassadeurs").select("id").eq("auth_user_id", currentUser.id).maybeSingle()
-        ]);
-
-        if (profileRes.data) setProfile(profileRes.data);
-
-        const isAmbassadeurFromTable = !!ambassadeurRes.data;
-        const isAmbassadeurFromRole =
-          profileRes.data?.role === 'candidate' ||
-          profileRes.data?.role === 'candidat' ||
-          profileRes.data?.role === 'ambassadeur';
-
-        setIsAmbassadeur(isAmbassadeurFromTable || isAmbassadeurFromRole);
-      } catch (err) {
-        console.error("Erreur load user:", err);
-      }
-    };
-
-    // 🔹 Chargement initial
-    const init = async () => {
-      const { data: { user: currentUser } } = await supabase.auth.getUser();
-      setUser(currentUser);
-      await loadUserData(currentUser);
-    };
-
-    init();
-
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-    };
-  }, []);
-
   const handleSignOut = async () => {
     await supabase.auth.signOut();
-    window.location.href = "/";
+    window.location.reload();
   };
 
-  const navLinkClasses = "text-sm font-bold text-white hover:text-[#FFD700] transition-colors";
+  // List of main pages where we show the HeaderSwipe
+  const isMainPage = ["/sagesses", "/savoirs", "/histoires", "/ambassadeurs", "/tresors"].includes(pathname);
 
   return (
-    <header className={cn(
-      "fixed left-0 right-0 z-[100] transition-all duration-300",
-      isBottomNav 
-        ? "bottom-0 bg-black shadow-[0_-10px_40px_rgba(255,255,255,0.08)] py-3 md:py-4 rounded-t-[2.5rem] border-t border-white/5" 
-        : `top-0 ${scrolled ? "bg-black/80 backdrop-blur-md shadow-sm py-2" : "bg-black py-4"}`
-    )}>
-      <div className="container max-w-7xl mx-auto flex items-center justify-between px-6">
+    <>
+      {/* HEADER SWIPE (Top) */}
+      {isMainPage && <HeaderSwipe />}
 
-        <Link href="/" className="flex items-center gap-3">
-          <Image src="/logo.png" alt="logo" width={32} height={32} />
-          <span className="text-xl font-black font-lato tracking-[3px]">
+      {/* DOCK (Bottom) */}
+      <footer className="fixed bottom-0 left-0 right-0 z-[100] h-20 bg-black/95 backdrop-blur-xl border-t border-white/5 flex items-center justify-between px-8 rounded-t-[2.5rem] shadow-[0_-10px_40px_rgba(0,0,0,0.2)] font-sans">
+        
+        {/* Logo à gauche */}
+        <Link href="/" className="flex items-center gap-2">
+          <Image src="/logo.png" alt="logo" width={28} height={28} />
+          <span className="text-lg font-black tracking-[2px] uppercase">
             <span className="text-white">Benin</span>
-            <span className="text-[#FFD700]">Ease</span>
+            <span className="text-[#FCD116]">Ease</span>
           </span>
         </Link>
 
-        <div className="flex items-center gap-4 md:gap-8">
-          {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-6">
-            <Link href="/sagesses" className={cn(navLinkClasses, pathname === "/sagesses" && "text-[#FFD700]")}>Sagesses</Link>
-            <Link href="/savoirs" className={cn(navLinkClasses, pathname === "/savoirs" && "text-[#FFD700]")}>Savoirs</Link>
-            <Link href="/histoires" className={cn(navLinkClasses, pathname === "/histoires" && "text-[#FFD700]")}>Histoires</Link>
-            <Link href="/ambassadeurs" className={cn(navLinkClasses, pathname === "/ambassadeurs" && "text-[#FFD700]")}>Ambassadeurs</Link>
-            <Link href="/tresors" className={cn(navLinkClasses, pathname === "/tresors" && "text-[#FFD700]")}>Trésors</Link>
-          </div>
-          
-          {/* Mobile Hamburger Toggle */}
-          <button 
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 text-white hover:bg-white/10 rounded-full transition-all"
-          >
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        {/* Actions à droite */}
+        <div className="flex items-center gap-6">
+          <button className="text-white/50 hover:text-white transition-colors">
+            <Search size={22} />
           </button>
 
           {user ? (
-            <div className="flex items-center gap-4">
-              <UserBadge 
-                status={profile?.voter_status || "Citoyen"} 
-                weight={profile?.voter_weight || 1} 
-                multiplier={profile?.power_multiplier || 1}
-                className="hidden md:flex"
-              />
-
-              <div className="relative user-menu-container">
-                <button onClick={() => setShowDropdown(!showDropdown)} className="flex items-center gap-2 group">
-                  <div className="relative">
-                    {profile?.avatar_url ? (
-                      <Image src={profile.avatar_url} alt="avatar" width={36} height={36} className="rounded-full ring-2 ring-transparent group-hover:ring-[#008751]/20 transition-all" />
-                    ) : (
-                      <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 group-hover:bg-[#008751]/10 group-hover:text-[#008751] transition-all">
-                        <UserIcon size={20} />
-                      </div>
-                    )}
-                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-black rounded-full flex items-center justify-center shadow-sm border border-white/10">
-                       <ChevronDown size={10} className={cn("text-white transition-transform", showDropdown && "rotate-180")} />
+            <div className="relative user-menu-container">
+              <button onClick={() => setShowDropdown(!showDropdown)} className="flex items-center gap-2 group">
+                <div className="relative h-10 w-10 rounded-full overflow-hidden border-2 border-white/10 group-hover:border-[#008751] transition-all">
+                  {profile?.avatar_url ? (
+                    <Image src={profile.avatar_url} alt="avatar" fill className="object-cover" />
+                  ) : (
+                    <div className="w-full h-full bg-white/5 flex items-center justify-center text-white/40">
+                      <UserIcon size={20} />
                     </div>
+                  )}
+                </div>
+                <ChevronDown size={14} className={cn("text-white/30 transition-transform", showDropdown && "rotate-180")} />
+              </button>
+
+              {showDropdown && (
+                <div className="absolute right-0 bottom-full mb-4 bg-white shadow-2xl rounded-2xl p-4 border border-gray-100 min-w-[220px] animate-in fade-in slide-in-from-bottom-2 duration-200">
+                  <div className="px-2 py-2 mb-3 border-b border-gray-50 pb-4">
+                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{profile?.voter_status || 'Citoyen'}</p>
+                    <p className="text-base font-black text-gray-900 truncate uppercase">{profile?.prenom || 'Explorateur'}</p>
                   </div>
-                </button>
 
-                {showDropdown && (
-                  <div className={cn(
-                    "absolute right-0 bg-white shadow-2xl rounded-2xl p-4 border border-gray-100 min-w-[220px] z-50 animate-in fade-in duration-200",
-                    isBottomNav ? "bottom-full mb-4 slide-in-from-bottom-2" : "top-full mt-3 slide-in-from-top-2"
-                  )}>
-                    <div className="px-2 py-2 mb-3 border-b border-gray-50 pb-4">
-                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">{profile?.voter_status || 'Votant'}</p>
-                      <p className="text-base font-bold text-gray-900 truncate">{profile?.prenom || 'Explorateur'}</p>
-                      <div className="mt-2 flex items-center gap-2">
-                        <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                           <div className="h-full bg-[#008751]" style={{ width: `${Math.min((profile?.total_points || 0) / 10, 100)}%` }} />
-                        </div>
-                        <span className="text-[10px] font-bold text-[#008751]">{profile?.total_points || 0} pts</span>
-                      </div>
-                    </div>
-
-                    <div className="space-y-1">
-                      <div className="md:hidden px-2 py-2 mb-2 bg-[#008751]/5 rounded-lg border border-[#008751]/10">
-                        <p className="text-[10px] font-bold text-[#008751] uppercase tracking-widest">Poids : +{profile?.voter_weight || 1} pts</p>
-                      </div>
-
-                      <button 
-                        onClick={handleSignOut} 
-                        className="flex items-center gap-3 w-full px-3 py-2.5 text-sm text-red-500 hover:bg-red-50 rounded-xl transition-all group"
-                      >
-                        <div className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center group-hover:bg-red-100 transition-all">
-                          <LogOut size={16} />
-                        </div>
-                        <span className="font-bold">Déconnexion</span>
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
+                  <button 
+                    onClick={handleSignOut} 
+                    className="flex items-center gap-3 w-full px-3 py-2.5 text-sm text-red-500 hover:bg-red-50 rounded-xl transition-all group"
+                  >
+                    <LogOut size={16} />
+                    <span className="font-black uppercase tracking-wider">Déconnexion</span>
+                  </button>
+                </div>
+              )}
             </div>
           ) : (
             <Link 
               href="/login" 
-              className="px-6 py-2.5 rounded-full bg-[#008751] text-white text-sm font-bold shadow-lg shadow-[#008751]/20 hover:bg-[#16a34a] hover:-translate-y-0.5 transition-all active:translate-y-0"
+              className="px-6 py-2 bg-[#008751] text-white text-[11px] font-black uppercase tracking-widest rounded-full hover:bg-[#006b40] transition-all"
             >
               Connexion
             </Link>
           )}
-
         </div>
-      </div>
-
-      {/* Mobile Menu Overlay */}
-      {isMobileMenuOpen && (
-        <div className={cn(
-          "fixed inset-0 z-40 bg-black/95 backdrop-blur-xl md:hidden animate-in fade-in duration-300",
-          isBottomNav ? "bottom-20 mb-4" : "top-20"
-        )}>
-          <div className="p-8 flex flex-col gap-6">
-
-            <Link 
-              href="/sagesses" 
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="text-3xl font-display font-black text-white flex items-center justify-between"
-            >
-              Sagesses <ChevronDown size={20} className="-rotate-90 text-white/30" />
-            </Link>
-            <Link 
-              href="/savoirs" 
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="text-3xl font-display font-black text-white flex items-center justify-between"
-            >
-              Savoirs <ChevronDown size={20} className="-rotate-90 text-white/30" />
-            </Link>
-            <Link 
-              href="/histoires" 
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="text-3xl font-display font-black text-white flex items-center justify-between"
-            >
-              Histoires <ChevronDown size={20} className="-rotate-90 text-white/30" />
-            </Link>
-            <Link 
-              href="/ambassadeurs" 
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="text-3xl font-display font-black text-white flex items-center justify-between"
-            >
-              Ambassadeurs <ChevronDown size={20} className="-rotate-90 text-white/30" />
-            </Link>
-            <Link 
-              href="/tresors" 
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="text-3xl font-display font-black text-white flex items-center justify-between"
-            >
-              Trésors <ChevronDown size={20} className="-rotate-90 text-white/30" />
-            </Link>
-            
-            <div className="mt-8 pt-8 border-t border-gray-100">
-              {!user && (
-                <Link 
-                  href="/login" 
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="w-full flex items-center justify-center py-4 bg-[#008751] text-white rounded-2xl font-bold text-lg shadow-xl shadow-[#008751]/20"
-                >
-                  Se connecter
-                </Link>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-    </header>
+      </footer>
+    </>
   );
 };
 

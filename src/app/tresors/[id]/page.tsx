@@ -193,7 +193,7 @@ export default function TreasurePage({ params }: { params: { id: string } }) {
           className="text-center max-w-2xl"
         >
           <div className="text-8xl mb-8">🏆</div>
-          <h1 className="text-black text-4xl font-serif font-bold mb-4">
+          <h1 className="text-black text-4xl font-sans font-bold mb-4">
             Trésor Libéré
           </h1>
           <p className="text-black/80 font-sans mb-8">
@@ -227,7 +227,7 @@ export default function TreasurePage({ params }: { params: { id: string } }) {
             >
               <div className="text-center">
                 <div className="text-6xl mb-6">⚡</div>
-                <h2 className="text-yellow-600 text-2xl font-serif font-bold mb-4">
+                <h2 className="text-yellow-600 text-2xl font-sans font-bold mb-4">
                   ÉCLAIRAGE DE SAVOIR
                 </h2>
                 <p className="text-black font-sans leading-relaxed mb-8">
@@ -256,7 +256,7 @@ export default function TreasurePage({ params }: { params: { id: string } }) {
           </div>
           
           {/* Titre en Serif Noir */}
-          <h1 className="text-black text-5xl font-serif font-bold mb-2 text-center">
+          <h1 className="text-black text-5xl font-sans font-bold mb-2 text-center">
             {mystere.title}
           </h1>
           
@@ -310,7 +310,7 @@ export default function TreasurePage({ params }: { params: { id: string } }) {
 
               {/* L'énigme en Noir profond */}
               <div className="text-center mb-12">
-                <h3 className="text-black text-xl font-serif font-bold mb-8">
+                <h3 className="text-black text-xl font-sans font-bold mb-8">
                   {mystere.questions[currentQuestion].question}
                 </h3>
               </div>

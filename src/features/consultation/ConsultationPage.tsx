@@ -39,7 +39,7 @@ export default function ConsultationPage() {
             </motion.div>
           </div>
           
-          <h2 className="text-4xl font-serif mb-6 text-black italic">Session Terminée</h2>
+          <h2 className="text-4xl font-sans mb-6 text-black italic">Session Terminée</h2>
           <p className="text-lg font-light text-neutral-500 leading-relaxed mb-12">
             Votre sagesse a été capturée et transmise. Elle fait désormais partie 
             de la mémoire collective de BeninEase.

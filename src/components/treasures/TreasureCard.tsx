@@ -66,7 +66,7 @@ export default function TreasureCard({ data, className }: TreasureCardProps) {
            </div>
            <div className="space-y-2">
               <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Histoire & Héritage</p>
-              <p className="text-sm text-gray-600 leading-relaxed font-serif italic">
+              <p className="text-sm text-gray-600 leading-relaxed font-sans italic">
                 {data.history}
               </p>
            </div>

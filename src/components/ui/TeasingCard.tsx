@@ -85,7 +85,7 @@ export default function TeasingCard({
         <div className="flex-1 flex flex-col items-center justify-start space-y-4 w-full">
           <p
             className={cn(
-              "text-gray-600 font-serif italic mx-auto",
+              "text-gray-600 font-sans italic mx-auto",
               hideImage
                 ? "text-2xl md:text-3xl max-w-lg leading-[1.8] md:leading-[2]"
                 : "text-lg md:text-xl max-w-[450px] leading-relaxed"

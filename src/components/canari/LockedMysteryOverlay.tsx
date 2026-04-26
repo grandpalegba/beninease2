@@ -90,7 +90,7 @@ export default function LockedMysteryOverlay({ lockedUntil, onUnlock }: LockedMy
           transition={{ delay: 1, duration: 0.8 }}
           className="space-y-6"
         >
-          <h2 className="text-gray-300 text-3xl font-serif font-bold">
+          <h2 className="text-gray-300 text-3xl font-sans font-bold">
             Le Silence des Ancêtres
           </h2>
           

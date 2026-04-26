@@ -189,7 +189,7 @@ export default function ProfilHistoirePage() {
               {profil.photo_url ? (
                 <Image src={profil.photo_url} alt={profil.nom_complet} fill className="object-cover object-top" />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-gray-400 font-serif text-3xl">{profil.nom_complet[0]}</div>
+                <div className="w-full h-full flex items-center justify-center text-gray-400 font-sans text-3xl">{profil.nom_complet[0]}</div>
               )}
             </div>
             

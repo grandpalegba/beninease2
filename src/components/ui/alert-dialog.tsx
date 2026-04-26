@@ -44,7 +44,7 @@ export const AlertDialogHeader = ({ children }: { children: React.ReactNode }) =
 );
 
 export const AlertDialogTitle = ({ children }: { children: React.ReactNode }) => (
-  <h3 className="text-xl font-serif font-bold text-neutral-900">{children}</h3>
+  <h3 className="text-xl font-sans font-bold text-neutral-900">{children}</h3>
 );
 
 export const AlertDialogDescription = ({ children }: { children: React.ReactNode }) => (

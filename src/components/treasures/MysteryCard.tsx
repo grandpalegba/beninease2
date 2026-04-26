@@ -72,7 +72,7 @@ export default function MysteryCard({
              </h3>
            </div>
            
-           <p className="text-sm text-gray-400 font-serif italic leading-relaxed max-w-[250px]">
+           <p className="text-sm text-gray-400 font-sans italic leading-relaxed max-w-[250px]">
              "{mystere.questions?.[0]?.question || "L'âme de la nation réside dans la mémoire des ancêtres..."}"
            </p>
 
@@ -137,7 +137,7 @@ export default function MysteryCard({
                       <h2 className="text-3xl md:text-5xl font-display font-black text-gray-900">
                         {mystere.questions?.[currentStep]?.question}
                       </h2>
-                      <p className="text-amber-700/50 font-serif italic italic">
+                      <p className="text-amber-700/50 font-sans italic italic">
                         "Que votre sagesse guide votre main vers le canari"
                       </p>
                    </div>
@@ -196,7 +196,7 @@ function VictoryView({ treasureData }: { treasureData: any }) {
       </div>
       <div className="text-center space-y-4">
          <h2 className="text-5xl font-display font-black text-amber-900 uppercase">Unité Céleste</h2>
-         <p className="text-amber-800/60 max-w-sm mx-auto italic font-serif">Le secret est scellé. La nation est unie.</p>
+         <p className="text-amber-800/60 max-w-sm mx-auto italic font-sans">Le secret est scellé. La nation est unie.</p>
       </div>
       <TreasureCard data={treasureData} className="w-full mt-10" />
     </motion.div>
