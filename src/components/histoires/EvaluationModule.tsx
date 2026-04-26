@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { supabase } from "@/utils/supabase/client";
 import { cn } from "@/lib/utils";
-import { Play } from "lucide-react";
 
 function getYoutubeID(url: string) {
   if (!url) return null;
@@ -68,30 +67,32 @@ export function EvaluationModule({ episode, profilId, seriesInfo }: EvaluationMo
           <video src={episode.video_url} controls className="w-full h-full object-cover" />
         )}
         <div className="absolute bottom-6 left-8 text-white pointer-events-none group-hover:opacity-0 transition-opacity">
-          <p className="font-semibold text-lg">{seriesInfo?.episode_titre || episode.titre}</p>
+          <p className="font-bold text-lg uppercase tracking-tight">{episode.titre}</p>
           <p className="text-sm opacity-70">Documentaire • 12:45</p>
         </div>
       </div>
 
       {/* DROITE : ÉVALUATION */}
-      <div className="p-10 md:p-16 flex flex-col justify-center space-y-10">
+      <div className="p-10 md:p-12 flex flex-col justify-between h-full bg-white">
         <div>
-          <h2 className="text-4xl font-black mb-2 uppercase tracking-tighter">Évaluation</h2>
-          <p className="text-gray-400 font-medium italic">
-            {seriesInfo?.episode_question || episode.episode_question || "Analyse de la souveraineté culturelle"}
+          <h2 className="text-3xl font-black text-black uppercase tracking-tighter leading-none mb-1">
+            {episode.titre}
+          </h2>
+          <p className="text-gray-400 font-medium italic text-sm">
+            {episode.episode_question || "Analyse de la souveraineté culturelle"}
           </p>
         </div>
 
-        <div className="space-y-8">
+        <div className="space-y-6 py-4">
           {[
             { label: "Originalité", key: "originalite", className: "range-green", color: "text-[#008751]" },
             { label: "Authenticité", key: "authenticite", className: "range-yellow", color: "text-[#FCD116]" },
             { label: "Impact", key: "impact", className: "range-red", color: "text-[#E8112D]" }
           ].map((c) => (
-            <div key={c.key} className="space-y-4">
+            <div key={c.key} className="space-y-2">
               <div className="flex justify-between items-end font-black">
-                <span className="text-[10px] uppercase tracking-[0.3em] text-black mb-1">{c.label}</span>
-                <span className={cn("text-2xl", c.color)}>
+                <span className="text-[9px] uppercase tracking-[0.3em] text-gray-400">{c.label}</span>
+                <span className={cn("text-lg", c.color)}>
                   {(scores[c.key as keyof typeof scores] - 1) * 25}%
                 </span>
               </div>
@@ -110,7 +111,7 @@ export function EvaluationModule({ episode, profilId, seriesInfo }: EvaluationMo
         <button 
           onClick={submitEvaluation}
           disabled={loading}
-          className="w-full bg-[#0F172A] text-white py-5 rounded-[20px] font-black uppercase tracking-[0.2em] text-sm shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 mt-4"
+          className="w-full bg-[#0F172A] text-white py-4 rounded-[20px] font-black uppercase tracking-[0.2em] text-xs shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
         >
           {loading ? "Transmission..." : "Valider l'évaluation"}
         </button>

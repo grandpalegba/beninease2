@@ -154,28 +154,20 @@ export default function ProfilHistoirePage() {
       <main className="max-w-7xl mx-auto space-y-8">
         
         {/* Header Block */}
-        <header className="bg-white p-4 rounded-[2rem] shadow-sm border border-gray-100 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="relative w-16 h-16 rounded-2xl overflow-hidden shadow-inner bg-gray-50">
-              {profil.photo_url && (
-                <Image src={profil.photo_url} alt={profil.nom_complet} fill className="object-cover object-top" />
-              )}
-            </div>
-            <h1 className="text-2xl font-black text-gray-900 uppercase tracking-tighter">{profil.nom_complet}</h1>
+        <header className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center gap-6">
+          <div className="relative w-16 h-16 rounded-2xl overflow-hidden shadow-inner bg-gray-50 border border-gray-100">
+            {profil.photo_url && (
+              <Image src={profil.photo_url} alt={profil.nom_complet} fill className="object-cover object-top" />
+            )}
           </div>
-          <button 
-            onClick={() => router.back()}
-            className="p-3 rounded-2xl bg-gray-50 text-gray-400 hover:text-black transition-colors"
-          >
-            <ChevronLeft size={24} />
-          </button>
+          <h1 className="text-3xl font-black text-gray-900 uppercase tracking-tighter leading-none">{profil.nom_complet}</h1>
         </header>
 
         {/* Hero Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
           {/* Main Video Block (6 columns) */}
-          <div className="lg:col-span-6 bg-black rounded-[2.5rem] relative aspect-video overflow-hidden group shadow-xl">
+          <div className="lg:col-span-6 bg-black rounded-[2.5rem] relative aspect-video overflow-hidden group shadow-xl border border-gray-100">
             {mainVideoId ? (
               <iframe 
                 src={`https://www.youtube.com/embed/${mainVideoId}`} 
@@ -209,9 +201,6 @@ export default function ProfilHistoirePage() {
                 {profil.serie?.titre.split(' ').map((word, i) => <span key={i} className="block">{word}</span>)}
               </h2>
             </div>
-            <div className="absolute bottom-6 left-6 text-white font-black text-[9px] tracking-[0.3em] uppercase">
-              Ancestralewona • Safe Work
-            </div>
           </div>
 
           {/* Finance & Action Block (3 columns) */}
@@ -220,12 +209,10 @@ export default function ProfilHistoirePage() {
               <div className="flex items-start gap-4">
                 <HistogrammeBeninois stats={stats} totalAvis={stats.count} />
                 <div>
-                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] mb-1">Asset Value</p>
                   <p className="text-4xl font-black text-black leading-none tabular-nums tracking-tighter">
                     {displayPrice.toFixed(2)}
-                    <span className="text-xs font-black text-gray-300 uppercase tracking-widest ml-1">NB</span>
                   </p>
-                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-1">Noix Bénies</p>
+                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2">Noix Bénies</p>
                 </div>
               </div>
               
@@ -234,18 +221,17 @@ export default function ProfilHistoirePage() {
                   <Users size={24} />
                 </div>
                 <div>
-                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] mb-1">Investors</p>
                   <p className="text-4xl font-black text-black leading-none tabular-nums tracking-tighter">1,482</p>
-                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-1">Active Shares</p>
+                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2">Active Shares</p>
                 </div>
               </div>
             </div>
 
             <button 
               onClick={() => setOpen(true)}
-              className="w-full bg-[#3b6934] text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-2 hover:bg-[#2d5027] transition-all shadow-xl shadow-[#3b6934]/20 active:scale-95"
+              className="w-full bg-[#3b6934] text-white py-6 rounded-2xl font-black uppercase tracking-[0.2em] text-xs flex items-center justify-center hover:bg-[#2d5027] transition-all shadow-xl shadow-[#3b6934]/20 active:scale-95"
             >
-              Investir <ArrowRight size={16} />
+              Investir
             </button>
           </div>
         </div>
@@ -256,8 +242,8 @@ export default function ProfilHistoirePage() {
         </section>
 
         {/* Suggestions Section */}
-        <section className="space-y-8">
-          <h3 className="text-2xl font-black uppercase tracking-tighter ml-2">Suggestions</h3>
+        <section className="mt-8 space-y-6 pb-20">
+          <h3 className="text-sm font-black uppercase tracking-[0.3em] ml-2 text-gray-400">Suggestions</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {suggestions.map((p, i) => (
               <div 
