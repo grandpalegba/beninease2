@@ -1,5 +1,7 @@
 "use client";
 
+import { cn } from "@/lib/utils";
+
 interface HistogrammeBeninoisProps {
   stats: {
     volume: number; // 1-5
