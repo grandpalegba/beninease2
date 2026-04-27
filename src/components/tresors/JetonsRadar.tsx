@@ -95,20 +95,37 @@ export function JetonsRadar({ conscience, confiance, connaissance, competence }:
           })}
         </svg>
 
-        {/* Labels */}
+        {/* Labels avec valeurs */}
         {points.map((p) => {
-          const coords = getPointCoords(115, p.angle);
+          // Adjust position based on angle for better centering
+          const labelDist = 135; // Increased distance for clarity
+          const coords = getPointCoords(labelDist, p.angle);
+          
+          // Specific values provided by user
+          const displayValues: Record<string, number> = {
+            "Compétence": 18,
+            "Conscience": 14,
+            "Confiance": 18,
+            "Connaissance": 22
+          };
+          
           return (
             <div
               key={p.label}
-              className="absolute text-[8px] font-black uppercase tracking-tighter text-gray-400"
+              className="absolute flex flex-col items-center justify-center text-center leading-none"
               style={{
                 left: `${coords.x}px`,
                 top: `${coords.y}px`,
                 transform: "translate(-50%, -50%)",
+                width: "80px"
               }}
             >
-              {p.label}
+              <span className="text-[8px] font-black uppercase tracking-widest text-gray-400 mb-1">
+                {p.label}
+              </span>
+              <span className="text-[10px] font-bold text-gray-900">
+                {displayValues[p.label]}
+              </span>
             </div>
           );
         })}
