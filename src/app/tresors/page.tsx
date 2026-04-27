@@ -1,168 +1,111 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase/client";
-import { TreasuresService } from "@/lib/treasures-service";
-import type { Mystere, UserTreasure } from "@/types/treasures";
-import CardDeck from "@/components/ui/CardDeck";
-import TeasingCard from "@/components/ui/TeasingCard";
-import AwaleHeader from "@/components/treasures/AwaleHeader";
-import RoyalJar from "@/components/treasures/RoyalJar";
-import AnswerGrid from "@/components/treasures/AnswerGrid";
-import TreasureCard from "@/components/treasures/TreasureCard";
-import { useMysteryGame } from "@/hooks/useMysteryGame";
-import { Loader2, AlertCircle, Clock, Trophy, RotateCcw } from "lucide-react";
+import { Loader2, AlertCircle } from "lucide-react";
 import Image from "next/image";
 
-export default function TreasuresPage() {
-  const [mysteres, setMysteres] = useState<Mystere[]>([]);
-  const [userProgress, setUserProgress] = useState<Record<string, UserTreasure>>({});
+interface Tresor {
+  id: string;
+  nom: string;
+  sous_titre: string;
+  image_url: string;
+  created_at: string;
+}
+
+export default function TresorsPage() {
+  const [tresors, setTresors] = useState<Tresor[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
-
-  const handleSuccess = useCallback((mystereId: string, data: any) => {
-    setUserProgress(prev => ({ ...prev, [mystereId]: data }));
-  }, []);
-
-  const { 
-    handleCorrectAnswer, 
-    handleWrongAnswer, 
-    handleLiftCooldown 
-  } = useMysteryGame(userId, handleSuccess);
-
-  const loadData = useCallback(async () => {
-    try {
-      setLoading(true);
-      const { data: { user } } = await supabase.auth.getUser();
-      setUserId(user?.id || null);
-
-      const [mysteresRes, progressRes] = await Promise.all([
-        TreasuresService.getMysteres(0, 50),
-        user ? TreasuresService.getUserProgress(user.id) : Promise.resolve({ data: {} })
-      ]);
-
-      if (mysteresRes.error) throw mysteresRes.error;
-      
-      const mysteresWithInfo = await Promise.all((mysteresRes.data || []).map(async (m) => {
-        const { data: info } = await TreasuresService.getTreasureInfo(m.id);
-        return { ...m, treasure_info: info };
-      }));
-
-      setMysteres(mysteresWithInfo);
-      setUserProgress(progressRes.data || {});
-    } catch (err) {
-      console.error('Error loading treasures:', err);
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    loadData();
-  }, [loadData]);
+    async function fetchTresors() {
+      try {
+        setLoading(true);
+        const { data, error: supabaseError } = await supabase
+          .from("tresors_benin")
+          .select("*")
+          .order("nom", { ascending: true });
 
-  if (loading) return (
-    <div className="h-screen w-full flex flex-col items-center justify-center bg-[#F4F4F2]">
-      <Loader2 className="w-10 h-10 animate-spin text-amber-600 mb-4" />
-      <p className="text-gray-500 font-medium font-display uppercase tracking-widest text-xs">Extraction des Trésors...</p>
-    </div>
-  );
+        if (supabaseError) throw supabaseError;
+        setTresors(data || []);
+      } catch (err: any) {
+        console.error("Error fetching tresors:", err);
+        setError(err.message || "Erreur de chargement");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchTresors();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#F9F7F2]">
+        <Loader2 className="w-10 h-10 animate-spin text-[#008751] mb-4" />
+        <p className="text-gray-400 uppercase tracking-widest text-xs font-sans">Chargement des Trésors...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-[#F9F7F2] font-sans">
+        <AlertCircle className="w-12 h-12 text-red-400 mb-4" />
+        <h2 className="text-xl font-bold mb-2">Une erreur est survenue</h2>
+        <p className="text-gray-500 mb-6">{error}</p>
+        <button 
+          onClick={() => window.location.reload()} 
+          className="text-[#008751] font-bold hover:underline"
+        >
+          Réessayer
+        </button>
+      </div>
+    );
+  }
 
   return (
-    <div className="h-screen w-full bg-[#F4F4F2] overflow-hidden">
-      <CardDeck 
-        items={mysteres}
-        renderItem={(mystere) => {
-          const progress = userProgress[mystere.id];
-          const lives = TreasuresService.getRemainingLives(progress);
-          const isLocked = TreasuresService.checkCooldown(progress);
-          const currentStep = progress?.current_step || 0;
-          const lockTimeLeft = progress ? TreasuresService.getTimeRemaining(progress.locked_until) : "";
+    <div className="min-h-screen bg-[#F9F7F2] py-16 px-6 md:px-12 lg:px-24">
+      {/* HEADER SECTION */}
+      <div className="max-w-7xl mx-auto mb-[64px] text-center">
+        <h1 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tighter uppercase font-sans mb-4">
+          Galerie des Trésors
+        </h1>
+        <p className="text-gray-400 uppercase tracking-[0.3em] text-[10px] font-bold">
+          Patrimoine & Splendeur du Bénin
+        </p>
+      </div>
 
-          return (
-            <TeasingCard
-              id={mystere.id}
-              image=""
-              title={mystere.title}
-              subtitle={mystere.theme?.name || "Mystère Ancestral"}
-              text={mystere.mise_en_abyme || mystere.explanation || "Découvrez le secret enfoui..."}
-              hideImage={true}
-              hideTitle={false}
-              className=""
-              expandedContent={() => (
-                <div className="space-y-12">
-                   {/* Header: Awale is actually inside the TeasingCard's sticky top fixed area but we need lives */}
-                   <div className="fixed top-0 left-0 right-0 z-[60] pointer-events-none">
-                      <div className="max-w-4xl mx-auto flex justify-center">
-                        <AwaleHeader lives={lives} className="pointer-events-auto" />
-                      </div>
-                   </div>
+      {/* GRID SECTION */}
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {tresors.map((tresor) => (
+          <div 
+            key={tresor.id}
+            className="group bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-500 cursor-pointer"
+          >
+            {/* IMAGE CONTAINER */}
+            <div className="relative aspect-[4/3] overflow-hidden">
+              <Image 
+                src={tresor.image_url} 
+                alt={tresor.nom}
+                fill
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+            </div>
 
-                   <div className="pt-24 space-y-12">
-                      {currentStep >= 4 ? (
-                        <div className="flex flex-col items-center text-center space-y-8">
-                           <Image src="/images/treasures/image_15.png" alt="Victoire" width={400} height={400} className="object-contain" />
-                           <h2 className="text-5xl font-display font-black text-amber-900 uppercase">Unité Céleste</h2>
-                           <TreasureCard data={mystere.treasure_info} className="w-full" />
-                        </div>
-                      ) : lives === 0 || isLocked ? (
-                        <div className="bg-[#0D0D12] text-white p-12 rounded-[3.5rem] text-center space-y-8">
-                           <Image src="/images/treasures/image_16.png" alt="Silence" width={300} height={300} className="object-contain mx-auto opacity-80" />
-                           <h2 className="text-4xl font-display font-black text-red-600 uppercase tracking-widest">Silence Royal</h2>
-                           <div className="flex items-center justify-center gap-4 px-8 py-4 bg-white/5 rounded-full border border-white/5 w-fit mx-auto">
-                             <Clock className="w-6 h-6 text-amber-500" />
-                             <span className="text-2xl font-mono text-amber-500 font-black">{lockTimeLeft || "48:00:00"}</span>
-                           </div>
-                        </div>
-                      ) : (
-                        <div className="space-y-16">
-                           <div className="text-center space-y-4">
-                              <h2 className="text-3xl md:text-5xl font-display font-black text-gray-900">
-                                {mystere.questions?.[currentStep]?.question}
-                              </h2>
-                           </div>
-                           <div className="flex justify-center">
-                             <RoyalJar currentStep={currentStep} className="w-80 h-80" />
-                           </div>
-                           <div className="max-w-2xl mx-auto w-full">
-                              <AnswerGrid 
-                                options={[
-                                  mystere.questions?.[currentStep]?.choice_a,
-                                  mystere.questions?.[currentStep]?.choice_b,
-                                  mystere.questions?.[currentStep]?.choice_c,
-                                  mystere.questions?.[currentStep]?.choice_d
-                                ]}
-                                currentQuestionIndex={currentStep}
-                                isAnswered={false}
-                                onDragEnd={(e, info, index) => {
-                                  const correct = mystere.questions?.[currentStep]?.correct_answer;
-                                  const letter = String.fromCharCode(65 + index);
-                                  if (letter === correct) onCorrectAnswer(mystere.id);
-                                  else onWrongAnswer(mystere.id);
-                                }}
-                                onDragStart={() => {}}
-                                onDrag={() => {}}
-                              />
-                           </div>
-                        </div>
-                      )}
-                   </div>
-                </div>
-              )}
-            />
-          );
-        }}
-      />
+            {/* TEXT CONTENT */}
+            <div className="p-8">
+              <h2 className="text-[20px] font-bold text-gray-900 leading-tight mb-2" style={{ fontFamily: "'Noto Serif', serif" }}>
+                {tresor.nom}
+              </h2>
+              <p className="text-[16px] text-gray-500 font-medium font-sans leading-relaxed">
+                {tresor.sous_titre}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
-
-  function onCorrectAnswer(id: string) {
-    handleCorrectAnswer(id);
-  }
-
-  function onWrongAnswer(id: string) {
-    handleWrongAnswer(id);
-  }
 }
