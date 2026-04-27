@@ -46,11 +46,13 @@ export default function MapComponent({ startPos, endPos, origine, exil }: MapCom
     iconAnchor: [0, 0],
   });
 
+  const bounds = L.latLngBounds([startPos, endPos]);
+
   return (
     <div className="flex flex-col h-full w-full relative">
       <MapContainer 
-        center={[25, 10]} 
-        zoom={2} 
+        bounds={bounds}
+        boundsOptions={{ padding: [50, 50] }}
         scrollWheelZoom={false} 
         className="h-full w-full bg-[#F8F9FA]"
         attributionControl={false}
