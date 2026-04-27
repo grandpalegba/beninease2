@@ -49,26 +49,15 @@ export default function MapComponent({ startPos, endPos, origine, exil }: MapCom
   // Text Icons
   const textIcon = (text: string) => L.divIcon({
     className: "custom-text-icon",
-    html: `<div style="font-family: sans-serif; font-weight: 900; font-size: 11px; color: #1A1A1A; text-transform: uppercase; letter-spacing: 0.15em; background: white; padding: 4px 8px; border-radius: 6px; white-space: nowrap; border: 1.5px solid #1A1A1A; box-shadow: 2px 2px 0px rgba(0,0,0,1);">${text}</div>`,
-    iconSize: [0, 0],
-    iconAnchor: [-10, 20], // Offset to not cover the marker
+    html: `<div style="font-family: sans-serif; font-weight: 800; font-size: 11px; color: #1A1A1A; text-transform: uppercase; letter-spacing: 0.1em; white-space: nowrap; text-shadow: 1px 1px 0px white, -1px -1px 0px white, 1px -1px 0px white, -1px 1px 0px white;">${text}</div>`,
+    iconSize: undefined, // Let it autosize
+    iconAnchor: [-15, 6], // Offset to the right
   });
 
   const bounds = L.latLngBounds([startPos, endPos]);
 
   return (
     <div className="flex flex-col h-full w-full relative">
-      {/* SVG Pattern Definition for Benin Flag */}
-      <svg style={{ position: 'absolute', width: 0, height: 0 }}>
-        <defs>
-          <pattern id="beninFlagPattern" patternUnits="userSpaceOnUse" width="100%" height="100%">
-            <rect width="50%" height="100%" fill="#008751" /> {/* Green left half */}
-            <rect x="50%" width="50%" height="50%" fill="#FAC710" /> {/* Yellow top right quarter */}
-            <rect x="50%" y="50%" width="50%" height="50%" fill="#E8112D" /> {/* Red bottom right quarter */}
-          </pattern>
-        </defs>
-      </svg>
-
       <MapContainer 
         bounds={bounds}
         boundsOptions={{ padding: [50, 50] }}
@@ -86,8 +75,8 @@ export default function MapComponent({ startPos, endPos, origine, exil }: MapCom
             style={{
               color: "#008751",
               weight: 1.5,
-              fillOpacity: 0.9,
-              fillColor: "url(#beninFlagPattern)" as any,
+              fillOpacity: 0.8,
+              fillColor: "#008751",
             }}
           />
         )}

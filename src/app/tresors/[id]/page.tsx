@@ -230,7 +230,7 @@ export default function TresorDetailPage() {
             {/* Matériaux (Texte simple) */}
             <div>
               <p className="text-[9px] font-black uppercase tracking-[0.3em] text-gray-400 mb-2">MATÉRIAUX</p>
-              <p className="text-sm font-bold text-gray-700 uppercase tracking-widest leading-relaxed">
+              <p className="text-sm font-bold text-gray-700 leading-relaxed">
                 {tresor.materiaux}
               </p>
             </div>

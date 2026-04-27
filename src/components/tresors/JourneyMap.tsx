@@ -91,8 +91,8 @@ export function JourneyMap({ origine, exil, spoliationDate, spoliationEvent }: J
   const endPos: [number, number] = exil.coords || CITY_COORDS[exil.ville] || CITY_COORDS[exil.pays] || CITY_COORDS["Paris"];
 
   return (
-    <div className="rounded-[2.5rem] overflow-hidden border border-gray-100 shadow-sm bg-white h-full flex flex-col">
-      <div className="flex-1 w-full bg-gray-100 relative min-h-[400px]">
+    <div className="rounded-[2.5rem] overflow-hidden border border-gray-100 shadow-sm bg-white h-full flex flex-col relative z-0">
+      <div className="w-full bg-gray-100 relative h-[350px]">
         {isMounted && (
           <MapComponent startPos={startPos} endPos={endPos} origine={origine} exil={exil} />
         )}
