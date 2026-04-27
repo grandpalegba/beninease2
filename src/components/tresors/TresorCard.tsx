@@ -23,10 +23,10 @@ export function TresorCard({ tresor }: TresorCardProps) {
   return (
     <div 
       onClick={handleClick}
-      className="group cursor-pointer flex w-full h-full shrink-0 flex-col rounded-3xl bg-white border border-gray-100 overflow-hidden shadow-xl transition-all duration-300 relative"
+      className="group cursor-pointer flex w-full h-full shrink-0 flex-col rounded-3xl bg-[#000000] border border-gray-800 overflow-hidden shadow-xl transition-all duration-300 relative"
     >
       {/* ── Image avec masque dégradé (Look Ibrahim Sow / ProfileCard) ── */}
-      <div className="absolute top-8 left-8 right-8 h-[55%] overflow-hidden bg-gray-50/50 rounded-[2rem] pointer-events-none border border-gray-100/50">
+      <div className="absolute top-8 left-8 right-8 h-[55%] overflow-hidden bg-[#111111] rounded-[2rem] pointer-events-none border border-gray-800">
         {tresor.image_url ? (
           <Image
             src={tresor.image_url}
@@ -47,24 +47,24 @@ export function TresorCard({ tresor }: TresorCardProps) {
       {/* ── Contenu ── */}
       <div className="flex flex-col p-10 mt-auto bg-transparent relative z-10 pointer-events-none justify-end h-full">
         <div className="mb-6">
-          <h3 className="text-4xl text-gray-900 leading-tight tracking-tight font-bold" style={{ fontFamily: "'Noto Serif', serif" }}>
+          <h3 className="text-4xl text-white leading-tight tracking-tight font-bold" style={{ fontFamily: "'Noto Serif', serif" }}>
             {tresor.nom}
           </h3>
-          <p className="text-base font-medium text-gray-500 mt-3 font-sans leading-relaxed">
+          <p className="text-base font-medium text-gray-400 mt-3 font-sans leading-relaxed">
             {tresor.sous_titre}
           </p>
         </div>
 
         {/* ── Localisation (Style badge) ── */}
-        <div className="flex items-center gap-3 pt-6 border-t border-gray-100">
-          <div className="h-10 w-10 relative rounded-full overflow-hidden bg-[#D4AF37]/10 flex items-center justify-center">
+        <div className="flex items-center gap-3 pt-6 border-t border-gray-800">
+          <div className="h-10 w-10 relative rounded-full overflow-hidden bg-[#D4AF37]/20 flex items-center justify-center">
              <div className="w-5 h-5 bg-[#D4AF37] rounded-full" />
           </div>
           <div>
-            <p className="text-[10px] text-gray-400 uppercase font-bold tracking-widest mb-2">
+            <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-2">
               Localisation probable
             </p>
-            <h4 className="text-xs font-bold text-gray-900 uppercase tracking-widest font-sans">
+            <h4 className="text-xs font-bold text-white uppercase tracking-widest font-sans">
               {tresor.localisation || "Non renseignée"}
             </h4>
           </div>
