@@ -11,6 +11,7 @@ interface Tresor {
   nom: string;
   sous_titre: string;
   image_url: string;
+  localisation?: string;
   created_at: string;
 }
 

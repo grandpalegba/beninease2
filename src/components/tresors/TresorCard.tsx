@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 interface TresorCardProps {
@@ -8,12 +9,22 @@ interface TresorCardProps {
     nom: string;
     sous_titre: string;
     image_url: string;
+    localisation?: string;
   };
 }
 
 export function TresorCard({ tresor }: TresorCardProps) {
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push(`/tresors/${tresor.id}`);
+  };
+
   return (
-    <div className="group cursor-pointer flex w-full h-full shrink-0 flex-col rounded-3xl bg-white border border-gray-100 overflow-hidden shadow-xl transition-all duration-300 relative">
+    <div 
+      onClick={handleClick}
+      className="group cursor-pointer flex w-full h-full shrink-0 flex-col rounded-3xl bg-white border border-gray-100 overflow-hidden shadow-xl transition-all duration-300 relative"
+    >
       {/* ── Image avec masque dégradé (Look Ibrahim Sow / ProfileCard) ── */}
       <div className="absolute inset-0 w-full h-[70%] overflow-hidden bg-gray-50 pointer-events-none">
         {tresor.image_url ? (
@@ -48,17 +59,17 @@ export function TresorCard({ tresor }: TresorCardProps) {
           </p>
         </div>
 
-        {/* ── Label Patrimoine (Style badge) ── */}
+        {/* ── Localisation (Style badge) ── */}
         <div className="flex items-center gap-3 pt-6 border-t border-gray-100">
           <div className="h-10 w-10 relative rounded-full overflow-hidden bg-[#008751]/10 flex items-center justify-center">
-             <div className="w-5 h-5 bg-[#008751] rounded-sm rotate-45" />
+             <div className="w-5 h-5 bg-[#008751] rounded-full" />
           </div>
           <div>
             <p className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">
-              Catégorie
+              Localisation probable
             </p>
             <h4 className="text-xs font-bold text-gray-900 uppercase tracking-widest font-sans">
-              Patrimoine du Bénin
+              {tresor.localisation || "Non renseignée"}
             </h4>
           </div>
         </div>
