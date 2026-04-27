@@ -186,6 +186,16 @@ export default function TresorDetailPage() {
             </div>
           </div>
 
+          {/* Nom et sous-titre — sous la photo */}
+          <div className="px-2">
+            <h1 className="font-sans font-black text-2xl md:text-3xl mb-2 tracking-tight leading-[1.3] text-gray-900">
+              {tresor.nom}
+            </h1>
+            <p className="text-gray-500 font-medium text-base">
+              {tresor.sous_titre?.replace(/\.\s*$/, '')}
+            </p>
+          </div>
+
           {/* Radar des Jetons (Sous l'image) */}
           <div className="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-sm">
              <div className="mb-10 text-center">
@@ -207,15 +217,6 @@ export default function TresorDetailPage() {
 
         {/* Colonne Droite : Infos & Carte (7 cols) */}
         <div className="lg:col-span-7 bg-white rounded-[3rem] p-8 md:p-14 border border-gray-100 shadow-sm flex flex-col">
-          <div className="mb-10">
-            <h1 className="font-sans font-black text-3xl md:text-4xl mb-4 tracking-tight leading-[1.3] text-gray-900">
-              {tresor.nom}
-            </h1>
-            <p className="text-gray-500 font-medium text-lg">
-              {tresor.sous_titre?.replace(/\.\s*$/, '')}
-            </p>
-          </div>
-
           {/* Itinéraire Intégré */}
           <div className="mb-10 h-[350px]">
             <JourneyMap 
