@@ -174,8 +174,8 @@ export default function TresorDetailPage() {
         {/* Colonne Gauche : Image + Jetons (5 cols) */}
         <div className="lg:col-span-5 space-y-8">
           {/* Carte Image + Titre */}
-          <div className="bg-white rounded-[3rem] overflow-hidden border border-gray-100 shadow-sm flex flex-col">
-            <div className="relative w-full h-[450px] bg-[#FBFBFA] p-10 flex flex-shrink-0 items-center justify-center">
+          <div className="bg-[#000000] rounded-[3rem] overflow-hidden shadow-sm flex flex-col">
+            <div className="relative w-full h-[450px] p-10 flex flex-shrink-0 items-center justify-center">
               <div className="relative w-full h-full rounded-3xl overflow-hidden">
                 <Image 
                   src={tresor.image_url} 
@@ -187,12 +187,12 @@ export default function TresorDetailPage() {
                 />
               </div>
             </div>
-            {/* Nom et sous-titre — dans l'encadré blanc */}
-            <div className="p-8 md:p-10 pt-2 bg-white">
-              <h1 className="font-sans font-black text-2xl md:text-3xl mb-2 tracking-tight leading-[1.3] text-gray-900">
+            {/* Nom et sous-titre — dans l'encadré noir */}
+            <div className="p-8 md:p-10 pt-2">
+              <h1 className="font-sans font-black text-2xl md:text-3xl mb-2 tracking-tight leading-[1.3] text-white">
                 {tresor.nom}
               </h1>
-              <p className="text-gray-500 font-medium text-base">
+              <p className="text-gray-400 font-medium text-base">
                 {tresor.sous_titre?.replace(/\.\s*$/, '')}
               </p>
             </div>
