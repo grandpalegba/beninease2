@@ -193,9 +193,6 @@ export default function TresorDetailPage() {
         {/* Colonne Droite : Infos & Carte (7 cols) */}
         <div className="lg:col-span-7 bg-white rounded-[3rem] p-8 md:p-14 border border-gray-100 shadow-sm flex flex-col">
           <div className="mb-10">
-            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-[#E8112D] mb-4">
-              XIXe SIÈCLE
-            </p>
             <h1 className="font-sans font-black text-3xl md:text-4xl mb-4 tracking-tight leading-[1.3] text-gray-900">
               {tresor.nom}
             </h1>
