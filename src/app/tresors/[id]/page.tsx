@@ -226,7 +226,7 @@ export default function TresorDetailPage() {
             />
           </div>
 
-          {/* Histoire de l'exil — sous la carte */}
+          {/* Histoire de l'exil + Enjeux + Analyse — sous la carte */}
           <div className="space-y-10">
             <div>
               <h2 className="font-sans font-black text-2xl mb-4 text-gray-900">Histoire de l'exil</h2>
@@ -242,11 +242,10 @@ export default function TresorDetailPage() {
               </p>
             </div>
 
-            {/* Matériaux */}
             <div>
-              <p className="text-[9px] font-black uppercase tracking-[0.3em] text-gray-400 mb-2">MATÉRIAUX</p>
-              <p className="text-sm font-medium text-gray-700 leading-relaxed">
-                {tresor.materiaux}
+              <h2 className="font-sans font-black text-2xl mb-4 text-gray-900">Analyse symbolique</h2>
+              <p className="leading-relaxed text-base text-gray-600 font-medium">
+                {tresor.analyse_symbolique}
               </p>
             </div>
           </div>
@@ -256,12 +255,12 @@ export default function TresorDetailPage() {
       {/* ── SECTION MÉDIANE : Récit & Évaluation ── */}
       <section className="max-w-[1400px] mx-auto mt-12 px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-12">
         
-        {/* Colonne Narrative (7 cols) — Analyse symbolique + Citation */}
+        {/* Colonne Narrative (7 cols) — Matériaux + Citation */}
         <div className="lg:col-span-7 bg-white rounded-[3rem] p-10 md:p-16 border border-gray-100 shadow-sm space-y-16">
           <div>
-            <h2 className="font-sans font-black text-3xl mb-8 text-gray-900">Analyse symbolique</h2>
+            <h2 className="font-sans font-black text-3xl mb-8 text-gray-900">Matériaux</h2>
             <p className="leading-relaxed text-lg text-gray-600 font-medium">
-              {tresor.analyse_symbolique}
+              {tresor.materiaux}
             </p>
           </div>
 
