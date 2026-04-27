@@ -174,7 +174,7 @@ export default function TresorDetailPage() {
         {/* Colonne Gauche : Image + Jetons (5 cols) */}
         <div className="lg:col-span-5 space-y-8">
           {/* Image du Trésor */}
-          <div className="bg-white rounded-[3rem] overflow-hidden border-2 border-[#D4AF37]/30 shadow-sm relative h-[450px] bg-[#FBFBFA] p-10 flex items-center justify-center">
+          <div className="bg-white rounded-[3rem] overflow-hidden border border-gray-100 shadow-sm relative h-[450px] bg-[#FBFBFA] p-10 flex items-center justify-center">
             <div className="relative w-full h-full rounded-3xl overflow-hidden">
               <Image 
                 src={tresor.image_url} 

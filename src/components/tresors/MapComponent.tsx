@@ -1,6 +1,6 @@
 "use client";
 
-import { MapContainer, TileLayer, Marker, Popup, Polyline, GeoJSON, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
@@ -20,58 +20,50 @@ function ChangeView({ bounds }: { bounds: L.LatLngBounds }) {
   return null;
 }
 
-/** Injects the Benin flag pattern into Leaflet's own SVG renderer so that
- *  fillColor: "url(#beninFlag)" works on GeoJSON paths. */
-function BeninFlagDefs() {
+/**
+ * Renders the Benin country shape using 3 separate Leaflet panes, 
+ * each clipped with CSS to replicate the flag: 
+ *   green left 40% / yellow top-right / red bottom-right
+ */
+function BeninFlagLayers({ geoJSON }: { geoJSON: any }) {
   const map = useMap();
 
   useEffect(() => {
-    const inject = () => {
-      // Leaflet SVG renderer container
-      const renderer = (map as any)._renderer;
-      const svg: SVGElement | null = renderer?._container ?? null;
-      if (!svg) return;
+    if (!geoJSON) return;
 
-      // Ensure <defs> exists
-      let defs = svg.querySelector("defs");
-      if (!defs) {
-        defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
-        svg.insertBefore(defs, svg.firstChild);
+    // Create & clip panes
+    const paneConfig: [string, string, string][] = [
+      ["benin-green",  "#008751", "inset(0 60% 0 0)"],     // left 40%
+      ["benin-yellow", "#FAC710", "inset(0 0 50% 40%)"],   // top-right
+      ["benin-red",    "#E8112D", "inset(50% 0 0 40%)"],   // bottom-right
+    ];
+
+    const layers: L.GeoJSON[] = [];
+
+    paneConfig.forEach(([name, color, clip], i) => {
+      if (!map.getPane(name)) {
+        map.createPane(name);
       }
+      const pane = map.getPane(name)!;
+      pane.style.clipPath = clip;
+      pane.style.zIndex = String(200 + i);
 
-      // Only inject once
-      if (svg.querySelector("#beninFlag")) return;
+      const isBase = i === 0;
+      const layer = L.geoJSON(geoJSON, {
+        pane: name,
+        style: {
+          fillColor: color,
+          fillOpacity: 1,
+          color: isBase ? "#008751" : "none",
+          weight: isBase ? 1.5 : 0,
+        },
+      });
+      layer.addTo(map);
+      layers.push(layer);
+    });
 
-      const ns = "http://www.w3.org/2000/svg";
-      const pattern = document.createElementNS(ns, "pattern");
-      pattern.id = "beninFlag";
-      pattern.setAttribute("patternUnits", "objectBoundingBox");
-      pattern.setAttribute("width", "1");
-      pattern.setAttribute("height", "1");
-
-      const makeRect = (x: string, y: string, w: string, h: string, fill: string) => {
-        const r = document.createElementNS(ns, "rect");
-        r.setAttribute("x", x); r.setAttribute("y", y);
-        r.setAttribute("width", w); r.setAttribute("height", h);
-        r.setAttribute("fill", fill);
-        return r;
-      };
-
-      // Green left half
-      pattern.appendChild(makeRect("0",    "0",   "0.42", "1",   "#008751"));
-      // Yellow top-right
-      pattern.appendChild(makeRect("0.42", "0",   "0.58", "0.5", "#FAC710"));
-      // Red bottom-right
-      pattern.appendChild(makeRect("0.42", "0.5", "0.58", "0.5", "#E8112D"));
-
-      defs.appendChild(pattern);
-    };
-
-    inject();
-    // Retry after Leaflet finishes rendering
-    const t = setTimeout(inject, 300);
-    return () => clearTimeout(t);
-  }, [map]);
+    return () => layers.forEach(l => l.remove());
+  }, [map, geoJSON]);
 
   return null;
 }
@@ -86,21 +78,20 @@ export default function MapComponent({ startPos, endPos, origine, exil }: MapCom
       .catch(err => console.error("Error loading Benin GeoJSON:", err));
   }, []);
 
-  // Combined Icons (Dot + Text)
   const destText = exil.ville && exil.ville !== "Non renseignée" ? exil.ville : exil.pays;
 
   const originIcon = L.divIcon({
     className: "custom-combined-icon",
-    html: `<div style="font-family: sans-serif; font-weight: 800; font-size: 11px; color: #1A1A1A; text-transform: uppercase; letter-spacing: 0.1em; white-space: nowrap; text-shadow: 1px 1px 0px white, -1px -1px 0px white, 1px -1px 0px white, -1px 1px 0px white;">BÉNIN</div>`,
+    html: `<div style="font-family:sans-serif;font-weight:800;font-size:11px;color:#1A1A1A;text-transform:uppercase;letter-spacing:0.1em;white-space:nowrap;text-shadow:1px 1px 0 white,-1px -1px 0 white,1px -1px 0 white,-1px 1px 0 white;">BÉNIN</div>`,
     iconSize: undefined,
     iconAnchor: [0, -8],
   });
 
   const destIcon = L.divIcon({
     className: "custom-combined-icon",
-    html: `<div style="display: flex; align-items: center; gap: 8px;">
-             <div style="background-color: #E0312D; width: 14px; height: 14px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.3); flex-shrink: 0;"></div>
-             <div style="font-family: sans-serif; font-weight: 800; font-size: 11px; color: #1A1A1A; text-transform: uppercase; letter-spacing: 0.1em; white-space: nowrap; text-shadow: 1px 1px 0px white, -1px -1px 0px white, 1px -1px 0px white, -1px 1px 0px white;">${destText}</div>
+    html: `<div style="display:flex;align-items:center;gap:8px;">
+             <div style="background:#E0312D;width:14px;height:14px;border-radius:50%;border:2px solid white;box-shadow:0 0 5px rgba(0,0,0,0.3);flex-shrink:0;"></div>
+             <div style="font-family:sans-serif;font-weight:800;font-size:11px;color:#1A1A1A;text-transform:uppercase;letter-spacing:0.1em;white-space:nowrap;text-shadow:1px 1px 0 white,-1px -1px 0 white,1px -1px 0 white,-1px 1px 0 white;">${destText}</div>
            </div>`,
     iconSize: undefined,
     iconAnchor: [7, 7],
@@ -118,20 +109,9 @@ export default function MapComponent({ startPos, endPos, origine, exil }: MapCom
         attributionControl={false}
       >
         <ChangeView bounds={bounds} />
-        <BeninFlagDefs />
         <TileLayer url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png" />
 
-        {beninGeoJSON && (
-          <GeoJSON
-            data={beninGeoJSON}
-            style={{
-              color: "#008751",
-              weight: 1.5,
-              fillOpacity: 1,
-              fillColor: "url(#beninFlag)" as any,
-            }}
-          />
-        )}
+        <BeninFlagLayers geoJSON={beninGeoJSON} />
 
         <Marker position={startPos} icon={originIcon} interactive={false} />
         <Marker position={endPos} icon={destIcon}>
