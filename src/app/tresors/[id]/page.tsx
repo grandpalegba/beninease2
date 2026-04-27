@@ -87,7 +87,7 @@ export default function TresorDetailPage() {
             origine: { ville: data.origine_ville || "Bénin", pays: "Bénin" },
             exil: { 
               ville: data.exil_ville || "Non renseignée", 
-              pays: data.exil_pays || "Non renseigné", 
+              pays: data.pays_localisation_tresors || data.exil_pays || "Non renseigné", 
               institution: data.exil_institution || "Non renseignée" 
             },
             evenement: { 
@@ -212,12 +212,12 @@ export default function TresorDetailPage() {
               {tresor.nom}
             </h1>
             <p className="text-gray-500 font-medium text-lg">
-              {tresor.sous_titre}
+              {tresor.sous_titre?.replace(/\.\s*$/, '')}
             </p>
           </div>
 
           {/* Itinéraire Intégré */}
-          <div className="mb-10 flex-1 min-h-[300px]">
+          <div className="mb-10 h-[350px]">
             <JourneyMap 
               origine={tresor.cartographie.origine}
               exil={tresor.cartographie.exil}
@@ -226,11 +226,26 @@ export default function TresorDetailPage() {
             />
           </div>
 
-          <div className="space-y-8">
-            {/* Matériaux (Texte simple) */}
+          {/* Histoire de l'exil — sous la carte */}
+          <div className="space-y-10">
+            <div>
+              <h2 className="font-sans font-black text-2xl mb-4 text-gray-900">Histoire de l'exil</h2>
+              <p className="leading-relaxed text-base text-gray-600 font-medium">
+                {tresor.histoire_exil}
+              </p>
+            </div>
+
+            <div>
+              <h2 className="font-sans font-black text-2xl mb-4 text-gray-900">Enjeux de restitution</h2>
+              <p className="leading-relaxed text-base text-gray-600 font-medium">
+                {tresor.enjeux_restitution}
+              </p>
+            </div>
+
+            {/* Matériaux */}
             <div>
               <p className="text-[9px] font-black uppercase tracking-[0.3em] text-gray-400 mb-2">MATÉRIAUX</p>
-              <p className="text-sm font-bold text-gray-700 leading-relaxed">
+              <p className="text-sm font-medium text-gray-700 leading-relaxed">
                 {tresor.materiaux}
               </p>
             </div>
@@ -241,26 +256,12 @@ export default function TresorDetailPage() {
       {/* ── SECTION MÉDIANE : Récit & Évaluation ── */}
       <section className="max-w-[1400px] mx-auto mt-12 px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-12">
         
-        {/* Colonne Narratve (7 cols) */}
+        {/* Colonne Narrative (7 cols) — Analyse symbolique + Citation */}
         <div className="lg:col-span-7 bg-white rounded-[3rem] p-10 md:p-16 border border-gray-100 shadow-sm space-y-16">
           <div>
             <h2 className="font-sans font-black text-3xl mb-8 text-gray-900">Analyse symbolique</h2>
             <p className="leading-relaxed text-lg text-gray-600 font-medium">
               {tresor.analyse_symbolique}
-            </p>
-          </div>
-
-          <div>
-            <h2 className="font-sans font-black text-3xl mb-8 text-gray-900">Histoire de l'exil</h2>
-            <p className="leading-relaxed text-lg text-gray-600 font-medium">
-              {tresor.histoire_exil}
-            </p>
-          </div>
-
-          <div>
-            <h2 className="font-sans font-black text-3xl mb-8 text-gray-900">Enjeux de restitution</h2>
-            <p className="leading-relaxed text-lg text-gray-600 font-medium">
-              {tresor.enjeux_restitution}
             </p>
           </div>
 

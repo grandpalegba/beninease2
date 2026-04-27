@@ -34,14 +34,12 @@ export default function MapComponent({ startPos, endPos, origine, exil }: MapCom
   // Combined Icons (Dot + Text)
   const destText = exil.ville && exil.ville !== "Non renseignée" ? exil.ville : exil.pays;
   
+  // Origin: text only (country shape already shows the flag colors)
   const originIcon = L.divIcon({
     className: "custom-combined-icon",
-    html: `<div style="display: flex; align-items: center; gap: 8px;">
-             <div style="background-color: #008751; width: 14px; height: 14px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.3); flex-shrink: 0;"></div>
-             <div style="font-family: sans-serif; font-weight: 800; font-size: 11px; color: #1A1A1A; text-transform: uppercase; letter-spacing: 0.1em; white-space: nowrap; text-shadow: 1px 1px 0px white, -1px -1px 0px white, 1px -1px 0px white, -1px 1px 0px white;">BÉNIN</div>
-           </div>`,
+    html: `<div style="font-family: sans-serif; font-weight: 800; font-size: 11px; color: #1A1A1A; text-transform: uppercase; letter-spacing: 0.1em; white-space: nowrap; text-shadow: 1px 1px 0px white, -1px -1px 0px white, 1px -1px 0px white, -1px 1px 0px white;">BÉNIN</div>`,
     iconSize: undefined,
-    iconAnchor: [7, 7], // Anchor on the dot center
+    iconAnchor: [0, -8], // Slightly above the origin point
   });
 
   const destIcon = L.divIcon({
