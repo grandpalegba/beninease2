@@ -40,6 +40,7 @@ export interface TresorDetail {
     texte: string;
     auteur: string;
     role: string;
+    annee?: string;
   };
 }
 
@@ -73,30 +74,38 @@ export default function TresorDetailPage() {
           nom: data.nom,
           sous_titre: data.sous_titre,
           image_url: data.image_url,
-          materiaux: data.materiaux || "Bronze, alliages cuivreux, bois sculpté.",
-          analyse_symbolique: data.analyse_symbolique || "Cette pièce incarne la souveraineté du Royaume de Dahomey.",
-          histoire_exil: data.histoire_exil || "Spolié lors de l'expédition punitive française de 1892.",
-          enjeux_restitution: data.enjeux_restitution || "Objet d'une demande officielle de restitution depuis 2016.",
+          materiaux: data.materiaux || "Non renseigné",
+          analyse_symbolique: data.analyse_symbolique || "Aucune analyse disponible.",
+          histoire_exil: data.histoire_exil || "Aucun récit disponible.",
+          enjeux_restitution: data.enjeux_restitution || "Aucun enjeu renseigné.",
           metrics: {
-            rarete: data.metric_rarete || 85,
-            conservation: data.metric_conservation || 92,
-            restitution: data.metric_restitution || 70,
+            rarete: data.metric_rarete || 50,
+            conservation: data.metric_conservation || 50,
+            restitution: data.metric_restitution || 50,
           },
           cartographie: {
-            origine: { ville: data.origine_ville || "Abomey", pays: data.origine_pays || "Bénin" },
-            exil: { ville: data.exil_ville || "Paris", pays: data.exil_pays || "France", institution: data.exil_institution || "Musée du Quai Branly" },
-            evenement: { date: data.evenement_date || "Novembre 1892", description: data.evenement_desc || "Prise du palais royal d'Abomey." },
+            origine: { ville: data.origine_ville || "Bénin", pays: "Bénin" },
+            exil: { 
+              ville: data.exil_ville || "Non renseignée", 
+              pays: data.exil_pays || "Non renseigné", 
+              institution: data.exil_institution || "Non renseignée" 
+            },
+            evenement: { 
+              date: data.evenement_date || "Date inconnue", 
+              description: data.evenement_desc || "Évènement non renseigné" 
+            },
           },
           jetons: {
-            conscience: data.jeton_conscience || 60,
-            confiance: data.jeton_confiance || 45,
-            connaissance: data.jeton_connaissance || 80,
-            competence: data.jeton_competence || 70,
+            conscience: data.jeton_conscience || 5,
+            confiance: data.jeton_confiance || 5,
+            connaissance: data.jeton_connaissance || 5,
+            competence: data.jeton_competence || 5,
           },
           citation: data.citation_texte ? {
             texte: data.citation_texte,
-            auteur: data.citation_auteur || "Historien local",
-            role: data.citation_role || "Gardien de la mémoire"
+            auteur: data.auteur_contexte || "Source anonyme",
+            role: data.auteur_fonction || "Historien",
+            annee: data.source_annee
           } : undefined
         };
 
@@ -175,7 +184,7 @@ export default function TresorDetailPage() {
              />
              
              {/* Bouton Action */}
-             <button className="w-full mt-12 py-5 bg-[#BC4B2D] hover:bg-[#A33818] text-white rounded-2xl font-bold text-sm tracking-widest uppercase transition-all shadow-lg active:scale-95">
+             <button className="w-full mt-12 py-5 bg-black hover:bg-gray-800 text-white rounded-2xl font-bold text-sm tracking-widest uppercase transition-all shadow-lg active:scale-95">
                 Libérer le Trésor
              </button>
           </div>
@@ -206,14 +215,6 @@ export default function TresorDetailPage() {
           </div>
 
           <div className="space-y-8">
-            {/* Histoire de l'exil (Remonté sous la carte) */}
-            <div>
-              <p className="text-[9px] font-black uppercase tracking-[0.3em] text-gray-400 mb-2">HISTOIRE DE L'EXIL</p>
-              <p className="text-sm text-gray-600 leading-relaxed font-medium">
-                {tresor.histoire_exil}
-              </p>
-            </div>
-
             {/* Matériaux (Texte simple) */}
             <div>
               <p className="text-[9px] font-black uppercase tracking-[0.3em] text-gray-400 mb-2">MATÉRIAUX</p>
@@ -238,6 +239,13 @@ export default function TresorDetailPage() {
           </div>
 
           <div>
+            <h2 className="font-sans font-black text-3xl mb-8 text-gray-900">Histoire de l'exil</h2>
+            <p className="leading-relaxed text-lg text-gray-600 font-medium">
+              {tresor.histoire_exil}
+            </p>
+          </div>
+
+          <div>
             <h2 className="font-sans font-black text-3xl mb-8 text-gray-900">Enjeux de restitution</h2>
             <p className="leading-relaxed text-lg text-gray-600 font-medium">
               {tresor.enjeux_restitution}
@@ -251,7 +259,7 @@ export default function TresorDetailPage() {
                 « {tresor.citation.texte} »
               </p>
               <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
-                — {tresor.citation.auteur} · {tresor.citation.role}
+                — {tresor.citation.auteur} · {tresor.citation.role} {tresor.citation.annee && `(${tresor.citation.annee})`}
               </div>
             </div>
           )}

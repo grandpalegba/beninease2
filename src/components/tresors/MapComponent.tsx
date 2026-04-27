@@ -1,6 +1,6 @@
 "use client";
 
-import { MapContainer, TileLayer, Marker, Popup, Polyline, GeoJSON } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, Polyline, GeoJSON, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
@@ -10,6 +10,14 @@ interface MapComponentProps {
   endPos: [number, number];
   origine: { ville: string; pays: string };
   exil: { ville: string; pays: string; institution?: string };
+}
+
+function ChangeView({ bounds }: { bounds: L.LatLngBounds }) {
+  const map = useMap();
+  useEffect(() => {
+    map.fitBounds(bounds, { padding: [50, 50] });
+  }, [map, bounds]);
+  return null;
 }
 
 export default function MapComponent({ startPos, endPos, origine, exil }: MapComponentProps) {
@@ -57,6 +65,7 @@ export default function MapComponent({ startPos, endPos, origine, exil }: MapCom
         className="h-full w-full bg-[#F8F9FA]"
         attributionControl={false}
       >
+        <ChangeView bounds={bounds} />
         <TileLayer
           url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png"
         />

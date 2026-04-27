@@ -80,7 +80,7 @@ export function JetonsRadar({ conscience, confiance, connaissance, competence }:
           {/* Polygone Dynamique Animé */}
           <motion.path
             d={drawPath}
-            fill="#FAC710"
+            fill="#E2E8F0"
             fillOpacity={0.45}
             stroke="#D4AF37"
             strokeWidth={1}
