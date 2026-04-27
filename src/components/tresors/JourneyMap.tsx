@@ -1,7 +1,6 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
 
 // Types
@@ -32,38 +31,15 @@ const CITY_COORDS: Record<string, [number, number]> = {
   "France": [46.2276, 2.2137],
 };
 
-// Internal component that uses Leaflet
-// This will be dynamically imported to avoid SSR issues
-const MapInner = ({ startPos, endPos, origine, exil }: any) => {
-  const { MapContainer, TileLayer, Marker, Popup, Polyline } = require("react-leaflet");
-  const L = require("leaflet");
-
-  // Fix for default marker icons in Leaflet + Webpack/Next.js
-  useEffect(() => {
-    delete (L.Icon.Default.prototype as any)._getIconUrl;
-    L.Icon.Default.mergeOptions({
-      iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
-      iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
-      shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
-    });
-  }, [L]);
-
-  return (
-    <MapContainer center={startPos} zoom={3} scrollWheelZoom={false} className="h-full w-full">
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      <Marker position={startPos}>
-        <Popup>Origine: {origine.ville}, {origine.pays}</Popup>
-      </Marker>
-      <Marker position={endPos}>
-        <Popup>Exil: {exil.institution} ({exil.ville})</Popup>
-      </Marker>
-      <Polyline positions={[startPos, endPos]} color="#8B4513" dashArray="10, 10" />
-    </MapContainer>
-  );
-};
+// Use dynamic import for the map component with SSR disabled
+const MapComponent = dynamic(() => import("./MapComponent"), { 
+  ssr: false,
+  loading: () => (
+    <div className="absolute inset-0 flex items-center justify-center bg-gray-50">
+      <p className="text-[10px] uppercase tracking-widest text-gray-300 animate-pulse">Chargement de la carte...</p>
+    </div>
+  )
+});
 
 export function JourneyMap({ origine, exil, spoliationDate, spoliationEvent }: JourneyMapProps) {
   const [isMounted, setIsMounted] = useState(false);
@@ -89,12 +65,8 @@ export function JourneyMap({ origine, exil, spoliationDate, spoliationEvent }: J
       </div>
       
       <div className="h-[300px] w-full bg-gray-100 relative">
-        {isMounted ? (
-          <MapInner startPos={startPos} endPos={endPos} origine={origine} exil={exil} />
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <p className="text-[10px] uppercase tracking-widest text-gray-300">Initialisation de la carte...</p>
-          </div>
+        {isMounted && (
+          <MapComponent startPos={startPos} endPos={endPos} origine={origine} exil={exil} />
         )}
       </div>
 
