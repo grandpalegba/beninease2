@@ -112,7 +112,8 @@ export default function MapComponent({ startPos, endPos, origine, exil }: MapCom
   const originIcon = L.divIcon({
     className: "custom-combined-icon",
     html: `<div style="font-family:sans-serif;font-weight:800;font-size:11px;color:#1A1A1A;text-transform:uppercase;letter-spacing:0.1em;white-space:nowrap;text-shadow:1px 1px 0 white,-1px -1px 0 white,1px -1px 0 white,-1px 1px 0 white;">BÉNIN</div>`,
-    iconSize: undefined, iconAnchor: [0, -8],
+    iconSize: undefined,
+    iconAnchor: [-18, 5], // Offset right: label appears to the right of Benin shape
   });
 
   const destIcon = L.divIcon({
