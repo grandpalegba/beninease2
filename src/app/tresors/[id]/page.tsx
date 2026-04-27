@@ -275,35 +275,6 @@ export default function TresorDetailPage() {
         </div>
       </section>
 
-      {/* ── SECTION BASSE : Suggestions ── */}
-      <section className="max-w-[1400px] mx-auto mt-24 px-6 md:px-12">
-        <p className="text-[9px] font-black uppercase tracking-[0.4em] text-[#E8112D] mb-8">VOUS POURRIEZ AUSSI AIMER</p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {suggestions.map((s) => (
-             <div 
-               key={s.id} 
-               onClick={() => router.push(`/tresors/${s.id}`)}
-               className="bg-white rounded-[2rem] overflow-hidden border border-gray-100 shadow-sm group cursor-pointer hover:shadow-xl transition-all duration-500"
-             >
-                <div className="aspect-[4/3] relative overflow-hidden bg-[#FBFBFA] p-6">
-                   <Image 
-                      src={s.image_url} 
-                      alt={s.nom}
-                      fill
-                      className="object-contain group-hover:scale-110 transition-transform duration-700"
-                   />
-                </div>
-                <div className="p-8">
-                   <p className="text-[8px] font-black text-[#E8112D] uppercase tracking-widest mb-3">RÉCITS D'EXIL</p>
-                   <h4 className="font-sans font-bold text-xl mb-2">{s.nom}</h4>
-                   <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
-                     {s.exil_institution}, {s.exil_ville}
-                   </p>
-                </div>
-             </div>
-          ))}
-        </div>
-      </section>
     </div>
   );
 }
