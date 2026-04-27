@@ -78,33 +78,41 @@ export default function TresorsPage() {
       </div>
 
       {/* GRID SECTION */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {tresors.map((tresor) => (
-          <div 
-            key={tresor.id}
-            className="group bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-500 cursor-pointer"
-          >
-            {/* IMAGE CONTAINER */}
-            <div className="relative aspect-[4/3] overflow-hidden">
-              <Image 
-                src={tresor.image_url} 
-                alt={tresor.nom}
-                fill
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-            </div>
+      <div className="max-w-7xl mx-auto">
+        {tresors.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {tresors.map((tresor) => (
+              <div 
+                key={tresor.id}
+                className="group bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-500 cursor-pointer"
+              >
+                {/* IMAGE CONTAINER */}
+                <div className="relative aspect-[4/3] overflow-hidden">
+                  <Image 
+                    src={tresor.image_url} 
+                    alt={tresor.nom}
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                </div>
 
-            {/* TEXT CONTENT */}
-            <div className="p-8">
-              <h2 className="text-[20px] font-bold text-gray-900 leading-tight mb-2" style={{ fontFamily: "'Noto Serif', serif" }}>
-                {tresor.nom}
-              </h2>
-              <p className="text-[16px] text-gray-500 font-medium font-sans leading-relaxed">
-                {tresor.sous_titre}
-              </p>
-            </div>
+                {/* TEXT CONTENT */}
+                <div className="p-8">
+                  <h2 className="text-[20px] font-bold text-gray-900 leading-tight mb-2" style={{ fontFamily: "'Noto Serif', serif" }}>
+                    {tresor.nom}
+                  </h2>
+                  <p className="text-[16px] text-gray-500 font-medium font-sans leading-relaxed">
+                    {tresor.sous_titre}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
+        ) : (
+          <div className="text-center py-20 bg-white/50 rounded-[2.5rem] border border-dashed border-gray-200">
+            <p className="text-gray-400 font-sans italic">Aucun trésor n&apos;a été trouvé dans la collection pour le moment.</p>
+          </div>
+        )}
       </div>
     </div>
   );
