@@ -138,120 +138,178 @@ export default function TresorDetailPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#F9F7F2] text-[#1A1A1A] font-sans">
-      {/* Floating Back Button */}
+    <div className="min-h-screen bg-[#F9F7F2] text-[#1A1A1A] font-sans pb-24">
+      {/* Navigation Flottante */}
       <button 
         onClick={() => router.push('/tresors')}
-        className="fixed top-8 left-8 z-50 w-12 h-12 bg-white/80 backdrop-blur-md border border-white/50 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-all text-gray-900"
+        className="fixed top-8 left-8 z-50 w-12 h-12 bg-white/90 backdrop-blur-md border border-gray-100 rounded-full flex items-center justify-center shadow-sm hover:scale-110 transition-all text-gray-900"
       >
-        <ArrowLeft size={24} />
+        <ArrowLeft size={20} />
       </button>
 
-      {/* Hero Section - Image & Titre Principal */}
-      <section className="relative h-[80vh] w-full overflow-hidden">
-        <Image 
-          src={tresor.image_url} 
-          alt={tresor.nom}
-          fill
-          className="object-cover"
-          priority
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#F9F7F2] via-transparent to-transparent"></div>
-        <div className="absolute bottom-0 left-0 w-full p-8 md:p-16 lg:px-24">
-          <p className="text-[0.7rem] uppercase font-black tracking-[0.4em] text-[#8B4513] mb-4">
-            Trésor N°{tresor.numero} — {tresor.cartographie.origine.ville}
-          </p>
-          <h1 className="font-serif text-5xl md:text-8xl mb-6 tracking-tighter leading-none">{tresor.nom}</h1>
-          <p className="max-w-2xl text-xl md:text-2xl italic opacity-80 font-serif text-gray-700">
-            « {tresor.sous_titre} »
-          </p>
+      {/* ── SECTION HAUTE : Image & Infos Clés ── */}
+      <section className="max-w-[1400px] mx-auto pt-12 px-6 md:px-12">
+        <div className="bg-white rounded-[3rem] overflow-hidden border border-gray-100 shadow-sm flex flex-col lg:flex-row min-h-[700px]">
+          {/* Image (Gauche) */}
+          <div className="lg:w-1/2 relative h-[500px] lg:h-auto">
+            <Image 
+              src={tresor.image_url} 
+              alt={tresor.nom}
+              fill
+              className="object-cover"
+              priority
+            />
+            {/* Petit badge zoom ou plein écran (optionnel) */}
+            <div className="absolute bottom-6 right-6 w-10 h-10 bg-black/20 backdrop-blur-md rounded-full flex items-center justify-center text-white cursor-pointer">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+            </div>
+          </div>
+
+          {/* Infos & Carte (Droite) */}
+          <div className="lg:w-1/2 p-8 md:p-14 flex flex-col">
+            <div className="mb-10">
+              <p className="text-[10px] font-black uppercase tracking-[0.4em] text-[#E8112D] mb-4">
+                XIXe SIÈCLE
+              </p>
+              <h1 className="font-serif text-5xl md:text-6xl mb-4 tracking-tighter leading-tight text-gray-900">
+                {tresor.nom}
+              </h1>
+              <p className="text-gray-500 font-medium text-lg italic">
+                {tresor.sous_titre} — Royaume de Dahomey
+              </p>
+            </div>
+
+            {/* Itinéraire Intégré */}
+            <div className="mb-10 flex-1">
+              <JourneyMap 
+                origine={tresor.cartographie.origine}
+                exil={tresor.cartographie.exil}
+                spoliationDate={tresor.cartographie.evenement.date}
+                spoliationEvent={tresor.cartographie.evenement.description}
+              />
+            </div>
+
+            {/* Évènement Pill */}
+            <div className="bg-[#FFF5F5] border border-[#FFE0E0] rounded-full px-6 py-4 flex items-center gap-4 mb-8">
+              <span className="text-[#E8112D] font-black text-sm tabular-nums">1892</span>
+              <div className="h-4 w-[1px] bg-[#E8112D]/20" />
+              <span className="text-[10px] uppercase font-black tracking-widest text-[#E8112D]">
+                SAC D'ABOMEY — GÉNÉRAL DODDS
+              </span>
+            </div>
+
+            {/* Matériaux Tags */}
+            <div>
+              <p className="text-[9px] font-black uppercase tracking-[0.3em] text-gray-400 mb-4">MATÉRIAUX</p>
+              <div className="flex flex-wrap gap-2">
+                {tresor.materiaux.split(',').map((mat) => (
+                  <span key={mat} className="px-5 py-2 bg-white border border-gray-100 rounded-full text-[10px] font-bold text-gray-600 uppercase tracking-wider shadow-sm">
+                    {mat.trim()}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      <div className="mx-auto max-w-7xl px-6 py-20 lg:grid lg:grid-cols-12 lg:gap-16">
-        {/* Colonne Gauche - Contenu Narratif */}
-        <div className="lg:col-span-7 space-y-20">
+      {/* ── SECTION MÉDIANE : Récit & Analytics ── */}
+      <section className="max-w-[1400px] mx-auto mt-12 px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-12">
+        
+        {/* Colonne Narratve (7 cols) */}
+        <div className="lg:col-span-7 bg-white rounded-[3rem] p-10 md:p-16 border border-gray-100 shadow-sm space-y-16">
           <div>
-            <h2 className="font-serif text-3xl md:text-4xl mb-8 flex items-center gap-4">
-              Analyse Symbolique
-              <div className="h-[2px] flex-1 bg-gray-100" />
-            </h2>
-            <p className="leading-relaxed text-xl opacity-90 text-gray-800">
+            <h2 className="font-serif text-3xl mb-8 text-gray-900">Analyse symbolique</h2>
+            <p className="leading-relaxed text-lg text-gray-600 font-medium">
               {tresor.analyse_symbolique}
             </p>
           </div>
 
           {tresor.citation && (
-            <PullQuote 
-              texte={tresor.citation.texte} 
-              auteur={tresor.citation.auteur} 
-              role={tresor.citation.role} 
-            />
+            <div className="relative pl-12 py-4">
+              <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#E8112D] rounded-full" />
+              <p className="font-serif text-2xl italic text-gray-800 leading-snug mb-6">
+                « {tresor.citation.texte} »
+              </p>
+              <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                — {tresor.citation.auteur} · {tresor.citation.role}
+              </div>
+            </div>
           )}
 
           <div>
-            <h2 className="font-serif text-3xl md:text-4xl mb-8 flex items-center gap-4">
-              Histoire de l'Exil
-              <div className="h-[2px] flex-1 bg-gray-100" />
-            </h2>
-            <p className="leading-relaxed text-lg opacity-90 text-gray-700">
+            <h2 className="font-serif text-3xl mb-8 text-gray-900">Histoire de l'exil</h2>
+            <p className="leading-relaxed text-gray-600 font-medium">
               {tresor.histoire_exil}
             </p>
           </div>
-          
-          <div className="p-10 bg-white rounded-[2.5rem] border border-gray-100 shadow-sm">
-             <h2 className="font-serif text-2xl mb-6">Enjeux de la Restitution</h2>
-             <p className="leading-relaxed text-gray-600 italic">
-                {tresor.enjeux_restitution}
-             </p>
+
+          <div>
+            <h2 className="font-serif text-3xl mb-8 text-gray-900">Enjeux de restitution</h2>
+            <p className="leading-relaxed text-gray-600 font-medium">
+              {tresor.enjeux_restitution}
+            </p>
           </div>
         </div>
 
-        {/* Colonne Droite - Sidebar Technique/Data */}
-        <aside className="lg:col-span-5 space-y-8 mt-16 lg:mt-0">
-          {/* Carte du voyage */}
-          <JourneyMap 
-            origine={tresor.cartographie.origine}
-            exil={tresor.cartographie.exil}
-            spoliationDate={tresor.cartographie.evenement.date}
-            spoliationEvent={tresor.cartographie.evenement.description}
-          />
-
-          {/* Analyse des indicateurs */}
-          <div className="rounded-[2.5rem] border border-gray-100 bg-white p-10 shadow-sm transition-all hover:shadow-md">
-            <h3 className="text-[0.65rem] font-black uppercase tracking-[0.3em] text-gray-400 mb-10">
-              Indicateurs de Prestige
-            </h3>
-            <PrestigeBars 
-              rarete={tresor.metrics.rarete}
-              conservation={tresor.metrics.conservation}
-              restitution={tresor.metrics.restitution}
-            />
+        {/* Colonne Analytics (5 cols) */}
+        <div className="lg:col-span-5 space-y-8">
+          {/* Prestige Sidebar */}
+          <div className="bg-[#F9F8F5] rounded-[2.5rem] p-10 border border-gray-100 shadow-sm">
+             <div className="mb-8">
+                <p className="text-[9px] font-black uppercase tracking-[0.4em] text-gray-400 mb-2">INDICE DE PRESTIGE</p>
+                <h3 className="text-2xl font-serif text-gray-900">Évaluation</h3>
+             </div>
+             <PrestigeBars 
+                rarete={tresor.metrics.rarete}
+                conservation={tresor.metrics.conservation}
+                restitution={tresor.metrics.restitution}
+             />
+             <p className="mt-8 text-[9px] italic text-gray-400 leading-relaxed max-w-[280px]">
+                * Indices estimés à partir de l'historiographie et des dossiers diplomatiques disponibles.
+             </p>
           </div>
 
-          {/* Radar des Jetons */}
-          <div className="rounded-[2.5rem] border border-gray-100 bg-white p-10 shadow-sm transition-all hover:shadow-md">
-            <h3 className="text-[0.65rem] font-black uppercase tracking-[0.3em] text-gray-400 mb-6">
-              Matrice de Souveraineté
-            </h3>
-            <JetonsRadar 
-              conscience={tresor.jetons.conscience}
-              confiance={tresor.jetons.confiance}
-              connaissance={tresor.jetons.connaissance}
-              competence={tresor.jetons.competence}
-            />
-          </div>
-          
-          <div className="p-8 border border-dashed border-gray-200 rounded-[2rem] flex items-center gap-4 text-gray-400">
-             <div className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center shrink-0">
-                <span className="text-xs font-black">Mat</span>
+          {/* Jetons Sidebar */}
+          <div className="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-sm">
+             <div className="mb-10 text-center">
+                <p className="text-[9px] font-black uppercase tracking-[0.4em] text-gray-400 mb-2">LES QUATRE JETONS</p>
              </div>
-             <div className="text-[10px] leading-tight font-bold uppercase tracking-widest">
-                Matériaux : <span className="text-gray-900">{tresor.materiaux}</span>
-             </div>
+             <JetonsRadar 
+                conscience={tresor.jetons.conscience}
+                confiance={tresor.jetons.confiance}
+                connaissance={tresor.jetons.connaissance}
+                competence={tresor.jetons.competence}
+             />
+             
+             {/* Bouton Action */}
+             <button className="w-full mt-12 py-5 bg-[#BC4B2D] hover:bg-[#A33818] text-white rounded-2xl font-bold text-sm tracking-widest uppercase transition-all shadow-lg active:scale-95">
+                Libérer le Trésor
+             </button>
           </div>
-        </aside>
-      </div>
+        </div>
+      </section>
+
+      {/* ── SECTION BASSE : Suggestions ── */}
+      <section className="max-w-[1400px] mx-auto mt-24 px-6 md:px-12">
+        <p className="text-[9px] font-black uppercase tracking-[0.4em] text-[#E8112D] mb-8">SUGGESTIONS</p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {[1,2,3].map((i) => (
+             <div key={i} className="bg-white rounded-[2rem] overflow-hidden border border-gray-100 shadow-sm group cursor-pointer hover:shadow-xl transition-all duration-500">
+                <div className="aspect-[4/3] relative overflow-hidden">
+                   <div className="absolute inset-0 bg-gray-200 animate-pulse" />
+                </div>
+                <div className="p-8">
+                   <p className="text-[8px] font-black text-[#E8112D] uppercase tracking-widest mb-3">XVIIIe-XIXe SIÈCLE</p>
+                   <h4 className="font-serif text-xl mb-2">Portes du palais d'Abomey</h4>
+                   <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Musée du quai Branly, Paris</p>
+                </div>
+             </div>
+          ))}
+        </div>
+      </section>
     </div>
+  );
+}
   );
 }
