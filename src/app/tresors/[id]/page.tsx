@@ -148,10 +148,12 @@ export default function TresorDetailPage() {
       </button>
 
       {/* ── SECTION HAUTE : Image & Infos Clés ── */}
-      <section className="max-w-[1400px] mx-auto pt-12 px-6 md:px-12">
-        <div className="bg-white rounded-[3rem] overflow-hidden border border-gray-100 shadow-sm flex flex-col lg:flex-row min-h-[700px]">
-          {/* Image (Gauche) - Optimisée pour voir le trésor entier */}
-          <div className="lg:w-1/2 relative h-[500px] lg:h-auto bg-[#FBFBFA] p-12">
+      <section className="max-w-[1400px] mx-auto pt-12 px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-12">
+        
+        {/* Colonne Gauche : Image + Jetons (5 cols) */}
+        <div className="lg:col-span-5 space-y-8">
+          {/* Image du Trésor */}
+          <div className="bg-white rounded-[3rem] overflow-hidden border border-gray-100 shadow-sm relative h-[450px] bg-[#FBFBFA] p-10">
             <div className="relative w-full h-full">
               <Image 
                 src={tresor.image_url} 
@@ -161,38 +163,57 @@ export default function TresorDetailPage() {
                 priority
               />
             </div>
-            {/* Petit badge zoom ou plein écran (optionnel) */}
-            <div className="absolute bottom-6 right-6 w-10 h-10 bg-black/5 backdrop-blur-md rounded-full flex items-center justify-center text-gray-400 cursor-pointer hover:bg-black/10 transition-colors">
+            <div className="absolute bottom-6 right-6 w-10 h-10 bg-black/5 backdrop-blur-md rounded-full flex items-center justify-center text-gray-400 cursor-pointer">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
             </div>
           </div>
 
-          {/* Infos & Carte (Droite) */}
-          <div className="lg:w-1/2 p-8 md:p-14 flex flex-col">
-            <div className="mb-10">
-              <p className="text-[10px] font-black uppercase tracking-[0.4em] text-[#E8112D] mb-4">
-                XIXe SIÈCLE
-              </p>
-              <h1 className="font-sans font-black text-5xl md:text-6xl mb-4 tracking-tighter leading-tight text-gray-900">
-                {tresor.nom}
-              </h1>
-              <p className="text-gray-500 font-medium text-lg">
-                {tresor.sous_titre} — Royaume de Dahomey
-              </p>
-            </div>
+          {/* Radar des Jetons (Sous l'image) */}
+          <div className="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-sm">
+             <div className="mb-10 text-center">
+                <p className="text-[9px] font-black uppercase tracking-[0.4em] text-gray-400 mb-2">LES QUATRE JETONS</p>
+             </div>
+             <JetonsRadar 
+                conscience={tresor.jetons.conscience}
+                confiance={tresor.jetons.confiance}
+                connaissance={tresor.jetons.connaissance}
+                competence={tresor.jetons.competence}
+             />
+             
+             {/* Bouton Action */}
+             <button className="w-full mt-12 py-5 bg-[#BC4B2D] hover:bg-[#A33818] text-white rounded-2xl font-bold text-sm tracking-widest uppercase transition-all shadow-lg active:scale-95">
+                Libérer le Trésor
+             </button>
+          </div>
+        </div>
 
-            {/* Itinéraire Intégré */}
-            <div className="mb-10 flex-1">
-              <JourneyMap 
-                origine={tresor.cartographie.origine}
-                exil={tresor.cartographie.exil}
-                spoliationDate={tresor.cartographie.evenement.date}
-                spoliationEvent={tresor.cartographie.evenement.description}
-              />
-            </div>
+        {/* Colonne Droite : Infos & Carte (7 cols) */}
+        <div className="lg:col-span-7 bg-white rounded-[3rem] p-8 md:p-14 border border-gray-100 shadow-sm flex flex-col">
+          <div className="mb-10">
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-[#E8112D] mb-4">
+              XIXe SIÈCLE
+            </p>
+            <h1 className="font-sans font-black text-5xl md:text-6xl mb-4 tracking-tighter leading-tight text-gray-900">
+              {tresor.nom}
+            </h1>
+            <p className="text-gray-500 font-medium text-lg">
+              {tresor.sous_titre} — Royaume de Dahomey
+            </p>
+          </div>
 
+          {/* Itinéraire Intégré */}
+          <div className="mb-10 flex-1 min-h-[300px]">
+            <JourneyMap 
+              origine={tresor.cartographie.origine}
+              exil={tresor.cartographie.exil}
+              spoliationDate={tresor.cartographie.evenement.date}
+              spoliationEvent={tresor.cartographie.evenement.description}
+            />
+          </div>
+
+          <div className="space-y-8">
             {/* Évènement Pill */}
-            <div className="bg-[#FFF5F5] border border-[#FFE0E0] rounded-full px-6 py-4 flex items-center gap-4 mb-8">
+            <div className="bg-[#FFF5F5] border border-[#FFE0E0] rounded-full px-6 py-4 flex items-center gap-4">
               <span className="text-[#E8112D] font-black text-sm tabular-nums">1892</span>
               <div className="h-4 w-[1px] bg-[#E8112D]/20" />
               <span className="text-[10px] uppercase font-black tracking-widest text-[#E8112D]">
@@ -205,7 +226,7 @@ export default function TresorDetailPage() {
               <p className="text-[9px] font-black uppercase tracking-[0.3em] text-gray-400 mb-4">MATÉRIAUX</p>
               <div className="flex flex-wrap gap-2">
                 {tresor.materiaux.split(',').map((mat) => (
-                  <span key={mat} className="px-5 py-2 bg-white border border-gray-100 rounded-full text-[10px] font-bold text-gray-600 uppercase tracking-wider shadow-sm">
+                  <span key={mat} className="px-5 py-2 bg-[#F9F7F2] border border-gray-100 rounded-full text-[10px] font-bold text-gray-600 uppercase tracking-wider">
                     {mat.trim()}
                   </span>
                 ))}
@@ -215,7 +236,7 @@ export default function TresorDetailPage() {
         </div>
       </section>
 
-      {/* ── SECTION MÉDIANE : Récit & Analytics ── */}
+      {/* ── SECTION MÉDIANE : Récit & Évaluation ── */}
       <section className="max-w-[1400px] mx-auto mt-12 px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-12">
         
         {/* Colonne Narratve (7 cols) */}
@@ -254,10 +275,9 @@ export default function TresorDetailPage() {
           </div>
         </div>
 
-        {/* Colonne Analytics (5 cols) */}
-        <div className="lg:col-span-5 space-y-8">
-          {/* Prestige Sidebar */}
-          <div className="bg-white rounded-[2.5rem] p-10 md:p-14 border border-gray-100 shadow-sm">
+        {/* Colonne Évaluation (5 cols) */}
+        <div className="lg:col-span-5">
+          <div className="bg-white rounded-[2.5rem] p-10 md:p-14 border border-gray-100 shadow-sm sticky top-8">
              <div className="mb-12">
                 <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400 mb-2">INDICE DE PRESTIGE</p>
                 <h3 className="text-3xl font-sans font-black text-gray-900">Évaluation</h3>
@@ -270,24 +290,6 @@ export default function TresorDetailPage() {
              <p className="mt-12 text-[11px] italic text-gray-400 leading-relaxed">
                 Indices estimés à partir de l'historiographie et des dossiers diplomatiques disponibles.
              </p>
-          </div>
-
-          {/* Jetons Sidebar */}
-          <div className="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-sm">
-             <div className="mb-10 text-center">
-                <p className="text-[9px] font-black uppercase tracking-[0.4em] text-gray-400 mb-2">LES QUATRE JETONS</p>
-             </div>
-             <JetonsRadar 
-                conscience={tresor.jetons.conscience}
-                confiance={tresor.jetons.confiance}
-                connaissance={tresor.jetons.connaissance}
-                competence={tresor.jetons.competence}
-             />
-             
-             {/* Bouton Action */}
-             <button className="w-full mt-12 py-5 bg-[#BC4B2D] hover:bg-[#A33818] text-white rounded-2xl font-bold text-sm tracking-widest uppercase transition-all shadow-lg active:scale-95">
-                Libérer le Trésor
-             </button>
           </div>
         </div>
       </section>

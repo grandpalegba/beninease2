@@ -14,14 +14,23 @@ interface MapComponentProps {
 
 export default function MapComponent({ startPos, endPos, origine, exil }: MapComponentProps) {
   useEffect(() => {
-    // Fix for default marker icons
-    delete (L.Icon.Default.prototype as any)._getIconUrl;
-    L.Icon.Default.mergeOptions({
-      iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
-      iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
-      shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
-    });
+    // Fix for default marker icons is handled by custom icons below
   }, []);
+
+  // Custom icons
+  const greenIcon = L.divIcon({
+    className: "custom-div-icon",
+    html: `<div style="background-color: #2C9A5A; width: 14px; height: 14px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.3);"></div>`,
+    iconSize: [14, 14],
+    iconAnchor: [7, 7],
+  });
+
+  const redIcon = L.divIcon({
+    className: "custom-div-icon",
+    html: `<div style="background-color: #E0312D; width: 14px; height: 14px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.3);"></div>`,
+    iconSize: [14, 14],
+    iconAnchor: [7, 7],
+  });
 
   return (
     <MapContainer 
@@ -34,13 +43,13 @@ export default function MapComponent({ startPos, endPos, origine, exil }: MapCom
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <Marker position={startPos}>
+      <Marker position={startPos} icon={greenIcon}>
         <Popup>Origine: {origine.ville}, {origine.pays}</Popup>
       </Marker>
-      <Marker position={endPos}>
+      <Marker position={endPos} icon={redIcon}>
         <Popup>Exil: {exil.institution} ({exil.ville})</Popup>
       </Marker>
-      <Polyline positions={[startPos, endPos]} color="#E8112D" weight={3} dashArray="10, 10" />
+      <Polyline positions={[startPos, endPos]} color="#E8112D" weight={2} dashArray="10, 10" opacity={0.6} />
     </MapContainer>
   );
 }
