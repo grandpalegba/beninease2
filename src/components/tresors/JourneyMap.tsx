@@ -2,33 +2,14 @@
 
 import dynamic from "next/dynamic";
 import "leaflet/dist/leaflet.css";
+import { useEffect, useState } from "react";
 
-const MapContainer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.MapContainer),
-  { ssr: false }
-);
-const TileLayer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.TileLayer),
-  { ssr: false }
-);
-const Marker = dynamic(
-  () => import("react-leaflet").then((mod) => mod.Marker),
-  { ssr: false }
-);
-const Popup = dynamic(
-  () => import("react-leaflet").then((mod) => mod.Popup),
-  { ssr: false }
-);
-const Polyline = dynamic(
-  () => import("react-leaflet").then((mod) => mod.Polyline),
-  { ssr: false }
-);
-
+// Types
 interface Location {
   ville: string;
   pays: string;
   institution?: string;
-  coords?: [number, number]; // Fallback coordinates if not found
+  coords?: [number, number];
 }
 
 interface JourneyMapProps {
@@ -38,7 +19,6 @@ interface JourneyMapProps {
   spoliationEvent: string;
 }
 
-// Default coordinates for some common places
 const CITY_COORDS: Record<string, [number, number]> = {
   "Abomey": [7.1855, 1.9912],
   "Cotonou": [6.3654, 2.4183],
@@ -52,7 +32,46 @@ const CITY_COORDS: Record<string, [number, number]> = {
   "France": [46.2276, 2.2137],
 };
 
+// Internal component that uses Leaflet
+// This will be dynamically imported to avoid SSR issues
+const MapInner = ({ startPos, endPos, origine, exil }: any) => {
+  const { MapContainer, TileLayer, Marker, Popup, Polyline } = require("react-leaflet");
+  const L = require("leaflet");
+
+  // Fix for default marker icons in Leaflet + Webpack/Next.js
+  useEffect(() => {
+    delete (L.Icon.Default.prototype as any)._getIconUrl;
+    L.Icon.Default.mergeOptions({
+      iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
+      iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+      shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+    });
+  }, [L]);
+
+  return (
+    <MapContainer center={startPos} zoom={3} scrollWheelZoom={false} className="h-full w-full">
+      <TileLayer
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      <Marker position={startPos}>
+        <Popup>Origine: {origine.ville}, {origine.pays}</Popup>
+      </Marker>
+      <Marker position={endPos}>
+        <Popup>Exil: {exil.institution} ({exil.ville})</Popup>
+      </Marker>
+      <Polyline positions={[startPos, endPos]} color="#8B4513" dashArray="10, 10" />
+    </MapContainer>
+  );
+};
+
 export function JourneyMap({ origine, exil, spoliationDate, spoliationEvent }: JourneyMapProps) {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const startPos: [number, number] = origine.coords || CITY_COORDS[origine.ville] || CITY_COORDS["Abomey"];
   const endPos: [number, number] = exil.coords || CITY_COORDS[exil.ville] || CITY_COORDS["Paris"];
 
@@ -69,22 +88,13 @@ export function JourneyMap({ origine, exil, spoliationDate, spoliationEvent }: J
         </div>
       </div>
       
-      <div className="h-[300px] w-full bg-gray-100">
-        {/* We wrap in a client check because Leaflet needs window */}
-        {typeof window !== "undefined" && (
-          <MapContainer center={startPos} zoom={3} scrollWheelZoom={false} className="h-full w-full">
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            <Marker position={startPos}>
-              <Popup>Origine: {origine.ville}, {origine.pays}</Popup>
-            </Marker>
-            <Marker position={endPos}>
-              <Popup>Exil: {exil.institution} ({exil.ville})</Popup>
-            </Marker>
-            <Polyline positions={[startPos, endPos]} color="#8B4513" dashArray="10, 10" />
-          </MapContainer>
+      <div className="h-[300px] w-full bg-gray-100 relative">
+        {isMounted ? (
+          <MapInner startPos={startPos} endPos={endPos} origine={origine} exil={exil} />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <p className="text-[10px] uppercase tracking-widest text-gray-300">Initialisation de la carte...</p>
+          </div>
         )}
       </div>
 
