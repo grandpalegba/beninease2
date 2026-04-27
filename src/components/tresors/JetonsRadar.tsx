@@ -18,8 +18,8 @@ export function JetonsRadar({ conscience, confiance, connaissance, competence }:
   const AXES = [
     { key: "competence", label: "Compétence", color: "#008751", value: competence || 5 },
     { key: "conscience", label: "Conscience", color: "#008751", value: conscience || 5 },
-    { key: "confiance", label: "Confiance", color: "#008751", value: confiance || 5 },
     { key: "connaissance", label: "Connaissance", color: "#008751", value: connaissance || 5 },
+    { key: "confiance", label: "Confiance", color: "#008751", value: confiance || 5 },
   ] as const;
 
   // 1. Calcul des coordonnées pour chaque point (échelle 5 à 40)
@@ -113,7 +113,7 @@ export function JetonsRadar({ conscience, confiance, connaissance, competence }:
 
         {/* Labels avec valeurs */}
         {points.map((p) => {
-          const labelDist = maxRadius + 35;
+          const labelDist = maxRadius + 45;
           const lx = cx + labelDist * Math.cos(p.angle);
           const ly = cy + labelDist * Math.sin(p.angle);
           

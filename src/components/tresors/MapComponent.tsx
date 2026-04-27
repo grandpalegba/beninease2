@@ -1,9 +1,9 @@
 "use client";
 
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, Polyline, GeoJSON } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface MapComponentProps {
   startPos: [number, number];
@@ -13,8 +13,14 @@ interface MapComponentProps {
 }
 
 export default function MapComponent({ startPos, endPos, origine, exil }: MapComponentProps) {
+  const [beninGeoJSON, setBeninGeoJSON] = useState<any>(null);
+
   useEffect(() => {
-    // Fix for default marker icons is handled by custom icons below
+    // Fetch Benin GeoJSON for background shape
+    fetch("https://raw.githubusercontent.com/johan/world.geo.json/master/countries/BEN.geo.json")
+      .then(res => res.json())
+      .then(data => setBeninGeoJSON(data))
+      .catch(err => console.error("Error loading Benin GeoJSON:", err));
   }, []);
 
   // Custom icons
@@ -43,6 +49,18 @@ export default function MapComponent({ startPos, endPos, origine, exil }: MapCom
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
+      {beninGeoJSON && (
+        <GeoJSON 
+          data={beninGeoJSON} 
+          style={{
+            color: "#2C9A5A",
+            weight: 1,
+            fillColor: "#2C9A5A",
+            fillOpacity: 0.1,
+            dashArray: "3, 3"
+          }}
+        />
+      )}
       <Marker position={startPos} icon={greenIcon}>
         <Popup>Origine: {origine.ville}, {origine.pays}</Popup>
       </Marker>

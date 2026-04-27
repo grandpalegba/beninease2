@@ -49,13 +49,15 @@ export default function TresorDetailPage() {
   const id = params.id as string;
 
   const [tresor, setTresor] = useState<TresorDetail | null>(null);
+  const [suggestions, setSuggestions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!id) return;
-    async function fetchDetail() {
+    async function fetchData() {
       try {
         setLoading(true);
+        // Fetch main treasure
         const { data, error } = await supabase
           .from("tresors_benin")
           .select("*")
@@ -64,8 +66,7 @@ export default function TresorDetailPage() {
 
         if (error) throw error;
 
-        // Transformation logic to match the requested TresorDetail interface
-        // We use fallbacks for columns that might not exist yet in the DB
+        // Transformation logic
         const mappedTresor: TresorDetail = {
           id: data.id,
           numero: data.numero || 1,
@@ -73,28 +74,18 @@ export default function TresorDetailPage() {
           sous_titre: data.sous_titre,
           image_url: data.image_url,
           materiaux: data.materiaux || "Bronze, alliages cuivreux, bois sculpté.",
-          analyse_symbolique: data.analyse_symbolique || "Cette pièce incarne la souveraineté du Royaume de Dahomey. Chaque motif sculpté représente un proverbe ou un exploit guerrier du souverain.",
-          histoire_exil: data.histoire_exil || "Spolié lors de l'expédition punitive française de 1892 menée par le colonel Dodds. Emporté comme trophée de guerre et déposé plus tard au Musée de l'Homme.",
-          enjeux_restitution: data.enjeux_restitution || "Objet d'une demande officielle de restitution depuis 2016. Symbole fort du renouveau culturel béninois.",
+          analyse_symbolique: data.analyse_symbolique || "Cette pièce incarne la souveraineté du Royaume de Dahomey.",
+          histoire_exil: data.histoire_exil || "Spolié lors de l'expédition punitive française de 1892.",
+          enjeux_restitution: data.enjeux_restitution || "Objet d'une demande officielle de restitution depuis 2016.",
           metrics: {
             rarete: data.metric_rarete || 85,
             conservation: data.metric_conservation || 92,
             restitution: data.metric_restitution || 70,
           },
           cartographie: {
-            origine: { 
-              ville: data.origine_ville || "Abomey", 
-              pays: data.origine_pays || "Bénin" 
-            },
-            exil: { 
-              ville: data.exil_ville || "Paris", 
-              pays: data.exil_pays || "France", 
-              institution: data.exil_institution || "Musée du Quai Branly" 
-            },
-            evenement: { 
-              date: data.evenement_date || "Novembre 1892", 
-              description: data.evenement_desc || "Prise du palais royal d'Abomey par les troupes coloniales." 
-            },
+            origine: { ville: data.origine_ville || "Abomey", pays: data.origine_pays || "Bénin" },
+            exil: { ville: data.exil_ville || "Paris", pays: data.exil_pays || "France", institution: data.exil_institution || "Musée du Quai Branly" },
+            evenement: { date: data.evenement_date || "Novembre 1892", description: data.evenement_desc || "Prise du palais royal d'Abomey." },
           },
           jetons: {
             conscience: data.jeton_conscience || 60,
@@ -106,21 +97,27 @@ export default function TresorDetailPage() {
             texte: data.citation_texte,
             auteur: data.citation_auteur || "Historien local",
             role: data.citation_role || "Gardien de la mémoire"
-          } : {
-            texte: "Ce trésor n'est pas seulement un objet, c'est l'âme de nos ancêtres qui respire encore.",
-            auteur: "Sage d'Abomey",
-            role: "Dignitaire de la Cour Royale"
-          }
+          } : undefined
         };
 
         setTresor(mappedTresor);
+
+        // Fetch 3 random suggestions
+        const { data: suggData } = await supabase
+          .from("tresors_benin")
+          .select("id, nom, image_url, exil_institution, exil_ville")
+          .neq("id", id)
+          .limit(3);
+        
+        if (suggData) setSuggestions(suggData);
+
       } catch (err) {
-        console.error("Error fetching detail:", err);
+        console.error("Error fetching data:", err);
       } finally {
         setLoading(false);
       }
     }
-    fetchDetail();
+    fetchData();
   }, [id]);
 
   if (loading) {
@@ -153,13 +150,13 @@ export default function TresorDetailPage() {
         {/* Colonne Gauche : Image + Jetons (5 cols) */}
         <div className="lg:col-span-5 space-y-8">
           {/* Image du Trésor */}
-          <div className="bg-white rounded-[3rem] overflow-hidden border border-gray-100 shadow-sm relative h-[450px] bg-[#FBFBFA] p-10">
+          <div className="bg-white rounded-[3rem] overflow-hidden border-2 border-[#D4AF37]/30 shadow-sm relative h-[450px] bg-[#FBFBFA] p-10">
             <div className="relative w-full h-full">
               <Image 
                 src={tresor.image_url} 
                 alt={tresor.nom}
                 fill
-                className="object-contain"
+                className="object-contain rounded-2xl"
                 priority
               />
             </div>
@@ -190,7 +187,7 @@ export default function TresorDetailPage() {
             <p className="text-[10px] font-black uppercase tracking-[0.4em] text-[#E8112D] mb-4">
               XIXe SIÈCLE
             </p>
-            <h1 className="font-sans font-black text-5xl md:text-6xl mb-4 tracking-tighter leading-tight text-gray-900">
+            <h1 className="font-sans font-black text-3xl md:text-4xl mb-4 tracking-tight leading-[1.3] text-gray-900">
               {tresor.nom}
             </h1>
             <p className="text-gray-500 font-medium text-lg">
@@ -209,15 +206,6 @@ export default function TresorDetailPage() {
           </div>
 
           <div className="space-y-8">
-            {/* Évènement Pill */}
-            <div className="bg-[#FFF5F5] border border-[#FFE0E0] rounded-full px-6 py-4 flex items-center gap-4">
-              <span className="text-[#E8112D] font-black text-sm tabular-nums">1892</span>
-              <div className="h-4 w-[1px] bg-[#E8112D]/20" />
-              <span className="text-[10px] uppercase font-black tracking-widest text-[#E8112D]">
-                SAC D'ABOMEY — GÉNÉRAL DODDS
-              </span>
-            </div>
-
             {/* Matériaux (Texte simple) */}
             <div>
               <p className="text-[9px] font-black uppercase tracking-[0.3em] text-gray-400 mb-2">MATÉRIAUX</p>
@@ -289,17 +277,28 @@ export default function TresorDetailPage() {
 
       {/* ── SECTION BASSE : Suggestions ── */}
       <section className="max-w-[1400px] mx-auto mt-24 px-6 md:px-12">
-        <p className="text-[9px] font-black uppercase tracking-[0.4em] text-[#E8112D] mb-8">SUGGESTIONS</p>
+        <p className="text-[9px] font-black uppercase tracking-[0.4em] text-[#E8112D] mb-8">VOUS POURRIEZ AUSSI AIMER</p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {[1,2,3].map((i) => (
-             <div key={i} className="bg-white rounded-[2rem] overflow-hidden border border-gray-100 shadow-sm group cursor-pointer hover:shadow-xl transition-all duration-500">
-                <div className="aspect-[4/3] relative overflow-hidden bg-gray-50 p-6">
-                   <div className="w-full h-full bg-gray-200 animate-pulse rounded-xl" />
+          {suggestions.map((s) => (
+             <div 
+               key={s.id} 
+               onClick={() => router.push(`/tresors/${s.id}`)}
+               className="bg-white rounded-[2rem] overflow-hidden border border-gray-100 shadow-sm group cursor-pointer hover:shadow-xl transition-all duration-500"
+             >
+                <div className="aspect-[4/3] relative overflow-hidden bg-[#FBFBFA] p-6">
+                   <Image 
+                      src={s.image_url} 
+                      alt={s.nom}
+                      fill
+                      className="object-contain group-hover:scale-110 transition-transform duration-700"
+                   />
                 </div>
                 <div className="p-8">
-                   <p className="text-[8px] font-black text-[#E8112D] uppercase tracking-widest mb-3">XVIIIe-XIXe SIÈCLE</p>
-                   <h4 className="font-sans font-bold text-xl mb-2">Portes du palais d'Abomey</h4>
-                   <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Musée du quai Branly, Paris</p>
+                   <p className="text-[8px] font-black text-[#E8112D] uppercase tracking-widest mb-3">RÉCITS D'EXIL</p>
+                   <h4 className="font-sans font-bold text-xl mb-2">{s.nom}</h4>
+                   <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+                     {s.exil_institution}, {s.exil_ville}
+                   </p>
                 </div>
              </div>
           ))}
