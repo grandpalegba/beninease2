@@ -266,8 +266,7 @@ export default function TresorDetailPage() {
         <div className="lg:col-span-5">
           <div className="bg-white rounded-[2.5rem] p-10 md:p-14 border border-gray-100 shadow-sm sticky top-8">
              <div className="mb-12">
-                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400 mb-2">INDICE DE PRESTIGE</p>
-                <h3 className="text-3xl font-sans font-black text-gray-900">Évaluation</h3>
+                <h3 className="text-3xl font-sans font-black text-gray-900">Évaluation du trésor</h3>
              </div>
              <PrestigeBars 
                 rarete={tresor.metrics.rarete}
