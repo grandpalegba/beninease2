@@ -10,121 +10,129 @@ interface JetonsRadarProps {
 }
 
 export function JetonsRadar({ conscience, confiance, connaissance, competence }: JetonsRadarProps) {
-  // Simple Radar implementation using SVG
-  const size = 200;
-  const center = size / 2;
-  const radius = size * 0.4;
+  const size = 300;
+  const cx = size / 2;
+  const cy = size / 2;
+  const maxRadius = 100;
 
-  const points = [
-    { label: "Conscience", value: conscience, angle: 0 },
-    { label: "Confiance", value: confiance, angle: 90 },
-    { label: "Connaissance", value: connaissance, angle: 180 },
-    { label: "Compétence", value: competence, angle: 270 },
-  ];
+  const AXES = [
+    { key: "competence", label: "Compétence", color: "#008751", value: competence || 5 },
+    { key: "conscience", label: "Conscience", color: "#008751", value: conscience || 5 },
+    { key: "confiance", label: "Confiance", color: "#008751", value: confiance || 5 },
+    { key: "connaissance", label: "Connaissance", color: "#008751", value: connaissance || 5 },
+  ] as const;
 
-  const getPointCoords = (value: number, angle: number) => {
-    const r = (value / 100) * radius;
-    const x = center + r * Math.cos((angle * Math.PI) / 180);
-    const y = center + r * Math.sin((angle * Math.PI) / 180);
-    return { x, y };
-  };
+  // 1. Calcul des coordonnées pour chaque point (échelle 5 à 40)
+  const points = AXES.map((axis, i) => {
+    const angle = (Math.PI * 2 * i) / AXES.length - Math.PI / 2;
+    // Normalisation : 40 est le rayon max
+    const ratio = axis.value / 40; 
+    const r = ratio * maxRadius;
+    return {
+      x: cx + r * Math.cos(angle),
+      y: cy + r * Math.sin(angle),
+      label: axis.label,
+      value: axis.value,
+      angle
+    };
+  });
 
-  const pathData = points
-    .map((p, i) => {
-      const coords = getPointCoords(p.value, p.angle);
-      return `${i === 0 ? "M" : "L"} ${coords.x} ${coords.y}`;
-    })
-    .join(" ") + " Z";
+  // 2. Création de la chaîne de caractères pour le chemin SVG
+  const drawPath = points.map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`).join(" ") + " Z";
 
   return (
     <div className="flex flex-col items-center">
-      <div className="relative w-[200px] h-[200px]">
-        <svg width={size} height={size} className="overflow-visible">
-          {/* Circular Grids */}
-          {[25, 50, 75, 100].map((r) => (
+      <div className="relative" style={{ width: size, height: size }}>
+        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="overflow-visible">
+          {/* Cercles de fond (Grille) */}
+          {[10, 20, 30, 40].map((val) => (
             <circle
-              key={r}
-              cx={center}
-              cy={center}
-              r={(r / 100) * radius}
+              key={val}
+              cx={cx}
+              cy={cy}
+              r={(val / 40) * maxRadius}
               fill="none"
               stroke="#F3F4F6"
               strokeWidth="1"
             />
           ))}
           
-          {/* Axis */}
-          {points.map((p) => {
-            const end = getPointCoords(100, p.angle);
+          {/* Axes */}
+          {AXES.map((_, i) => {
+            const angle = (Math.PI * 2 * i) / AXES.length - Math.PI / 2;
+            const x2 = cx + maxRadius * Math.cos(angle);
+            const y2 = cy + maxRadius * Math.sin(angle);
             return (
               <line
-                key={p.label}
-                x1={center}
-                y1={center}
-                x2={end.x}
-                y2={end.y}
+                key={i}
+                x1={cx}
+                y1={cy}
+                x2={x2}
+                y2={y2}
                 stroke="#F3F4F6"
                 strokeWidth="1"
               />
             );
           })}
 
-          {/* Radar Shape */}
+          {/* Polygone Dynamique Animé */}
           <motion.path
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 0.2 }}
-            transition={{ duration: 1.5, ease: "easeInOut" }}
-            d={pathData}
+            d={drawPath}
             fill="#008751"
+            fillOpacity={0.15}
             stroke="#008751"
-            strokeWidth="2"
+            strokeWidth={2}
+            strokeLinejoin="round"
+            initial={false}
+            animate={{ d: drawPath }}
+            transition={{ 
+              type: "spring", 
+              stiffness: 60, 
+              damping: 15 
+            }}
           />
-          
-          {/* Data Points */}
-          {points.map((p) => {
-            const coords = getPointCoords(p.value, p.angle);
-            return (
-              <circle
-                key={p.label}
-                cx={coords.x}
-                cy={coords.y}
-                r="3"
-                fill="#008751"
-              />
-            );
-          })}
+
+          {/* Points (Jetons) sur les sommets */}
+          {points.map((p, i) => (
+            <motion.circle
+              key={i}
+              cx={p.x}
+              cy={p.y}
+              r={4}
+              fill="#008751"
+              initial={false}
+              animate={{ cx: p.x, cy: p.y }}
+              transition={{ 
+                type: "spring", 
+                stiffness: 60, 
+                damping: 15 
+              }}
+            />
+          ))}
         </svg>
 
         {/* Labels avec valeurs */}
         {points.map((p) => {
-          // Adjust position based on angle for better centering
-          const labelDist = 135; // Increased distance for clarity
-          const coords = getPointCoords(labelDist, p.angle);
-          
-          // Specific values provided by user
-          const displayValues: Record<string, number> = {
-            "Compétence": 18,
-            "Conscience": 14,
-            "Confiance": 18,
-            "Connaissance": 22
-          };
+          const labelDist = maxRadius + 35;
+          const lx = cx + labelDist * Math.cos(p.angle);
+          const ly = cy + labelDist * Math.sin(p.angle);
           
           return (
             <div
               key={p.label}
-              className="absolute flex flex-col items-center justify-center text-center leading-none"
+              className="absolute flex flex-col items-center justify-center text-center leading-tight"
               style={{
-                left: `${coords.x}px`,
-                top: `${coords.y}px`,
+                left: `${lx}px`,
+                top: `${ly}px`,
                 transform: "translate(-50%, -50%)",
-                width: "80px"
+                width: "100px"
               }}
             >
-              <span className="text-[8px] font-black uppercase tracking-widest text-gray-400 mb-1">
+              <span className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1">
                 {p.label}
               </span>
-              <span className="text-[10px] font-bold text-gray-900">
-                {displayValues[p.label]}
+              <span className="text-[12px] font-bold text-gray-900">
+                {p.value}
               </span>
             </div>
           );
