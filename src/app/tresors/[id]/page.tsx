@@ -271,7 +271,7 @@ export default function TresorDetailPage() {
                 « {tresor.citation.texte} »
               </p>
               <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
-                — {tresor.citation.auteur} · {tresor.citation.role} {tresor.citation.annee && `(${tresor.citation.annee})`}
+                {tresor.citation.auteur} · {tresor.citation.role} {tresor.citation.annee && `(${tresor.citation.annee})`}
               </div>
             </div>
           )}
