@@ -38,36 +38,60 @@ export default function MapComponent({ startPos, endPos, origine, exil }: MapCom
     iconAnchor: [7, 7],
   });
 
+  // Text Icons
+  const textIcon = (text: string) => L.divIcon({
+    className: "custom-text-icon",
+    html: `<div style="font-family: sans-serif; font-weight: 800; font-size: 10px; color: #1A1A1A; text-transform: uppercase; letter-spacing: 0.1em; background: rgba(255,255,255,0.8); padding: 2px 6px; border-radius: 4px; white-space: nowrap; border: 1px solid rgba(0,0,0,0.05);">${text}</div>`,
+    iconSize: [0, 0],
+    iconAnchor: [0, 0],
+  });
+
   return (
-    <MapContainer 
-      center={[25, 5]} 
-      zoom={2} 
-      scrollWheelZoom={false} 
-      className="h-full w-full"
-      attributionControl={false}
-    >
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      {beninGeoJSON && (
-        <GeoJSON 
-          data={beninGeoJSON} 
-          style={{
-            color: "#2C9A5A",
-            weight: 1,
-            fillColor: "#2C9A5A",
-            fillOpacity: 0.1,
-            dashArray: "3, 3"
-          }}
+    <div className="flex flex-col h-full w-full relative">
+      {/* SVG Pattern Definition for Benin Flag */}
+      <svg style={{ position: 'absolute', width: 0, height: 0 }}>
+        <defs>
+          <pattern id="beninFlagPattern" patternUnits="userSpaceOnUse" width="100%" height="100%">
+            <rect width="40%" height="100%" fill="#008751" /> {/* Green left */}
+            <rect x="40%" width="60%" height="50%" fill="#FAC710" /> {/* Yellow top right */}
+            <rect x="40%" y="50%" width="60%" height="50%" fill="#E8112D" /> {/* Red bottom right */}
+          </pattern>
+        </defs>
+      </svg>
+
+      <MapContainer 
+        center={[25, 10]} 
+        zoom={2} 
+        scrollWheelZoom={false} 
+        className="h-full w-full bg-[#F8F9FA]"
+        attributionControl={false}
+      >
+        <TileLayer
+          url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png"
         />
-      )}
-      <Marker position={startPos} icon={greenIcon}>
-        <Popup>Origine: {origine.ville}, {origine.pays}</Popup>
-      </Marker>
-      <Marker position={endPos} icon={redIcon}>
-        <Popup>Exil: {exil.institution} ({exil.ville})</Popup>
-      </Marker>
-      <Polyline positions={[startPos, endPos]} color="#E8112D" weight={2} dashArray="10, 10" opacity={0.6} />
-    </MapContainer>
+        {beninGeoJSON && (
+          <GeoJSON 
+            data={beninGeoJSON} 
+            style={{
+              color: "#008751",
+              weight: 2,
+              fillOpacity: 0.9,
+              fillColor: "url(#beninFlagPattern)" as any,
+            }}
+          />
+        )}
+        
+        {/* Specific Country Labels */}
+        <Marker position={startPos} icon={textIcon("Bénin")} interactive={false} />
+        <Marker position={endPos} icon={textIcon(exil.pays)} interactive={false} />
+
+        {/* Exile Marker */}
+        <Marker position={endPos} icon={redIcon}>
+          <Popup>Exil: {exil.institution} ({exil.ville})</Popup>
+        </Marker>
+        
+        <Polyline positions={[startPos, endPos]} color="#E8112D" weight={1.5} dashArray="8, 8" opacity={0.5} />
+      </MapContainer>
+    </div>
   );
 }

@@ -17,9 +17,9 @@ export function JetonsRadar({ conscience, confiance, connaissance, competence }:
 
   const AXES = [
     { key: "competence", label: "Compétence", color: "#008751", value: competence || 5 },
-    { key: "conscience", label: "Conscience", color: "#008751", value: conscience || 5 },
-    { key: "connaissance", label: "Connaissance", color: "#008751", value: connaissance || 5 },
-    { key: "confiance", label: "Confiance", color: "#008751", value: confiance || 5 },
+    { key: "conscience", label: "Conscience", color: "#E8112D", value: conscience || 5 },
+    { key: "connaissance", label: "Connaissance", color: "#1A1A1A", value: connaissance || 5 },
+    { key: "confiance", label: "Confiance", color: "#FAC710", value: confiance || 5 },
   ] as const;
 
   // 1. Calcul des coordonnées pour chaque point (échelle 5 à 40)
@@ -78,10 +78,10 @@ export function JetonsRadar({ conscience, confiance, connaissance, competence }:
           {/* Polygone Dynamique Animé */}
           <motion.path
             d={drawPath}
-            fill="#008751"
-            fillOpacity={0.15}
-            stroke="#008751"
-            strokeWidth={2}
+            fill="#94A3B8"
+            fillOpacity={0.1}
+            stroke="#94A3B8"
+            strokeWidth={1.5}
             strokeLinejoin="round"
             initial={false}
             animate={{ d: drawPath }}
@@ -98,8 +98,8 @@ export function JetonsRadar({ conscience, confiance, connaissance, competence }:
               key={i}
               cx={p.x}
               cy={p.y}
-              r={4}
-              fill="#008751"
+              r={4.5}
+              fill={AXES[i].color}
               initial={false}
               animate={{ cx: p.x, cy: p.y }}
               transition={{ 
