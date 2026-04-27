@@ -150,17 +150,19 @@ export default function TresorDetailPage() {
       {/* ── SECTION HAUTE : Image & Infos Clés ── */}
       <section className="max-w-[1400px] mx-auto pt-12 px-6 md:px-12">
         <div className="bg-white rounded-[3rem] overflow-hidden border border-gray-100 shadow-sm flex flex-col lg:flex-row min-h-[700px]">
-          {/* Image (Gauche) */}
-          <div className="lg:w-1/2 relative h-[500px] lg:h-auto">
-            <Image 
-              src={tresor.image_url} 
-              alt={tresor.nom}
-              fill
-              className="object-cover"
-              priority
-            />
+          {/* Image (Gauche) - Optimisée pour voir le trésor entier */}
+          <div className="lg:w-1/2 relative h-[500px] lg:h-auto bg-[#FBFBFA] p-12">
+            <div className="relative w-full h-full">
+              <Image 
+                src={tresor.image_url} 
+                alt={tresor.nom}
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
             {/* Petit badge zoom ou plein écran (optionnel) */}
-            <div className="absolute bottom-6 right-6 w-10 h-10 bg-black/20 backdrop-blur-md rounded-full flex items-center justify-center text-white cursor-pointer">
+            <div className="absolute bottom-6 right-6 w-10 h-10 bg-black/5 backdrop-blur-md rounded-full flex items-center justify-center text-gray-400 cursor-pointer hover:bg-black/10 transition-colors">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
             </div>
           </div>
@@ -171,10 +173,10 @@ export default function TresorDetailPage() {
               <p className="text-[10px] font-black uppercase tracking-[0.4em] text-[#E8112D] mb-4">
                 XIXe SIÈCLE
               </p>
-              <h1 className="font-serif text-5xl md:text-6xl mb-4 tracking-tighter leading-tight text-gray-900">
+              <h1 className="font-sans font-black text-5xl md:text-6xl mb-4 tracking-tighter leading-tight text-gray-900">
                 {tresor.nom}
               </h1>
-              <p className="text-gray-500 font-medium text-lg italic">
+              <p className="text-gray-500 font-medium text-lg">
                 {tresor.sous_titre} — Royaume de Dahomey
               </p>
             </div>
@@ -219,7 +221,7 @@ export default function TresorDetailPage() {
         {/* Colonne Narratve (7 cols) */}
         <div className="lg:col-span-7 bg-white rounded-[3rem] p-10 md:p-16 border border-gray-100 shadow-sm space-y-16">
           <div>
-            <h2 className="font-serif text-3xl mb-8 text-gray-900">Analyse symbolique</h2>
+            <h2 className="font-sans font-black text-3xl mb-8 text-gray-900">Analyse symbolique</h2>
             <p className="leading-relaxed text-lg text-gray-600 font-medium">
               {tresor.analyse_symbolique}
             </p>
@@ -228,7 +230,7 @@ export default function TresorDetailPage() {
           {tresor.citation && (
             <div className="relative pl-12 py-4">
               <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#E8112D] rounded-full" />
-              <p className="font-serif text-2xl italic text-gray-800 leading-snug mb-6">
+              <p className="font-sans text-2xl font-bold text-gray-800 leading-snug mb-6">
                 « {tresor.citation.texte} »
               </p>
               <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
@@ -238,14 +240,14 @@ export default function TresorDetailPage() {
           )}
 
           <div>
-            <h2 className="font-serif text-3xl mb-8 text-gray-900">Histoire de l'exil</h2>
+            <h2 className="font-sans font-black text-3xl mb-8 text-gray-900">Histoire de l'exil</h2>
             <p className="leading-relaxed text-gray-600 font-medium">
               {tresor.histoire_exil}
             </p>
           </div>
 
           <div>
-            <h2 className="font-serif text-3xl mb-8 text-gray-900">Enjeux de restitution</h2>
+            <h2 className="font-sans font-black text-3xl mb-8 text-gray-900">Enjeux de restitution</h2>
             <p className="leading-relaxed text-gray-600 font-medium">
               {tresor.enjeux_restitution}
             </p>
@@ -255,18 +257,18 @@ export default function TresorDetailPage() {
         {/* Colonne Analytics (5 cols) */}
         <div className="lg:col-span-5 space-y-8">
           {/* Prestige Sidebar */}
-          <div className="bg-[#F9F8F5] rounded-[2.5rem] p-10 border border-gray-100 shadow-sm">
-             <div className="mb-8">
-                <p className="text-[9px] font-black uppercase tracking-[0.4em] text-gray-400 mb-2">INDICE DE PRESTIGE</p>
-                <h3 className="text-2xl font-serif text-gray-900">Évaluation</h3>
+          <div className="bg-white rounded-[2.5rem] p-10 md:p-14 border border-gray-100 shadow-sm">
+             <div className="mb-12">
+                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400 mb-2">INDICE DE PRESTIGE</p>
+                <h3 className="text-3xl font-sans font-black text-gray-900">Évaluation</h3>
              </div>
              <PrestigeBars 
                 rarete={tresor.metrics.rarete}
                 conservation={tresor.metrics.conservation}
                 restitution={tresor.metrics.restitution}
              />
-             <p className="mt-8 text-[9px] italic text-gray-400 leading-relaxed max-w-[280px]">
-                * Indices estimés à partir de l'historiographie et des dossiers diplomatiques disponibles.
+             <p className="mt-12 text-[11px] italic text-gray-400 leading-relaxed">
+                Indices estimés à partir de l'historiographie et des dossiers diplomatiques disponibles.
              </p>
           </div>
 
@@ -296,12 +298,12 @@ export default function TresorDetailPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {[1,2,3].map((i) => (
              <div key={i} className="bg-white rounded-[2rem] overflow-hidden border border-gray-100 shadow-sm group cursor-pointer hover:shadow-xl transition-all duration-500">
-                <div className="aspect-[4/3] relative overflow-hidden">
-                   <div className="absolute inset-0 bg-gray-200 animate-pulse" />
+                <div className="aspect-[4/3] relative overflow-hidden bg-gray-50 p-6">
+                   <div className="w-full h-full bg-gray-200 animate-pulse rounded-xl" />
                 </div>
                 <div className="p-8">
                    <p className="text-[8px] font-black text-[#E8112D] uppercase tracking-widest mb-3">XVIIIe-XIXe SIÈCLE</p>
-                   <h4 className="font-serif text-xl mb-2">Portes du palais d'Abomey</h4>
+                   <h4 className="font-sans font-bold text-xl mb-2">Portes du palais d'Abomey</h4>
                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Musée du quai Branly, Paris</p>
                 </div>
              </div>

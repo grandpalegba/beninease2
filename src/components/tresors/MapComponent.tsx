@@ -24,9 +24,14 @@ export default function MapComponent({ startPos, endPos, origine, exil }: MapCom
   }, []);
 
   return (
-    <MapContainer center={startPos} zoom={3} scrollWheelZoom={false} className="h-full w-full">
+    <MapContainer 
+      center={[25, 5]} 
+      zoom={2} 
+      scrollWheelZoom={false} 
+      className="h-full w-full"
+      attributionControl={false}
+    >
       <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       <Marker position={startPos}>
@@ -35,7 +40,7 @@ export default function MapComponent({ startPos, endPos, origine, exil }: MapCom
       <Marker position={endPos}>
         <Popup>Exil: {exil.institution} ({exil.ville})</Popup>
       </Marker>
-      <Polyline positions={[startPos, endPos]} color="#8B4513" dashArray="10, 10" />
+      <Polyline positions={[startPos, endPos]} color="#E8112D" weight={3} dashArray="10, 10" />
     </MapContainer>
   );
 }
