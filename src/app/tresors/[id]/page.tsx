@@ -79,9 +79,9 @@ export default function TresorDetailPage() {
           histoire_exil: data.histoire_exil || "Aucun récit disponible.",
           enjeux_restitution: data.enjeux_restitution || "Aucun enjeu renseigné.",
           metrics: {
-            rarete: data.metric_rarete || 50,
-            conservation: data.metric_conservation || 50,
-            restitution: data.metric_restitution || 50,
+            rarete: data.rarete_historique || 50,
+            conservation: data.etat_conservation || 50,
+            restitution: data.potentiel_restitution || 50,
           },
           cartographie: {
             origine: { ville: data.origine_ville || "Bénin", pays: "Bénin" },
