@@ -212,7 +212,7 @@ export default function TresorDetailPage() {
               {tresor.nom}
             </h1>
             <p className="text-gray-500 font-medium text-lg">
-              {tresor.sous_titre} — Royaume de Dahomey
+              {tresor.sous_titre}
             </p>
           </div>
 
