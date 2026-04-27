@@ -221,16 +221,12 @@ export default function TresorDetailPage() {
               </span>
             </div>
 
-            {/* Matériaux Tags */}
+            {/* Matériaux (Texte simple) */}
             <div>
-              <p className="text-[9px] font-black uppercase tracking-[0.3em] text-gray-400 mb-4">MATÉRIAUX</p>
-              <div className="flex flex-wrap gap-2">
-                {tresor.materiaux.split(',').map((mat) => (
-                  <span key={mat} className="px-5 py-2 bg-[#F9F7F2] border border-gray-100 rounded-full text-[10px] font-bold text-gray-600 uppercase tracking-wider">
-                    {mat.trim()}
-                  </span>
-                ))}
-              </div>
+              <p className="text-[9px] font-black uppercase tracking-[0.3em] text-gray-400 mb-2">MATÉRIAUX</p>
+              <p className="text-sm font-bold text-gray-700 uppercase tracking-widest leading-relaxed">
+                {tresor.materiaux}
+              </p>
             </div>
           </div>
         </div>
