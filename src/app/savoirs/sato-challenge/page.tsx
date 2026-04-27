@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from "@supabase/supabase-js";
 import { toast, Toaster } from "sonner";
@@ -99,6 +100,7 @@ const AwaleMini = ({ seedsCount, isWrong }: { seedsCount: number, isWrong: boole
 );
 
 export default function MysteresPage() {
+  const router = useRouter();
   // --- ÉTATS ---
   const [loading, setLoading] = useState(true);
   const [mysteres, setMysteres] = useState<any[]>([]);
@@ -193,7 +195,13 @@ export default function MysteresPage() {
 
       <AnimatePresence mode="wait">
         {view === "gallery" ? (
-          <motion.div key="gallery" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-screen flex flex-col items-center justify-center p-6">
+          <motion.div key="gallery" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-screen flex flex-col items-center justify-center p-6 relative">
+            <button 
+              onClick={() => router.push('/savoirs')} 
+              className="absolute top-6 left-6 z-50 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md border border-gray-100 active:scale-95 transition-transform"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a0412d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            </button>
             <motion.div
               drag="x" dragConstraints={{ left: 0, right: 0 }}
               onDragEnd={(_, info) => {
@@ -223,11 +231,18 @@ export default function MysteresPage() {
             <p className="mt-8 text-[10px] font-black text-gray-300 uppercase tracking-[0.25em] animate-pulse">Swipe pour naviguer • Tap pour l'initiation</p>
           </motion.div>
         ) : (
-          <motion.div key="ritual" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-50 flex flex-col items-center p-6 overflow-y-auto no-scrollbar">
-            <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-4 md:gap-16 mb-8 h-[400px] shrink-0">
-              <div className="flex flex-col items-center scale-75 origin-center"><div className="flex gap-3">{/* Okpele columns */}<div className="flex flex-col">{[...Array(4)].map((_, i) => <OkpeleSeed key={i} active={activeOkpeleSeeds > i} />)}</div><div className="flex flex-col">{[...Array(4)].map((_, i) => <OkpeleSeed key={i} active={activeOkpeleSeeds > i + 4} />)}</div></div></div>
-              <div ref={jarRef} className="z-10"><SatoJar holesCount={holes} isOver={isOverJar} /></div>
-              <div className="scale-75"><AwaleMini seedsCount={seeds} isWrong={isWrong} /></div>
+          <motion.div key="ritual" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-50 flex flex-col items-center p-6 overflow-y-auto no-scrollbar relative">
+            <button 
+              onClick={() => setView("gallery")}
+              className="absolute top-6 left-6 z-50 w-10 h-10 bg-[#faf9f8] rounded-full flex items-center justify-center shadow-sm border border-gray-100 active:scale-95 transition-transform"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a0412d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            </button>
+
+            <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-1 md:gap-16 mt-12 md:mt-4 mb-4 md:mb-8 h-[250px] md:h-[400px] shrink-0">
+              <div className="flex flex-col items-center scale-[0.55] md:scale-75 origin-center"><div className="flex gap-3">{/* Okpele columns */}<div className="flex flex-col">{[...Array(4)].map((_, i) => <OkpeleSeed key={i} active={activeOkpeleSeeds > i} />)}</div><div className="flex flex-col">{[...Array(4)].map((_, i) => <OkpeleSeed key={i} active={activeOkpeleSeeds > i + 4} />)}</div></div></div>
+              <div ref={jarRef} className="z-10 scale-[0.65] md:scale-100 origin-center"><SatoJar holesCount={holes} isOver={isOverJar} /></div>
+              <div className="scale-[0.5] md:scale-75 origin-center"><AwaleMini seedsCount={seeds} isWrong={isWrong} /></div>
             </div>
 
             <div className="w-full max-w-xl">
