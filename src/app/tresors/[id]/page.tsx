@@ -173,27 +173,29 @@ export default function TresorDetailPage() {
         
         {/* Colonne Gauche : Image + Jetons (5 cols) */}
         <div className="lg:col-span-5 space-y-8">
-          {/* Image du Trésor */}
-          <div className="bg-white rounded-[3rem] overflow-hidden border border-gray-100 shadow-sm relative h-[450px] bg-[#FBFBFA] p-10 flex items-center justify-center">
-            <div className="relative w-full h-full rounded-3xl overflow-hidden">
-              <Image 
-                src={tresor.image_url} 
-                alt={tresor.nom}
-                fill
-                className="object-contain"
-                priority
-              />
+          {/* Carte Image + Titre */}
+          <div className="bg-white rounded-[3rem] overflow-hidden border border-gray-100 shadow-sm flex flex-col">
+            <div className="relative w-full h-[450px] bg-[#FBFBFA] p-10 flex flex-shrink-0 items-center justify-center">
+              <div className="relative w-full h-full rounded-3xl overflow-hidden">
+                <Image 
+                  src={tresor.image_url} 
+                  alt={tresor.nom}
+                  fill
+                  className="object-contain pointer-events-none"
+                  draggable={false}
+                  priority
+                />
+              </div>
             </div>
-          </div>
-
-          {/* Nom et sous-titre — sous la photo */}
-          <div className="px-2">
-            <h1 className="font-sans font-black text-2xl md:text-3xl mb-2 tracking-tight leading-[1.3] text-gray-900">
-              {tresor.nom}
-            </h1>
-            <p className="text-gray-500 font-medium text-base">
-              {tresor.sous_titre?.replace(/\.\s*$/, '')}
-            </p>
+            {/* Nom et sous-titre — dans l'encadré blanc */}
+            <div className="p-8 md:p-10 pt-2 bg-white">
+              <h1 className="font-sans font-black text-2xl md:text-3xl mb-2 tracking-tight leading-[1.3] text-gray-900">
+                {tresor.nom}
+              </h1>
+              <p className="text-gray-500 font-medium text-base">
+                {tresor.sous_titre?.replace(/\.\s*$/, '')}
+              </p>
+            </div>
           </div>
 
           {/* Radar des Jetons (Sous l'image) */}
@@ -258,17 +260,10 @@ export default function TresorDetailPage() {
         
         {/* Colonne Narrative (7 cols) — Matériaux + Citation */}
         <div className="lg:col-span-7 bg-white rounded-[3rem] p-10 md:p-16 border border-gray-100 shadow-sm space-y-16">
-          <div>
-            <h2 className="font-sans font-black text-3xl mb-8 text-gray-900">Matériaux</h2>
-            <p className="leading-relaxed text-lg text-gray-600 font-medium">
-              {tresor.materiaux}
-            </p>
-          </div>
-
           {tresor.citation && (
             <div className="relative pl-12 py-4">
               <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#E8112D] rounded-full" />
-              <p className="font-sans text-xl font-bold text-gray-800 leading-snug mb-6">
+              <p className="font-sans text-xl italic font-bold text-gray-800 leading-snug mb-6">
                 « {tresor.citation.texte} »
               </p>
               <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
