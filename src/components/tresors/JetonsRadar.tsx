@@ -81,9 +81,9 @@ export function JetonsRadar({ conscience, confiance, connaissance, competence }:
           <motion.path
             d={drawPath}
             fill="#FAC710"
-            fillOpacity={0.3}
+            fillOpacity={0.45}
             stroke="#D4AF37"
-            strokeWidth={2}
+            strokeWidth={1}
             strokeLinejoin="round"
             initial={false}
             animate={{ d: drawPath }}

@@ -19,9 +19,9 @@ export function PrestigeBars({ rarete, conservation, restitution }: PrestigeBars
     <div className="space-y-10">
       {bars.map((bar) => (
         <div key={bar.label} className="space-y-4">
-          <div className="flex justify-between items-center text-[10px] md:text-[12px] uppercase tracking-[0.2em] font-medium text-gray-500">
+          <div className="flex justify-between items-center text-[8px] md:text-[9px] uppercase tracking-[0.2em] font-black text-gray-400">
             <span>{bar.label}</span>
-            <span className="font-sans text-xl md:text-2xl text-gray-900 font-bold">{bar.value}%</span>
+            <span className="font-sans text-lg md:text-xl text-gray-900 font-bold">{bar.value}%</span>
           </div>
           <div className="h-2.5 w-full bg-gray-100 rounded-full overflow-hidden">
             <motion.div

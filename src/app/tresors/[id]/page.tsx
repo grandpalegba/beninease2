@@ -206,6 +206,14 @@ export default function TresorDetailPage() {
           </div>
 
           <div className="space-y-8">
+            {/* Histoire de l'exil (Remonté sous la carte) */}
+            <div>
+              <p className="text-[9px] font-black uppercase tracking-[0.3em] text-gray-400 mb-2">HISTOIRE DE L'EXIL</p>
+              <p className="text-sm text-gray-600 leading-relaxed font-medium">
+                {tresor.histoire_exil}
+              </p>
+            </div>
+
             {/* Matériaux (Texte simple) */}
             <div>
               <p className="text-[9px] font-black uppercase tracking-[0.3em] text-gray-400 mb-2">MATÉRIAUX</p>
@@ -229,10 +237,17 @@ export default function TresorDetailPage() {
             </p>
           </div>
 
+          <div>
+            <h2 className="font-sans font-black text-3xl mb-8 text-gray-900">Enjeux de restitution</h2>
+            <p className="leading-relaxed text-lg text-gray-600 font-medium">
+              {tresor.enjeux_restitution}
+            </p>
+          </div>
+
           {tresor.citation && (
             <div className="relative pl-12 py-4">
               <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#E8112D] rounded-full" />
-              <p className="font-sans text-2xl font-bold text-gray-800 leading-snug mb-6">
+              <p className="font-sans text-xl font-bold text-gray-800 leading-snug mb-6">
                 « {tresor.citation.texte} »
               </p>
               <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
@@ -240,20 +255,6 @@ export default function TresorDetailPage() {
               </div>
             </div>
           )}
-
-          <div>
-            <h2 className="font-sans font-black text-3xl mb-8 text-gray-900">Histoire de l'exil</h2>
-            <p className="leading-relaxed text-gray-600 font-medium">
-              {tresor.histoire_exil}
-            </p>
-          </div>
-
-          <div>
-            <h2 className="font-sans font-black text-3xl mb-8 text-gray-900">Enjeux de restitution</h2>
-            <p className="leading-relaxed text-gray-600 font-medium">
-              {tresor.enjeux_restitution}
-            </p>
-          </div>
         </div>
 
         {/* Colonne Évaluation (5 cols) */}
