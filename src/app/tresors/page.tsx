@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase/client";
-import { Loader2, AlertCircle } from "lucide-react";
+import { Loader2, AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Tresor {
   id: string;
@@ -17,6 +18,8 @@ export default function TresorsPage() {
   const [tresors, setTresors] = useState<Tresor[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState(0); // 1 for right, -1 for left
 
   useEffect(() => {
     async function fetchTresors() {
@@ -40,24 +43,38 @@ export default function TresorsPage() {
     fetchTresors();
   }, []);
 
+  const paginate = (newDirection: number) => {
+    setDirection(newDirection);
+    setCurrentIndex((prevIndex) => {
+      let nextIndex = prevIndex + newDirection;
+      if (nextIndex < 0) nextIndex = tresors.length - 1;
+      if (nextIndex >= tresors.length) nextIndex = 0;
+      return nextIndex;
+    });
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-[#F9F7F2]">
         <Loader2 className="w-10 h-10 animate-spin text-[#008751] mb-4" />
-        <p className="text-gray-400 uppercase tracking-widest text-xs font-sans">Chargement des Trésors...</p>
+        <p className="text-gray-400 uppercase tracking-widest text-[10px] font-sans font-black">Immersion dans l'histoire...</p>
       </div>
     );
   }
 
-  if (error) {
+  if (error || tresors.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-[#F9F7F2] font-sans">
-        <AlertCircle className="w-12 h-12 text-red-400 mb-4" />
-        <h2 className="text-xl font-bold mb-2">Une erreur est survenue</h2>
-        <p className="text-gray-500 mb-6">{error}</p>
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-[#F9F7F2] font-sans text-center">
+        <AlertCircle className="w-12 h-12 text-red-300 mb-4" />
+        <h2 className="text-xl font-bold mb-2">
+          {error ? "Une erreur est survenue" : "Collection vide"}
+        </h2>
+        <p className="text-gray-400 mb-8 max-w-xs">
+          {error || "Aucun trésor n'a été trouvé dans la collection pour le moment."}
+        </p>
         <button 
           onClick={() => window.location.reload()} 
-          className="text-[#008751] font-bold hover:underline"
+          className="px-8 py-3 bg-white border border-gray-100 rounded-full text-[#008751] font-bold shadow-sm"
         >
           Réessayer
         </button>
@@ -65,54 +82,117 @@ export default function TresorsPage() {
     );
   }
 
+  const currentTresor = tresors[currentIndex];
+
+  const variants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? 500 : -500,
+      opacity: 0,
+      scale: 0.9,
+    }),
+    center: {
+      zIndex: 1,
+      x: 0,
+      opacity: 1,
+      scale: 1,
+    },
+    exit: (direction: number) => ({
+      zIndex: 0,
+      x: direction < 0 ? 500 : -500,
+      opacity: 0,
+      scale: 0.9,
+    })
+  };
+
   return (
-    <div className="min-h-screen bg-[#F9F7F2] py-16 px-6 md:px-12 lg:px-24">
-      {/* HEADER SECTION */}
-      <div className="max-w-7xl mx-auto mb-[64px] text-center">
-        <h1 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tighter uppercase font-sans mb-4">
-          Galerie des Trésors
-        </h1>
-        <p className="text-gray-400 uppercase tracking-[0.3em] text-[10px] font-bold">
-          Patrimoine & Splendeur du Bénin
-        </p>
+    <div className="h-screen bg-[#F9F7F2] overflow-hidden flex flex-col items-center justify-center relative px-6">
+      
+      {/* BACKGROUND DECOR (Optional but premium) */}
+      <div className="fixed inset-0 pattern-bg -z-10 opacity-[0.03]"></div>
+
+      {/* NAVIGATION ARROWS (Desktop) */}
+      <div className="hidden lg:flex absolute inset-x-12 top-1/2 -translate-y-1/2 justify-between pointer-events-none z-20">
+        <button 
+          onClick={() => paginate(-1)}
+          className="w-16 h-16 bg-white/80 backdrop-blur-md rounded-full shadow-lg flex items-center justify-center text-gray-400 hover:text-black hover:scale-110 transition-all pointer-events-auto border border-white"
+        >
+          <ChevronLeft size={32} />
+        </button>
+        <button 
+          onClick={() => paginate(1)}
+          className="w-16 h-16 bg-white/80 backdrop-blur-md rounded-full shadow-lg flex items-center justify-center text-gray-400 hover:text-black hover:scale-110 transition-all pointer-events-auto border border-white"
+        >
+          <ChevronRight size={32} />
+        </button>
       </div>
 
-      {/* GRID SECTION */}
-      <div className="max-w-7xl mx-auto">
-        {tresors.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {tresors.map((tresor) => (
-              <div 
-                key={tresor.id}
-                className="group bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-500 cursor-pointer"
-              >
-                {/* IMAGE CONTAINER */}
-                <div className="relative aspect-[4/3] overflow-hidden">
-                  <Image 
-                    src={tresor.image_url} 
-                    alt={tresor.nom}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                </div>
+      {/* IMMERSIVE CARD */}
+      <div className="relative w-full max-w-2xl aspect-[4/5] flex items-center justify-center">
+        <AnimatePresence initial={false} custom={direction}>
+          <motion.div
+            key={currentIndex}
+            custom={direction}
+            variants={variants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{
+              x: { type: "spring", stiffness: 300, damping: 30 },
+              opacity: { duration: 0.3 }
+            }}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={1}
+            onDragEnd={(e, { offset, velocity }) => {
+              const swipe = Math.abs(offset.x) > 100 || Math.abs(velocity.x) > 500;
+              if (swipe) {
+                paginate(offset.x > 0 ? -1 : 1);
+              }
+            }}
+            className="absolute w-full h-full bg-white rounded-[3rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.12)] border border-gray-100 overflow-hidden cursor-grab active:cursor-grabbing"
+          >
+            {/* IMAGE SECTION */}
+            <div className="relative w-full h-full">
+              <Image 
+                src={currentTresor.image_url} 
+                alt={currentTresor.nom}
+                fill
+                priority
+                className="object-cover select-none pointer-events-none"
+                draggable={false}
+              />
+              
+              {/* VIGNETTE GRADIENT */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
 
-                {/* TEXT CONTENT */}
-                <div className="p-8">
-                  <h2 className="text-[20px] font-bold text-gray-900 leading-tight mb-2" style={{ fontFamily: "'Noto Serif', serif" }}>
-                    {tresor.nom}
+              {/* CONTENT BOX (Floating bottom) */}
+              <div className="absolute bottom-10 inset-x-10">
+                <div className="bg-white/90 backdrop-blur-xl p-8 rounded-[2rem] shadow-2xl border border-white/50">
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight mb-2" style={{ fontFamily: "'Noto Serif', serif" }}>
+                    {currentTresor.nom}
                   </h2>
-                  <p className="text-[16px] text-gray-500 font-medium font-sans leading-relaxed">
-                    {tresor.sous_titre}
+                  <p className="text-sm md:text-base text-gray-500 font-medium font-sans tracking-tight">
+                    {currentTresor.sous_titre}
                   </p>
                 </div>
               </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-20 bg-white/50 rounded-[2.5rem] border border-dashed border-gray-200">
-            <p className="text-gray-400 font-sans italic">Aucun trésor n&apos;a été trouvé dans la collection pour le moment.</p>
-          </div>
-        )}
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* COUNTER & NAVIGATION HINT */}
+      <div className="mt-12 flex flex-col items-center gap-4">
+        <div className="flex items-center gap-4">
+           <div className="h-[1px] w-8 bg-gray-200"></div>
+           <p className="text-[12px] font-black text-gray-400 font-sans tracking-[0.4em] uppercase">
+             {currentIndex + 1} / {tresors.length}
+           </p>
+           <div className="h-[1px] w-8 bg-gray-200"></div>
+        </div>
+        <p className="text-[9px] font-bold text-gray-300 uppercase tracking-widest hidden md:block">
+          Utilisez les flèches ou glissez pour explorer
+        </p>
       </div>
     </div>
   );
