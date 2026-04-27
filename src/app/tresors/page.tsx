@@ -78,7 +78,6 @@ export default function TresorsPage() {
       {/* BACKGROUND DECOR */}
       <div className="fixed inset-0 pattern-bg -z-10 opacity-[0.03]"></div>
 
-      {/* --- CARROUSEL FAÇON HISTOIRES --- */}
       <div className="flex-1 overflow-hidden">
         <CardDeck
           items={shuffledTresors}
@@ -87,13 +86,6 @@ export default function TresorsPage() {
             <TresorCard tresor={tresor} />
           )}
         />
-      </div>
-
-      {/* INDICATION DE SWIPE */}
-      <div className="pb-12 text-center">
-        <p className="text-[10px] uppercase tracking-[0.3em] text-gray-300 animate-pulse font-sans font-black">
-          Swipe latéral pour explorer
-        </p>
       </div>
     </div>
   );

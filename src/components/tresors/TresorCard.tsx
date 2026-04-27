@@ -26,14 +26,14 @@ export function TresorCard({ tresor }: TresorCardProps) {
       className="group cursor-pointer flex w-full h-full shrink-0 flex-col rounded-3xl bg-white border border-gray-100 overflow-hidden shadow-xl transition-all duration-300 relative"
     >
       {/* ── Image avec masque dégradé (Look Ibrahim Sow / ProfileCard) ── */}
-      <div className="absolute top-6 left-6 right-6 h-[60%] overflow-hidden bg-gray-50/50 rounded-2xl pointer-events-none border border-gray-50">
+      <div className="absolute top-8 left-8 right-8 h-[55%] overflow-hidden bg-gray-50/50 rounded-[2rem] pointer-events-none border border-gray-100/50">
         {tresor.image_url ? (
           <Image
             src={tresor.image_url}
             alt={tresor.nom}
             fill
             sizes="(max-width: 640px) 85vw, 400px"
-            className="object-contain p-4 transition-transform duration-700 group-hover:scale-110"
+            className="object-contain p-8 transition-transform duration-700 group-hover:scale-110"
             draggable={false}
             priority
           />
@@ -45,7 +45,7 @@ export function TresorCard({ tresor }: TresorCardProps) {
       </div>
 
       {/* ── Contenu ── */}
-      <div className="flex flex-col p-8 mt-auto bg-transparent relative z-10 pointer-events-none justify-end h-full">
+      <div className="flex flex-col p-10 mt-auto bg-transparent relative z-10 pointer-events-none justify-end h-full">
         <div className="mb-6">
           <h3 className="text-4xl text-gray-900 leading-tight tracking-tight font-bold" style={{ fontFamily: "'Noto Serif', serif" }}>
             {tresor.nom}
@@ -57,11 +57,11 @@ export function TresorCard({ tresor }: TresorCardProps) {
 
         {/* ── Localisation (Style badge) ── */}
         <div className="flex items-center gap-3 pt-6 border-t border-gray-100">
-          <div className="h-10 w-10 relative rounded-full overflow-hidden bg-[#008751]/10 flex items-center justify-center">
-             <div className="w-5 h-5 bg-[#008751] rounded-full" />
+          <div className="h-10 w-10 relative rounded-full overflow-hidden bg-[#D4AF37]/10 flex items-center justify-center">
+             <div className="w-5 h-5 bg-[#D4AF37] rounded-full" />
           </div>
           <div>
-            <p className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">
+            <p className="text-[10px] text-gray-400 uppercase font-bold tracking-widest mb-2">
               Localisation probable
             </p>
             <h4 className="text-xs font-bold text-gray-900 uppercase tracking-widest font-sans">

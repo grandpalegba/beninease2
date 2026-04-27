@@ -129,6 +129,24 @@ export default function TresorDetailPage() {
     fetchData();
   }, [id]);
 
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStart === null) return;
+    const touchEnd = e.changedTouches[0].clientX;
+    const distance = touchStart - touchEnd;
+    
+    // Swipe left or right > 50px
+    if (distance > 50 || distance < -50) {
+      router.push('/tresors');
+    }
+    setTouchStart(null);
+  };
+
   if (loading) {
     return (
       <div className="h-screen w-full flex items-center justify-center bg-[#F9F7F2]">
@@ -144,14 +162,11 @@ export default function TresorDetailPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#F9F7F2] text-[#1A1A1A] font-sans pb-24">
-      {/* Navigation Flottante */}
-      <button 
-        onClick={() => router.push('/tresors')}
-        className="fixed top-8 left-8 z-50 w-12 h-12 bg-white/90 backdrop-blur-md border border-gray-100 rounded-full flex items-center justify-center shadow-sm hover:scale-110 transition-all text-gray-900"
-      >
-        <ArrowLeft size={20} />
-      </button>
+    <div 
+      className="min-h-screen bg-[#F9F7F2] text-[#1A1A1A] font-sans pb-24"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
 
       {/* ── SECTION HAUTE : Image & Infos Clés ── */}
       <section className="max-w-[1400px] mx-auto pt-12 px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-12">
