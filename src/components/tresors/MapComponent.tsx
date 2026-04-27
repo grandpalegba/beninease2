@@ -48,17 +48,6 @@ export default function MapComponent({ startPos, endPos, origine, exil }: MapCom
 
   return (
     <div className="flex flex-col h-full w-full relative">
-      {/* SVG Pattern Definition for Benin Flag */}
-      <svg style={{ position: 'absolute', width: 0, height: 0 }}>
-        <defs>
-          <pattern id="beninFlagPattern" patternUnits="userSpaceOnUse" width="100%" height="100%">
-            <rect width="40%" height="100%" fill="#008751" /> {/* Green left */}
-            <rect x="40%" width="60%" height="50%" fill="#FAC710" /> {/* Yellow top right */}
-            <rect x="40%" y="50%" width="60%" height="50%" fill="#E8112D" /> {/* Red bottom right */}
-          </pattern>
-        </defs>
-      </svg>
-
       <MapContainer 
         center={[25, 10]} 
         zoom={2} 
@@ -75,8 +64,8 @@ export default function MapComponent({ startPos, endPos, origine, exil }: MapCom
             style={{
               color: "#008751",
               weight: 2,
-              fillOpacity: 0.9,
-              fillColor: "url(#beninFlagPattern)" as any,
+              fillOpacity: 0.8,
+              fillColor: "#008751",
             }}
           />
         )}

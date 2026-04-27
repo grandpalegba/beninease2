@@ -26,20 +26,16 @@ export function TresorCard({ tresor }: TresorCardProps) {
       className="group cursor-pointer flex w-full h-full shrink-0 flex-col rounded-3xl bg-white border border-gray-100 overflow-hidden shadow-xl transition-all duration-300 relative"
     >
       {/* ── Image avec masque dégradé (Look Ibrahim Sow / ProfileCard) ── */}
-      <div className="absolute inset-0 w-full h-[70%] overflow-hidden bg-gray-50 pointer-events-none">
+      <div className="absolute top-6 left-6 right-6 h-[60%] overflow-hidden bg-gray-50/50 rounded-2xl pointer-events-none border border-gray-50">
         {tresor.image_url ? (
           <Image
             src={tresor.image_url}
             alt={tresor.nom}
             fill
             sizes="(max-width: 640px) 85vw, 400px"
-            className="object-cover transition-transform duration-700 group-hover:scale-105"
+            className="object-contain p-4 transition-transform duration-700 group-hover:scale-110"
             draggable={false}
             priority
-            style={{ 
-              maskImage: "linear-gradient(to bottom, black 70%, transparent 100%)", 
-              WebkitMaskImage: "linear-gradient(to bottom, black 70%, transparent 100%)" 
-            }}
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center text-[#008751] font-sans text-5xl font-bold opacity-20 uppercase">

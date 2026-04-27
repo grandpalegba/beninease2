@@ -52,8 +52,9 @@ export function JetonsRadar({ conscience, confiance, connaissance, competence }:
               cy={cy}
               r={(val / 40) * maxRadius}
               fill="none"
-              stroke="#F3F4F6"
-              strokeWidth="1"
+              stroke="#D4AF37"
+              strokeWidth="0.5"
+              strokeOpacity="0.3"
             />
           ))}
           
@@ -69,8 +70,9 @@ export function JetonsRadar({ conscience, confiance, connaissance, competence }:
                 y1={cy}
                 x2={x2}
                 y2={y2}
-                stroke="#F3F4F6"
+                stroke="#D4AF37"
                 strokeWidth="1"
+                strokeOpacity="0.3"
               />
             );
           })}
@@ -78,10 +80,10 @@ export function JetonsRadar({ conscience, confiance, connaissance, competence }:
           {/* Polygone Dynamique Animé */}
           <motion.path
             d={drawPath}
-            fill="#94A3B8"
-            fillOpacity={0.1}
-            stroke="#94A3B8"
-            strokeWidth={1.5}
+            fill="#FAC710"
+            fillOpacity={0.3}
+            stroke="#D4AF37"
+            strokeWidth={2}
             strokeLinejoin="round"
             initial={false}
             animate={{ d: drawPath }}
