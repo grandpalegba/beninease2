@@ -245,51 +245,34 @@ export default function TresorDetailPage() {
               </p>
             </div>
 
-            <div>
-              <h2 className="font-sans font-black text-2xl mb-4 text-gray-900">Analyse symbolique</h2>
-              <p className="leading-relaxed text-base text-gray-600 font-medium">
-                {tresor.analyse_symbolique}
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── SECTION MÉDIANE : Récit & Évaluation ── */}
-      <section className="max-w-[1400px] mx-auto mt-12 px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-12">
-        
-        {/* Colonne Narrative (7 cols) — Matériaux + Citation */}
-        <div className="lg:col-span-7 bg-white rounded-[3rem] p-10 md:p-16 border border-gray-100 shadow-sm space-y-16">
-          {tresor.citation && (
-            <div className="relative pl-12 py-4">
-              <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#E8112D] rounded-full" />
-              <p className="font-sans text-xl italic font-bold text-gray-800 leading-snug mb-6">
-                « {tresor.citation.texte} »
-              </p>
-              <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
-                {tresor.citation.auteur} · {tresor.citation.role} {tresor.citation.annee && `(${tresor.citation.annee})`}
+            {tresor.citation && (
+              <div className="relative pl-8 py-2 mt-4">
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#E8112D] rounded-full" />
+                <p className="font-sans text-xl italic font-bold text-gray-800 leading-snug mb-4">
+                  « {tresor.citation.texte} »
+                </p>
+                <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                  {tresor.citation.auteur} · {tresor.citation.role} {tresor.citation.annee && `(${tresor.citation.annee})`}
+                </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
 
-        {/* Colonne Évaluation (5 cols) */}
-        <div className="lg:col-span-5">
-          <div className="bg-white rounded-[2.5rem] p-10 md:p-14 border border-gray-100 shadow-sm sticky top-8">
-             <div className="mb-12">
-                <h3 className="text-3xl font-sans font-black text-gray-900">Évaluation du trésor</h3>
-             </div>
-             <PrestigeBars 
+            <div className="pt-8 mt-4 border-t border-gray-100">
+              <h3 className="text-2xl font-sans font-black text-gray-900 mb-8">Évaluation du trésor</h3>
+              <PrestigeBars 
                 rarete={tresor.metrics.rarete}
                 conservation={tresor.metrics.conservation}
                 restitution={tresor.metrics.restitution}
-             />
-             <p className="mt-12 text-[11px] italic text-gray-400 leading-relaxed">
+              />
+              <p className="mt-8 text-[11px] italic text-gray-400 leading-relaxed">
                 Indices estimés à partir de l'historiographie et des dossiers diplomatiques disponibles.
-             </p>
+              </p>
+            </div>
           </div>
         </div>
       </section>
+
+
 
     </div>
   );
