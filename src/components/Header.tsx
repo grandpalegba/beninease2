@@ -67,8 +67,9 @@ const Header = () => {
         <Link href="/" className="flex items-center gap-2">
           <Image src="/logo.png" alt="logo" width={28} height={28} />
           <span className="text-lg font-black tracking-[2px] uppercase">
-            <span className="text-white">Benin</span>
-            <span className="text-[#FCD116]">Ease</span>
+            <span className="text-white">BLACK</span>
+            <span className="text-[#FCD116] mx-1.5">TO</span>
+            <span className="text-white">BENIN</span>
           </span>
         </Link>
 

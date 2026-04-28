@@ -160,7 +160,7 @@ export default function TreasurePage({ params }: { params: { id: string } }) {
             </div>
           </div>
           
-          {/* Titre en Serif Noir */}
+          {/* Titre Noir */}
           <h1 className="text-black text-5xl font-sans font-bold mb-2 text-center">
             {mystere.title}
           </h1>

@@ -15,9 +15,7 @@ interface MapComponentProps {
 function ChangeView({ bounds }: { bounds: L.LatLngBounds }) {
   const map = useMap();
   useEffect(() => {
-    map.fitBounds(bounds, { padding: [50, 50] });
-    const t = setTimeout(() => map.zoomIn(1), 100);
-    return () => clearTimeout(t);
+    map.fitBounds(bounds, { padding: [100, 100] });
   }, [map, bounds]);
   return null;
 }
@@ -126,7 +124,7 @@ export default function MapComponent({ startPos, endPos, origine, exil }: MapCom
 
   return (
     <div className="flex flex-col h-full w-full relative">
-      <MapContainer bounds={bounds} boundsOptions={{ padding: [50, 50] }} scrollWheelZoom={false} zoomControl={false} className="h-full w-full bg-[#F8F9FA]" attributionControl={false}>
+      <MapContainer bounds={bounds} boundsOptions={{ padding: [100, 100] }} scrollWheelZoom={false} zoomControl={false} className="h-full w-full bg-[#F8F9FA]" attributionControl={false}>
         <ChangeView bounds={bounds} />
         <TileLayer url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png" />
         <BeninFlagCanvas geoJSON={beninGeoJSON} />

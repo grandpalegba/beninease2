@@ -9,10 +9,10 @@ interface PullQuoteProps {
 export function PullQuote({ texte, auteur, role }: PullQuoteProps) {
   return (
     <div className="relative py-12 px-8 border-l-4 border-[#8B4513] bg-[#F9F7F2]/50 my-12">
-      <span className="absolute top-0 left-4 text-6xl text-[#8B4513]/10 font-serif leading-none select-none">
+      <span className="absolute top-0 left-4 text-6xl text-[#8B4513]/10 font-sans leading-none select-none">
         “
       </span>
-      <p className="font-serif text-2xl md:text-3xl italic text-gray-800 leading-snug mb-6">
+      <p className="font-sans text-2xl md:text-3xl italic text-gray-800 leading-snug mb-6">
         {texte}
       </p>
       <div className="flex flex-col">
