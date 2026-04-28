@@ -77,7 +77,7 @@ export function ProfileCard({ profil, serie }: ProfileCardProps) {
 
         <div className="flex items-center justify-between rounded-2xl bg-gray-50 border border-gray-100 px-5 py-4 mb-4">
           <span className="text-[10px] uppercase tracking-widest text-gray-400 font-bold">
-            Cours
+            Valeurs en Noix Bénies
           </span>
           <span className="flex items-center gap-1.5 font-black text-xl tabular-nums text-gray-900">
             <Sparkles className="h-5 w-5 text-amber-500" />
