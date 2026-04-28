@@ -123,7 +123,7 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
   if (casesLoading && phase === "case") return <LoadingScreen />;
 
   return (
-    <div className="w-full min-h-screen bg-white">
+    <div className="w-full h-full bg-white flex flex-col">
       <AnimatePresence mode="wait">
 
         {/* PHASE 1 : SÉLECTION (Le Bumble) */}
@@ -133,7 +133,7 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="h-screen w-full"
+            className="w-full h-full"
           >
             <SwipeableCaseDeck
               cases={cases}

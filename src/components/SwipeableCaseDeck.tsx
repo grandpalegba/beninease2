@@ -48,7 +48,7 @@ const SwipeableCaseDeck: React.FC<SwipeableCaseDeckProps> = ({ cases, initialCas
   if (!currentCase) return null;
 
   return (
-    <main className="w-full min-h-screen bg-white flex flex-col items-center justify-start pt-2 md:pt-4 px-4 overflow-hidden">
+    <div className="w-full h-full flex flex-col items-center justify-center p-4 overflow-hidden">
       {/* ZONE DE LA CARTE */}
       <div className="relative w-full max-w-lg h-full max-h-[82vh] z-10 flex items-center justify-center">
         <AnimatePresence mode="wait">
@@ -67,26 +67,8 @@ const SwipeableCaseDeck: React.FC<SwipeableCaseDeckProps> = ({ cases, initialCas
             />
           </motion.div>
         </AnimatePresence>
-
-        {/* NAVIGATION DESKTOP : Flèches latérales style Talents */}
-        <div className="hidden md:flex absolute top-1/2 -left-24 -right-24 -translate-y-1/2 justify-between pointer-events-none">
-          <button
-            onClick={() => currentIndex > 0 && setCurrentIndex(v => v - 1)}
-            className="p-5 rounded-full bg-white text-neutral-300 hover:text-black hover:shadow-xl transition-all pointer-events-auto border border-neutral-100 disabled:opacity-0"
-            disabled={currentIndex === 0}
-          >
-            <ArrowLeft size={24} strokeWidth={1.5} />
-          </button>
-          <button
-            onClick={() => currentIndex < cases.length - 1 && setCurrentIndex(v => v + 1)}
-            className="p-5 rounded-full bg-white text-neutral-300 hover:text-black hover:shadow-xl transition-all pointer-events-auto border border-neutral-100 disabled:opacity-0"
-            disabled={currentIndex === cases.length - 1}
-          >
-            <ArrowRight size={24} strokeWidth={1.5} />
-          </button>
-        </div>
       </div>
-    </main>
+    </div>
   );
 };
 
