@@ -68,72 +68,40 @@ export const AfrakaDoors = () => {
     <section className="bg-white py-24 px-6 md:px-12 overflow-hidden">
       <div className="max-w-[1400px] mx-auto">
         
-        {/* Header de section */}
-        <div className="text-center mb-20">
-          <h2 className="font-display text-4xl md:text-6xl font-black text-black mb-6 tracking-tighter">
-            Les Portes d'ÂFRAKA
-          </h2>
-          <p className="max-w-2xl mx-auto text-zinc-500 text-sm md:text-base uppercase tracking-[0.3em] font-medium leading-relaxed">
-            Huit fragments. Une vérité. <br />
-            Reconstituez l'unité primordiale de l'excellence noire.
-          </p>
-        </div>
-
-        {/* Bento Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 auto-rows-fr">
+        {/* Bento Grid - 4 columns for desktop */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 auto-rows-fr">
           
-          {/* Fragment 1 */}
-          <DoorCard {...FRAGMENTS[0]} />
+          {/* Row 1 */}
+          <DoorCard {...FRAGMENTS[0]} className="h-[250px] md:h-[300px]" />
+          <DoorCard {...FRAGMENTS[1]} className="h-[250px] md:h-[300px]" />
+          <DoorCard {...FRAGMENTS[2]} className="h-[250px] md:h-[300px]" />
+          <DoorCard {...FRAGMENTS[3]} className="h-[250px] md:h-[300px]" />
 
-          {/* Fragment 2 */}
-          <DoorCard {...FRAGMENTS[1]} />
-
-          {/* Fragment 3 */}
-          <DoorCard {...FRAGMENTS[2]} />
-
-          {/* Fragment 4 */}
-          <DoorCard {...FRAGMENTS[3]} />
-
-          {/* BLOC CENTRAL LOGO (Fixe) */}
-          <div className="md:col-span-2 md:row-span-2 bg-[#1a1a1a] rounded-[2.5rem] flex flex-col items-center justify-center p-12 shadow-2xl relative overflow-hidden group">
+          {/* Row 2 & 3 */}
+          <DoorCard {...FRAGMENTS[4]} className="h-[250px] md:h-[300px]" />
+          
+          {/* BLOC CENTRAL LOGO (2x2) */}
+          <div className="md:col-span-2 md:row-span-2 bg-[#1a1a1a] rounded-[2.5rem] flex flex-col items-center justify-center p-8 shadow-2xl relative overflow-hidden group min-h-[300px] md:min-h-[624px]">
              <div className="absolute inset-0 opacity-10 bg-[url('/logo.png')] bg-center bg-repeat bg-[length:40px_40px]" />
              <Image 
                 src="/logo.png" 
                 alt="Black To Benin Logo" 
-                width={80} 
-                height={80} 
+                width={120} 
+                height={120} 
                 className="mb-8 relative z-10 transition-transform duration-700 group-hover:scale-110" 
              />
-             <h3 className="text-2xl md:text-3xl font-black text-white tracking-[0.2em] uppercase text-center relative z-10">
+             <h3 className="text-3xl md:text-5xl font-black text-white tracking-[0.2em] uppercase text-center relative z-10 leading-tight">
                 Black To <br />
                 <span className="text-[#FCD116]">Benin</span>
              </h3>
-             <div className="mt-8 w-12 h-[1px] bg-white/20 relative z-10" />
-             <p className="mt-8 text-[10px] font-black text-white/40 uppercase tracking-[0.4em] text-center relative z-10">
-                Gardien de l'œuf
-             </p>
           </div>
 
-          {/* Fragment 5 */}
-          <DoorCard {...FRAGMENTS[4]} />
-
-          {/* Fragment 6 */}
-          <DoorCard {...FRAGMENTS[5]} />
-
-          {/* Fragment 7 */}
-          <DoorCard {...FRAGMENTS[6]} />
-
-          {/* Fragment 8 */}
-          <DoorCard {...FRAGMENTS[7]} />
+          <DoorCard {...FRAGMENTS[5]} className="h-[250px] md:h-[300px]" />
+          <DoorCard {...FRAGMENTS[6]} className="h-[250px] md:h-[300px]" />
+          <DoorCard {...FRAGMENTS[7]} className="h-[250px] md:h-[300px]" />
 
         </div>
 
-        {/* Footer de section */}
-        <div className="mt-24 text-center">
-          <p className="text-zinc-400 text-[10px] font-black uppercase tracking-[0.5em] animate-pulse">
-            Cliquez sur une porte pour explorer le Ka
-          </p>
-        </div>
       </div>
     </section>
   );
