@@ -42,6 +42,7 @@ export interface TresorDetail {
     nom?: string;
     role?: string;
     annee?: string;
+    contexte?: string;
   };
 }
 
@@ -107,7 +108,8 @@ export default function TresorDetailPage() {
             prenom: data.auteur_prenom,
             nom: data.auteur_nom,
             role: data.auteur_fonction || "Historien",
-            annee: data.source_annee
+            annee: data.source_annee,
+            contexte: data.auteur_contexte
           } : undefined
         };
 
@@ -142,11 +144,11 @@ export default function TresorDetailPage() {
     const touchEndX = e.changedTouches[0].clientX;
     const touchEndY = e.changedTouches[0].clientY;
     
-    const distanceX = touchStart.x - touchEndX;
-    const distanceY = Math.abs(touchStart.y - touchEndY);
+    const distanceX = touchEndX - touchStart.x;
+    const distanceY = Math.abs(touchEndY - touchStart.y);
     
-    // Swipe left or right > 50px AND horizontal swipe is dominant
-    if (Math.abs(distanceX) > 50 && Math.abs(distanceX) > distanceY * 2) {
+    // Swipe right (vers la droite) > 70px AND horizontal swipe is dominant
+    if (distanceX > 70 && distanceX > distanceY * 1.5) {
       router.push('/tresors');
     }
     setTouchStart(null);
@@ -206,7 +208,7 @@ export default function TresorDetailPage() {
           {/* Radar des Jetons (Sous l'image) */}
           <div className="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-sm flex-1 flex flex-col">
              <div className="mb-10 text-center">
-                <p className="text-[9px] font-black uppercase tracking-[0.4em] text-gray-400 mb-2">LES QUATRE JETONS</p>
+                <p className="text-[9px] font-black uppercase tracking-[0.4em] text-gray-400 mb-2">NOMBRE DE JETONS POUR APPELER LE TRÉSOR</p>
              </div>
              <JetonsRadar 
                 conscience={tresor.jetons.conscience}
@@ -286,6 +288,7 @@ export default function TresorDetailPage() {
               <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex flex-wrap gap-x-2">
                 <span>{tresor.citation.prenom} {tresor.citation.nom}</span>
                 {tresor.citation.role && <span>· {tresor.citation.role}</span>}
+                {tresor.citation.contexte && <span>· {tresor.citation.contexte}</span>}
                 {tresor.citation.annee && <span>({tresor.citation.annee})</span>}
               </div>
             </div>
