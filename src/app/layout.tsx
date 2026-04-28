@@ -8,8 +8,8 @@ import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "BLACK TO BENIN - Les Trésors du Bénin",
-  description: "Découvrez les ambassadeurs et les mystères du patrimoine béninois.",
-  keywords: ["Bénin", "Ambassadeurs", "Culture", "Patrimoine", "Excellence"],
+  description: "Découvrez les talents et les mystères du patrimoine béninois.",
+  keywords: ["Bénin", "Talents", "Culture", "Patrimoine", "Excellence"],
   icons: {
     icon: '/favicon.png',
     shortcut: '/favicon.png',
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "BLACK TO BENIN - L'Excellence Béninoise",
-    description: "Découvrez les ambassadeurs et les mystères du patrimoine béninois.",
+    description: "Découvrez les talents et les mystères du patrimoine béninois.",
     url: "https://beninease.space",
     type: "website",
     locale: "fr_BJ",

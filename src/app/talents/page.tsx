@@ -166,8 +166,8 @@ const TalentsContent = () => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: "BeninEase - Ambassadeurs du Bénin",
-          text: "Découvrez les Trésors, les Bâtisseurs et les Ambassadeurs du patrimoine du Bénin.",
+          title: "BLACK TO BENIN - Talents du Bénin",
+          text: "Découvrez les Trésors, les Bâtisseurs et les Talents du patrimoine du Bénin.",
           url: shareUrl,
         });
       } catch (err) {
@@ -393,7 +393,7 @@ const VideoModal = ({ url, onClose }: { url: string, onClose: () => void }) => {
   );
 };
 
-const AmbassadeursPage = () => {
+const TalentsPage = () => {
   return (
     <Suspense fallback={<div className="h-screen w-full flex items-center justify-center bg-white"><Loader2 className="w-8 h-8 animate-spin text-zinc-900" /></div>}>
       <TalentsContent />
@@ -401,4 +401,4 @@ const AmbassadeursPage = () => {
   );
 };
 
-export default AmbassadeursPage;
+export default TalentsPage;
