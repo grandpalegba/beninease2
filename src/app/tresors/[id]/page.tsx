@@ -181,7 +181,11 @@ export default function TresorDetailPage() {
         {/* Colonne Gauche : Image + Jetons (5 cols) */}
         <div className="lg:col-span-5 flex flex-col gap-8 h-full">
           {/* Carte Image + Titre */}
-          <div className="bg-[#000000] rounded-[3rem] overflow-hidden shadow-sm flex flex-col">
+          <div 
+            className="bg-[#000000] rounded-[3rem] overflow-hidden shadow-sm flex flex-col"
+            onTouchStart={(e) => e.stopPropagation()}
+            onTouchEnd={(e) => e.stopPropagation()}
+          >
             <div className="relative w-full h-[450px] p-10 flex flex-shrink-0 items-center justify-center">
               <div className="relative w-full h-full rounded-3xl overflow-hidden">
                 <Image 
