@@ -63,8 +63,11 @@ const Header = () => {
       {/* DOCK (Bottom) */}
       <footer className="fixed bottom-0 left-0 right-0 z-[100] h-20 bg-black/95 backdrop-blur-xl border-t border-white/5 flex items-center justify-between px-8 rounded-t-[2.5rem] shadow-[0_-10px_40px_rgba(0,0,0,0.2)] font-sans">
         
-        {/* Logo à gauche */}
-        <Link href="/" className="flex items-center gap-2">
+        {/* Placeholder à gauche pour équilibrer le flex */}
+        <div className="flex-1 lg:flex-none lg:w-32" />
+
+        {/* Logo CENTRÉ */}
+        <Link href="/" className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2">
           <Image src="/logo.png" alt="logo" width={28} height={28} />
           <span className="text-lg font-black tracking-[2px] uppercase">
             <span className="text-white">BLACK</span>
@@ -74,11 +77,7 @@ const Header = () => {
         </Link>
 
         {/* Actions à droite */}
-        <div className="flex items-center gap-6">
-          <button className="text-white/50 hover:text-white transition-colors">
-            <Search size={22} />
-          </button>
-
+        <div className="flex-1 lg:flex-none lg:w-32 flex justify-end items-center gap-6">
           {user ? (
             <div className="relative user-menu-container">
               <button onClick={() => setShowDropdown(!showDropdown)} className="flex items-center gap-2 group">
