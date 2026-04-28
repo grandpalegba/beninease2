@@ -129,19 +129,22 @@ export default function TresorDetailPage() {
     fetchData();
   }, [id]);
 
-  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchStart, setTouchStart] = useState<{ x: number, y: number } | null>(null);
 
   const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchStart(e.targetTouches[0].clientX);
+    setTouchStart({ x: e.targetTouches[0].clientX, y: e.targetTouches[0].clientY });
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStart === null) return;
-    const touchEnd = e.changedTouches[0].clientX;
-    const distance = touchStart - touchEnd;
+    if (!touchStart) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
     
-    // Swipe left or right > 50px
-    if (distance > 50 || distance < -50) {
+    const distanceX = touchStart.x - touchEndX;
+    const distanceY = Math.abs(touchStart.y - touchEndY);
+    
+    // Swipe left or right > 50px AND horizontal swipe is dominant
+    if (Math.abs(distanceX) > 50 && Math.abs(distanceX) > distanceY * 2) {
       router.push('/tresors');
     }
     setTouchStart(null);
