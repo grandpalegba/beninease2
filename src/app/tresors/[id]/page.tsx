@@ -38,8 +38,9 @@ export interface TresorDetail {
   };
   citation?: {
     texte: string;
-    auteur: string;
-    role: string;
+    prenom?: string;
+    nom?: string;
+    role?: string;
     annee?: string;
   };
 }
@@ -103,7 +104,8 @@ export default function TresorDetailPage() {
           },
           citation: data.citation_texte ? {
             texte: data.citation_texte,
-            auteur: data.auteur_contexte || "Source anonyme",
+            prenom: data.auteur_prenom,
+            nom: data.auteur_nom,
             role: data.auteur_fonction || "Historien",
             annee: data.source_annee
           } : undefined
@@ -250,6 +252,13 @@ export default function TresorDetailPage() {
               </p>
             </div>
 
+            <div>
+              <h2 className="font-display font-black text-2xl mb-4 text-gray-900 uppercase tracking-tight">Analyse symbolique</h2>
+              <p className="leading-relaxed text-base text-gray-600 font-medium">
+                {tresor.analyse_symbolique}
+              </p>
+            </div>
+
             <div className="pt-8 mt-4 border-t border-gray-100">
               <h3 className="text-2xl font-display font-black text-gray-900 mb-8 uppercase tracking-tight">Évaluation du trésor</h3>
               <PrestigeBars 
@@ -274,8 +283,10 @@ export default function TresorDetailPage() {
               <p className="font-sans text-2xl italic font-bold text-gray-800 leading-snug mb-6">
                 « {tresor.citation.texte} »
               </p>
-              <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
-                {tresor.citation.auteur} · {tresor.citation.role} {tresor.citation.annee && `(${tresor.citation.annee})`}
+              <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex flex-wrap gap-x-2">
+                <span>{tresor.citation.prenom} {tresor.citation.nom}</span>
+                {tresor.citation.role && <span>· {tresor.citation.role}</span>}
+                {tresor.citation.annee && <span>({tresor.citation.annee})</span>}
               </div>
             </div>
           </div>
