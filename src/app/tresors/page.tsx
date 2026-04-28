@@ -74,7 +74,7 @@ export default function TresorsPage() {
   }
 
   return (
-    <div className="h-screen w-full bg-white flex flex-col overflow-hidden pt-12">
+    <div className="h-screen w-full bg-white flex flex-col overflow-hidden">
       {/* BACKGROUND DECOR */}
       <div className="fixed inset-0 pattern-bg -z-10 opacity-[0.03]"></div>
 

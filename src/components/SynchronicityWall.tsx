@@ -11,15 +11,15 @@ import BeninFrame from "./BeninFrame";
 
 /**
  * SynchronicityWall - A living gallery of profiles.
- * Displays profiles in a 10x10 grid.
+ * Displays profiles in an 8x8 grid.
  */
 const SynchronicityWall = () => {
   const { data: profiles = [], isLoading } = useProfiles();
   const [selected, setSelected] = useState<any | null>(null);
   const [revealed, setRevealed] = useState<Set<string>>(new Set());
   
-  // Le chef d'orchestre du mouvement - 100 tiles (10x10)
-  const order = useLivingOrder(100, 6, 2200);
+  // Le chef d'orchestre du mouvement - 64 tiles (8x8)
+  const order = useLivingOrder(64, 6, 2200);
 
   const handleSelect = (data: any) => {
     setSelected(data);
@@ -42,9 +42,9 @@ const SynchronicityWall = () => {
       >
         <div className="w-full flex justify-center mb-12">
           <BeninFrame
-            className="w-[90vw] max-w-[550px] aspect-square"
-            inset={8}
-            thickness={2}
+            className="w-[95vw] max-w-[650px] aspect-square shadow-2xl"
+            inset={0}
+            thickness={4}
           >
             <motion.div
               variants={{
@@ -58,8 +58,8 @@ const SynchronicityWall = () => {
               }}
               initial="hidden"
               animate="visible"
-              className="grid w-full h-full bg-background gap-0"
-              style={{ gridTemplateColumns: "repeat(10, 1fr)" }}
+              className="grid w-full h-full bg-black gap-0"
+              style={{ gridTemplateColumns: "repeat(8, 1fr)" }}
             >
               {order.map((originalIndex) => {
                 // Modulo ensures 64 profiles are repeated 4 times to fill 256 slots

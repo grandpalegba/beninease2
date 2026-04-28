@@ -35,7 +35,7 @@ export default function HistoiresPage() {
   }
 
   return (
-    <div className="h-screen w-full bg-white flex flex-col overflow-hidden pt-12">
+    <div className="h-screen w-full bg-white flex flex-col overflow-hidden">
 
       {/* --- CARROUSEL FAÇON TINDER/BUMBLE --- */}
       <div className="flex-1 overflow-hidden">
@@ -49,7 +49,7 @@ export default function HistoiresPage() {
       </div>
       
       {/* INDICATION DE SWIPE */}
-      <div className="pb-12 text-center">
+      <div className="pb-6 text-center">
         <p className="text-[10px] uppercase tracking-[0.3em] text-gray-300 animate-pulse">
           Swipe latéral pour découvrir
         </p>

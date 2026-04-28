@@ -244,8 +244,8 @@ const TalentsContent = () => {
 
 
       {/* Duel Cards Section */}
-      <div className="relative w-full flex-1 min-h-0 overflow-hidden px-2 md:px-4 max-w-5xl mx-auto my-6">
-        <div className={`grid grid-cols-2 gap-3 md:gap-8 h-full transition-all duration-300 ${swipeDir === "left" ? "-translate-x-full opacity-0" : swipeDir === "right" ? "translate-x-full opacity-0" : "translate-x-0 opacity-100"}`}>
+      <div className="relative w-full flex-1 min-h-0 overflow-hidden px-4 md:px-8 max-w-4xl mx-auto my-4 flex items-center justify-center">
+        <div className={`grid grid-cols-2 gap-4 md:gap-8 w-full max-h-[70vh] aspect-[14/10] transition-all duration-300 ${swipeDir === "left" ? "-translate-x-full opacity-0" : swipeDir === "right" ? "translate-x-full opacity-0" : "translate-x-0 opacity-100"}`}>
           <CandidateCard talent={pair.talent1} percent={100 - sliderValue} dotColor="#22C55E" onPlay={(url) => setActiveVideo(url)} />
           <CandidateCard talent={pair.talent2} percent={sliderValue} dotColor="#ffd31a" onPlay={(url) => setActiveVideo(url)} />
         </div>

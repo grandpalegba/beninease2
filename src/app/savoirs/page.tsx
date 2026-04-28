@@ -59,9 +59,9 @@ const OkpeleRitual = ({ activeSeeds }: { activeSeeds: number }) => (
 );
 
 const SatoJar = ({ holesCount, isOver }: { holesCount: number[], isOver: boolean }) => (
-  <div className={`relative w-40 h-56 md:w-72 md:h-96 shrink-0 transition-transform duration-500 ${isOver ? 'scale-105' : 'scale-100'}`}>
+  <div className={`relative w-32 h-44 md:w-56 md:h-72 shrink-0 transition-transform duration-500 ${isOver ? 'scale-105' : 'scale-100'}`}>
     <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-3/4 h-5 bg-black/5 blur-xl rounded-[50%] z-0" />
-    <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-28 md:w-52 h-10 z-20">
+    <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-20 md:w-40 h-8 z-20">
       <div className="absolute inset-0 bg-[#3d1810] rounded-[50%] border-b-4 border-[#5d251a] shadow-lg"></div>
       <div className="absolute top-1 left-1/2 -translate-x-1/2 w-[85%] h-[70%] bg-[#1a0a07] rounded-[50%] shadow-inner"></div>
     </div>

@@ -49,7 +49,7 @@ export default function CardDeck({ items, renderItem, className }: CardDeckProps
   if (items.length === 0) return null;
 
   return (
-    <div className={cn("h-[calc(100vh-64px)] w-full relative bg-[#F4F4F2] overflow-hidden flex items-center justify-center p-6 md:p-10", className)}>
+    <div className={cn("h-full w-full relative bg-white overflow-hidden flex items-center justify-center p-4 md:p-10", className)}>
       <AnimatePresence initial={false} custom={direction} mode="popLayout">
         <motion.div
           key={currentIndex}
@@ -73,7 +73,7 @@ export default function CardDeck({ items, renderItem, className }: CardDeckProps
               paginate(-1);
             }
           }}
-          className="w-full max-w-lg h-full max-h-[82vh] flex items-center justify-center cursor-grab active:cursor-grabbing z-10"
+          className="w-full max-w-lg h-full max-h-[78vh] flex items-center justify-center cursor-grab active:cursor-grabbing z-10"
           style={{ 
             willChange: "transform, opacity",
             backfaceVisibility: "hidden",
