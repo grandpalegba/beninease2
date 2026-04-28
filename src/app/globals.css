@@ -4,7 +4,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
   :root {
     --background: 60 6% 97%;
     --foreground: 0 0% 10%;
@@ -12,15 +11,35 @@
     --secondary: 167 100% 15%;
     --radius: 0.75rem;
     
-    --benin-green:  145 55% 38%;   /* ≈ #2C9A5A */
-    --benin-yellow: 45 95% 52%;    /* ≈ #FAC710 */
-    --benin-red:    358 75% 52%;   /* ≈ #E0312D */
-    --border:       40 15% 88%;    /* ≈ #E5E0D6 */
-    --muted:        40 20% 96%;    /* ≈ #F6F3EC */
+    --benin-green:  oklch(0.55 0.18 145);
+    --benin-green-deep: oklch(0.42 0.16 145);
+    --benin-yellow: oklch(0.82 0.17 95);
+    --benin-yellow-deep: oklch(0.72 0.18 90);
+    --benin-red:    oklch(0.58 0.22 28);
+    --benin-red-deep: oklch(0.46 0.20 28);
+    --border:       40 15% 88%;
+    --muted:        40 20% 96%;
   }
 }
 
 @layer utilities {
+  @keyframes float-slow {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-12px); }
+  }
+  .animate-float { animation: float-slow 6s ease-in-out infinite; }
+
+  @keyframes shimmer-gold {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.05); }
+  }
+  .animate-shimmer { animation: shimmer-gold 4s ease-in-out infinite; }
+
+  @keyframes ember-pulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.8; }
+  }
+  .animate-ember { animation: ember-pulse 5s ease-in-out infinite; }
   .font-display {
     font-family: 'Space Grotesk', sans-serif;
   }
