@@ -63,25 +63,75 @@ const FRAGMENTS = [
   }
 ];
 
+import useEmblaCarousel from "embla-carousel-react";
+
 export const AfrakaDoors = () => {
+  const [emblaRef] = useEmblaCarousel({ 
+    align: "center", 
+    loop: false,
+    skipSnaps: false
+  });
+
   return (
-    <section className="bg-white py-24 px-6 md:px-12 overflow-hidden">
+    <section className="bg-white py-12 md:py-24 px-6 md:px-12 overflow-hidden">
       <div className="max-w-[1400px] mx-auto">
         
-        {/* Bento Grid - 4 columns for desktop */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 auto-rows-fr">
+        {/* VIEW MOBILE : DIAPORAMA (Carousel) */}
+        <div className="md:hidden">
+          <div className="overflow-hidden" ref={emblaRef}>
+            <div className="flex gap-4">
+              
+              {/* Image Centrale en Premier sur Mobile */}
+              <div className="flex-[0_0_85%] min-w-0 relative">
+                <div className="bg-white rounded-[2.5rem] flex items-center justify-center shadow-xl border border-zinc-100 h-[450px] relative overflow-hidden">
+                  <Image 
+                    src="/afraka_logo.png" 
+                    alt="ÂFRAKA Logo" 
+                    fill
+                    className="object-contain p-6" 
+                  />
+                </div>
+              </div>
+
+              {/* Les 8 Portes */}
+              {FRAGMENTS.map((fragment) => (
+                <div key={fragment.id} className="flex-[0_0_85%] min-w-0">
+                  <DoorCard 
+                    {...fragment} 
+                    className="h-[450px]" 
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* Indicateur de swipe mobile */}
+          <div className="mt-8 flex justify-center">
+             <div className="flex gap-1.5 items-center">
+                <div className="w-8 h-1 bg-[#FCD116] rounded-full" />
+                <div className="w-1.5 h-1.5 bg-zinc-200 rounded-full" />
+                <div className="w-1.5 h-1.5 bg-zinc-200 rounded-full" />
+                <span className="ml-3 text-[10px] font-black uppercase tracking-widest text-zinc-400">
+                   Faire défiler
+                </span>
+             </div>
+          </div>
+        </div>
+
+        {/* VIEW DESKTOP : BENTO GRID */}
+        <div className="hidden md:grid md:grid-cols-4 gap-6 auto-rows-fr">
           
           {/* Row 1 */}
-          <DoorCard {...FRAGMENTS[0]} className="h-[250px] md:h-[300px]" />
-          <DoorCard {...FRAGMENTS[1]} className="h-[250px] md:h-[300px]" />
-          <DoorCard {...FRAGMENTS[2]} className="h-[250px] md:h-[300px]" />
-          <DoorCard {...FRAGMENTS[3]} className="h-[250px] md:h-[300px]" />
+          <DoorCard {...FRAGMENTS[0]} className="h-[300px]" />
+          <DoorCard {...FRAGMENTS[1]} className="h-[300px]" />
+          <DoorCard {...FRAGMENTS[2]} className="h-[300px]" />
+          <DoorCard {...FRAGMENTS[3]} className="h-[300px]" />
 
           {/* Row 2 & 3 */}
-          <DoorCard {...FRAGMENTS[4]} className="h-[250px] md:h-[300px]" />
+          <DoorCard {...FRAGMENTS[4]} className="h-[300px]" />
           
           {/* BLOC CENTRAL LOGO (2x2) */}
-          <div className="md:col-span-2 md:row-span-2 bg-white rounded-[2.5rem] flex items-center justify-center p-0 shadow-xl border border-zinc-100 relative overflow-hidden group min-h-[300px] md:min-h-[624px]">
+          <div className="md:col-span-2 md:row-span-2 bg-white rounded-[2.5rem] flex items-center justify-center p-0 shadow-xl border border-zinc-100 relative overflow-hidden group min-h-[624px]">
              <div className="relative z-10 w-full h-full">
                <Image 
                   src="/afraka_logo.png" 
@@ -92,9 +142,9 @@ export const AfrakaDoors = () => {
              </div>
           </div>
 
-          <DoorCard {...FRAGMENTS[5]} className="h-[250px] md:h-[300px]" />
-          <DoorCard {...FRAGMENTS[6]} className="h-[250px] md:h-[300px]" />
-          <DoorCard {...FRAGMENTS[7]} className="h-[250px] md:h-[300px]" />
+          <DoorCard {...FRAGMENTS[5]} className="h-[300px]" />
+          <DoorCard {...FRAGMENTS[6]} className="h-[300px]" />
+          <DoorCard {...FRAGMENTS[7]} className="h-[300px]" />
 
         </div>
 

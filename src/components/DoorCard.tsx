@@ -57,7 +57,7 @@ export const DoorCard = ({ id, title, fragment, image, className }: DoorCardProp
           <span className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.3em] mb-4">
             {title}
           </span>
-          <p className="text-sm md:text-base text-zinc-600 font-serif italic leading-relaxed">
+          <p className="text-sm md:text-base text-zinc-600 font-sans leading-loose tracking-wide">
             "{fragment}"
           </p>
           <div className="absolute top-4 right-4 opacity-10">
