@@ -39,7 +39,7 @@ export const DoorCard = ({ id, title, fragment, image, className }: DoorCardProp
               src={`/${image}`}
               alt={title}
               fill
-              className="object-cover transition-all duration-700 grayscale group-hover:grayscale-0 group-hover:scale-110"
+              className="object-cover transition-all duration-700 group-hover:scale-110"
             />
             {/* Overlay indicatif */}
             <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors duration-500" />
