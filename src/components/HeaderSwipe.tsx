@@ -4,13 +4,14 @@ import React, { useEffect, useCallback } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { CategoryPattern } from "@/components/talents/CategoryPattern";
 
 const PAGES = [
-  { name: "Sagesses", href: "/sagesses" },
-  { name: "Savoirs", href: "/savoirs" },
-  { name: "Histoires", href: "/histoires" },
-  { name: "Ambassadeurs", href: "/ambassadeurs" },
-  { name: "Trésors", href: "/tresors" },
+  { name: "Trésors", href: "/tresors", id: "vision" },
+  { name: "Histoires", href: "/histoires", id: "mythes-legendes" },
+  { name: "Savoirs", href: "/savoirs", id: "sagesse" },
+  { name: "Sagesses", href: "/sagesses", id: "parole-aines" },
+  { name: "Talents", href: "/talents", id: "beninois-monde" },
 ];
 
 export const HeaderSwipe = () => {
@@ -68,17 +69,24 @@ export const HeaderSwipe = () => {
           {PAGES.map((page, i) => (
             <div 
               key={i} 
-              className="flex-[0_0_auto] px-8 cursor-pointer"
+              className="flex-[0_0_auto] px-3 cursor-pointer"
               onClick={() => handleTitleClick(i, page.href)}
             >
-              <span className={cn(
-                "text-lg uppercase tracking-[0.2em] transition-all duration-700 block whitespace-nowrap",
+              <div className={cn(
+                "flex items-center gap-3 px-5 py-2 rounded-full transition-all duration-700",
                 pathname === page.href 
-                  ? "text-black font-black scale-110 opacity-100" 
-                  : "text-gray-300 font-medium scale-90 opacity-60 blur-[0.2px]"
+                  ? "bg-white text-[#1a1c1c] border border-zinc-200 shadow-sm scale-100 opacity-100" 
+                  : "bg-transparent text-gray-300 border border-transparent scale-90 opacity-50 blur-[0.3px]"
               )}>
-                {page.name}
-              </span>
+                <CategoryPattern id={page.id} className={pathname !== page.href ? "opacity-50 grayscale" : ""} />
+                <span className={cn(
+                  "font-display text-[10px] uppercase tracking-[0.2em] whitespace-nowrap",
+                  pathname === page.href ? "font-bold text-black" : "font-medium text-gray-400"
+                )}>
+                  {page.name}
+                </span>
+                <CategoryPattern id={page.id} className={cn("scale-x-[-1]", pathname !== page.href ? "opacity-50 grayscale" : "")} />
+              </div>
             </div>
           ))}
         </div>

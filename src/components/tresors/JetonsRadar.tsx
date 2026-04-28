@@ -16,7 +16,7 @@ export function JetonsRadar({ conscience, confiance, connaissance, competence }:
   const maxRadius = 100;
 
   const AXES = [
-    { key: "competence", label: "Compétence", color: "#008751", value: competence || 5 },
+    { key: "competence", label: "Concordance", color: "#008751", value: competence || 5 },
     { key: "conscience", label: "Conscience", color: "#E8112D", value: conscience || 5 },
     { key: "connaissance", label: "Connaissance", color: "#1A1A1A", value: connaissance || 5 },
     { key: "confiance", label: "Confiance", color: "#FAC710", value: confiance || 5 },

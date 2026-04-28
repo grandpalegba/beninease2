@@ -242,16 +242,6 @@ const TalentsContent = () => {
       onMouseUp={handleMouseUp}
     >
 
-      {/* Header Section: Title + Pill */}
-      <div className="flex flex-col items-center justify-center gap-6 shrink-0 w-full">
-        <div className="flex items-center gap-4 bg-white text-[#1a1c1c] border border-zinc-100 px-6 py-2 rounded-full shadow-sm">
-          <CategoryPattern id={pair.categoryId} />
-          <span className="font-display text-[10px] font-bold tracking-[0.2em] uppercase whitespace-nowrap">
-            {pair.category}
-          </span>
-          <CategoryPattern id={pair.categoryId} className="scale-x-[-1]" />
-        </div>
-      </div>
 
       {/* Duel Cards Section */}
       <div className="relative w-full flex-1 min-h-0 overflow-hidden px-2 md:px-4 max-w-5xl mx-auto my-6">

@@ -175,7 +175,7 @@ export default function TresorDetailPage() {
       <section className="max-w-[1400px] mx-auto pt-12 px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-12">
         
         {/* Colonne Gauche : Image + Jetons (5 cols) */}
-        <div className="lg:col-span-5 space-y-8">
+        <div className="lg:col-span-5 flex flex-col gap-8 h-full">
           {/* Carte Image + Titre */}
           <div className="bg-[#000000] rounded-[3rem] overflow-hidden shadow-sm flex flex-col">
             <div className="relative w-full h-[450px] p-10 flex flex-shrink-0 items-center justify-center">
@@ -202,7 +202,7 @@ export default function TresorDetailPage() {
           </div>
 
           {/* Radar des Jetons (Sous l'image) */}
-          <div className="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-sm">
+          <div className="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-sm flex-1 flex flex-col">
              <div className="mb-10 text-center">
                 <p className="text-[9px] font-black uppercase tracking-[0.4em] text-gray-400 mb-2">LES QUATRE JETONS</p>
              </div>
@@ -214,9 +214,11 @@ export default function TresorDetailPage() {
              />
              
              {/* Bouton Action */}
-             <button className="w-full mt-12 py-5 bg-black hover:bg-gray-800 text-white rounded-2xl font-bold text-sm tracking-widest uppercase transition-all shadow-lg active:scale-95">
-                Libérer le Trésor
-             </button>
+             <div className="mt-auto pt-12">
+               <button className="w-full py-5 bg-black hover:bg-gray-800 text-white rounded-2xl font-bold text-sm tracking-widest uppercase transition-all shadow-lg active:scale-95">
+                  Libérer le Trésor
+               </button>
+             </div>
           </div>
         </div>
 
@@ -248,18 +250,6 @@ export default function TresorDetailPage() {
               </p>
             </div>
 
-            {tresor.citation && (
-              <div className="relative pl-8 py-2 mt-4">
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#E8112D] rounded-full" />
-                <p className="font-sans text-xl italic font-bold text-gray-800 leading-snug mb-4">
-                  « {tresor.citation.texte} »
-                </p>
-                <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
-                  {tresor.citation.auteur} · {tresor.citation.role} {tresor.citation.annee && `(${tresor.citation.annee})`}
-                </div>
-              </div>
-            )}
-
             <div className="pt-8 mt-4 border-t border-gray-100">
               <h3 className="text-2xl font-sans font-black text-gray-900 mb-8">Évaluation du trésor</h3>
               <PrestigeBars 
@@ -275,7 +265,22 @@ export default function TresorDetailPage() {
         </div>
       </section>
 
-
+      {/* ── SECTION CITATION (Pleine largeur) ── */}
+      {tresor.citation && (
+        <section className="max-w-[1400px] mx-auto mt-12 px-6 md:px-12">
+          <div className="bg-white rounded-[3rem] p-10 md:p-14 border border-gray-100 shadow-sm">
+            <div className="relative pl-12 py-4">
+              <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#E8112D] rounded-full" />
+              <p className="font-sans text-2xl italic font-bold text-gray-800 leading-snug mb-6">
+                « {tresor.citation.texte} »
+              </p>
+              <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                {tresor.citation.auteur} · {tresor.citation.role} {tresor.citation.annee && `(${tresor.citation.annee})`}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
     </div>
   );
