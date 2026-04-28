@@ -81,15 +81,13 @@ export const AfrakaDoors = () => {
           <DoorCard {...FRAGMENTS[4]} className="h-[250px] md:h-[300px]" />
           
           {/* BLOC CENTRAL LOGO (2x2) */}
-          <div className="md:col-span-2 md:row-span-2 bg-[#1a1a1a] rounded-[2.5rem] flex flex-col items-center justify-center p-8 shadow-2xl relative overflow-hidden group min-h-[300px] md:min-h-[624px]">
-             <div className="absolute inset-0 opacity-10 bg-[url('/afraka_logo.png')] bg-center bg-no-repeat bg-contain scale-150" />
-             <div className="relative z-10 w-full h-full flex items-center justify-center">
+          <div className="md:col-span-2 md:row-span-2 bg-white rounded-[2.5rem] flex items-center justify-center p-0 shadow-xl border border-zinc-100 relative overflow-hidden group min-h-[300px] md:min-h-[624px]">
+             <div className="relative z-10 w-full h-full">
                <Image 
                   src="/afraka_logo.png" 
                   alt="ÂFRAKA Logo" 
-                  width={400} 
-                  height={400} 
-                  className="object-contain transition-transform duration-700 group-hover:scale-110 drop-shadow-[0_0_30px_rgba(252,209,22,0.3)]" 
+                  fill
+                  className="object-contain p-4 transition-transform duration-700 group-hover:scale-105" 
                />
              </div>
           </div>
