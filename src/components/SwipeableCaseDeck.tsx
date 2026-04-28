@@ -50,7 +50,7 @@ const SwipeableCaseDeck: React.FC<SwipeableCaseDeckProps> = ({ cases, initialCas
   return (
     <main className="w-full min-h-screen bg-white flex flex-col items-center justify-start pt-2 md:pt-4 px-4 overflow-hidden">
       {/* ZONE DE LA CARTE */}
-      <div className="relative w-full max-w-[450px] aspect-[3/4] md:aspect-[4/5] z-10">
+      <div className="relative w-full max-w-lg h-full max-h-[82vh] z-10 flex items-center justify-center">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentCase.id}

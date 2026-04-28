@@ -95,9 +95,9 @@ export default function ConsultationPage() {
   }
 
   return (
-    <main className="h-[100dvh] bg-background text-foreground font-sans antialiased flex flex-col items-center justify-start overflow-hidden pb-20">
+    <main className="h-[100dvh] bg-white text-foreground font-sans antialiased flex flex-col items-center justify-start overflow-hidden pb-20">
       {/* Title Section */}
-      <div className="w-full text-center shrink-0 z-10 pt-16">
+      <div className="w-full text-center shrink-0 z-10 pt-8">
 
         {/* Tab Selector - Pill Style */}
         <div className="bg-[#f0f1f1] p-1 rounded-full flex gap-1 shadow-none mx-auto w-fit">

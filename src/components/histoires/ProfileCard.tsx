@@ -65,7 +65,7 @@ export function ProfileCard({ profil, serie }: ProfileCardProps) {
       {/* ── Contenu ── */}
       <div className="flex flex-col p-6 mt-auto bg-transparent relative z-10 pointer-events-none justify-end h-full">
         <div className="mb-4">
-          <h3 className="font-sans font-black text-4xl text-gray-900 leading-tight tracking-tight">
+          <h3 className="font-display font-black text-4xl text-gray-900 leading-tight tracking-tighter">
             {profil.nom_complet}
           </h3>
           {profil.profession && (

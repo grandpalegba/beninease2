@@ -209,18 +209,14 @@ export default function SavoirsPage() {
                 else if (info.offset.y < -50) startRitual();
               }}
               onClick={startRitual}
-              className="w-full max-w-[320px] h-[520px] md:h-[580px] -mt-12 md:-mt-20 bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-pointer flex flex-col"
+              className="w-full max-w-lg h-full max-h-[82vh] -mt-12 md:-mt-20 bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-pointer flex flex-col"
             >
-              <div className="pt-5 pb-3 px-7 text-center select-none">
-                <span className="text-[10px] md:text-[11px] font-sans font-medium text-gray-400 uppercase tracking-[0.35em]">
-                  {themes[currentM.theme_id] || "Bénin Éternel"}
-                </span>
-              </div>
+
               <div className="h-[50%] md:h-[55%] w-full overflow-hidden bg-gray-100 pointer-events-none">
                 <img src={`https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/mysteres-assets/${currentM.id}.jpg`} className="h-full w-full object-cover" alt="" />
               </div>
               <div className="p-6 md:p-7 flex flex-col flex-1 bg-white select-none pointer-events-none">
-                <h2 className="text-[15px] md:text-[17px] font-bold font-sans uppercase tracking-[0.1em] text-[#1a1a1a] leading-tight">
+                <h2 className="text-[15px] md:text-[17px] font-bold font-display uppercase tracking-[0.15em] text-[#1a1a1a] leading-tight">
                   {currentM.title}
                 </h2>
                 <p className="text-[10px] md:text-[11px] font-sans font-bold text-[#a0412d] mt-2 italic uppercase">
@@ -251,7 +247,7 @@ export default function SavoirsPage() {
                 !showExplanation ? (
                   <div className="text-center flex flex-col gap-3 md:gap-5">
                     {/* QUESTION EN SANS SERIF */}
-                    <h2 className="font-sans font-bold text-gray-700 text-base md:text-xl leading-snug px-4">
+                    <h2 className="font-display font-bold text-gray-700 text-base md:text-xl leading-snug px-4 tracking-tight">
                       {currentQuestions[qIndex]?.question}
                     </h2>
 

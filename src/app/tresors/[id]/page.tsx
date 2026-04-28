@@ -192,7 +192,7 @@ export default function TresorDetailPage() {
             </div>
             {/* Nom et sous-titre — dans l'encadré noir */}
             <div className="p-8 md:p-10 pt-2">
-              <h1 className="font-sans font-black text-2xl md:text-3xl mb-2 tracking-tight leading-[1.3] text-white">
+              <h1 className="font-display font-black text-2xl md:text-3xl mb-2 tracking-tighter leading-[1.3] text-white uppercase">
                 {tresor.nom}
               </h1>
               <p className="text-gray-400 font-medium text-base">
@@ -237,21 +237,21 @@ export default function TresorDetailPage() {
           {/* Histoire de l'exil + Enjeux + Analyse — sous la carte */}
           <div className="space-y-10">
             <div>
-              <h2 className="font-sans font-black text-2xl mb-4 text-gray-900">Histoire de l'exil</h2>
+              <h2 className="font-display font-black text-2xl mb-4 text-gray-900 uppercase tracking-tight">Histoire de l'exil</h2>
               <p className="leading-relaxed text-base text-gray-600 font-medium">
                 {tresor.histoire_exil}
               </p>
             </div>
 
             <div>
-              <h2 className="font-sans font-black text-2xl mb-4 text-gray-900">Enjeux de restitution</h2>
+              <h2 className="font-display font-black text-2xl mb-4 text-gray-900 uppercase tracking-tight">Enjeux de restitution</h2>
               <p className="leading-relaxed text-base text-gray-600 font-medium">
                 {tresor.enjeux_restitution}
               </p>
             </div>
 
             <div className="pt-8 mt-4 border-t border-gray-100">
-              <h3 className="text-2xl font-sans font-black text-gray-900 mb-8">Évaluation du trésor</h3>
+              <h3 className="text-2xl font-display font-black text-gray-900 mb-8 uppercase tracking-tight">Évaluation du trésor</h3>
               <PrestigeBars 
                 rarete={tresor.metrics.rarete}
                 conservation={tresor.metrics.conservation}

@@ -47,7 +47,7 @@ export function TresorCard({ tresor }: TresorCardProps) {
       {/* ── Contenu ── */}
       <div className="flex flex-col p-10 mt-auto bg-transparent relative z-10 pointer-events-none justify-end h-full">
         <div className="mb-6">
-          <h3 className="text-4xl text-black leading-tight tracking-tight font-bold font-sans">
+          <h3 className="text-4xl text-black leading-tight tracking-tighter font-bold font-display">
             {tresor.nom}
           </h3>
           <p className="text-base font-medium text-gray-500 mt-3 font-sans leading-relaxed">
