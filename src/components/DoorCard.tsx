@@ -43,11 +43,6 @@ export const DoorCard = ({ id, title, fragment, image, className }: DoorCardProp
             />
             {/* Overlay indicatif */}
             <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors duration-500" />
-            <div className="absolute bottom-4 left-4">
-              <span className="text-[10px] font-black text-white/80 uppercase tracking-[0.2em] drop-shadow-md">
-                Porte {id}
-              </span>
-            </div>
           </div>
         </div>
 
