@@ -227,7 +227,7 @@ export default function TresorDetailPage() {
              {/* Bouton Action */}
              <div className="mt-auto pt-12">
                <button className="w-full py-5 bg-black hover:bg-gray-800 text-white rounded-2xl font-bold text-sm tracking-widest uppercase transition-all shadow-lg active:scale-95">
-                  Libérer le Trésor
+                  Invoquer le Trésor
                </button>
              </div>
           </div>
