@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from "@supabase/supabase-js";
 import { toast, Toaster } from "sonner";
 import { confetti } from "tsparticles-confetti";
@@ -117,13 +118,22 @@ const AwaleMini = ({ seedsCount, isWrong }: { seedsCount: number, isWrong: boole
 );
 
 export default function SavoirsPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const isRitualParam = searchParams?.get('ritual') === 'true';
+
   const [loading, setLoading] = useState(true);
   const [mysteres, setMysteres] = useState<any[]>([]);
   const [themes, setThemes] = useState<Record<string, string>>({});
   const [allQuestions, setAllQuestions] = useState<any[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const [view, setView] = useState<"gallery" | "ritual">("gallery");
+  const [view, setView] = useState<"gallery" | "ritual">(isRitualParam ? "ritual" : "gallery");
+
+  // Sync view with URL param
+  useEffect(() => {
+    setView(isRitualParam ? "ritual" : "gallery");
+  }, [isRitualParam]);
   const [timeLeft, setTimeLeft] = useState(64);
   const [holes, setHoles] = useState([0, 1, 2, 3]);
   const [seeds, setSeeds] = useState(16);
@@ -171,7 +181,8 @@ export default function SavoirsPage() {
 
   const startRitual = () => {
     if (currentQuestions.length > 0) {
-      setHoles([0, 1, 2, 3]); setSeeds(16); setTimeLeft(64); setQIndex(0); setExplanations([]); setIsFinished(false); setView("ritual");
+      setHoles([0, 1, 2, 3]); setSeeds(16); setTimeLeft(64); setQIndex(0); setExplanations([]); setIsFinished(false); 
+      router.push('/savoirs?ritual=true');
     } else { toast.error("Rituel en préparation..."); }
   };
 
@@ -231,7 +242,7 @@ export default function SavoirsPage() {
         ) : (
           <motion.div key="ritual" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-[150] flex flex-col items-center p-4 pb-20 overflow-hidden">
             <button 
-              onClick={() => setView("gallery")}
+              onClick={() => router.push('/savoirs')}
               className="absolute top-6 left-6 z-[160] px-4 py-2 bg-[#faf9f8] rounded-full flex items-center gap-2 shadow-sm border border-gray-100 active:scale-95 transition-transform"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a0412d" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
@@ -295,7 +306,7 @@ export default function SavoirsPage() {
                   <div className="bg-white p-4 rounded-[2rem] text-left mb-4 space-y-2 border border-gray-50 max-h-40 overflow-y-auto no-scrollbar">
                     {explanations.map((exp, i) => <p key={i} className="text-[11px] font-sans text-gray-500 flex items-start"><span className="text-[#a0412d] mr-2">✦</span> {exp}</p>)}
                   </div>
-                  <button onClick={() => setView("gallery")} className="w-full py-3 bg-[#a0412d] text-white rounded-full font-sans font-bold uppercase tracking-widest text-[10px] shadow-lg">Autre mystère</button>
+                  <button onClick={() => router.push('/savoirs')} className="w-full py-3 bg-[#a0412d] text-white rounded-full font-sans font-bold uppercase tracking-widest text-[10px] shadow-lg">Autre mystère</button>
                 </div>
               )}
             </div>

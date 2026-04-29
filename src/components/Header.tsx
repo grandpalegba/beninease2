@@ -21,7 +21,7 @@ type UserProfile = {
   power_multiplier: number;
 };
 
-const Header = () => {
+const Header = ({ hideTop = false }: { hideTop?: boolean }) => {
   const pathname = usePathname();
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -58,7 +58,7 @@ const Header = () => {
   return (
     <>
       {/* HEADER SWIPE (Top) */}
-      {isMainPage && <HeaderSwipe />}
+      {isMainPage && !hideTop && <HeaderSwipe />}
 
       {/* DOCK (Bottom) */}
       <footer className="fixed bottom-0 left-0 right-0 z-[200] h-20 bg-black/95 backdrop-blur-xl border-t border-white/5 flex items-center justify-between px-8 rounded-t-[2.5rem] shadow-[0_-10px_40px_rgba(0,0,0,0.2)] font-sans">
