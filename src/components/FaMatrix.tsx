@@ -117,11 +117,11 @@ const FaMatrix = () => {
             onClick={() => router.push('/sagesses/generalites')}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="w-16 h-16 flex flex-col items-center justify-center flex-shrink-0 rounded-lg group relative overflow-hidden transition-all shadow-sm border border-[#008751]/20 bg-gradient-to-br from-[#00693E] to-[#008751]"
+            className="w-16 h-16 flex flex-col items-center justify-center flex-shrink-0 rounded-lg group relative overflow-hidden transition-all shadow-sm border border-white/10 bg-black"
           >
-            <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity" />
-            <BookOpen size={18} className="text-white mb-1 drop-shadow-md" strokeWidth={2.5} />
-            <span className="text-[9px] font-black uppercase tracking-widest text-white drop-shadow-md">Bases</span>
+            <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-5 transition-opacity" />
+            <BookOpen size={18} className="text-[#FCD116] mb-1 drop-shadow-md" strokeWidth={2.5} />
+            <span className="text-[9px] font-black uppercase tracking-widest text-white/70 drop-shadow-md">Bases</span>
           </motion.button>
 
           {/* Top Header Labels (Extra Row) - Surgical Precision Alignment */}
