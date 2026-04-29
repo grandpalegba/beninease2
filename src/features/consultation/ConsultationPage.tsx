@@ -109,7 +109,7 @@ export default function ConsultationPage() {
                 : 'text-[#666] hover:text-[#1a1a1a]'
             }`}
           >
-            Matrice des choix
+            Cas pratiques
           </button>
           <button
             onClick={() => setActiveView('wall')}
@@ -119,7 +119,7 @@ export default function ConsultationPage() {
                 : 'text-[#666] hover:text-[#1a1a1a]'
             }`}
           >
-            Mur des sagesses
+            Mur des consultations
           </button>
         </div>
       </div>
