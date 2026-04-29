@@ -10,28 +10,31 @@ import { BookOpen } from 'lucide-react';
 /**
  * Renders a small version of the ideogram dots
  */
-export const SignDotsColumn = ({ code, color = "currentColor", size = 1.5 }: { code: [number, number, number, number], color?: string, size?: number }) => (
-  <div className="flex flex-col gap-[2px] items-center">
-    {code.map((type, i) => (
-      <div key={i} className="flex gap-[2px]">
-        <div style={{ width: size, height: size, background: color }} className="rounded-full" />
-        {type === 2 && <div style={{ width: size, height: size, background: color }} className="rounded-full" />}
-      </div>
-    ))}
-  </div>
-);
+export const SignDotsColumn = ({ code, color = "currentColor", size = 1.5 }: { code: [number, number, number, number], color?: string, size?: number }) => {
+  const innerGap = size / 4;
+  return (
+    <div className="flex flex-col items-center" style={{ gap: innerGap }}>
+      {code.map((type, i) => (
+        <div key={i} className="flex" style={{ gap: innerGap }}>
+          <div style={{ width: size, height: size, background: color }} className="rounded-full shadow-sm" />
+          {type === 2 && <div style={{ width: size, height: size, background: color }} className="rounded-full shadow-sm" />}
+        </div>
+      ))}
+    </div>
+  );
+};
 
-export const SignIdeogram = ({ leftSign, rightSign, color = "currentColor", size = 1 }: { 
+export const SignIdeogram = ({ leftSign, rightSign, color = "#1a1a1a", size = 1 }: { 
   leftSign: FongbeSign, 
   rightSign: FongbeSign,
   color?: string,
   size?: number
 }) => {
-  const dotSize = size > 5 ? (size / 15) : 1.5 * size;
-  const gapSize = size > 5 ? (size / 10) : 2 * size;
+  const dotSize = size > 5 ? (size / 10) : 1.5 * size;
+  const columnGap = size > 5 ? (size / 5) : 4 * size;
 
   return (
-    <div className="flex items-center justify-center gap-4 pointer-events-none" style={{ gap: gapSize }}>
+    <div className="flex items-center justify-center pointer-events-none" style={{ gap: columnGap }}>
       <SignDotsColumn code={leftSign.code} color={color} size={dotSize} />
       <SignDotsColumn code={rightSign.code} color={color} size={dotSize} />
     </div>
@@ -154,13 +157,13 @@ const FaMatrix = () => {
           {SIGNS.map((sign, i) => (
             <div 
               key={`h-${i}`} 
-              className="w-10 h-16 flex items-end justify-center pb-2"
+              className="w-10 h-16 flex items-end justify-start"
             >
               <motion.span 
                 initial={{ opacity: 0, y: -10, rotate: -45 }}
                 animate={{ opacity: 1, y: 0, rotate: -45 }}
                 transition={{ delay: i * 0.02, duration: 0.5 }}
-                className="text-[10px] font-bold uppercase tracking-[0.2em] text-black font-sans origin-bottom-left translate-x-2"
+                className="text-[10px] font-bold uppercase tracking-[0.2em] text-black font-sans origin-bottom-left translate-x-[20px] whitespace-nowrap"
               >
                 {sign.name}
               </motion.span>
