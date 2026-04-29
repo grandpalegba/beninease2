@@ -115,7 +115,7 @@ export function EvaluationModule({ episode, profilId, seriesInfo }: EvaluationMo
         <button 
           onClick={submitEvaluation}
           disabled={loading}
-          className="w-full max-w-[280px] mx-auto bg-[#0F172A] text-white py-4 rounded-[20px] font-black uppercase tracking-[0.2em] text-[10px] shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 mt-6"
+          className="w-full max-w-[300px] mx-auto bg-black text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-xs hover:bg-gray-800 transition-all shadow-xl shadow-black/10 active:scale-95 disabled:opacity-50 mt-6"
         >
           {loading ? "Transmission..." : "Valider l'évaluation"}
         </button>

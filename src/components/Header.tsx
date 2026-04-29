@@ -63,23 +63,24 @@ const Header = () => {
       {/* DOCK (Bottom) */}
       <footer className="fixed bottom-0 left-0 right-0 z-[100] h-20 bg-black/95 backdrop-blur-xl border-t border-white/5 flex items-center justify-between px-8 rounded-t-[2.5rem] shadow-[0_-10px_40px_rgba(0,0,0,0.2)] font-sans">
         
-        {/* Placeholder à gauche pour équilibrer le flex */}
-        <div className="flex-1 lg:flex-none lg:w-32" />
-
-        {/* Logo CENTRÉ */}
-        <Link href="/" className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2">
-          <div className="relative w-5 h-5 md:w-7 md:h-7">
-            <Image src="/logo.png" alt="logo" fill className="object-contain" />
-          </div>
-          <span className="text-[10px] md:text-lg font-black tracking-[1px] md:tracking-[2px] uppercase flex items-center">
-            <span className="text-white">BLACK</span>
-            <span className="text-[#FCD116] mx-1 md:mx-1.5">TO</span>
-            <span className="text-white">BENIN</span>
-          </span>
-        </Link>
+        {/* Logo : Gauche sur mobile, Centré sur MD+ */}
+        <div className={cn(
+          "flex-1 md:flex-none flex items-center md:absolute md:left-1/2 md:-translate-x-1/2 transition-all duration-500"
+        )}>
+          <Link href="/" className="flex items-center gap-1.5 md:gap-2">
+            <div className="relative w-5 h-5 md:w-7 md:h-7">
+              <Image src="/logo.png" alt="logo" fill className="object-contain" />
+            </div>
+            <span className="text-[9px] md:text-lg font-black tracking-[1px] md:tracking-[2px] uppercase flex items-center">
+              <span className="text-white">BLACK</span>
+              <span className="text-[#FCD116] mx-1 md:mx-1.5">TO</span>
+              <span className="text-white">BENIN</span>
+            </span>
+          </Link>
+        </div>
 
         {/* Actions à droite */}
-        <div className="flex-1 lg:flex-none lg:w-32 flex justify-end items-center gap-6">
+        <div className="flex-1 md:flex-none md:w-32 flex justify-end items-center gap-4 md:gap-6">
           {user ? (
             <div className="relative user-menu-container">
               <button onClick={() => setShowDropdown(!showDropdown)} className="flex items-center gap-2 group">
@@ -115,7 +116,7 @@ const Header = () => {
           ) : (
             <Link 
               href="/login" 
-              className="px-6 py-2 bg-[#008751] text-white text-[11px] font-black uppercase tracking-widest rounded-full hover:bg-[#006b40] transition-all"
+              className="px-4 py-1.5 md:px-6 md:py-2 bg-[#008751] text-white text-[9px] md:text-[11px] font-black uppercase tracking-widest rounded-full hover:bg-[#006b40] transition-all"
             >
               Connexion
             </Link>
