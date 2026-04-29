@@ -42,7 +42,7 @@ const GeneralitesPage = () => {
           <div className="grid sm:grid-cols-2 gap-8">
             <VideoCard 
               title="Histoire et Origines du Fâ"
-              expertName="Bokônon Ahodehou"
+              expertName="Bokônon Ahodehou Gangji"
               expertLanguages="Fongbé, Français"
               expertLocation="Bénin"
               expertPhoto="/assets/talents/guide-moise.jpg"
@@ -51,7 +51,7 @@ const GeneralitesPage = () => {
             />
             <VideoCard 
               title="La Philosophie du Destin"
-              expertName="Aïcha Gogan"
+              expertName="Mama Loucafo"
               expertLanguages="Yoruba, Français"
               expertLocation="Bénin"
               expertPhoto="/assets/talents/arielle-gogan.jpg"
