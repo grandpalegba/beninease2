@@ -43,8 +43,8 @@ const SynchronicityWall = () => {
       >
         <div className="w-full flex justify-center mb-12">
           <BeninFrame
-            className="w-[95vw] max-w-[850px] aspect-square shadow-2xl"
-            inset={12}
+            className="w-[98vw] max-w-[850px] aspect-square shadow-2xl"
+            inset={4}
             thickness={6}
           >
             <div className="relative w-full h-full bg-white">
@@ -61,7 +61,7 @@ const SynchronicityWall = () => {
                 }}
                 initial="hidden"
                 animate="visible"
-                className="relative z-10 grid w-full h-full gap-[1.5px]"
+                className="relative z-10 grid w-full h-full gap-[0.5px]"
                 style={{ gridTemplateColumns: "repeat(16, 1fr)" }}
               >
                 {order.map((originalIndex) => {
