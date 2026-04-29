@@ -57,6 +57,9 @@ const MatrixCell = ({
   const leftSign = SIGNS[rIndex];
   const rightSign = SIGNS[cIndex];
 
+  const isMeji = rIndex === cIndex;
+  const hoverColor = isMeji ? "#E8112D" : "#008751";
+
   return (
     <motion.div 
       initial={{ opacity: 0, scale: 0.9 }}
@@ -65,9 +68,13 @@ const MatrixCell = ({
       className={cn(
         "w-10 h-10 flex items-center justify-center rounded-sm transition-all cursor-pointer border",
         isHovered 
-          ? "bg-[#E8112D] border-[#E8112D] scale-110 z-10 shadow-lg" 
+          ? "scale-110 z-10 shadow-lg" 
           : "bg-black border-white/5 hover:border-white/20"
       )}
+      style={{
+        backgroundColor: isHovered ? hoverColor : undefined,
+        borderColor: isHovered ? hoverColor : undefined,
+      }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => onClick(rIndex, cIndex)}
@@ -120,7 +127,7 @@ const FaMatrix = () => {
             className="w-16 h-16 flex flex-col items-center justify-center flex-shrink-0 rounded-lg group relative overflow-hidden transition-all shadow-sm border border-white/10 bg-black"
           >
             <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-5 transition-opacity" />
-            <BookOpen size={18} className="text-[#FCD116] mb-1 drop-shadow-md" strokeWidth={2.5} />
+            <BookOpen size={18} className="text-[#FFD700] mb-1 drop-shadow-md" strokeWidth={2.5} />
             <span className="text-[9px] font-black uppercase tracking-widest text-white/70 drop-shadow-md">Bases</span>
           </motion.button>
 
