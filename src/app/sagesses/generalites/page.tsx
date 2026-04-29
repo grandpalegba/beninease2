@@ -29,26 +29,16 @@ const GeneralitesPage = () => {
         <motion.h1 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-4xl md:text-5xl font-display uppercase tracking-[0.2em] font-bold text-center mb-12 text-[#E8112D]"
+          className="text-4xl md:text-5xl font-display uppercase tracking-[0.2em] font-bold text-center mb-12 text-black"
         >
-          Bases et Généralités sur le Fâ
+          Généralités sur le Fâ
         </motion.h1>
 
         {/* Separator Line */}
         <div className="w-24 h-[1.5px] bg-[#008751] mb-20" />
 
-        {/* Section Title */}
-        <div className="w-full mb-12 text-center md:text-left">
-          <h2 className="text-[10px] font-bold uppercase tracking-[0.4em] text-[#008751]">
-            Introduction aux fondements
-          </h2>
-        </div>
-
         {/* Video Gallery */}
         <div className="w-full space-y-12">
-          <h2 className="text-[10px] font-bold uppercase tracking-[0.4em] text-[#E8112D] text-center md:text-left">
-            Partage d'expertises sur les bases
-          </h2>
           <div className="grid sm:grid-cols-2 gap-8">
             <VideoCard 
               title="Histoire et Origines du Fâ"
@@ -112,7 +102,7 @@ const VideoCard = ({ title, expertName, expertPhoto, expertLanguages, expertLoca
       </div>
       <button 
         onClick={(e) => { e.stopPropagation(); onContact(); }}
-        className="w-full py-3 bg-[#E8112D] text-white rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-[#FCD116] hover:text-[#1a1a1a] transition-all shadow-sm"
+        className="w-full py-3 bg-black text-white rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-[#E8112D] transition-all shadow-sm"
       >
         Contacter l'expert
       </button>

@@ -12,7 +12,7 @@ import { BookOpen } from 'lucide-react';
  */
 export const SignDotsColumn = ({ code, color = "#000000", size = 1.5 }: { code: [number, number, number, number], color?: string, size?: number }) => {
   const dotSize = size;
-  const innerGap = size < 2 ? 1.5 : (size / 8); // Elegant gap for matrix dots
+  const innerGap = size < 2 ? 2 : (size * 1.5); // Spaced out gap (1.5x dot size)
   
   return (
     <div className="flex flex-col items-center" style={{ gap: innerGap }}>
@@ -26,15 +26,14 @@ export const SignDotsColumn = ({ code, color = "#000000", size = 1.5 }: { code: 
   );
 };
 
-export const SignIdeogram = ({ leftSign, rightSign, color = "#1a1a1a", size = 1 }: { 
+export const SignIdeogram = ({ leftSign, rightSign, color = "#000000", size = 1 }: { 
   leftSign: FongbeSign, 
   rightSign: FongbeSign,
   color?: string,
   size?: number
 }) => {
-  // size Prop is used as the DOT size directly for more control
-  const dotSize = size > 5 ? (size / 6.5) : 1.5 * size;
-  const columnGap = size > 5 ? (size / 3.5) : 4 * size;
+  const dotSize = size > 5 ? (size / 16) : 1.5 * size;
+  const columnGap = size > 5 ? (size / 3) : 4 * size;
 
   return (
     <div className="flex items-center justify-center pointer-events-none" style={{ gap: columnGap }}>
@@ -102,8 +101,8 @@ const MatrixCell = ({ rIndex, cIndex, onClick }: { rIndex: number, cIndex: numbe
         <SignIdeogram 
           leftSign={leftSign} 
           rightSign={rightSign} 
-          color={isHovered ? "#E8112D" : "#1a1a1a"} 
-          size={2} 
+          color={isHovered ? "#E8112D" : "#000000"} 
+          size={1.4} 
         />
       </motion.div>
 
@@ -155,18 +154,18 @@ const FaMatrix = () => {
             <span className="text-[9px] font-black uppercase tracking-widest text-white drop-shadow-md">Bases</span>
           </motion.button>
 
-          {/* Top Header Labels (Extra Row) */}
+          {/* Top Header Labels (Extra Row) - Surgical Precision Alignment */}
           <div className="flex gap-[2px]">
             {SIGNS.map((sign, i) => (
               <div 
                 key={`h-${i}`} 
-                className="w-10 h-16 flex items-end justify-center pb-4"
+                className="w-10 h-16 relative"
               >
                 <motion.span 
                   initial={{ opacity: 0, y: -5, rotate: -45 }}
                   animate={{ opacity: 1, y: 0, rotate: -45 }}
                   transition={{ delay: i * 0.02, duration: 0.5 }}
-                  className="text-[10px] font-bold uppercase tracking-[0.2em] text-black font-sans origin-bottom whitespace-nowrap"
+                  className="absolute left-1/2 bottom-4 text-[10px] font-bold uppercase tracking-[0.2em] text-black font-sans origin-bottom-left whitespace-nowrap"
                 >
                   {sign.name}
                 </motion.span>
