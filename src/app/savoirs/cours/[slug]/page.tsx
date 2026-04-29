@@ -122,22 +122,22 @@ const CoursePage = () => {
       <nav className="absolute top-0 left-0 right-0 z-50 px-6 py-6 flex justify-start pointer-events-none">
         <button 
           onClick={() => router.back()} 
-          className="p-3 bg-white/80 backdrop-blur-md rounded-full shadow-sm border border-neutral-100 hover:bg-white transition-all pointer-events-auto"
+          className="p-3 bg-white shadow-sm border border-neutral-100 rounded-full hover:bg-neutral-50 transition-all pointer-events-auto"
         >
           <ChevronLeft size={20} />
         </button>
       </nav>
 
-      <main className="max-w-4xl mx-auto px-6 pt-4 flex flex-col items-center">
+      <main className="max-w-4xl mx-auto px-6 pt-0 flex flex-col items-center">
         
-        {/* 1. En-tête Visual: Ideogram (No circle) */}
+        {/* 1. En-tête Visual: Ideogram (The Star) */}
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-6"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="mb-8 pt-12"
         >
           {leftSign && rightSign && (
-            <SignIdeogram leftSign={leftSign} rightSign={rightSign} size={100} />
+            <SignIdeogram leftSign={leftSign} rightSign={rightSign} size={150} />
           )}
         </motion.div>
 
@@ -146,7 +146,7 @@ const CoursePage = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="text-4xl md:text-5xl font-display uppercase tracking-[0.2em] font-bold text-center mb-8 text-black"
+          className="text-2xl md:text-3xl font-display uppercase tracking-[0.2em] font-bold text-center mb-8 text-black"
         >
           {displayName}
         </motion.h1>
@@ -159,7 +159,7 @@ const CoursePage = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="text-2xl md:text-3xl font-display uppercase tracking-[0.3em] font-bold text-center mb-20 text-black"
+          className="text-lg md:text-xl font-display uppercase tracking-[0.3em] font-bold text-center mb-20 text-black"
         >
           Partages d'expertises
         </motion.h2>

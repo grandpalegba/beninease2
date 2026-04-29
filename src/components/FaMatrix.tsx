@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SIGNS, type FongbeSign } from '@/data/fongbe';
 import { useRouter } from 'next/navigation';
@@ -27,8 +27,6 @@ export const SignIdeogram = ({ leftSign, rightSign, color = "currentColor", size
   color?: string,
   size?: number
 }) => {
-  // If size is large (e.g. 100), we treat it as a scale multiplier or adjust dot size.
-  // Let's normalize it so that size=1 means 1.5px dots.
   const dotSize = size > 5 ? (size / 40) : 1.5 * size;
   const gapSize = size > 5 ? (size / 30) : 2 * size;
 
@@ -45,38 +43,65 @@ const MatrixCell = ({ rIndex, cIndex, onClick }: { rIndex: number, cIndex: numbe
   const leftSign = SIGNS[rIndex];
   const rightSign = SIGNS[cIndex];
 
+  // Animation delay based on distance from top-left (sweep effect)
+  const revealDelay = (rIndex + cIndex) * 0.02;
+
   return (
     <motion.button
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ 
-        delay: (Math.abs(rIndex - 7.5) + Math.abs(cIndex - 7.5)) * 0.03,
-        duration: 0.4,
-        ease: "easeOut"
+      initial={{ opacity: 0, scale: 0.9, backgroundColor: "#ffffff" }}
+      animate={{ 
+        opacity: 1, 
+        scale: 1,
+        backgroundColor: "#f9fafb", // neutral-50
+        transition: { 
+          delay: revealDelay,
+          duration: 0.5,
+          ease: "easeOut"
+        }
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => onClick(rIndex, cIndex)}
       className={`
-        relative w-10 h-10 rounded-[4px] border transition-all duration-300 ease-out flex items-center justify-center
-        ${isHovered ? 'bg-[#FCD116]/10 border-[#FCD116]/30 z-10' : 'bg-neutral-50 border-[#008751]/20'}
+        relative w-10 h-10 rounded-[4px] border transition-all duration-300 ease-out flex items-center justify-center overflow-hidden
+        ${isHovered ? 'bg-[#FCD116]/10 border-[#FCD116]/30 z-10' : 'border-[#008751]/20'}
       `}
       style={{
         boxShadow: isHovered ? '0 10px 20px rgba(0,135,81,0.05)' : 'none',
         transform: isHovered ? 'translateY(-2px) scale(1.05)' : 'none'
       }}
     >
+      {/* Golden Flash Overlay (Revealing Light) */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0 }}
+        animate={{ 
+          opacity: [0, 0.8, 0],
+          scale: [0.5, 1.5, 1],
+        }}
+        transition={{ 
+          delay: revealDelay,
+          duration: 0.8,
+          times: [0, 0.2, 1]
+        }}
+        className="absolute inset-0 bg-[#FCD116] blur-[8px] pointer-events-none"
+      />
+
       {/* Ghost Ideogram */}
-      <div className={`transition-all duration-300 ${isHovered ? 'opacity-100' : 'opacity-[0.3]'}`}>
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: isHovered ? 1 : 0.3 }}
+        transition={{ delay: revealDelay + 0.2, duration: 0.5 }}
+        className="transition-all duration-300"
+      >
         <SignIdeogram 
           leftSign={leftSign} 
           rightSign={rightSign} 
           color={isHovered ? "#E8112D" : "#1a1a1a"} 
           size={0.8} 
         />
-      </div>
+      </motion.div>
 
-      {/* Tiny Yellow Glow in center */}
+      {/* Tiny Yellow Glow in center on hover */}
       {isHovered && (
         <motion.div 
           layoutId="glow"
@@ -112,7 +137,7 @@ const FaMatrix = () => {
       <div className="relative inline-block p-4">
         {/* Top Header */}
         <div className="flex gap-[2px] mb-[2px]">
-          {/* Intersection Cell: GÉNÉRALITÉS with Benin Gradient */}
+          {/* Intersection Cell: Bases with Benin Gradient */}
           <motion.button
             onClick={() => router.push('/savoirs/generalites')}
             initial={{ opacity: 0 }}
@@ -131,9 +156,14 @@ const FaMatrix = () => {
               key={`h-${i}`} 
               className="w-10 h-12 flex items-center justify-center"
             >
-              <span className="text-[9px] font-bold uppercase tracking-[0.2em] rotate-[-45deg] text-black font-sans drop-shadow-sm">
+              <motion.span 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.02, duration: 0.5 }}
+                className="text-[9px] font-bold uppercase tracking-[0.2em] rotate-[-45deg] text-black font-sans drop-shadow-sm"
+              >
                 {sign.name}
-              </span>
+              </motion.span>
             </div>
           ))}
         </div>
@@ -144,9 +174,14 @@ const FaMatrix = () => {
             <div key={`r-${rIndex}`} className="flex gap-[2px]">
               {/* Left Header */}
               <div className="w-12 h-10 flex items-center justify-center flex-shrink-0">
-                <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-black font-sans drop-shadow-sm">
+                <motion.span 
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: rIndex * 0.02, duration: 0.5 }}
+                  className="text-[9px] font-bold uppercase tracking-[0.2em] text-black font-sans drop-shadow-sm"
+                >
                   {rowSign.name}
-                </span>
+                </motion.span>
               </div>
 
               {/* Cells */}
