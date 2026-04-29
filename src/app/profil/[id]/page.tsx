@@ -26,7 +26,6 @@ export default function ProfilHistoirePage() {
 
   const [profil, setProfil] = useState<ProfilAvecSerie | null>(null);
   const [loading, setLoading] = useState(true);
-  const [suggestions, setSuggestions] = useState<ProfilAvecSerie[]>([]);
 
   const storePrice = useWallet((s) => s.effectivePrice(id));
   const solde = useWallet((s) => s.solde);
@@ -77,14 +76,6 @@ export default function ProfilHistoirePage() {
             
             if (epData) allEpisodes = epData;
           }
-
-          const { data: suggData } = await supabase
-            .from("profiles_histoires")
-            .select("*")
-            .eq("series_id", pData.series_id)
-            .neq("id", id)
-            .limit(3);
-          if (suggData) setSuggestions(suggData as any);
         }
 
         // On mappe les vidéos du profil aux épisodes de la série par index
@@ -156,26 +147,26 @@ export default function ProfilHistoirePage() {
       <main className="max-w-7xl mx-auto space-y-6">
         
         {/* --- HEADER BLOCK : Symétrie Nom | Bio | Valeur --- */}
-        <header className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center justify-between gap-8 relative">
+        <header className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex flex-col md:flex-row items-center md:justify-between gap-4 md:gap-8 relative overflow-hidden">
           {/* Bouton Retour Flottant */}
           <button 
             onClick={() => router.push('/histoires')}
-            className="absolute -left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white border border-gray-100 rounded-full shadow-lg flex items-center justify-center text-gray-400 hover:text-black transition-all hover:scale-110 z-20"
+            className="absolute left-4 top-4 md:relative md:left-0 md:top-0 w-10 h-10 bg-gray-50 border border-gray-100 rounded-full shadow-sm flex items-center justify-center text-gray-400 hover:text-black transition-all hover:scale-110 z-20"
             title="Retour aux cartes"
           >
-            <ChevronLeft size={24} />
+            <ChevronLeft size={20} />
           </button>
 
           {/* GAUCHE : Identité */}
-          <div className="flex items-center gap-6 pl-6">
-            <div className="relative w-16 h-16 rounded-2xl overflow-hidden shadow-inner bg-gray-50 border border-gray-100 select-none shrink-0">
+          <div className="flex items-center gap-4 md:gap-6 w-full md:w-auto pt-8 md:pt-0">
+            <div className="relative w-14 h-14 md:w-16 md:h-16 rounded-2xl overflow-hidden shadow-inner bg-gray-50 border border-gray-100 select-none shrink-0">
               {profil.photo_url && (
                 <Image src={profil.photo_url} alt={profil.nom_complet} fill className="object-cover object-top pointer-events-none" draggable={false} />
               )}
             </div>
-            <div className="shrink-0">
-              <h1 className="text-3xl font-black text-gray-900 tracking-tighter leading-none mb-1">{profil.nom_complet}</h1>
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">{profil.profession}</p>
+            <div className="shrink-1">
+              <h1 className="text-xl md:text-3xl font-black text-gray-900 tracking-tighter leading-tight mb-1">{profil.nom_complet}</h1>
+              <p className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-widest">{profil.profession}</p>
             </div>
           </div>
 
@@ -189,10 +180,10 @@ export default function ProfilHistoirePage() {
           )}
 
           {/* DROITE : Valeur Financière */}
-          <div className="flex items-center gap-4 text-right">
-            <div>
+          <div className="flex items-center justify-between md:justify-end gap-4 w-full md:w-auto pt-4 md:pt-0 border-t md:border-none border-gray-50">
+            <div className="text-left md:text-right">
               <p className="text-[9px] font-black text-gray-300 uppercase tracking-[0.2em] mb-1">Valeur Actuelle</p>
-              <div className="flex items-center justify-end gap-2">
+              <div className="flex items-center md:justify-end gap-2">
                 <p className="text-2xl font-black text-black leading-none tracking-tighter tabular-nums">
                   {profil.valeur_noix_benies.toFixed(2)}
                   <span className="text-xs ml-1 text-gray-400">NB</span>
@@ -202,6 +193,12 @@ export default function ProfilHistoirePage() {
                 </span>
               </div>
             </div>
+            {/* Affiche (Mini-thumb) */}
+            {profil.serie?.affiche_url && (
+              <div className="w-12 h-16 rounded-xl overflow-hidden border-2 border-white shadow-md shrink-0 relative">
+                <Image src={profil.serie.affiche_url} alt="Serie" fill className="object-cover" />
+              </div>
+            )}
           </div>
         </header>
 
@@ -228,7 +225,7 @@ export default function ProfilHistoirePage() {
           </div>
 
           {/* Serie Poster Block (2 columns) */}
-          <div className="lg:col-span-2 rounded-[2.5rem] overflow-hidden relative shadow-lg border-4 border-white group select-none aspect-[2/3]">
+          <div className="lg:col-span-2 rounded-[2.5rem] overflow-hidden relative shadow-lg border-4 border-white group select-none aspect-[2/3] hidden lg:block">
             {profil.serie?.affiche_url ? (
               <Image src={profil.serie.affiche_url} alt="Serie" fill className="object-cover transition-transform duration-700 group-hover:scale-110 pointer-events-none" draggable={false} />
             ) : (
@@ -244,7 +241,7 @@ export default function ProfilHistoirePage() {
 
         {/* --- ACTIONS SECTION --- */}
         <div className="flex flex-col md:flex-row gap-6 items-center justify-between bg-white/50 p-4 rounded-[2rem] border border-gray-100">
-           <div className="flex items-center gap-4 px-6">
+           <div className="flex items-center gap-4 px-6 w-full md:w-auto">
               <div className="w-12 h-12 bg-white border border-gray-100 rounded-xl flex items-center justify-center text-gray-400 shadow-sm">
                 <Users size={24} />
               </div>
@@ -256,37 +253,15 @@ export default function ProfilHistoirePage() {
 
            <button 
               onClick={() => setOpen(true)}
-              className="w-full md:w-[300px] bg-[#3b6934] text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-xs hover:bg-[#2d5027] transition-all shadow-xl shadow-[#3b6934]/20 active:scale-95"
+              className="w-full md:w-[300px] bg-black text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-xs hover:bg-gray-800 transition-all shadow-xl shadow-black/10 active:scale-95"
             >
-              Investir Maintenant
+              Donner de l&apos;écho
             </button>
         </div>
 
         {/* --- EVALUATION MODULE --- */}
-        <section className="space-y-8">
+        <section className="space-y-8 pb-10">
           <EpisodeCarousel episodes={profil.video_urls} profilId={profil.id} seriesInfo={profil.serie} />
-        </section>
-
-        {/* --- SUGGESTIONS SECTION --- */}
-        <section className="mt-8 space-y-6 pb-20">
-          <h3 className="text-sm font-black uppercase tracking-[0.3em] ml-2 text-gray-400">Suggestions</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {suggestions.map((p, i) => (
-              <div 
-                key={p.id} 
-                onClick={() => router.push(`/profil/${p.id}`)}
-                className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex items-center gap-4 hover:shadow-md transition-all cursor-pointer group"
-              >
-                <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-gray-100 group-hover:scale-105 transition-transform select-none">
-                  {p.photo_url && <Image src={p.photo_url} alt={p.nom_complet} fill className="object-cover pointer-events-none" draggable={false} />}
-                </div>
-                <div>
-                  <p className="font-black text-gray-900 tracking-tight">{p.nom_complet}</p>
-                  <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">{p.profession}</p>
-                </div>
-              </div>
-            ))}
-          </div>
         </section>
       </main>
 

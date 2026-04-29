@@ -33,14 +33,14 @@ export function HistogrammeBeninois({ stats }: HistogrammeBeninoisProps) {
         </p>
       </div>
 
-      <div className="space-y-5">
+      <div className="space-y-6">
         {bars.map((bar, i) => (
-          <div key={i} className="space-y-1.5">
-            <div className="flex justify-between items-center px-1">
-              <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest">{bar.label}</span>
-              <span className="text-[10px] font-black text-gray-800 tabular-nums">{bar.value}%</span>
+          <div key={i} className="space-y-2">
+            <div className="flex justify-between items-end px-1">
+              <span className="text-[8px] font-black text-gray-400 uppercase tracking-[0.3em]">{bar.label}</span>
+              <span className={cn("text-[10px] font-black tabular-nums", bar.color.replace('bg-', 'text-'))}>{bar.value}%</span>
             </div>
-            <div className="h-2 w-full bg-gray-50 rounded-full overflow-hidden">
+            <div className="h-1 w-full bg-gray-50 rounded-full overflow-hidden">
               <div 
                 className={cn(bar.color, "h-full rounded-full transition-all duration-1000 ease-out")}
                 style={{ width: `${bar.value}%` }}

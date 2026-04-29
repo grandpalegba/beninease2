@@ -93,10 +93,10 @@ export function EvaluationModule({ episode, profilId, seriesInfo }: EvaluationMo
             { label: "Authenticité", key: "authenticite", className: "range-yellow", color: "text-[#FCD116]" },
             { label: "Impact", key: "impact", className: "range-red", color: "text-[#E8112D]" }
           ].map((c) => (
-            <div key={c.key} className="space-y-1">
+            <div key={c.key} className="space-y-2">
               <div className="flex justify-between items-end font-black">
                 <span className="text-[8px] uppercase tracking-[0.3em] text-gray-400">{c.label}</span>
-                <span className={cn("text-base", c.color)}>
+                <span className={cn("text-[10px] tabular-nums", c.color)}>
                   {Math.round(scores[c.key as keyof typeof scores])}%
                 </span>
               </div>

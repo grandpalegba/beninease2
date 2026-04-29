@@ -75,19 +75,17 @@ export const HeaderSwipe = () => {
               onClick={() => handleTitleClick(i, page.href)}
             >
               <div className={cn(
-                "flex items-center gap-3 px-6 py-2.5 rounded-full transition-all duration-500",
+                "flex items-center px-8 py-2.5 rounded-full transition-all duration-500",
                 pathname === page.href 
                   ? "bg-white text-black border border-black/10 shadow-lg scale-110 opacity-100" 
                   : "bg-transparent text-gray-400 border border-transparent scale-90 opacity-100"
               )}>
-                <CategoryPattern id={page.id} className={pathname !== page.href ? "opacity-60 grayscale" : ""} />
                 <span className={cn(
                   "font-display text-[10px] md:text-[11px] uppercase tracking-[0.25em] whitespace-nowrap",
                   pathname === page.href ? "font-black text-black" : "font-semibold text-gray-500"
                 )}>
                   {page.name}
                 </span>
-                <CategoryPattern id={page.id} className={cn("scale-x-[-1]", pathname !== page.href ? "opacity-60 grayscale" : "")} />
               </div>
             </div>
           ))}
