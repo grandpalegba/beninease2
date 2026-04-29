@@ -56,7 +56,7 @@ const WallTile = memo(({ data, index, isSelected, onClick }: Props) => {
         layout
         whileHover={{ scale: 1.1, zIndex: 10 }}
         className="relative aspect-square overflow-hidden"
-        style={{ backgroundColor: tileBg, opacity: 0.7 }}
+        style={{ backgroundColor: 'transparent', opacity: 0.7 }}
       >
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="w-[2px] h-[2px] bg-white opacity-40 rounded-full" />
@@ -98,7 +98,7 @@ const WallTile = memo(({ data, index, isSelected, onClick }: Props) => {
         visible: { opacity: 1, scale: 1 }
       }}
       onClick={() => onClick?.(data)}
-      className="relative aspect-square overflow-hidden cursor-pointer group bg-neutral-800 select-none shadow-none"
+      className="relative aspect-square overflow-hidden cursor-pointer group bg-transparent select-none shadow-none"
       animate={{
         y: [0, -1.5, 0, 1.5, 0],
         opacity: [0.92, 1, 0.92]
@@ -115,7 +115,7 @@ const WallTile = memo(({ data, index, isSelected, onClick }: Props) => {
         y: 0,
         boxShadow: "0 10px 20px rgba(0,0,0,0.3)"
       }}
-      style={{ backgroundColor: tileBg, opacity: 1 }}
+      style={{ backgroundColor: 'transparent', opacity: 1 }}
     >
       <motion.img
         src={imageUrl}

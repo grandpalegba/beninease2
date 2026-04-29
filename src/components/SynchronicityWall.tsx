@@ -46,36 +46,47 @@ const SynchronicityWall = () => {
             inset={0}
             thickness={4}
           >
-            <motion.div
-              variants={{
-                hidden: { opacity: 0 },
-                visible: {
-                  opacity: 1,
-                  transition: {
-                    staggerChildren: 0.005,
-                  }
-                }
-              }}
-              initial="hidden"
-              animate="visible"
-              className="grid w-full h-full bg-black gap-0"
-              style={{ gridTemplateColumns: "repeat(8, 1fr)" }}
-            >
-              {order.map((originalIndex) => {
-                // Modulo ensures 64 profiles are repeated 4 times to fill 256 slots
-                const profile = profiles.length > 0 ? profiles[originalIndex % profiles.length] : null;
+            <div className="relative w-full h-full">
+              {/* Fond Drapeau du Bénin */}
+              <div className="absolute inset-0 flex overflow-hidden">
+                <div className="w-1/2 bg-[#008751]" />
+                <div className="w-1/2 flex flex-col">
+                  <div className="h-1/2 bg-[#FCD116]" />
+                  <div className="h-1/2 bg-[#E8112D]" />
+                </div>
+              </div>
 
-                return (
-                  <WallTile
-                    key={`tile-${originalIndex}`}
-                    data={profile}
-                    index={originalIndex}
-                    isSelected={profile ? revealed.has(profile.id) : false}
-                    onClick={profile ? handleSelect : undefined}
-                  />
-                );
-              })}
-            </motion.div>
+              <motion.div
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: {
+                    opacity: 1,
+                    transition: {
+                      staggerChildren: 0.005,
+                    }
+                  }
+                }}
+                initial="hidden"
+                animate="visible"
+                className="relative z-10 grid w-full h-full gap-[1px]"
+                style={{ gridTemplateColumns: "repeat(8, 1fr)" }}
+              >
+                {order.map((originalIndex) => {
+                  // Modulo ensures 64 profiles are repeated 4 times to fill 256 slots
+                  const profile = profiles.length > 0 ? profiles[originalIndex % profiles.length] : null;
+
+                  return (
+                    <WallTile
+                      key={`tile-${originalIndex}`}
+                      data={profile}
+                      index={originalIndex}
+                      isSelected={profile ? revealed.has(profile.id) : false}
+                      onClick={profile ? handleSelect : undefined}
+                    />
+                  );
+                })}
+              </motion.div>
+            </div>
           </BeninFrame>
         </div>
 
