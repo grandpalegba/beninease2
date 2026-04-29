@@ -18,8 +18,8 @@ const SynchronicityWall = () => {
   const [selected, setSelected] = useState<any | null>(null);
   const [revealed, setRevealed] = useState<Set<string>>(new Set());
   
-  // Le chef d'orchestre du mouvement - 64 tiles (8x8)
-  const order = useLivingOrder(64, 6, 2200);
+  // Le chef d'orchestre du mouvement - 256 tiles (16x16)
+  const order = useLivingOrder(256, 8, 2200);
 
   const handleSelect = (data: any) => {
     setSelected(data);
@@ -42,7 +42,7 @@ const SynchronicityWall = () => {
       >
         <div className="w-full flex justify-center mb-12">
           <BeninFrame
-            className="w-[95vw] max-w-[650px] aspect-square shadow-2xl"
+            className="w-[95vw] max-w-[1200px] aspect-square shadow-2xl"
             inset={0}
             thickness={4}
           >
@@ -51,8 +51,8 @@ const SynchronicityWall = () => {
               <div className="absolute inset-0 flex overflow-hidden">
                 <div className="w-1/2 bg-[#008751]" />
                 <div className="w-1/2 flex flex-col">
-                  <div className="h-1/2 bg-[#FCD116]" />
-                  <div className="h-1/2 bg-[#E8112D]" />
+                  <div className="h-1/2 bg-[#FCD116] />
+                  <div className="h-1/2 bg-[#E8112D] />
                 </div>
               </div>
 
@@ -69,10 +69,10 @@ const SynchronicityWall = () => {
                 initial="hidden"
                 animate="visible"
                 className="relative z-10 grid w-full h-full gap-[1px]"
-                style={{ gridTemplateColumns: "repeat(8, 1fr)" }}
+                style={{ gridTemplateColumns: "repeat(16, 1fr)" }}
               >
                 {order.map((originalIndex) => {
-                  // Modulo ensures 64 profiles are repeated 4 times to fill 256 slots
+                  // Modulo ensures 256 tiles are filled
                   const profile = profiles.length > 0 ? profiles[originalIndex % profiles.length] : null;
 
                   return (
