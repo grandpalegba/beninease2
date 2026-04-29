@@ -157,13 +157,13 @@ const FaMatrix = () => {
           {SIGNS.map((sign, i) => (
             <div 
               key={`h-${i}`} 
-              className="w-10 h-16 flex items-end justify-start"
+              className="w-10 h-16 flex items-end justify-center"
             >
               <motion.span 
                 initial={{ opacity: 0, y: -10, rotate: -45 }}
                 animate={{ opacity: 1, y: 0, rotate: -45 }}
                 transition={{ delay: i * 0.02, duration: 0.5 }}
-                className="text-[10px] font-bold uppercase tracking-[0.2em] text-black font-sans origin-bottom-left translate-x-[20px] whitespace-nowrap"
+                className="text-[10px] font-bold uppercase tracking-[0.2em] text-black font-sans origin-bottom-left translate-x-[28px] whitespace-nowrap"
               >
                 {sign.name}
               </motion.span>
