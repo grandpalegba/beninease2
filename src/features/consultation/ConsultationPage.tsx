@@ -4,11 +4,12 @@ import React, { useState } from 'react';
 import { useLifeCases } from './useLifeCases';
 import SandMatrix from '@/components/SandMatrix';
 import SynchronicityWall from '@/components/SynchronicityWall';
+import FaMatrix from '@/components/FaMatrix';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, ArrowRight, RotateCcw } from 'lucide-react';
 import Link from 'next/link';
 
-type View = 'matrix' | 'wall';
+type View = 'fa' | 'matrix' | 'wall';
 
 /**
  * ConsultationPage - "Sagesses du Bénin"
@@ -18,7 +19,7 @@ type View = 'matrix' | 'wall';
 export default function ConsultationPage() {
   const { cases, loading, error } = useLifeCases();
   const [isCompleted, setIsCompleted] = useState(false);
-  const [activeView, setActiveView] = useState<View>('matrix');
+  const [activeView, setActiveView] = useState<View>('fa');
 
   // Success Screen
   if (isCompleted) {
@@ -102,6 +103,16 @@ export default function ConsultationPage() {
         {/* Tab Selector - Pill Style */}
         <div className="bg-[#f0f1f1] p-1 rounded-full flex gap-1 shadow-none mx-auto w-fit">
           <button
+            onClick={() => setActiveView('fa')}
+            className={`px-6 py-2 rounded-full text-[10px] font-bold tracking-[0.05em] transition-all ${
+              activeView === 'fa' 
+                ? 'bg-[#1a1a1a] text-white' 
+                : 'text-[#666] hover:text-[#1a1a1a]'
+            }`}
+          >
+            Matrice du Fâ
+          </button>
+          <button
             onClick={() => setActiveView('matrix')}
             className={`px-6 py-2 rounded-full text-[10px] font-bold tracking-[0.05em] transition-all ${
               activeView === 'matrix' 
@@ -127,7 +138,18 @@ export default function ConsultationPage() {
       {/* Content Area */}
       <div className="w-full max-w-7xl px-4 md:px-12 flex-1 flex items-center justify-center min-h-0 mt-4">
         <AnimatePresence mode="wait">
-          {activeView === 'matrix' ? (
+          {activeView === 'fa' ? (
+            <motion.div 
+              key="fa"
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              transition={{ duration: 0.4 }}
+              className="w-full h-full"
+            >
+              <FaMatrix />
+            </motion.div>
+          ) : activeView === 'matrix' ? (
             <motion.div 
               key="matrix"
               initial={{ opacity: 0, scale: 0.98 }}
