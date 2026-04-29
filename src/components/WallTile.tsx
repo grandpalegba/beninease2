@@ -39,29 +39,10 @@ const WallTile = memo(({ data, index, isSelected, onClick }: Props) => {
   if (!data) {
     const tileBg = TILE_BACKGROUNDS[index % TILE_BACKGROUNDS.length];
     return (
-      <motion.div
-        variants={{
-          hidden: { opacity: 0, scale: 0.5 },
-          visible: { opacity: 1, scale: 1 }
-        }}
-        animate={{ 
-          y: [0, -1.5, 0, 1.5, 0],
-          opacity: [0.92, 1, 0.92]
-        }}
-        transition={{
-          y: { duration: 7 + (index % 5), repeat: Infinity, ease: "easeInOut", delay: (index % 7) * 0.35 },
-          opacity: { duration: 4, repeat: Infinity, ease: "linear" },
-          layout: { type: "spring", stiffness: 110, damping: 18 }
-        }}
         layout
-        whileHover={{ scale: 1.1, zIndex: 10 }}
-        className="relative aspect-square overflow-hidden"
-        style={{ backgroundColor: 'transparent', opacity: 0.7 }}
-      >
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-[2px] h-[2px] bg-white opacity-40 rounded-full" />
-        </div>
-      </motion.div>
+        className="relative w-full h-full"
+        style={{ backgroundColor: tileBg }}
+      />
     );
   }
 
@@ -98,33 +79,30 @@ const WallTile = memo(({ data, index, isSelected, onClick }: Props) => {
         visible: { opacity: 1, scale: 1 }
       }}
       onClick={() => onClick?.(data)}
-      className="relative aspect-square overflow-hidden cursor-pointer group bg-transparent select-none shadow-none"
+      className="relative w-full h-full overflow-hidden cursor-pointer group bg-transparent select-none p-0 m-0 block"
       animate={{
-        y: [0, -1.5, 0, 1.5, 0],
-        opacity: [0.92, 1, 0.92]
+        opacity: [0.95, 1, 0.95]
       }}
       transition={{
-        y: { duration: 7 + (index % 5), repeat: Infinity, ease: "easeInOut", delay: (index % 7) * 0.35 },
         opacity: { duration: 4, repeat: Infinity, ease: "linear" },
         layout: { type: "spring", stiffness: 110, damping: 18 }
       }}
       whileHover={{ 
-        scale: 1.35, 
+        scale: 1.15, 
         zIndex: 20,
         opacity: 1,
-        y: 0,
-        boxShadow: "0 10px 20px rgba(0,0,0,0.3)"
+        boxShadow: "0 10px 25px rgba(0,0,0,0.4)"
       }}
-      style={{ backgroundColor: 'transparent', opacity: 1, width: '100%', height: '100%' }}
+      style={{ backgroundColor: 'transparent', opacity: 1, width: '100%', height: '100%', display: 'block' }}
     >
       <motion.img
         src={imageUrl}
         alt={author}
         loading="lazy"
-        animate={{ scale: [1, 1.05, 1] }}
+        animate={{ scale: [1, 1.02, 1] }}
         transition={{ duration: 5 + (index % 4), repeat: Infinity, ease: "easeInOut" }}
         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-        className="absolute top-0 left-0 pointer-events-none select-none sepia-[0.1] saturate-[0.9] group-hover:sepia-0 group-hover:saturate-100 transition-all duration-500"
+        className="absolute top-0 left-0 pointer-events-none select-none group-hover:scale-105 transition-transform duration-500"
       />
 
       {/* Overlay de sélection ou au survol */}

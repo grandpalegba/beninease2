@@ -43,8 +43,8 @@ const SynchronicityWall = () => {
       >
         <div className="w-full flex justify-center mb-12">
           <BeninFrame
-            className="w-[98vw] max-w-[850px] aspect-square shadow-2xl"
-            inset={4}
+            className="w-[98vw] max-w-[850px] aspect-square"
+            inset={0}
             thickness={6}
           >
             <div className="relative w-full h-full bg-white">
