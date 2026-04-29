@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 /**
  * Renders a small version of the ideogram dots
  */
-export const SignDotsColumn = ({ code, color = "#FFFFFF", size = 1.5 }: { code: [number, number, number, number], color?: string, size?: number }) => {
+export const SignDotsColumn = ({ code, color = "#000000", size = 1.5 }: { code: [number, number, number, number], color?: string, size?: number }) => {
   const dotSize = size;
   const innerGap = size < 2 ? 2 : (size * 1.5); // Spaced out gap (1.5x dot size)
   
@@ -27,7 +27,7 @@ export const SignDotsColumn = ({ code, color = "#FFFFFF", size = 1.5 }: { code: 
   );
 };
 
-export const SignIdeogram = ({ leftSign, rightSign, color = "#FFFFFF", size = 1 }: { 
+export const SignIdeogram = ({ leftSign, rightSign, color = "#000000", size = 1 }: { 
   leftSign: FongbeSign, 
   rightSign: FongbeSign,
   color?: string,
