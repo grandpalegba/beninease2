@@ -146,7 +146,7 @@ const CoursePage = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="text-4xl md:text-5xl font-display uppercase tracking-[0.2em] font-bold text-center mb-12 text-[#E8112D]"
+          className="text-4xl md:text-5xl font-display uppercase tracking-[0.2em] font-bold text-center mb-12 text-black"
         >
           {displayName}
         </motion.h1>
@@ -229,7 +229,7 @@ const VideoCard = ({ title, expertName, expertPhoto, expertLanguages, expertLoca
       </div>
       <button 
         onClick={(e) => { e.stopPropagation(); onContact(); }}
-        className="w-full py-3 bg-[#E8112D] text-white rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-[#FCD116] hover:text-[#1a1a1a] transition-all shadow-sm"
+        className="w-full py-3 bg-black text-white rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-neutral-800 transition-all shadow-sm"
       >
         Contacter l'expert
       </button>

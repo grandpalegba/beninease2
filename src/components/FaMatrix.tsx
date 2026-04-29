@@ -26,12 +26,19 @@ export const SignIdeogram = ({ leftSign, rightSign, color = "currentColor", size
   rightSign: FongbeSign,
   color?: string,
   size?: number
-}) => (
-  <div className="flex gap-1 items-center justify-center pointer-events-none transition-all duration-300" style={{ transform: `scale(${size})` }}>
-    <SignDotsColumn code={leftSign.code} color={color} size={1.5} />
-    <SignDotsColumn code={rightSign.code} color={color} size={1.5} />
-  </div>
-);
+}) => {
+  // If size is large (e.g. 100), we treat it as a scale multiplier or adjust dot size.
+  // Let's normalize it so that size=1 means 1.5px dots.
+  const dotSize = size > 5 ? (size / 40) : 1.5 * size;
+  const gapSize = size > 5 ? (size / 30) : 2 * size;
+
+  return (
+    <div className="flex items-center justify-center gap-4 pointer-events-none" style={{ gap: gapSize }}>
+      <SignDotsColumn code={leftSign.code} color={color} size={dotSize} />
+      <SignDotsColumn code={rightSign.code} color={color} size={dotSize} />
+    </div>
+  );
+};
 
 const MatrixCell = ({ rIndex, cIndex, onClick }: { rIndex: number, cIndex: number, onClick: (r: number, c: number) => void }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -52,7 +59,7 @@ const MatrixCell = ({ rIndex, cIndex, onClick }: { rIndex: number, cIndex: numbe
       onClick={() => onClick(rIndex, cIndex)}
       className={`
         relative w-10 h-10 rounded-[4px] border transition-all duration-300 ease-out flex items-center justify-center
-        ${isHovered ? 'bg-[#FCD116]/10 border-[#FCD116]/30 z-10' : 'bg-white border-[#008751]/10'}
+        ${isHovered ? 'bg-[#FCD116]/10 border-[#FCD116]/30 z-10' : 'bg-neutral-50 border-[#008751]/20'}
       `}
       style={{
         boxShadow: isHovered ? '0 10px 20px rgba(0,135,81,0.05)' : 'none',
