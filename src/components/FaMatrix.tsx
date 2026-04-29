@@ -11,13 +11,13 @@ import { BookOpen } from 'lucide-react';
  * Renders a small version of the ideogram dots
  */
 export const SignDotsColumn = ({ code, color = "currentColor", size = 1.5 }: { code: [number, number, number, number], color?: string, size?: number }) => {
-  const innerGap = size / 4;
+  const innerGap = size / 20; // Very tight vertical and horizontal gap
   return (
     <div className="flex flex-col items-center" style={{ gap: innerGap }}>
       {code.map((type, i) => (
         <div key={i} className="flex" style={{ gap: innerGap }}>
-          <div style={{ width: size, height: size, background: color }} className="rounded-full shadow-sm" />
-          {type === 2 && <div style={{ width: size, height: size, background: color }} className="rounded-full shadow-sm" />}
+          <div style={{ width: size, height: size, background: color }} className="rounded-full" />
+          {type === 2 && <div style={{ width: size, height: size, background: color }} className="rounded-full" />}
         </div>
       ))}
     </div>
@@ -30,8 +30,8 @@ export const SignIdeogram = ({ leftSign, rightSign, color = "#1a1a1a", size = 1 
   color?: string,
   size?: number
 }) => {
-  const dotSize = size > 5 ? (size / 10) : 1.5 * size;
-  const columnGap = size > 5 ? (size / 5) : 4 * size;
+  const dotSize = size > 5 ? (size / 8) : 1.5 * size;
+  const columnGap = size > 5 ? (size / 4) : 4 * size;
 
   return (
     <div className="flex items-center justify-center pointer-events-none" style={{ gap: columnGap }}>
@@ -139,36 +139,37 @@ const FaMatrix = () => {
     <div className="w-full h-full flex flex-col items-center justify-center p-4 md:p-8 bg-white overflow-auto select-none">
       <div className="relative inline-block p-4">
         {/* Top Header */}
-        <div className="flex gap-[2px] mb-[2px]">
+        <div className="flex gap-[2px] mb-8">
           {/* Intersection Cell: Bases with Benin Gradient */}
           <motion.button
             onClick={() => router.push('/sagesses/generalites')}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="w-12 h-12 flex flex-col items-center justify-center flex-shrink-0 rounded-lg group relative overflow-hidden transition-all shadow-sm border border-[#008751]/20 bg-gradient-to-br from-[#00693E] to-[#008751]"
+            className="w-16 h-12 flex flex-col items-center justify-center flex-shrink-0 rounded-lg group relative overflow-hidden transition-all shadow-sm border border-[#008751]/20 bg-gradient-to-br from-[#00693E] to-[#008751]"
           >
-            <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <BookOpen size={14} className="text-white mb-1 z-10" />
-            <span className="text-[7px] font-bold uppercase tracking-[1px] text-white z-10">
-              Bases
-            </span>
+            <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity" />
+            <BookOpen size={16} className="text-white mb-1 drop-shadow-md" strokeWidth={2.5} />
+            <span className="text-[8px] font-black uppercase tracking-widest text-white drop-shadow-md">Bases</span>
           </motion.button>
 
-          {SIGNS.map((sign, i) => (
-            <div 
-              key={`h-${i}`} 
-              className="w-10 h-16 flex items-end justify-center"
-            >
-              <motion.span 
-                initial={{ opacity: 0, y: -10, rotate: -45 }}
-                animate={{ opacity: 1, y: 0, rotate: -45 }}
-                transition={{ delay: i * 0.02, duration: 0.5 }}
-                className="text-[10px] font-bold uppercase tracking-[0.2em] text-black font-sans origin-bottom-left translate-x-[28px] whitespace-nowrap"
+          {/* Top Header Labels */}
+          <div className="flex gap-[2px]">
+            {SIGNS.map((sign, i) => (
+              <div 
+                key={`h-${i}`} 
+                className="w-10 h-16 flex items-end justify-center relative"
               >
-                {sign.name}
-              </motion.span>
-            </div>
-          ))}
+                <motion.span 
+                  initial={{ opacity: 0, y: -10, rotate: -45 }}
+                  animate={{ opacity: 1, y: 0, rotate: -45 }}
+                  transition={{ delay: i * 0.02, duration: 0.5 }}
+                  className="text-[10px] font-bold uppercase tracking-[0.2em] text-black font-sans origin-bottom-left translate-x-[18px] translate-y-[-10px] whitespace-nowrap"
+                >
+                  {sign.name}
+                </motion.span>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Rows */}
