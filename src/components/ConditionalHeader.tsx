@@ -5,7 +5,7 @@ import Header from "./Header";
 
 export default function ConditionalHeader() {
   const pathname = usePathname();
-  const isSatoChallenge = pathname?.includes('/mysteres/sato-challenge') || pathname?.includes('/savoirs/sato-challenge') || pathname?.includes('/savoirs/quiz');
+  const isSatoChallenge = pathname?.includes('/mysteres/sato-challenge') || pathname?.startsWith('/savoirs/sato-challenge') || pathname?.includes('/savoirs/quiz');
 
   // Ne pas afficher le Header sur la page Sato Challenge
   if (isSatoChallenge) {
