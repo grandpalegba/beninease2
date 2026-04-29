@@ -54,11 +54,13 @@ const FaMatrix = () => {
     const leftSign = SIGNS[rIndex];
     const rightSign = SIGNS[cIndex];
     
-    // If signs are the same, it's a "Meji" sign
+    // Format des Signes Mères : Si doublon, nom + " Meji"
+    // Format des Signes composés : nom + espace + nom
     const combinedName = rIndex === cIndex 
-      ? `${leftSign.name}Meji` 
-      : `${leftSign.name}${rightSign.name}`;
+      ? `${leftSign.name} Meji` 
+      : `${leftSign.name} ${rightSign.name}`;
       
+    // Technique : Slugs sans espace ni accents
     const slug = generateSlug(combinedName);
 
     setClickedCell({ r: rIndex, c: cIndex });
@@ -81,7 +83,7 @@ const FaMatrix = () => {
               className="w-10 h-12 flex items-center justify-center border-b border-r border-neutral-200 bg-neutral-50"
             >
               <span className="text-[8px] font-bold uppercase tracking-tighter rotate-[-45deg] text-neutral-400">
-                {sign.name}
+                {sign.name === "Tche" ? "Tche" : sign.name}
               </span>
             </div>
           ))}
@@ -104,9 +106,9 @@ const FaMatrix = () => {
                 onMouseEnter={() => setHoveredCell({ r: rIndex, c: cIndex })}
                 onMouseLeave={() => setHoveredCell(null)}
                 onClick={() => handleCellClick(rIndex, cIndex)}
-                className={`w-10 h-10 border-r border-b border-neutral-100 transition-colors duration-300 relative group
-                  ${hoveredCell?.r === rIndex || hoveredCell?.c === cIndex ? 'bg-neutral-50' : 'bg-[#f5f5f5]'}
-                  hover:bg-white
+                className={`w-10 h-10 border-r border-b border-neutral-100 transition-all duration-500 relative group
+                  ${hoveredCell?.r === rIndex || hoveredCell?.c === cIndex ? 'bg-neutral-50' : 'bg-[#e5e5e5]'}
+                  hover:bg-white hover:z-20 hover:scale-[1.05] hover:shadow-lg
                 `}
               >
                 {/* Visual feedback for the cell */}

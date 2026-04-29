@@ -9,6 +9,8 @@ import { supabase } from '@/lib/supabase/client';
 import { SIGNS, type FongbeSign } from '@/data/fongbe';
 import { SignIdeogram } from '@/components/FaMatrix';
 
+import ContactModal from '@/components/ContactModal';
+
 interface SignData {
   id: string;
   signe_nom: string;
@@ -33,6 +35,7 @@ const CoursePage = () => {
   const [loading, setLoading] = useState(true);
   const [leftSign, setLeftSign] = useState<FongbeSign | null>(null);
   const [rightSign, setRightSign] = useState<FongbeSign | null>(null);
+  const [isContactOpen, setIsContactOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -102,82 +105,178 @@ const CoursePage = () => {
   if (!data) {
     return (
       <div className="min-h-screen bg-white flex flex-col items-center justify-center p-8 text-center">
-        <h1 className="text-2xl font-display mb-4">Signe non trouvé</h1>
-        <button onClick={() => router.back()} className="text-sm underline uppercase tracking-widest font-bold">Retour</button>
+        <h1 className="text-2xl font-display mb-4 uppercase tracking-widest">Signe non trouvé</h1>
+        <button onClick={() => router.back()} className="text-[10px] underline uppercase tracking-[0.2em] font-bold">Retour à la matrice</button>
       </div>
     );
   }
 
+  // Formatting name based on strict rules for display
+  const displayName = data.signe_nom.toLowerCase().includes('medji') || data.signe_nom.toLowerCase().includes('meji')
+    ? `${data.signe_nom.split(' ')[0]} Meji`
+    : data.signe_nom;
+
   return (
-    <div className="min-h-screen bg-white text-[#1a1a1a] pb-20">
-      {/* Header */}
-      <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-neutral-100 px-6 py-4 flex items-center gap-4">
-        <button onClick={() => router.back()} className="p-2 hover:bg-neutral-50 rounded-full transition-colors">
+    <div className="min-h-screen bg-white text-[#1a1a1a] pb-32">
+      {/* Navbar Minimalist */}
+      <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-6 flex justify-start pointer-events-none">
+        <button 
+          onClick={() => router.back()} 
+          className="p-3 bg-white/80 backdrop-blur-md rounded-full shadow-sm border border-neutral-100 hover:bg-white transition-all pointer-events-auto"
+        >
           <ChevronLeft size={20} />
         </button>
-        <h1 className="text-lg font-display uppercase tracking-widest font-bold">{data.signe_nom}</h1>
-      </header>
+      </nav>
 
-      <main className="max-w-4xl mx-auto px-6 pt-8">
-        {/* Video Section with Fallback */}
-        <div className="aspect-video w-full bg-neutral-900 rounded-2xl overflow-hidden relative mb-12 shadow-2xl">
-          {/* Mock Video Placeholder */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-white/50 gap-4">
-            <div className="w-20 h-20 rounded-full border-2 border-white/20 flex items-center justify-center backdrop-blur-sm group cursor-pointer hover:bg-white/10 transition-all">
-              <Play size={32} className="ml-1 fill-white" />
-            </div>
-            <span className="text-[10px] uppercase tracking-[0.3em] font-bold">Video Lesson: {data.signe_nom}</span>
+      <main className="max-w-4xl mx-auto px-6 pt-24 flex flex-col items-center">
+        
+        {/* 1. En-tête Visual: Ideogram */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8 p-12 bg-neutral-50 rounded-[3rem] border border-neutral-100 shadow-sm"
+        >
+          {leftSign && rightSign && (
+            <SignIdeogram leftSign={leftSign} rightSign={rightSign} size={110} />
+          )}
+        </motion.div>
+
+        {/* 2. Nom du signe */}
+        <motion.h1 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="text-4xl md:text-5xl font-display uppercase tracking-[0.2em] font-bold text-center mb-12"
+        >
+          {displayName}
+        </motion.h1>
+
+        {/* 3. Ligne de séparation fine */}
+        <div className="w-24 h-[1px] bg-neutral-200 mb-20" />
+
+        {/* 4. Titre de section */}
+        <div className="w-full mb-12 text-center md:text-left">
+          <h2 className="text-[10px] font-bold uppercase tracking-[0.4em] text-neutral-400">
+            Cours et éléments sur le signe du Fâ
+          </h2>
+        </div>
+
+        {/* 5. Contenu textuel */}
+        <div className="w-full grid md:grid-cols-2 gap-16 mb-24">
+          <div className="space-y-12">
+            <TextSection title="Introduction" content={data.introduction} />
+            <TextSection title="La Devise" content={data.devise} italic />
           </div>
-          {/* Text to "furnish" if no video (per prompt) */}
-          <div className="absolute bottom-0 inset-x-0 p-8 bg-gradient-to-t from-black/80 to-transparent">
-            <p className="text-white/80 text-sm font-light italic max-w-lg line-clamp-2">
-              "{data.introduction}"
-            </p>
+          <div className="space-y-12">
+            <TextSection title="Les Avantages" content={data.avantages} isGood />
+            <TextSection title="Les Défis" content={data.defis} isWarning />
           </div>
         </div>
 
-        {/* Info Grid */}
-        <div className="grid md:grid-cols-3 gap-12">
-          {/* Left Column: Ideogram & Devise */}
-          <div className="md:col-span-1 flex flex-col items-center text-center">
-            <div className="mb-8 p-8 border border-neutral-100 rounded-3xl bg-neutral-50 shadow-sm">
-              {leftSign && rightSign && (
-                <SignIdeogram leftSign={leftSign} rightSign={rightSign} size={100} />
-              )}
-            </div>
-            <div className="space-y-4">
-              <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-neutral-400">Devise du signe</span>
-              <p className="font-headline italic text-lg leading-relaxed text-neutral-600">
-                "{data.devise}"
-              </p>
-            </div>
-          </div>
-
-          {/* Right Column: Content Sections */}
-          <div className="md:col-span-2 space-y-12">
-            <Section icon={<Info size={18} />} title="Introduction" content={data.introduction} />
-            <div className="grid sm:grid-cols-2 gap-8">
-              <Section icon={<Shield size={18} />} title="Avantages" content={data.avantages} color="text-emerald-600" />
-              <Section icon={<Target size={18} />} title="Défis" content={data.defis} color="text-amber-600" />
-            </div>
-            <Section icon={<Lightbulb size={18} />} title="Recommandation" content={data.recommandation} isHighlight />
+        {/* 6. Galerie Vidéo (Max 4) */}
+        <div className="w-full space-y-12">
+          <h2 className="text-[10px] font-bold uppercase tracking-[0.4em] text-neutral-400 text-center md:text-left">
+            Vidéos & Expertises
+          </h2>
+          <div className="grid sm:grid-cols-2 gap-8">
+            <VideoCard 
+              title={`Ésotérisme du signe ${displayName}`}
+              expertName="Bokônon Ahodehou"
+              expertLanguages="Fongbé, Français"
+              expertLocation="Bénin"
+              expertPhoto="/assets/talents/guide-moise.jpg"
+              thumbnail="/assets/talents/tantie-flore.jpg"
+              onContact={() => setIsContactOpen(true)}
+            />
+            <VideoCard 
+              title={`Les interdits de ${displayName}`}
+              expertName="Aïcha Gogan"
+              expertLanguages="Yoruba, Français"
+              expertLocation="Bénin"
+              expertPhoto="/assets/talents/arielle-gogan.jpg"
+              thumbnail="/assets/talents/amina-dossou.jpg"
+              onContact={() => setIsContactOpen(true)}
+            />
+            <VideoCard 
+              title="Cours en attente..."
+              expertName="Expert à venir"
+              expertLanguages="-"
+              expertLocation="-"
+              isPlaceholder
+              onContact={() => setIsContactOpen(true)}
+            />
+            <VideoCard 
+              title="Cours en attente..."
+              expertName="Expert à venir"
+              expertLanguages="-"
+              expertLocation="-"
+              isPlaceholder
+              onContact={() => setIsContactOpen(true)}
+            />
           </div>
         </div>
       </main>
+
+      <ContactModal 
+        isOpen={isContactOpen} 
+        onClose={() => setIsContactOpen(false)} 
+        signName={displayName}
+      />
     </div>
   );
 };
 
-const Section = ({ icon, title, content, color = "text-neutral-800", isHighlight = false }: any) => (
-  <div className={`space-y-4 ${isHighlight ? 'p-8 bg-neutral-50 rounded-2xl border border-neutral-100' : ''}`}>
-    <div className="flex items-center gap-3">
-      <div className={`p-2 rounded-lg bg-white shadow-sm ${color}`}>{icon}</div>
+const TextSection = ({ title, content, italic = false, isGood = false, isWarning = false }: any) => (
+  <div className="space-y-4">
+    <div className="flex items-center gap-2">
+      {isGood && <div className="w-1 h-4 bg-emerald-500 rounded-full" />}
+      {isWarning && <div className="w-1 h-4 bg-amber-500 rounded-full" />}
       <h3 className="text-[10px] uppercase tracking-[0.2em] font-bold text-neutral-400">{title}</h3>
     </div>
-    <p className={`text-sm leading-relaxed font-light ${color}`}>
-      {content || "Information non disponible pour le moment."}
+    <p className={`text-sm leading-relaxed font-light text-neutral-700 ${italic ? 'italic font-headline text-lg' : ''}`}>
+      {content || "Information non disponible."}
     </p>
   </div>
 );
+
+const VideoCard = ({ title, expertName, expertPhoto, expertLanguages, expertLocation, thumbnail, onContact, isPlaceholder = false }: any) => (
+  <div className={`group rounded-3xl overflow-hidden border border-neutral-100 shadow-sm transition-all hover:shadow-xl ${isPlaceholder ? 'opacity-40 grayscale' : ''}`}>
+    <div className="relative aspect-video bg-neutral-100 overflow-hidden">
+      {!isPlaceholder && thumbnail && (
+        <img src={thumbnail} alt={title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+      )}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white border border-white/30 group-hover:scale-110 transition-transform">
+          <Play size={20} fill="currentColor" />
+        </div>
+      </div>
+    </div>
+    <div className="p-6 space-y-6 bg-white">
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 rounded-full bg-neutral-100 overflow-hidden border border-neutral-200 shrink-0">
+          {expertPhoto && <img src={expertPhoto} alt={expertName} className="w-full h-full object-cover" />}
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400 truncate">{expertName}</p>
+          <h4 className="text-sm font-bold truncate leading-tight mt-0.5">{title}</h4>
+          {!isPlaceholder && (
+            <div className="flex flex-wrap gap-x-2 mt-1">
+              <span className="text-[9px] text-neutral-400">{expertLanguages}</span>
+              <span className="text-[9px] text-neutral-400">•</span>
+              <span className="text-[9px] text-neutral-400">{expertLocation}</span>
+            </div>
+          )}
+        </div>
+      </div>
+      <button 
+        onClick={(e) => { e.stopPropagation(); onContact(); }}
+        className="w-full py-3 border border-neutral-200 rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-neutral-900 hover:text-white hover:border-neutral-900 transition-all"
+      >
+        Contacter l'expert
+      </button>
+    </div>
+  </div>
+);
+
 
 export default CoursePage;
