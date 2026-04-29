@@ -115,7 +115,7 @@ const WallTile = memo(({ data, index, isSelected, onClick }: Props) => {
         y: 0,
         boxShadow: "0 10px 20px rgba(0,0,0,0.3)"
       }}
-      style={{ backgroundColor: 'transparent', opacity: 1 }}
+      style={{ backgroundColor: 'transparent', opacity: 1, width: '100%', height: '100%' }}
     >
       <motion.img
         src={imageUrl}

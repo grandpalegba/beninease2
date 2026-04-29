@@ -61,7 +61,7 @@ const SynchronicityWall = () => {
                 }}
                 initial="hidden"
                 animate="visible"
-                className="relative z-10 grid w-full h-full gap-[0.5px]"
+                className="relative z-10 grid w-full h-full gap-0"
                 style={{ gridTemplateColumns: "repeat(16, 1fr)" }}
               >
                 {order.map((originalIndex) => {
