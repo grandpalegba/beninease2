@@ -51,8 +51,8 @@ const SynchronicityWall = () => {
               <div className="absolute inset-0 flex overflow-hidden">
                 <div className="w-1/2 bg-[#008751]" />
                 <div className="w-1/2 flex flex-col">
-                  <div className="h-1/2 bg-[#FCD116] />
-                  <div className="h-1/2 bg-[#E8112D] />
+                  <div className="h-1/2 bg-[#FCD116]" />
+                  <div className="h-1/2 bg-[#E8112D]" />
                 </div>
               </div>
 
