@@ -39,6 +39,7 @@ const WallTile = memo(({ data, index, isSelected, onClick }: Props) => {
   if (!data) {
     const tileBg = TILE_BACKGROUNDS[index % TILE_BACKGROUNDS.length];
     return (
+      <motion.div
         layout
         className="relative w-full h-full"
         style={{ backgroundColor: tileBg }}
