@@ -222,8 +222,8 @@ export default function SavoirsPage() {
                 <p className="text-[10px] md:text-[11px] font-sans font-bold text-[#a0412d] mt-2 italic uppercase">
                   {currentM.subtitle}
                 </p>
-                <div className="mt-2 pt-2 border-t border-gray-50 flex-1 overflow-y-auto no-scrollbar">
-                  <p className="text-[14px] md:text-[15px] text-gray-400 italic leading-relaxed">"{currentM.mise_en_abyme}"</p>
+                <div className="mt-6 pt-4 border-t border-gray-50 flex-1 overflow-y-auto no-scrollbar">
+                  <p className="text-[14px] md:text-[15px] text-gray-500 italic leading-[1.8]">"{currentM.mise_en_abyme}"</p>
                 </div>
               </div>
             </motion.div>

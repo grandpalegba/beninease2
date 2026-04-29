@@ -223,8 +223,8 @@ export default function MysteresPage() {
               <div className="p-7 flex flex-col flex-1 bg-white">
                 <h2 className="font-lato text-[24px] font-black leading-[1.1] tracking-[0.05em] uppercase">{currentM.title}</h2>
                 <p className="font-lato text-[11px] font-bold text-[#a0412d] mt-1 italic tracking-[0.12em] uppercase">{currentM.subtitle}</p>
-                <div className="mt-3 pt-3 border-t border-gray-50 flex-1 overflow-y-auto no-scrollbar">
-                  <p className="font-lato text-[15px] text-gray-500 italic leading-[1.6]">"{currentM.mise_en_abyme}"</p>
+                <div className="mt-6 pt-4 border-t border-gray-50 flex-1 overflow-y-auto no-scrollbar">
+                  <p className="font-lato text-[15px] text-gray-500 italic leading-[1.8]">"{currentM.mise_en_abyme}"</p>
                 </div>
               </div>
             </motion.div>
