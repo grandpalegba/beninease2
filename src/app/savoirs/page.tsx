@@ -229,11 +229,18 @@ export default function SavoirsPage() {
             </motion.div>
           </motion.div>
         ) : (
-          <motion.div key="ritual" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-50 flex flex-col items-center p-4 overflow-hidden">
-            <div className="w-12 h-1 bg-gray-100 rounded-full mb-4 shrink-0" />
+          <motion.div key="ritual" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-[150] flex flex-col items-center p-4 overflow-hidden">
+            <button 
+              onClick={() => setView("gallery")}
+              className="absolute top-6 left-6 z-[160] px-4 py-2 bg-[#faf9f8] rounded-full flex items-center gap-2 shadow-sm border border-gray-100 active:scale-95 transition-transform"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a0412d" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+              <span className="text-[10px] font-black uppercase tracking-widest text-[#a0412d]">Retour</span>
+            </button>
+            <div className="w-12 h-1 bg-gray-100 rounded-full mb-8 shrink-0" />
 
             {/* ZONE VISUELLE */}
-            <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-4 md:gap-20 h-[160px] shrink-0">
+            <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-4 md:gap-20 h-[160px] mb-12 md:mb-20 shrink-0">
               <OkpeleRitual activeSeeds={Math.ceil(timeLeft / 8)} />
               <div ref={jarRef} className="z-10 flex items-center justify-center">
                 <SatoJar holesCount={holes} isOver={isOverJar} />
