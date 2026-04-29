@@ -72,7 +72,7 @@ const BeninFrame = ({ children, inset = 10, thickness = 6, className = "" }: Pro
           borderBottomLeftRadius: 4,
         }}
       />
-      <div className="relative">{children}</div>
+      <div className="relative h-full w-full">{children}</div>
     </div>
   );
 };

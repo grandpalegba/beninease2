@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { RotateCcw } from "lucide-react";
-import { useProfiles, type Profile } from "@/hooks/useProfiles";
+import { useConsultations } from "@/hooks/useConsultations";
 import { useLivingOrder } from "@/hooks/useLivingOrder";
 import WallTile from "./WallTile";
 import ConsultationModal from "./ConsultationModal";
@@ -14,7 +14,7 @@ import BeninFrame from "./BeninFrame";
  * Displays profiles in an 8x8 grid.
  */
 const SynchronicityWall = () => {
-  const { data: profiles = [], isLoading } = useProfiles();
+  const { data: consultations = [], isLoading } = useConsultations();
   const [selected, setSelected] = useState<any | null>(null);
   const [revealed, setRevealed] = useState<Set<string>>(new Set());
   
@@ -66,15 +66,15 @@ const SynchronicityWall = () => {
               >
                 {order.map((originalIndex) => {
                   // Modulo ensures 256 tiles are filled
-                  const profile = profiles.length > 0 ? profiles[originalIndex % profiles.length] : null;
+                  const data = consultations.length > 0 ? consultations[originalIndex % consultations.length] : null;
 
                   return (
                     <WallTile
                       key={`tile-${originalIndex}`}
-                      data={profile}
+                      data={data}
                       index={originalIndex}
-                      isSelected={profile ? revealed.has(profile.id) : false}
-                      onClick={profile ? handleSelect : undefined}
+                      isSelected={data ? revealed.has(data.id) : false}
+                      onClick={data ? handleSelect : undefined}
                     />
                   );
                 })}
