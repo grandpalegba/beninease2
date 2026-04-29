@@ -10,7 +10,7 @@ import { BookOpen } from 'lucide-react';
 /**
  * Renders a small version of the ideogram dots
  */
-const MiniDotsColumn = ({ code, color = "currentColor", size = 1.5 }: { code: [number, number, number, number], color?: string, size?: number }) => (
+export const SignDotsColumn = ({ code, color = "currentColor", size = 1.5 }: { code: [number, number, number, number], color?: string, size?: number }) => (
   <div className="flex flex-col gap-[2px] items-center">
     {code.map((type, i) => (
       <div key={i} className="flex gap-[2px]">
@@ -21,15 +21,15 @@ const MiniDotsColumn = ({ code, color = "currentColor", size = 1.5 }: { code: [n
   </div>
 );
 
-const MiniIdeogram = ({ leftSign, rightSign, color = "currentColor", size = 1 }: { 
+export const SignIdeogram = ({ leftSign, rightSign, color = "currentColor", size = 1 }: { 
   leftSign: FongbeSign, 
   rightSign: FongbeSign,
   color?: string,
   size?: number
 }) => (
   <div className="flex gap-1 items-center justify-center pointer-events-none transition-all duration-300" style={{ transform: `scale(${size})` }}>
-    <MiniDotsColumn code={leftSign.code} color={color} size={1.5} />
-    <MiniDotsColumn code={rightSign.code} color={color} size={1.5} />
+    <SignDotsColumn code={leftSign.code} color={color} size={1.5} />
+    <SignDotsColumn code={rightSign.code} color={color} size={1.5} />
   </div>
 );
 
@@ -60,8 +60,8 @@ const MatrixCell = ({ rIndex, cIndex, onClick }: { rIndex: number, cIndex: numbe
       }}
     >
       {/* Ghost Ideogram */}
-      <div className={`transition-all duration-300 ${isHovered ? 'opacity-100' : 'opacity-[0.15]'}`}>
-        <MiniIdeogram 
+      <div className={`transition-all duration-300 ${isHovered ? 'opacity-100' : 'opacity-[0.3]'}`}>
+        <SignIdeogram 
           leftSign={leftSign} 
           rightSign={rightSign} 
           color={isHovered ? "#E8112D" : "#1a1a1a"} 
@@ -115,7 +115,7 @@ const FaMatrix = () => {
             <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             <BookOpen size={14} className="text-white mb-1 z-10" />
             <span className="text-[7px] font-bold uppercase tracking-[1px] text-white z-10">
-              Généralités
+              Bases
             </span>
           </motion.button>
 
@@ -124,7 +124,7 @@ const FaMatrix = () => {
               key={`h-${i}`} 
               className="w-10 h-12 flex items-center justify-center"
             >
-              <span className="text-[9px] font-bold uppercase tracking-[0.2em] rotate-[-45deg] text-[#FCD116] font-sans drop-shadow-sm">
+              <span className="text-[9px] font-bold uppercase tracking-[0.2em] rotate-[-45deg] text-black font-sans drop-shadow-sm">
                 {sign.name}
               </span>
             </div>
@@ -137,7 +137,7 @@ const FaMatrix = () => {
             <div key={`r-${rIndex}`} className="flex gap-[2px]">
               {/* Left Header */}
               <div className="w-12 h-10 flex items-center justify-center flex-shrink-0">
-                <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#FCD116] font-sans drop-shadow-sm">
+                <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-black font-sans drop-shadow-sm">
                   {rowSign.name}
                 </span>
               </div>
