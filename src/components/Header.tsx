@@ -61,7 +61,7 @@ const Header = () => {
       {isMainPage && <HeaderSwipe />}
 
       {/* DOCK (Bottom) */}
-      <footer className="fixed bottom-0 left-0 right-0 z-[100] h-20 bg-black/95 backdrop-blur-xl border-t border-white/5 flex items-center justify-between px-8 rounded-t-[2.5rem] shadow-[0_-10px_40px_rgba(0,0,0,0.2)] font-sans">
+      <footer className="fixed bottom-0 left-0 right-0 z-[200] h-20 bg-black/95 backdrop-blur-xl border-t border-white/5 flex items-center justify-between px-8 rounded-t-[2.5rem] shadow-[0_-10px_40px_rgba(0,0,0,0.2)] font-sans">
         
         {/* Logo : Gauche sur mobile, Centré sur MD+ */}
         <div className={cn(

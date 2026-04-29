@@ -229,7 +229,7 @@ export default function SavoirsPage() {
             </motion.div>
           </motion.div>
         ) : (
-          <motion.div key="ritual" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-[150] flex flex-col items-center p-4 overflow-hidden">
+          <motion.div key="ritual" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-[150] flex flex-col items-center p-4 pb-20 overflow-hidden">
             <button 
               onClick={() => setView("gallery")}
               className="absolute top-6 left-6 z-[160] px-4 py-2 bg-[#faf9f8] rounded-full flex items-center gap-2 shadow-sm border border-gray-100 active:scale-95 transition-transform"
