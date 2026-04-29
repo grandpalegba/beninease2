@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { ChevronLeft, Play, Info, Shield, Target, Lightbulb } from 'lucide-react';
+import { ArrowLeft, Play, Info, Shield, Target, Lightbulb } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import { SIGNS, type FongbeSign } from '@/data/fongbe';
 import { SignIdeogram } from '@/components/FaMatrix';
@@ -119,12 +119,13 @@ const CoursePage = () => {
   return (
     <div className="min-h-screen bg-white text-[#1a1a1a] pb-32">
       {/* Navbar Minimalist */}
-      <nav className="absolute top-0 left-0 right-0 z-50 px-6 py-6 flex justify-start pointer-events-none">
+      <nav className="absolute top-0 left-0 right-0 z-50 px-8 py-10 flex justify-start pointer-events-none">
         <button 
           onClick={() => router.back()} 
-          className="p-3 bg-white shadow-sm border border-neutral-100 rounded-full hover:bg-neutral-50 transition-all pointer-events-auto"
+          className="flex items-center gap-3 text-neutral-300 hover:text-neutral-500 transition-colors pointer-events-auto group"
         >
-          <ChevronLeft size={20} />
+          <ArrowLeft size={20} strokeWidth={1.5} className="group-hover:-translate-x-1 transition-transform" />
+          <span className="text-[10px] font-bold uppercase tracking-[0.3em]">Retour</span>
         </button>
       </nav>
 

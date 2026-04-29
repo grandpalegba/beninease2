@@ -129,7 +129,7 @@ const FaMatrix = () => {
       ? `${leftSign.name} Meji` 
       : `${leftSign.name} ${rightSign.name}`;
     const slug = generateSlug(combinedName);
-    router.push(`/savoirs/cours/${slug}`);
+    router.push(`/sagesses/cours/${slug}`);
   };
 
   return (
@@ -139,7 +139,7 @@ const FaMatrix = () => {
         <div className="flex gap-[2px] mb-[2px]">
           {/* Intersection Cell: Bases with Benin Gradient */}
           <motion.button
-            onClick={() => router.push('/savoirs/generalites')}
+            onClick={() => router.push('/sagesses/generalites')}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="w-12 h-12 flex flex-col items-center justify-center flex-shrink-0 rounded-lg group relative overflow-hidden transition-all shadow-sm border border-[#008751]/20 bg-gradient-to-br from-[#00693E] to-[#008751]"
