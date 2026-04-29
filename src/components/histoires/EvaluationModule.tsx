@@ -96,7 +96,7 @@ export function EvaluationModule({ episode, profilId, seriesInfo }: EvaluationMo
             <div key={c.key} className="space-y-2">
               <div className="flex justify-between items-end font-black">
                 <span className="text-[8px] uppercase tracking-[0.3em] text-gray-400">{c.label}</span>
-                <span className={cn("text-[10px] tabular-nums", c.color)}>
+                <span className="text-[10px] font-black tabular-nums text-black">
                   {Math.round(scores[c.key as keyof typeof scores])}%
                 </span>
               </div>

@@ -38,7 +38,7 @@ export function HistogrammeBeninois({ stats }: HistogrammeBeninoisProps) {
           <div key={i} className="space-y-2">
             <div className="flex justify-between items-end px-1">
               <span className="text-[8px] font-black text-gray-400 uppercase tracking-[0.3em]">{bar.label}</span>
-              <span className={cn("text-[10px] font-black tabular-nums", bar.color.replace('bg-', 'text-'))}>{bar.value}%</span>
+              <span className="text-[10px] font-black tabular-nums text-black">{bar.value}%</span>
             </div>
             <div className="h-1 w-full bg-gray-50 rounded-full overflow-hidden">
               <div 

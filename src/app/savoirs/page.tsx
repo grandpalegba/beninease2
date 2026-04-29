@@ -233,7 +233,7 @@ export default function SavoirsPage() {
             <div className="w-12 h-1 bg-gray-100 rounded-full mb-4 shrink-0" />
 
             {/* ZONE VISUELLE */}
-            <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-4 md:gap-20 h-[220px] md:h-[350px] shrink-0">
+            <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-4 md:gap-20 h-[160px] shrink-0">
               <OkpeleRitual activeSeeds={Math.ceil(timeLeft / 8)} />
               <div ref={jarRef} className="z-10 flex items-center justify-center">
                 <SatoJar holesCount={holes} isOver={isOverJar} />
@@ -242,7 +242,7 @@ export default function SavoirsPage() {
             </div>
 
             {/* ZONE QUESTION ET LABELS */}
-            <div className="w-full max-w-xl flex-1 flex flex-col justify-center pb-4">
+            <div className="w-full max-w-xl flex-1 flex flex-col justify-start pt-0 md:pt-2 pb-4">
               {!isFinished ? (
                 !showExplanation ? (
                   <div className="text-center flex flex-col gap-3 md:gap-5">

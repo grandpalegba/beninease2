@@ -68,12 +68,12 @@ const Header = () => {
 
         {/* Logo CENTRÉ */}
         <Link href="/" className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2">
-          <div className="relative w-6 h-6 md:w-7 md:h-7">
+          <div className="relative w-5 h-5 md:w-7 md:h-7">
             <Image src="/logo.png" alt="logo" fill className="object-contain" />
           </div>
-          <span className="text-lg font-black tracking-[2px] uppercase hidden lg:inline-flex">
+          <span className="text-[10px] md:text-lg font-black tracking-[1px] md:tracking-[2px] uppercase flex items-center">
             <span className="text-white">BLACK</span>
-            <span className="text-[#FCD116] mx-1.5">TO</span>
+            <span className="text-[#FCD116] mx-1 md:mx-1.5">TO</span>
             <span className="text-white">BENIN</span>
           </span>
         </Link>
