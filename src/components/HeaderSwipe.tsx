@@ -78,12 +78,12 @@ export const HeaderSwipe = () => {
                 "flex items-center gap-2 transition-all duration-500",
                 pathname === page.href 
                   ? "scale-110 opacity-100" 
-                  : "opacity-30 scale-90"
+                  : "opacity-50 scale-90"
               )}>
                 <CategoryPattern id={page.id} className={pathname === page.href ? "text-white" : "grayscale opacity-40"} />
                 <span className={cn(
                   "font-display text-[10px] md:text-[11px] uppercase tracking-[0.25em] whitespace-nowrap transition-colors duration-500",
-                  pathname === page.href ? "font-black text-white" : "font-semibold text-gray-500"
+                  pathname === page.href ? "font-black text-white" : "font-semibold text-gray-400"
                 )}>
                   {page.name}
                 </span>
