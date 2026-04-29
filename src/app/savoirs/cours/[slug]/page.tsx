@@ -128,13 +128,13 @@ const CoursePage = () => {
         </button>
       </nav>
 
-      <main className="max-w-4xl mx-auto px-6 pt-12 flex flex-col items-center">
+      <main className="max-w-4xl mx-auto px-6 pt-4 flex flex-col items-center">
         
-        {/* 1. En-tête Visual: Ideogram */}
+        {/* 1. En-tête Visual: Ideogram (No circle) */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-6 p-10 bg-neutral-50 rounded-[3rem] border border-neutral-100 shadow-sm"
+          className="mb-6"
         >
           {leftSign && rightSign && (
             <SignIdeogram leftSign={leftSign} rightSign={rightSign} size={100} />
@@ -146,26 +146,26 @@ const CoursePage = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="text-4xl md:text-5xl font-display uppercase tracking-[0.2em] font-bold text-center mb-12 text-black"
+          className="text-4xl md:text-5xl font-display uppercase tracking-[0.2em] font-bold text-center mb-8 text-black"
         >
           {displayName}
         </motion.h1>
 
         {/* 3. Ligne de séparation fine */}
-        <div className="w-24 h-[1.5px] bg-[#008751] mb-20" />
+        <div className="w-24 h-[1.5px] bg-[#008751] mb-12" />
 
-        {/* 4. Titre de section */}
-        <div className="w-full mb-12 text-center md:text-left">
-          <h2 className="text-[10px] font-bold uppercase tracking-[0.4em] text-[#008751]">
-            Cours et éléments sur le signe du Fâ
-          </h2>
-        </div>
+        {/* 4. Nouveau Titre Principal Centré */}
+        <motion.h2 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="text-2xl md:text-3xl font-display uppercase tracking-[0.3em] font-bold text-center mb-20 text-black"
+        >
+          Partages d'expertises
+        </motion.h2>
 
         {/* 6. Galerie Vidéo (Max 4) */}
         <div className="w-full space-y-12">
-          <h2 className="text-[10px] font-bold uppercase tracking-[0.4em] text-[#E8112D] text-center md:text-left">
-            Partage d'expertises sur le signe
-          </h2>
           <div className="grid sm:grid-cols-2 gap-8">
             <VideoCard 
               title={`Ésotérisme du signe ${displayName}`}
