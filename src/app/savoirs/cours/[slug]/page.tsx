@@ -119,7 +119,7 @@ const CoursePage = () => {
   return (
     <div className="min-h-screen bg-white text-[#1a1a1a] pb-32">
       {/* Navbar Minimalist */}
-      <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-6 flex justify-start pointer-events-none">
+      <nav className="absolute top-0 left-0 right-0 z-50 px-6 py-6 flex justify-start pointer-events-none">
         <button 
           onClick={() => router.back()} 
           className="p-3 bg-white/80 backdrop-blur-md rounded-full shadow-sm border border-neutral-100 hover:bg-white transition-all pointer-events-auto"
@@ -128,16 +128,16 @@ const CoursePage = () => {
         </button>
       </nav>
 
-      <main className="max-w-4xl mx-auto px-6 pt-24 flex flex-col items-center">
+      <main className="max-w-4xl mx-auto px-6 pt-12 flex flex-col items-center">
         
         {/* 1. En-tête Visual: Ideogram */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 p-12 bg-neutral-50 rounded-[3rem] border border-neutral-100 shadow-sm"
+          className="mb-6 p-10 bg-neutral-50 rounded-[3rem] border border-neutral-100 shadow-sm"
         >
           {leftSign && rightSign && (
-            <SignIdeogram leftSign={leftSign} rightSign={rightSign} size={110} />
+            <SignIdeogram leftSign={leftSign} rightSign={rightSign} size={100} />
           )}
         </motion.div>
 
@@ -146,37 +146,25 @@ const CoursePage = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="text-4xl md:text-5xl font-display uppercase tracking-[0.2em] font-bold text-center mb-12"
+          className="text-4xl md:text-5xl font-display uppercase tracking-[0.2em] font-bold text-center mb-12 text-[#E8112D]"
         >
           {displayName}
         </motion.h1>
 
         {/* 3. Ligne de séparation fine */}
-        <div className="w-24 h-[1px] bg-neutral-200 mb-20" />
+        <div className="w-24 h-[1.5px] bg-[#008751] mb-20" />
 
         {/* 4. Titre de section */}
         <div className="w-full mb-12 text-center md:text-left">
-          <h2 className="text-[10px] font-bold uppercase tracking-[0.4em] text-neutral-400">
+          <h2 className="text-[10px] font-bold uppercase tracking-[0.4em] text-[#008751]">
             Cours et éléments sur le signe du Fâ
           </h2>
         </div>
 
-        {/* 5. Contenu textuel */}
-        <div className="w-full grid md:grid-cols-2 gap-16 mb-24">
-          <div className="space-y-12">
-            <TextSection title="Introduction" content={data.introduction} />
-            <TextSection title="La Devise" content={data.devise} italic />
-          </div>
-          <div className="space-y-12">
-            <TextSection title="Les Avantages" content={data.avantages} isGood />
-            <TextSection title="Les Défis" content={data.defis} isWarning />
-          </div>
-        </div>
-
         {/* 6. Galerie Vidéo (Max 4) */}
         <div className="w-full space-y-12">
-          <h2 className="text-[10px] font-bold uppercase tracking-[0.4em] text-neutral-400 text-center md:text-left">
-            Vidéos & Expertises
+          <h2 className="text-[10px] font-bold uppercase tracking-[0.4em] text-[#E8112D] text-center md:text-left">
+            Partage d'expertises sur le signe
           </h2>
           <div className="grid sm:grid-cols-2 gap-8">
             <VideoCard 
@@ -197,22 +185,6 @@ const CoursePage = () => {
               thumbnail="/assets/talents/amina-dossou.jpg"
               onContact={() => setIsContactOpen(true)}
             />
-            <VideoCard 
-              title="Cours en attente..."
-              expertName="Expert à venir"
-              expertLanguages="-"
-              expertLocation="-"
-              isPlaceholder
-              onContact={() => setIsContactOpen(true)}
-            />
-            <VideoCard 
-              title="Cours en attente..."
-              expertName="Expert à venir"
-              expertLanguages="-"
-              expertLocation="-"
-              isPlaceholder
-              onContact={() => setIsContactOpen(true)}
-            />
           </div>
         </div>
       </main>
@@ -225,19 +197,6 @@ const CoursePage = () => {
     </div>
   );
 };
-
-const TextSection = ({ title, content, italic = false, isGood = false, isWarning = false }: any) => (
-  <div className="space-y-4">
-    <div className="flex items-center gap-2">
-      {isGood && <div className="w-1 h-4 bg-emerald-500 rounded-full" />}
-      {isWarning && <div className="w-1 h-4 bg-amber-500 rounded-full" />}
-      <h3 className="text-[10px] uppercase tracking-[0.2em] font-bold text-neutral-400">{title}</h3>
-    </div>
-    <p className={`text-sm leading-relaxed font-light text-neutral-700 ${italic ? 'italic font-headline text-lg' : ''}`}>
-      {content || "Information non disponible."}
-    </p>
-  </div>
-);
 
 const VideoCard = ({ title, expertName, expertPhoto, expertLanguages, expertLocation, thumbnail, onContact, isPlaceholder = false }: any) => (
   <div className={`group rounded-3xl overflow-hidden border border-neutral-100 shadow-sm transition-all hover:shadow-xl ${isPlaceholder ? 'opacity-40 grayscale' : ''}`}>
@@ -253,11 +212,11 @@ const VideoCard = ({ title, expertName, expertPhoto, expertLanguages, expertLoca
     </div>
     <div className="p-6 space-y-6 bg-white">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full bg-neutral-100 overflow-hidden border border-neutral-200 shrink-0">
+        <div className="w-10 h-10 rounded-full bg-neutral-100 overflow-hidden border border-[#008751]/30 shrink-0">
           {expertPhoto && <img src={expertPhoto} alt={expertName} className="w-full h-full object-cover" />}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400 truncate">{expertName}</p>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-[#008751] truncate">{expertName}</p>
           <h4 className="text-sm font-bold truncate leading-tight mt-0.5">{title}</h4>
           {!isPlaceholder && (
             <div className="flex flex-wrap gap-x-2 mt-1">
@@ -270,7 +229,7 @@ const VideoCard = ({ title, expertName, expertPhoto, expertLanguages, expertLoca
       </div>
       <button 
         onClick={(e) => { e.stopPropagation(); onContact(); }}
-        className="w-full py-3 border border-neutral-200 rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-neutral-900 hover:text-white hover:border-neutral-900 transition-all"
+        className="w-full py-3 bg-[#E8112D] text-white rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-[#FCD116] hover:text-[#1a1a1a] transition-all shadow-sm"
       >
         Contacter l'expert
       </button>

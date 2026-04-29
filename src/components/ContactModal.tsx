@@ -93,7 +93,7 @@ const ContactModal = ({ isOpen, onClose, signName }: Props) => {
               <button 
                 type="submit"
                 disabled={loading}
-                className="w-full py-4 bg-[#1a1a1a] text-white rounded-xl text-[10px] font-bold uppercase tracking-[0.3em] flex items-center justify-center gap-3 hover:bg-black transition-all"
+                className="w-full py-4 bg-[#E8112D] text-white rounded-xl text-[10px] font-bold uppercase tracking-[0.3em] flex items-center justify-center gap-3 hover:bg-[#FCD116] hover:text-[#1a1a1a] transition-all"
               >
                 {loading ? "Envoi en cours..." : "Envoyer le message"}
                 {!loading && <Send size={14} />}

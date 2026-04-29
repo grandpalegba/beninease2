@@ -136,7 +136,7 @@ export default function ConsultationPage() {
       </div>
 
       {/* Content Area */}
-      <div className="w-full max-w-7xl px-4 md:px-12 flex-1 flex items-center justify-center min-h-0 mt-4">
+      <div className="w-full max-w-7xl px-4 md:px-12 flex-1 flex items-center justify-center min-h-0 mt-0">
         <AnimatePresence mode="wait">
           {activeView === 'fa' ? (
             <motion.div 
