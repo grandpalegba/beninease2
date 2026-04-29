@@ -42,9 +42,9 @@ const SynchronicityWall = () => {
       >
         <div className="w-full flex justify-center mb-12">
           <BeninFrame
-            className="w-[95vw] max-w-[1200px] aspect-square shadow-2xl"
+            className="w-[85vw] max-w-[700px] aspect-square shadow-2xl"
             inset={0}
-            thickness={4}
+            thickness={3}
           >
             <div className="relative w-full h-full">
               {/* Fond Drapeau du Bénin */}
@@ -68,7 +68,7 @@ const SynchronicityWall = () => {
                 }}
                 initial="hidden"
                 animate="visible"
-                className="relative z-10 grid w-full h-full gap-[1px]"
+                className="relative z-10 grid w-full h-full gap-0"
                 style={{ gridTemplateColumns: "repeat(16, 1fr)" }}
               >
                 {order.map((originalIndex) => {
