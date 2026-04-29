@@ -19,7 +19,8 @@ const SynchronicityWall = () => {
   const [revealed, setRevealed] = useState<Set<string>>(new Set());
   
   // Le chef d'orchestre du mouvement - 256 tiles (16x16)
-  const order = useLivingOrder(256, 8, 2200);
+  // Augmentation du rythme pour une impression de vie plus dynamique
+  const order = useLivingOrder(256, 12, 1800);
 
   const handleSelect = (data: any) => {
     setSelected(data);
@@ -42,19 +43,11 @@ const SynchronicityWall = () => {
       >
         <div className="w-full flex justify-center mb-12">
           <BeninFrame
-            className="w-[85vw] max-w-[700px] aspect-square shadow-2xl"
-            inset={0}
-            thickness={3}
+            className="w-[95vw] max-w-[850px] aspect-square shadow-2xl"
+            inset={12}
+            thickness={6}
           >
-            <div className="relative w-full h-full">
-              {/* Fond Drapeau du Bénin */}
-              <div className="absolute inset-0 flex overflow-hidden">
-                <div className="w-1/2 bg-[#008751]" />
-                <div className="w-1/2 flex flex-col">
-                  <div className="h-1/2 bg-[#FCD116]" />
-                  <div className="h-1/2 bg-[#E8112D]" />
-                </div>
-              </div>
+            <div className="relative w-full h-full bg-white">
 
               <motion.div
                 variants={{
@@ -68,7 +61,7 @@ const SynchronicityWall = () => {
                 }}
                 initial="hidden"
                 animate="visible"
-                className="relative z-10 grid w-full h-full gap-0"
+                className="relative z-10 grid w-full h-full gap-[1.5px]"
                 style={{ gridTemplateColumns: "repeat(16, 1fr)" }}
               >
                 {order.map((originalIndex) => {
