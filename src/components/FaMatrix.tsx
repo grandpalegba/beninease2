@@ -6,11 +6,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { SIGNS, type FongbeSign } from '@/data/fongbe';
 import { useRouter } from 'next/navigation';
 import { BookOpen } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 /**
  * Renders a small version of the ideogram dots
  */
-export const SignDotsColumn = ({ code, color = "#000000", size = 1.5 }: { code: [number, number, number, number], color?: string, size?: number }) => {
+export const SignDotsColumn = ({ code, color = "#FFFFFF", size = 1.5 }: { code: [number, number, number, number], color?: string, size?: number }) => {
   const dotSize = size;
   const innerGap = size < 2 ? 2 : (size * 1.5); // Spaced out gap (1.5x dot size)
   
@@ -26,7 +27,7 @@ export const SignDotsColumn = ({ code, color = "#000000", size = 1.5 }: { code: 
   );
 };
 
-export const SignIdeogram = ({ leftSign, rightSign, color = "#000000", size = 1 }: { 
+export const SignIdeogram = ({ leftSign, rightSign, color = "#FFFFFF", size = 1 }: { 
   leftSign: FongbeSign, 
   rightSign: FongbeSign,
   color?: string,
@@ -43,77 +44,46 @@ export const SignIdeogram = ({ leftSign, rightSign, color = "#000000", size = 1 
   );
 };
 
-const MatrixCell = ({ rIndex, cIndex, onClick }: { rIndex: number, cIndex: number, onClick: (r: number, c: number) => void }) => {
+const MatrixCell = ({ 
+  rIndex, 
+  cIndex, 
+  onClick 
+}: { 
+  rIndex: number;
+  cIndex: number;
+  onClick: (r: number, c: number) => void;
+}) => {
   const [isHovered, setIsHovered] = useState(false);
   const leftSign = SIGNS[rIndex];
   const rightSign = SIGNS[cIndex];
 
-  // Animation delay based on distance from top-left (sweep effect)
-  const revealDelay = (rIndex + cIndex) * 0.02;
-
   return (
-    <motion.button
-      initial={{ opacity: 0, scale: 0.9, backgroundColor: "#ffffff" }}
-      animate={{ 
-        opacity: 1, 
-        scale: 1,
-        backgroundColor: "#f9fafb", // neutral-50
-        transition: { 
-          delay: revealDelay,
-          duration: 0.5,
-          ease: "easeOut"
-        }
-      }}
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay: (rIndex + cIndex) * 0.005, duration: 0.3 }}
+      className={cn(
+        "w-10 h-10 flex items-center justify-center rounded-sm transition-all cursor-pointer border",
+        isHovered 
+          ? "bg-[#E8112D] border-[#E8112D] scale-110 z-10 shadow-lg" 
+          : "bg-black border-white/5 hover:border-white/20"
+      )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => onClick(rIndex, cIndex)}
-      className={`
-        relative w-10 h-10 rounded-[4px] border transition-all duration-300 ease-out flex items-center justify-center overflow-hidden
-        ${isHovered ? 'bg-[#FCD116]/10 border-[#FCD116]/30 z-10' : 'border-[#008751]/20'}
-      `}
-      style={{
-        boxShadow: isHovered ? '0 10px 20px rgba(0,135,81,0.05)' : 'none',
-        transform: isHovered ? 'translateY(-2px) scale(1.05)' : 'none'
-      }}
     >
-      {/* Golden Flash Overlay (Revealing Light) */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0 }}
-        animate={{ 
-          opacity: [0, 0.8, 0],
-          scale: [0.5, 1.5, 1],
-        }}
-        transition={{ 
-          delay: revealDelay,
-          duration: 0.8,
-          times: [0, 0.2, 1]
-        }}
-        className="absolute inset-0 bg-[#FCD116] blur-[8px] pointer-events-none"
-      />
-
-      {/* Ghost Ideogram */}
       <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: isHovered ? 1 : 0.3 }}
-        transition={{ delay: revealDelay + 0.2, duration: 0.5 }}
-        className="transition-all duration-300"
+        animate={{ scale: isHovered ? 1.2 : 1 }}
+        transition={{ type: "spring", stiffness: 400, damping: 10 }}
       >
         <SignIdeogram 
           leftSign={leftSign} 
           rightSign={rightSign} 
-          color={isHovered ? "#E8112D" : "#000000"} 
+          color="#FFFFFF" 
           size={1.4} 
         />
       </motion.div>
-
-      {/* Tiny Yellow Glow in center on hover */}
-      {isHovered && (
-        <motion.div 
-          layoutId="glow"
-          className="absolute w-1.5 h-1.5 bg-[#FCD116] rounded-full blur-[4px] opacity-60"
-        />
-      )}
-    </motion.button>
+    </motion.div>
   );
 };
 
