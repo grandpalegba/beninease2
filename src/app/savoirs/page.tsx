@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from "@supabase/supabase-js";
@@ -117,7 +117,9 @@ const AwaleMini = ({ seedsCount, isWrong }: { seedsCount: number, isWrong: boole
   </motion.div>
 );
 
-export default function SavoirsPage() {
+// --- PAGE PRINCIPALE (wrapped in Suspense for useSearchParams) ---
+
+function SavoirsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const isRitualParam = searchParams?.get('ritual') === 'true';
@@ -134,6 +136,7 @@ export default function SavoirsPage() {
   useEffect(() => {
     setView(isRitualParam ? "ritual" : "gallery");
   }, [isRitualParam]);
+
   const [timeLeft, setTimeLeft] = useState(64);
   const [holes, setHoles] = useState([0, 1, 2, 3]);
   const [seeds, setSeeds] = useState(16);
@@ -181,7 +184,7 @@ export default function SavoirsPage() {
 
   const startRitual = () => {
     if (currentQuestions.length > 0) {
-      setHoles([0, 1, 2, 3]); setSeeds(16); setTimeLeft(64); setQIndex(0); setExplanations([]); setIsFinished(false); 
+      setHoles([0, 1, 2, 3]); setSeeds(16); setTimeLeft(64); setQIndex(0); setExplanations([]); setIsFinished(false);
       router.push('/savoirs?ritual=true');
     } else { toast.error("Rituel en préparation..."); }
   };
@@ -222,7 +225,6 @@ export default function SavoirsPage() {
               onClick={startRitual}
               className="w-full max-w-lg h-full max-h-[82vh] -mt-12 md:-mt-20 bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-pointer flex flex-col"
             >
-
               <div className="h-[50%] md:h-[55%] w-full overflow-hidden bg-gray-100 pointer-events-none">
                 <img src={`https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/mysteres-assets/${currentM.id}.jpg`} className="h-full w-full object-cover" alt="" />
               </div>
@@ -234,21 +236,21 @@ export default function SavoirsPage() {
                   {currentM.subtitle}
                 </p>
                 <div className="mt-6 pt-4 border-t border-gray-50 flex-1 overflow-y-auto no-scrollbar">
-                  <p className="text-[14px] md:text-[15px] text-gray-500 italic leading-[1.8]">"{currentM.mise_en_abyme}"</p>
+                  <p className="text-[14px] md:text-[15px] text-gray-500 italic leading-[1.8]">&quot;{currentM.mise_en_abyme}&quot;</p>
                 </div>
               </div>
             </motion.div>
           </motion.div>
         ) : (
           <motion.div key="ritual" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-[150] flex flex-col items-center p-4 pb-20 overflow-hidden">
-            <button 
+            <button
               onClick={() => router.push('/savoirs')}
               className="absolute top-6 left-6 z-[160] px-4 py-2 bg-[#faf9f8] rounded-full flex items-center gap-2 shadow-sm border border-gray-100 active:scale-95 transition-transform"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a0412d" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
               <span className="text-[10px] font-black uppercase tracking-widest text-[#a0412d]">Retour</span>
             </button>
-            <div className="w-12 h-1 bg-gray-100 rounded-full mb-8 shrink-0" />
+            <div className="w-12 h-1 bg-gray-100 rounded-full mb-8 shrink-0 mt-14" />
 
             {/* ZONE VISUELLE */}
             <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-4 md:gap-20 h-[160px] mb-12 md:mb-20 shrink-0">
@@ -264,7 +266,6 @@ export default function SavoirsPage() {
               {!isFinished ? (
                 !showExplanation ? (
                   <div className="text-center flex flex-col gap-3 md:gap-5">
-                    {/* QUESTION EN SANS SERIF */}
                     <h2 className="font-display font-bold text-gray-700 text-base md:text-xl leading-snug px-4 tracking-tight">
                       {currentQuestions[qIndex]?.question}
                     </h2>
@@ -296,7 +297,7 @@ export default function SavoirsPage() {
                   </div>
                 ) : (
                   <div onClick={() => { setShowExplanation(false); setQIndex(p => p + 1); setTimeLeft(64); }} className="p-6 bg-orange-50/50 rounded-[2rem] border border-orange-100/50 text-center cursor-pointer">
-                    <p className="text-sm md:text-lg italic font-sans font-medium text-[#a0412d]">"{currentQuestions[qIndex]?.explanation}"</p>
+                    <p className="text-sm md:text-lg italic font-sans font-medium text-[#a0412d]">&quot;{currentQuestions[qIndex]?.explanation}&quot;</p>
                     <p className="text-[9px] mt-4 uppercase tracking-widest font-sans font-black text-gray-300">Tapoter pour continuer</p>
                   </div>
                 )
@@ -314,5 +315,13 @@ export default function SavoirsPage() {
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+export default function SavoirsPage() {
+  return (
+    <Suspense fallback={<div className="h-screen flex items-center justify-center bg-white"><div className="w-10 h-10 border-4 border-[#a0412d] border-t-transparent rounded-full animate-spin" /></div>}>
+      <SavoirsContent />
+    </Suspense>
   );
 }

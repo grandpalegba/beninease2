@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "@/app/globals.css";
@@ -30,7 +31,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="fr" className="scroll-smooth">
       <body className="min-h-screen antialiased bg-[#F9F9F7]">
         <Providers>
-          <ConditionalHeader />
+          <Suspense fallback={null}>
+            <ConditionalHeader />
+          </Suspense>
           <BodyWrapper>
             {children}
           </BodyWrapper>
