@@ -115,7 +115,7 @@ export function JetonsRadar({ conscience, confiance, connaissance, competence }:
 
         {/* Labels avec valeurs */}
         {points.map((p, i) => {
-          const labelDist = maxRadius + 65; // Augmenté pour laisser de la place à l'icône
+          const labelDist = maxRadius + 35;
           const lx = cx + labelDist * Math.cos(p.angle);
           const ly = cy + labelDist * Math.sin(p.angle);
           
@@ -130,13 +130,6 @@ export function JetonsRadar({ conscience, confiance, connaissance, competence }:
                 width: "120px"
               }}
             >
-              <div className="mb-3 w-16 h-16 relative flex items-center justify-center">
-                <img 
-                  src={`/${AXES[i].icon}`} 
-                  alt={p.label} 
-                  className="w-full h-full object-contain drop-shadow-sm transition-transform hover:scale-110 duration-500"
-                />
-              </div>
               <span className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1">
                 {p.label}
               </span>

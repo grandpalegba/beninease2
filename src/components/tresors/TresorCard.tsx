@@ -33,7 +33,7 @@ export function TresorCard({ tresor }: TresorCardProps) {
             alt={tresor.nom}
             fill
             sizes="(max-width: 640px) 85vw, 400px"
-            className="object-contain p-8 transition-transform duration-700 group-hover:scale-110"
+            className="object-contain p-6 transition-transform duration-700 group-hover:scale-110"
             draggable={false}
             priority
           />
@@ -47,10 +47,10 @@ export function TresorCard({ tresor }: TresorCardProps) {
       {/* ── Contenu ── */}
       <div className="flex flex-col p-10 mt-auto bg-transparent relative z-10 pointer-events-none justify-end h-full">
         <div className="mb-6">
-          <h3 className="text-4xl text-black leading-tight tracking-tighter font-bold font-display">
+          <h3 className="text-3xl md:text-4xl text-black leading-tight tracking-tight font-bold font-display">
             {tresor.nom}
           </h3>
-          <p className="text-base font-medium text-gray-500 mt-3 font-sans leading-relaxed">
+          <p className="text-sm md:text-base font-medium text-gray-500 mt-3 font-sans leading-relaxed">
             {tresor.sous_titre?.replace(/\.\s*$/, '')}
           </p>
         </div>

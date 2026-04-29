@@ -189,8 +189,8 @@ export default function TresorDetailPage() {
         <div className="lg:col-span-5 flex flex-col gap-8 h-full">
           {/* Carte Image + Titre */}
           <div className="bg-[#000000] rounded-[3rem] overflow-hidden shadow-sm flex flex-col">
-            <div className="relative w-full h-[450px] p-10 flex flex-shrink-0 items-center justify-center">
-              <div className="relative w-full h-full rounded-3xl overflow-hidden">
+            <div className="relative w-full h-[320px] md:h-[450px] p-6 md:p-10 flex flex-shrink-0 items-center justify-center">
+              <div className="relative w-full h-full rounded-2xl overflow-hidden">
                 <Image 
                   src={tresor.image_url} 
                   alt={tresor.nom}
@@ -203,10 +203,10 @@ export default function TresorDetailPage() {
             </div>
             {/* Nom et sous-titre — dans l'encadré noir */}
             <div className="p-8 md:p-10 pt-2">
-              <h1 className="font-display font-black text-2xl md:text-3xl mb-2 tracking-tighter leading-[1.3] text-white uppercase">
+              <h1 className="font-display font-black text-xl md:text-3xl mb-2 tracking-tight leading-tight text-white uppercase">
                 {tresor.nom}
               </h1>
-              <p className="text-gray-400 font-medium text-base">
+              <p className="text-gray-400 font-medium text-sm md:text-base">
                 {tresor.sous_titre?.replace(/\.\s*$/, '')}
               </p>
             </div>
