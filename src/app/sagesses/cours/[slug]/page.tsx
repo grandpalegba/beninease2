@@ -138,7 +138,7 @@ const CoursePage = () => {
           className="mb-8 pt-12"
         >
           {leftSign && rightSign && (
-            <SignIdeogram leftSign={leftSign} rightSign={rightSign} size={150} />
+            <SignIdeogram leftSign={leftSign} rightSign={rightSign} size={180} />
           )}
         </motion.div>
 

@@ -27,8 +27,8 @@ export const SignIdeogram = ({ leftSign, rightSign, color = "currentColor", size
   color?: string,
   size?: number
 }) => {
-  const dotSize = size > 5 ? (size / 40) : 1.5 * size;
-  const gapSize = size > 5 ? (size / 30) : 2 * size;
+  const dotSize = size > 5 ? (size / 15) : 1.5 * size;
+  const gapSize = size > 5 ? (size / 10) : 2 * size;
 
   return (
     <div className="flex items-center justify-center gap-4 pointer-events-none" style={{ gap: gapSize }}>
@@ -154,13 +154,13 @@ const FaMatrix = () => {
           {SIGNS.map((sign, i) => (
             <div 
               key={`h-${i}`} 
-              className="w-10 h-12 flex items-center justify-center"
+              className="w-10 h-16 flex items-end justify-center pb-2"
             >
               <motion.span 
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: -10, rotate: -45 }}
+                animate={{ opacity: 1, y: 0, rotate: -45 }}
                 transition={{ delay: i * 0.02, duration: 0.5 }}
-                className="text-[9px] font-bold uppercase tracking-[0.2em] rotate-[-45deg] text-black font-sans drop-shadow-sm"
+                className="text-[10px] font-bold uppercase tracking-[0.2em] text-black font-sans origin-bottom-left translate-x-2"
               >
                 {sign.name}
               </motion.span>
@@ -173,12 +173,12 @@ const FaMatrix = () => {
           {SIGNS.map((rowSign, rIndex) => (
             <div key={`r-${rIndex}`} className="flex gap-[2px]">
               {/* Left Header */}
-              <div className="w-12 h-10 flex items-center justify-center flex-shrink-0">
+              <div className="w-16 h-10 flex items-center justify-end pr-4 flex-shrink-0">
                 <motion.span 
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: rIndex * 0.02, duration: 0.5 }}
-                  className="text-[9px] font-bold uppercase tracking-[0.2em] text-black font-sans drop-shadow-sm"
+                  className="text-[10px] font-bold uppercase tracking-[0.2em] text-black font-sans"
                 >
                   {rowSign.name}
                 </motion.span>
