@@ -12,10 +12,7 @@ import { useSubmitEvaluation } from "@/hooks/useSubmitEvaluation";
 import { toast } from "sonner";
 
 // Mock data placeholders - update these with actual data files later
-const PROFILE_PHOTOS: string[] = ["/assets/profile-aicha.jpg"];
-const PROFILES: any[] = [
-  { id: "1", firstName: "Aïcha", lastName: "Bokônon", activity: "Guide Spirituelle", location: "Ouidah" }
-];
+import { PROFILE_PHOTOS } from "@/assets/profiles";
 
 interface Props {
   consultation: any | null; // Using any for now to avoid missing Consultation type errors
@@ -68,14 +65,14 @@ const ConsultationModal = ({ consultation, onClose }: Props) => {
   const isProfile = consultation && 'firstName' in consultation;
   const storageBaseUrl = "https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/profile-photos/";
   
-  let bokononPhoto = null;
+  let bokononPhoto = "";
   if (consultation) {
     if (isProfile && consultation.imageUrl) {
       bokononPhoto = consultation.imageUrl.startsWith('http') 
         ? consultation.imageUrl 
         : `${storageBaseUrl}${consultation.imageUrl}`;
     } else {
-      const videoSeed = isProfile ? consultation.photoIndex : consultation.videoSeed;
+      const videoSeed = isProfile ? (consultation.photoIndex || 0) : (consultation.videoSeed || 0);
       bokononPhoto = PROFILE_PHOTOS[videoSeed % PROFILE_PHOTOS.length];
     }
   }

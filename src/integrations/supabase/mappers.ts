@@ -15,11 +15,18 @@ export function mapConsultationRow(
   const lifeCase = LIFE_CASES.find((c) => c.id === row.life_case_id);
 
   if (!signX || !signY) {
-    throw new Error(`Unknown sign index in consultation ${row.id}`);
+    console.error(`Unknown sign index in consultation ${row.id}`);
+    return null as any; // Skip this row
   }
-  if (!lifeCase) {
-    throw new Error(`Unknown life_case_id ${row.life_case_id} in consultation ${row.id}`);
-  }
+  
+  const lifeCase = LIFE_CASES.find((c) => c.id === row.life_case_id) || {
+    id: row.life_case_id,
+    photoUrl: "",
+    label: "Sagesse",
+    title: "Consultation",
+    quote: "",
+    persona: "Anonyme"
+  };
 
   return {
     id: `${row.row_index}-${row.col_index}`,

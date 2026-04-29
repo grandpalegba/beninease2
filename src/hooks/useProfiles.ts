@@ -20,8 +20,8 @@ export function useProfiles() {
       // We assume the table 'profiles' has these columns now
       const { data, error } = await supabase
         .from('profiles')
-        .select('id, first_name, last_name, photo_index, image_url' as any)
-        .order('first_name' as any);
+        .select('id, first_name, last_name, photo_index, image_url, index, products, projects, email' as any)
+        .order('index' as any);
 
       if (error) throw error;
       if (!data) return [];
@@ -32,10 +32,10 @@ export function useProfiles() {
         lastName: row.last_name || '',
         photoIndex: row.photo_index || 0,
         imageUrl: row.image_url,
-        email: '', // Not in DB currently
-        index: 0,   // Not in DB currently
-        products: [],
-        projects: []
+        email: row.email,
+        index: row.index || 0,
+        products: row.products || [],
+        projects: row.projects || []
       }));
     }
   });

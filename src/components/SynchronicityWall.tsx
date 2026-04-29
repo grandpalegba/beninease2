@@ -3,26 +3,28 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { RotateCcw } from "lucide-react";
-import { useConsultations } from "@/hooks/useConsultations";
+import { useProfiles } from "@/hooks/useProfiles";
 import { useLivingOrder } from "@/hooks/useLivingOrder";
 import WallTile from "./WallTile";
 import ConsultationModal from "./ConsultationModal";
 import BeninFrame from "./BeninFrame";
+import { PROFILE_PHOTOS, PROFILES } from "@/assets/profiles";
 
-/**
- * SynchronicityWall - A living gallery of profiles.
- * Displays profiles in an 8x8 grid.
- */
 const SynchronicityWall = () => {
-  const { data: consultations = [], isLoading } = useConsultations();
+  const { data: profiles = [], isLoading } = useProfiles();
   const [selected, setSelected] = useState<any | null>(null);
   const [revealed, setRevealed] = useState<Set<string>>(new Set());
   
+  // Use DB profiles if available, otherwise fallback to mock data to ensure the wall is interactive
+  const effectiveData = profiles.length > 0 ? profiles : PROFILES;
+  
+  console.log("SynchronicityWall: profiles count =", profiles.length, "isLoading =", isLoading);
+
   // Le chef d'orchestre du mouvement - 256 tiles (16x16)
-  // Augmentation du rythme pour une impression de vie plus dynamique
   const order = useLivingOrder(256, 12, 1800);
 
   const handleSelect = (data: any) => {
+    console.log("Selected tile data:", data);
     setSelected(data);
     setRevealed((prev) => {
       const next = new Set(prev);
@@ -39,7 +41,7 @@ const SynchronicityWall = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1.2 }}
-        className={`flex flex-col items-center justify-center py-8 px-4 ${isLoading ? "opacity-50 pointer-events-none" : "opacity-100"}`}
+        className={`flex flex-col items-center justify-center py-8 px-4 ${isLoading && profiles.length === 0 ? "opacity-50 pointer-events-none" : "opacity-100"}`}
       >
         <div className="w-full flex justify-center mb-12">
           <BeninFrame
@@ -66,7 +68,7 @@ const SynchronicityWall = () => {
               >
                 {order.map((originalIndex) => {
                   // Modulo ensures 256 tiles are filled
-                  const data = consultations.length > 0 ? consultations[originalIndex % consultations.length] : null;
+                  const data = effectiveData[originalIndex % effectiveData.length];
 
                   return (
                     <WallTile
