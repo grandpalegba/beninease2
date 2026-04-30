@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useSeries } from "@/hooks/useSeries";
 import { Loader2, AlertCircle, ArrowRight } from "lucide-react";
 import Link from "next/link";
