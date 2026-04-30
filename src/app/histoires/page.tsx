@@ -64,37 +64,41 @@ export default function SeriesHistoiresPage() {
             key={serie.id || `serie-${index}`} 
             className="w-full h-full shrink-0 flex flex-col items-center justify-center px-4"
           >
-            <div className="flex flex-col items-center justify-center w-full max-w-[850px] h-full pt-10 pb-6">
-              {/* Carte Horizontale Sans Contour et Plus Haute */}
+            {/* Conteneur Centre de la Carte et du Bouton */}
+            <div className="flex flex-col items-center justify-center w-full max-w-[950px]">
+              {/* Carte Horizontale Plus Haute pour Image Entiere */}
               <motion.div 
                 onTap={() => router.push("/histoires/explorer")}
-                className="w-full h-[320px] sm:h-[480px] relative rounded-[2.5rem] overflow-hidden shadow-2xl bg-white flex flex-row transition-transform active:scale-[0.98]"
+                className="w-full h-[380px] sm:h-[580px] relative rounded-[3rem] overflow-hidden shadow-2xl bg-white flex flex-row transition-transform active:scale-[0.98]"
               >
-                {/* Côté Gauche : Affiche (45% pour mieux voir l'image) */}
-                <div className="w-[45%] h-full overflow-hidden bg-gray-50 shrink-0">
+                {/* Côté Gauche : Affiche (50% pour visibilité totale) */}
+                <div className="w-[50%] h-full overflow-hidden bg-gray-100 shrink-0">
                   <img 
                     src={serie.affiche_url || "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5"} 
                     alt={serie.titre}
                     className="w-full h-full object-cover"
                     draggable={false}
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5";
+                    }}
                   />
                 </div>
                 
                 {/* Côté Droit : Contenu Typographique */}
-                <div className="flex-1 p-5 sm:p-12 flex flex-col text-left overflow-y-auto hide-scrollbar pointer-events-none">
-                  <h3 className="text-xl sm:text-5xl font-black mb-1 sm:mb-2 leading-tight tracking-[0.05em] text-gray-900 uppercase">
+                <div className="w-[50%] p-6 sm:p-14 flex flex-col justify-center text-left overflow-y-auto hide-scrollbar pointer-events-none">
+                  <h3 className="text-2xl sm:text-5xl font-black mb-2 sm:mb-4 leading-tight tracking-[0.05em] text-gray-900 uppercase">
                     {serie.titre}
                   </h3>
                   
                   {serie.sous_titre && (
-                    <p className="text-xs sm:text-2xl font-bold italic text-gray-900 mb-4 sm:mb-8 leading-tight">
+                    <p className="text-sm sm:text-2xl font-bold italic text-gray-900 mb-6 sm:mb-10 leading-tight">
                       {serie.sous_titre}
                     </p>
                   )}
                   
-                  <div className="w-10 sm:w-16 h-0.5 sm:h-1 bg-[#008751] mb-4 sm:mb-8 rounded-full opacity-30 shrink-0" />
+                  <div className="w-12 sm:w-20 h-0.5 sm:h-1 bg-[#008751] mb-6 sm:mb-10 rounded-full opacity-30 shrink-0" />
 
-                  <p className="text-[10px] sm:text-lg font-normal text-gray-500 leading-relaxed">
+                  <p className="text-[11px] sm:text-xl font-normal text-gray-500 leading-relaxed">
                     {serie.synopsis}
                   </p>
                 </div>
@@ -104,7 +108,7 @@ export default function SeriesHistoiresPage() {
               <div className="shrink-0 mt-10 sm:mt-16">
                 <Link 
                   href="/histoires/explorer"
-                  className="flex items-center justify-center bg-black text-white px-10 sm:px-20 py-4 sm:py-7 rounded-full shadow-2xl font-bold text-[10px] sm:text-[14px] uppercase tracking-[0.3em] transition-transform hover:scale-105 active:scale-95"
+                  className="flex items-center justify-center bg-black text-white px-12 sm:px-24 py-5 sm:py-8 rounded-full shadow-2xl font-bold text-[11px] sm:text-[15px] uppercase tracking-[0.3em] transition-transform hover:scale-105 active:scale-95"
                 >
                   Explorer les histoires
                 </Link>
