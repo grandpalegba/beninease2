@@ -91,11 +91,11 @@ export function EvaluationModule({ episode, profilId, seriesInfo }: EvaluationMo
       {/* DROITE : ÉVALUATION */}
       <div className="p-10 md:p-12 flex flex-col justify-between min-h-full bg-white">
         <div>
-          <h2 className="text-2xl font-black text-black tracking-tighter leading-none mb-2">
+          <h2 className="text-3xl font-black text-black tracking-tighter leading-none mb-3">
             {episode.titre}
           </h2>
-          <p className="text-gray-400 font-medium italic text-xs leading-relaxed">
-            {episode.episode_question || "Analyse de la souveraineté culturelle"}
+          <p className="text-[#008751] font-bold italic text-sm leading-relaxed opacity-80">
+            {episode.episode_question || "Quelles leçons tirez-vous de ce récit ?"}
           </p>
         </div>
 

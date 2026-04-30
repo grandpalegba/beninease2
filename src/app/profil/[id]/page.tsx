@@ -80,10 +80,10 @@ export default function ProfilHistoirePage() {
 
         // On utilise les vrais épisodes de la série s'ils existent, sinon un mock de secours
         const episodesToMap = allEpisodes.length > 0 ? allEpisodes : [
-          { episode_titre: "La conviction pure", episode_question: "Agir par conviction sans aucune garantie." },
-          { episode_titre: "Épisode 2", episode_question: "Analyse de la souveraineté culturelle" },
-          { episode_titre: "Épisode 3", episode_question: "L'impact de la tradition" },
-          { episode_titre: "Épisode 4", episode_question: "Le retour aux sources" }
+          { episode_titre: "La conviction pure", episode_question: "Comment la tradition influence-t-elle nos choix modernes ?" },
+          { episode_titre: "Le pacte des ancêtres", episode_question: "La loyauté envers le passé est-elle un frein ou une force ?" },
+          { episode_titre: "Éveil de conscience", episode_question: "Quel rôle joue l'éducation dans la préservation de l'identité ?" },
+          { episode_titre: "Le retour au pays", episode_question: "Peut-on vraiment se reconstruire loin de ses racines ?" }
         ];
 
         const video_urls: Episode[] = episodesToMap.map((dbEp, index) => ({

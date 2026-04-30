@@ -64,18 +64,35 @@ export function ProfileCard({ profil, serie }: ProfileCardProps) {
 
       {/* ── Contenu ── */}
       <div className="flex flex-col p-6 mt-auto bg-transparent relative z-10 pointer-events-none justify-end h-full">
-        <div className="mb-4">
-          <h3 className="font-display font-black text-4xl text-gray-900 leading-tight tracking-tighter">
-            {profil.nom_complet}
-          </h3>
-          {profil.profession && (
-            <p className="text-sm font-medium text-gray-500 mt-2">
-              {profil.profession}
-            </p>
+        
+        {/* Nom + Affiche Série */}
+        <div className="flex items-center gap-4 mb-5">
+          {serie && (
+            <div className="h-20 w-14 relative rounded-xl overflow-hidden shadow-xl bg-gray-100 shrink-0 border border-gray-100">
+              {serie.affiche_url && (
+                <Image
+                  src={serie.affiche_url}
+                  alt={serie.titre}
+                  fill
+                  className="object-cover"
+                />
+              )}
+            </div>
           )}
+          <div className="flex flex-col">
+            <h3 className="font-display font-black text-3xl text-gray-900 leading-tight tracking-tighter">
+              {profil.nom_complet}
+            </h3>
+            {profil.profession && (
+              <p className="text-xs font-bold uppercase tracking-widest text-[#008751] mt-1">
+                {profil.profession}
+              </p>
+            )}
+          </div>
         </div>
 
-        <div className="flex items-center justify-between rounded-2xl bg-gray-50 border border-gray-100 px-5 py-4 mb-4">
+        {/* Valeurs en Noix Bénies */}
+        <div className="flex items-center justify-between rounded-2xl bg-gray-50 border border-gray-100 px-5 py-4 mb-2">
           <span className="text-[10px] uppercase tracking-widest text-gray-400 font-bold">
             Valeurs en Noix Bénies
           </span>
@@ -87,30 +104,6 @@ export function ProfileCard({ profil, serie }: ProfileCardProps) {
             </span>
           </span>
         </div>
-
-        {/* ── Miniature de la Série ── */}
-        {serie && (
-          <div className="flex items-center gap-4 pt-5 border-t border-gray-100 mt-2">
-            <div className="h-14 w-10 relative rounded-lg overflow-hidden shadow-md bg-gray-100 shrink-0 border border-gray-200">
-              {serie.affiche_url && (
-                <Image
-                  src={serie.affiche_url}
-                  alt={serie.titre}
-                  fill
-                  className="object-cover"
-                />
-              )}
-            </div>
-            <div className="flex flex-col">
-              <span className="text-[10px] text-[#008751] uppercase font-bold tracking-[0.2em] mb-0.5">
-                Série
-              </span>
-              <h4 className="text-sm font-black text-gray-900 leading-tight">
-                {serie.titre}
-              </h4>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

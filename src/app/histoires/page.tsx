@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useSeries } from "@/hooks/useSeries";
 import { Loader2, AlertCircle, ArrowRight } from "lucide-react";
@@ -8,9 +8,20 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 
 export default function SeriesHistoiresPage() {
-  const { series, loading, error, refetch } = useSeries();
+  const { series: rawSeries, loading, error, refetch } = useSeries();
   const [currentIndex, setCurrentIndex] = useState(0);
   const router = useRouter();
+
+  // Shuffle des séries au chargement
+  const series = useMemo(() => {
+    if (!rawSeries.length) return [];
+    const shuffled = [...rawSeries];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  }, [rawSeries]);
 
   if (loading) {
     return (
@@ -32,17 +43,15 @@ export default function SeriesHistoiresPage() {
   }
 
   const handleDragEnd = (event: any, info: any) => {
-    const threshold = 30; // Seuil plus bas pour faciliter le swipe à la souris
+    const threshold = 30;
     const velocityThreshold = 200;
     
     if (info.offset.x < -threshold || info.velocity.x < -velocityThreshold) {
-      if (currentIndex < series.length - 1) {
-        setCurrentIndex(prev => prev + 1);
-      }
+      // Swipe Left -> Next (Infinite wrap)
+      setCurrentIndex(prev => (prev + 1) % series.length);
     } else if (info.offset.x > threshold || info.velocity.x > velocityThreshold) {
-      if (currentIndex > 0) {
-        setCurrentIndex(prev => prev - 1);
-      }
+      // Swipe Right -> Prev (Infinite wrap)
+      setCurrentIndex(prev => (prev - 1 + series.length) % series.length);
     }
   };
 
@@ -51,7 +60,7 @@ export default function SeriesHistoiresPage() {
       
       {/* Container principal du carrousel avec Framer Motion */}
       <motion.div 
-        className="flex-1 w-full flex relative cursor-grab active:cursor-grabbing"
+        className="absolute inset-0 w-full flex cursor-grab active:cursor-grabbing"
         animate={{ x: `-${currentIndex * 100}%` }}
         transition={{ type: "spring", stiffness: 200, damping: 25 }}
         drag="x"
@@ -62,10 +71,10 @@ export default function SeriesHistoiresPage() {
         {series.map((serie, index) => (
           <div 
             key={serie.id || `serie-${index}`} 
-            className="w-full h-full shrink-0 flex flex-col items-center justify-center px-4"
+            className="w-full h-full flex flex-col items-center justify-center px-4 shrink-0"
           >
             {/* Conteneur Centre de la Carte et du Bouton */}
-            <div className="flex flex-col items-center justify-center w-full max-w-[950px]">
+            <div className="flex flex-col items-center justify-center w-full max-w-[950px] relative">
               {/* Carte Horizontale Plus Haute pour Image Entiere */}
               <motion.div 
                 onTap={() => router.push("/histoires/explorer")}
@@ -86,19 +95,19 @@ export default function SeriesHistoiresPage() {
                 
                 {/* Côté Droit : Contenu Typographique */}
                 <div className="w-[50%] p-6 sm:p-14 flex flex-col justify-center text-left overflow-y-auto hide-scrollbar pointer-events-none">
-                  <h3 className="text-2xl sm:text-5xl font-black mb-2 sm:mb-4 leading-tight tracking-[0.05em] text-gray-900 uppercase">
+                  <h3 className="text-xl sm:text-3xl font-black mb-2 sm:mb-4 leading-tight tracking-[0.05em] text-gray-900 uppercase">
                     {serie.titre}
                   </h3>
                   
                   {serie.sous_titre && (
-                    <p className="text-sm sm:text-2xl font-bold italic text-gray-900 mb-6 sm:mb-10 leading-tight">
+                    <p className="text-sm sm:text-xl font-bold italic text-gray-900 mb-6 sm:mb-10 leading-relaxed">
                       {serie.sous_titre}
                     </p>
                   )}
                   
                   <div className="w-12 sm:w-20 h-0.5 sm:h-1 bg-[#008751] mb-6 sm:mb-10 rounded-full opacity-30 shrink-0" />
 
-                  <p className="text-[11px] sm:text-xl font-normal text-gray-500 leading-relaxed">
+                  <p className="text-[11px] sm:text-lg font-normal text-gray-500 leading-[1.8]">
                     {serie.synopsis}
                   </p>
                 </div>
