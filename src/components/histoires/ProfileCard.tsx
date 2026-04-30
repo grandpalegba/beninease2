@@ -65,10 +65,21 @@ export function ProfileCard({ profil, serie }: ProfileCardProps) {
       {/* ── Contenu ── */}
       <div className="flex flex-col p-6 mt-auto bg-transparent relative z-10 pointer-events-none justify-end h-full">
         
-        {/* Nom + Affiche Série */}
-        <div className="flex items-center gap-4 mb-5">
+        {/* Nom + Affiche Série (Disposition Face à Face) */}
+        <div className="flex items-center justify-between gap-4 mb-5">
+          <div className="flex flex-col">
+            <h3 className="font-display font-black text-2xl sm:text-3xl text-gray-900 leading-tight tracking-tighter">
+              {profil.nom_complet}
+            </h3>
+            {profil.profession && (
+              <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#008751] mt-1">
+                {profil.profession}
+              </p>
+            )}
+          </div>
+
           {serie && (
-            <div className="h-20 w-14 relative rounded-xl overflow-hidden shadow-xl bg-gray-100 shrink-0 border border-gray-100">
+            <div className="h-16 w-12 sm:h-20 sm:w-14 relative rounded-xl overflow-hidden shadow-xl bg-gray-100 shrink-0 border border-gray-100">
               {serie.affiche_url && (
                 <Image
                   src={serie.affiche_url}
@@ -79,27 +90,17 @@ export function ProfileCard({ profil, serie }: ProfileCardProps) {
               )}
             </div>
           )}
-          <div className="flex flex-col">
-            <h3 className="font-display font-black text-3xl text-gray-900 leading-tight tracking-tighter">
-              {profil.nom_complet}
-            </h3>
-            {profil.profession && (
-              <p className="text-xs font-bold uppercase tracking-widest text-[#008751] mt-1">
-                {profil.profession}
-              </p>
-            )}
-          </div>
         </div>
 
-        {/* Valeurs en Noix Bénies */}
-        <div className="flex items-center justify-between rounded-2xl bg-gray-50 border border-gray-100 px-5 py-4 mb-2">
-          <span className="text-[10px] uppercase tracking-widest text-gray-400 font-bold">
-            Valeurs en Noix Bénies
+        {/* Valeur en noix bénies */}
+        <div className="flex items-center justify-between rounded-2xl bg-gray-50/80 backdrop-blur-sm border border-gray-100 px-5 py-4 mb-2">
+          <span className="text-[9px] sm:text-[10px] uppercase tracking-widest text-gray-400 font-bold">
+            Valeur en noix bénies
           </span>
-          <span className="flex items-center gap-1.5 font-black text-xl tabular-nums text-gray-900">
-            <Sparkles className="h-5 w-5 text-amber-500" />
+          <span className="flex items-center gap-1.5 font-black text-lg sm:text-xl tabular-nums text-gray-900">
+            <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-amber-500" />
             {displayPrice.toFixed(2)}
-            <span className="text-xs font-bold text-gray-400 ml-0.5">
+            <span className="text-[10px] sm:text-xs font-bold text-gray-400 ml-0.5">
               NB
             </span>
           </span>

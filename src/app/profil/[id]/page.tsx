@@ -148,59 +148,54 @@ export default function ProfilHistoirePage() {
 
       <main className="max-w-7xl mx-auto space-y-6">
         
-        {/* --- HEADER BLOCK : Symétrie Nom | Bio | Valeur --- */}
-        <header className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex flex-col md:flex-row items-center md:justify-between gap-4 md:gap-8 relative overflow-hidden">
+        {/* --- HEADER BLOCK : Identité | Affiche | Valeur --- */}
+        <header className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-sm border border-gray-100 flex flex-col md:flex-row items-center md:justify-between gap-6 md:gap-10 relative overflow-hidden">
           {/* Bouton Retour Flottant */}
           <button 
             onClick={() => router.push('/histoires')}
-            className="absolute left-4 top-4 md:relative md:left-0 md:top-0 w-10 h-10 bg-gray-50 border border-gray-100 rounded-full shadow-sm flex items-center justify-center text-gray-400 hover:text-black transition-all hover:scale-110 z-20"
+            className="absolute left-4 top-4 md:relative md:left-0 md:top-0 w-12 h-12 bg-gray-50 border border-gray-100 rounded-full shadow-sm flex items-center justify-center text-gray-400 hover:text-black transition-all hover:scale-110 z-20"
             title="Retour aux cartes"
           >
-            <ChevronLeft size={20} />
+            <ChevronLeft size={24} />
           </button>
 
           {/* GAUCHE : Identité */}
-          <div className="flex items-center gap-4 md:gap-6 w-full md:w-auto pt-8 md:pt-0">
-            <div className="relative w-14 h-14 md:w-16 md:h-16 rounded-2xl overflow-hidden shadow-inner bg-gray-50 border border-gray-100 select-none shrink-0">
+          <div className="flex items-center gap-6 w-full md:w-auto pt-8 md:pt-0">
+            <div className="relative w-16 h-16 md:w-20 md:h-20 rounded-2xl overflow-hidden shadow-inner bg-gray-50 border border-gray-100 select-none shrink-0">
               {profil.photo_url && (
                 <Image src={profil.photo_url} alt={profil.nom_complet} fill className="object-cover object-top pointer-events-none" draggable={false} />
               )}
             </div>
             <div className="shrink-1">
-              <h1 className="text-xl md:text-3xl font-black text-gray-900 tracking-tighter leading-tight mb-1">{profil.nom_complet}</h1>
-              <p className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-widest">{profil.profession}</p>
+              <h1 className="text-2xl md:text-4xl font-black text-gray-900 tracking-tighter leading-tight mb-1">{profil.nom_complet}</h1>
+              <p className="text-xs md:text-sm font-bold text-[#008751] uppercase tracking-widest">{profil.profession}</p>
             </div>
           </div>
 
-          {/* CENTRE : Bio (visible sur MD+) */}
-          {profil.bio_courte && (
-            <div className="flex-1 max-w-lg hidden lg:block">
-              <p className="text-sm font-medium text-gray-500 italic text-center leading-relaxed">
-                « {profil.bio_courte} »
-              </p>
+          {/* CENTRE : Affiche de la Série (Plus grande, remplace la citation) */}
+          {profil.serie?.affiche_url && (
+            <div className="flex-1 flex justify-center py-4 md:py-0">
+              <div className="relative w-20 h-28 md:w-24 md:h-32 rounded-2xl overflow-hidden shadow-2xl border-4 border-white transform hover:scale-105 transition-transform duration-500">
+                <Image src={profil.serie.affiche_url} alt={profil.serie.titre} fill className="object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+              </div>
             </div>
           )}
 
           {/* DROITE : Valeur Financière */}
-          <div className="flex items-center justify-between md:justify-end gap-4 w-full md:w-auto pt-4 md:pt-0 border-t md:border-none border-gray-50">
+          <div className="flex items-center justify-between md:justify-end gap-6 w-full md:w-auto pt-6 md:pt-0 border-t md:border-none border-gray-50">
             <div className="text-left md:text-right">
-              <p className="text-[9px] font-black text-gray-300 uppercase tracking-[0.2em] mb-1">Valeur Actuelle</p>
-              <div className="flex items-center md:justify-end gap-2">
-                <p className="text-2xl font-black text-black leading-none tracking-tighter tabular-nums">
+              <p className="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] mb-2">Valeur Actuelle</p>
+              <div className="flex items-center md:justify-end gap-3">
+                <p className="text-3xl md:text-4xl font-black text-black leading-none tracking-tighter tabular-nums">
                   {profil.valeur_noix_benies.toFixed(2)}
                   <span className="text-xs ml-1 text-gray-400">NB</span>
                 </p>
-                <span className="px-2 py-1 rounded-full bg-green-50 text-[10px] font-black text-green-600 border border-green-100">
+                <span className="px-3 py-1 rounded-full bg-green-50 text-[11px] font-black text-green-600 border border-green-100">
                   +0.0%
                 </span>
               </div>
             </div>
-            {/* Affiche (Mini-thumb) */}
-            {profil.serie?.affiche_url && (
-              <div className="w-12 h-16 rounded-xl overflow-hidden border-2 border-white shadow-md shrink-0 relative">
-                <Image src={profil.serie.affiche_url} alt="Serie" fill className="object-cover" />
-              </div>
-            )}
           </div>
         </header>
 

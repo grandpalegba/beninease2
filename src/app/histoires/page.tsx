@@ -75,39 +75,41 @@ export default function SeriesHistoiresPage() {
           >
             {/* Conteneur Centre de la Carte et du Bouton */}
             <div className="flex flex-col items-center justify-center w-full max-w-[950px] relative">
-              {/* Carte Horizontale Plus Haute pour Image Entiere */}
+              {/* Carte Horizontale Ajustée pour Mobile */}
               <motion.div 
                 onTap={() => router.push("/histoires/explorer")}
-                className="w-full h-[380px] sm:h-[580px] relative rounded-[3rem] overflow-hidden shadow-2xl bg-white flex flex-row transition-transform active:scale-[0.98]"
+                className="w-full h-[280px] sm:h-[580px] relative rounded-[2rem] sm:rounded-[3rem] overflow-hidden shadow-2xl bg-white flex flex-row transition-transform active:scale-[0.98]"
               >
-                {/* Côté Gauche : Affiche (50% pour visibilité totale) */}
-                <div className="w-[50%] h-full overflow-hidden bg-gray-100 shrink-0">
+                {/* Côté Gauche : Affiche (50% - Assurer visibilité totale) */}
+                <div className="w-[50%] h-full overflow-hidden bg-gray-100 shrink-0 relative">
                   <img 
                     src={serie.affiche_url || "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5"} 
                     alt={serie.titre}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover sm:object-cover" 
                     draggable={false}
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5";
                     }}
                   />
+                  {/* Overlay subtil pour aider à la lecture du titre si l'image est claire */}
+                  <div className="absolute inset-0 bg-black/5 sm:hidden pointer-events-none" />
                 </div>
                 
-                {/* Côté Droit : Contenu Typographique */}
-                <div className="w-[50%] p-6 sm:p-14 flex flex-col justify-center text-left overflow-y-auto hide-scrollbar pointer-events-none">
-                  <h3 className="text-xl sm:text-3xl font-black mb-2 sm:mb-4 leading-tight tracking-[0.05em] text-gray-900 uppercase">
+                {/* Côté Droit : Contenu Typographique (Ajusté pour la petite hauteur mobile) */}
+                <div className="w-[50%] p-4 sm:p-14 flex flex-col justify-center text-left overflow-y-auto hide-scrollbar pointer-events-none">
+                  <h3 className="text-lg sm:text-3xl font-black mb-1 sm:mb-4 leading-tight tracking-[0.02em] text-gray-900 uppercase">
                     {serie.titre}
                   </h3>
                   
                   {serie.sous_titre && (
-                    <p className="text-sm sm:text-xl font-bold italic text-gray-900 mb-6 sm:mb-10 leading-relaxed">
+                    <p className="text-[10px] sm:text-xl font-bold italic text-gray-900 mb-2 sm:mb-10 leading-tight">
                       {serie.sous_titre}
                     </p>
                   )}
                   
-                  <div className="w-12 sm:w-20 h-0.5 sm:h-1 bg-[#008751] mb-6 sm:mb-10 rounded-full opacity-30 shrink-0" />
+                  <div className="w-6 sm:w-20 h-0.5 sm:h-1 bg-[#008751] mb-2 sm:mb-10 rounded-full opacity-30 shrink-0" />
 
-                  <p className="text-[11px] sm:text-lg font-normal text-gray-500 leading-[1.8]">
+                  <p className="text-[9px] sm:text-xl font-normal text-gray-500 leading-normal sm:leading-[1.8]">
                     {serie.synopsis}
                   </p>
                 </div>
