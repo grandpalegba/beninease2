@@ -202,7 +202,7 @@ const FaMatrix = () => {
     <div className="w-full h-full flex flex-col items-center justify-start bg-white select-none relative">
       {/* Desktop View / Always visible but scaled on mobile if not in modal */}
       <div className="w-full h-full overflow-auto no-scrollbar flex flex-col items-center p-2 md:p-8">
-        <div className="md:hidden mb-4 mt-2">
+        <div className="md:hidden mb-4 mt-0">
           <button 
             onClick={() => setIsModalOpen(true)}
             className="flex items-center gap-2 bg-black text-white px-6 py-3 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-xl active:scale-95 transition-all"

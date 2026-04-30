@@ -19,7 +19,7 @@ const GeneralitesPage = () => {
         <BackButton className="relative top-0 left-0 pointer-events-auto" />
       </nav>
 
-      <main className="max-w-4xl mx-auto px-6 pt-24 flex flex-col items-center">
+      <main className="max-w-4xl mx-auto px-6 pt-16 flex flex-col items-center">
         
         {/* Title */}
         <motion.h1 

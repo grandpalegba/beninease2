@@ -28,17 +28,17 @@ export default function BackButton({ href, className, iconColor = "#008751" }: B
       animate={{ opacity: 1, x: 0 }}
       onClick={handleBack}
       className={cn(
-        "absolute top-6 left-6 z-50 px-5 py-2.5 bg-white/90 backdrop-blur-md rounded-full flex items-center gap-2 shadow-sm border border-gray-100 active:scale-95 transition-all hover:bg-white group",
+        "absolute top-4 left-4 z-50 px-3 py-1.5 bg-white/90 backdrop-blur-md rounded-full flex items-center gap-1.5 shadow-sm border border-gray-100 active:scale-95 transition-all hover:bg-white group",
         className
       )}
     >
       <ChevronLeft 
-        size={18} 
+        size={14} 
         style={{ color: iconColor }} 
         className="transition-transform group-hover:-translate-x-0.5" 
         strokeWidth={3} 
       />
-      <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] text-gray-900">
+      <span className="text-[9px] font-black uppercase tracking-wider text-gray-900">
         Retour
       </span>
     </motion.button>
