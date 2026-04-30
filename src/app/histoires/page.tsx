@@ -71,7 +71,7 @@ export default function SeriesHistoiresPage() {
         {series.map((serie, index) => (
           <div 
             key={serie.id || `serie-${index}`} 
-            className="w-full h-full flex flex-col items-center justify-center px-4 shrink-0"
+            className="w-full h-full flex flex-col items-center justify-start sm:justify-center pt-24 sm:pt-0 px-4 shrink-0"
           >
             {/* Conteneur Centre de la Carte et du Bouton */}
             <div className="flex flex-col items-center justify-center w-full max-w-[950px] relative">

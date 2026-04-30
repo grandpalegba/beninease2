@@ -56,7 +56,7 @@ export default function ProfilHistoirePage() {
 
         if (pError) throw pError;
 
-        let allEpisodes: any[] = [];
+        let allEpisodesFromDB: any[] = [];
         if (pData.series_id) {
           // 1. On récupère la série actuelle pour avoir le titre de référence
           const { data: currentSerie } = await supabase
@@ -68,35 +68,36 @@ export default function ProfilHistoirePage() {
           if (currentSerie) {
             serieData = currentSerie;
             // 2. On récupère TOUS les épisodes de cette même série (par titre)
+            // On récupère les titres et questions définis par le USER dans le schéma
             const { data: epData } = await supabase
               .from("series_histoires")
               .select("*")
               .eq("titre", currentSerie.titre)
               .order("episode_numero", { ascending: true });
             
-            if (epData) allEpisodes = epData;
+            if (epData) allEpisodesFromDB = epData;
           }
         }
 
-        // On utilise les vrais épisodes de la série s'ils existent, sinon un mock de secours
-        const episodesToMap = allEpisodes.length > 0 ? allEpisodes : [
-          { episode_titre: "La conviction pure", episode_question: "Comment la tradition influence-t-elle nos choix modernes ?" },
-          { episode_titre: "Le pacte des ancêtres", episode_question: "La loyauté envers le passé est-elle un frein ou une force ?" },
-          { episode_titre: "Éveil de conscience", episode_question: "Quel rôle joue l'éducation dans la préservation de l'identité ?" },
-          { episode_titre: "Le retour au pays", episode_question: "Peut-on vraiment se reconstruire loin de ses racines ?" }
-        ];
-
-        const video_urls: Episode[] = episodesToMap.map((dbEp, index) => ({
-          id: dbEp.id || `mock-${index + 1}`,
-          titre: dbEp.episode_titre || `Épisode ${index + 1}`,
-          video_url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-          numero: dbEp.episode_numero || (index + 1),
-          episode_question: dbEp.episode_question || null
-        }));
+        // On fusionne les infos de la table 'series_histoires' (titres/questions) 
+        // avec les vidéos attachées au profil (profiles_histoires.video_urls)
+        const profileVideos = Array.isArray(pData.video_urls) ? pData.video_urls : [];
+        
+        const video_urls: Episode[] = allEpisodesFromDB.map((dbEp, index) => {
+          // On cherche si une vidéo correspond à cet index dans le profil
+          const profVideo = profileVideos[index];
+          return {
+            id: dbEp.id || `ep-${index + 1}`,
+            titre: dbEp.episode_titre || `Épisode ${dbEp.episode_numero || index + 1}`,
+            video_url: profVideo?.video_url || profVideo?.url || "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+            numero: dbEp.episode_numero || (index + 1),
+            episode_question: dbEp.episode_question || null
+          };
+        });
 
         setProfil({
           ...pData,
-          video_urls,
+          video_urls: video_urls.length > 0 ? video_urls : profileVideos, // Fallback si pas d'épisodes en DB
           serie: serieData as any,
         } as any);
 

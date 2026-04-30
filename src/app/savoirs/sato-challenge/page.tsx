@@ -241,13 +241,13 @@ export default function MysteresPage() {
               <span className="text-[10px] font-black uppercase tracking-widest text-[#a0412d]">Retour</span>
             </button>
 
-            <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-1 md:gap-16 mt-8 md:mt-4 mb-12 md:mb-20 h-[160px] md:h-[280px] shrink-0">
-              <div className="flex flex-col items-center scale-[0.5] md:scale-75 origin-center"><div className="flex gap-3">{/* Okpele columns */}<div className="flex flex-col">{[...Array(4)].map((_, i) => <OkpeleSeed key={i} active={activeOkpeleSeeds > i} />)}</div><div className="flex flex-col">{[...Array(4)].map((_, i) => <OkpeleSeed key={i} active={activeOkpeleSeeds > i + 4} />)}</div></div></div>
-              <div ref={jarRef} className="z-10 scale-[0.6] md:scale-100 origin-center"><SatoJar holesCount={holes} isOver={isOverJar} /></div>
-              <div className="scale-[0.45] md:scale-75 origin-center"><AwaleMini seedsCount={seeds} isWrong={isWrong} /></div>
+            <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-1 md:gap-16 mt-16 md:mt-4 mb-4 md:mb-20 h-[100px] md:h-[280px] shrink-0">
+              <div className="flex flex-col items-center scale-[0.35] md:scale-75 origin-center"><div className="flex gap-3">{/* Okpele columns */}<div className="flex flex-col">{[...Array(4)].map((_, i) => <OkpeleSeed key={i} active={activeOkpeleSeeds > i} />)}</div><div className="flex flex-col">{[...Array(4)].map((_, i) => <OkpeleSeed key={i} active={activeOkpeleSeeds > i + 4} />)}</div></div></div>
+              <div ref={jarRef} className="z-10 scale-[0.45] md:scale-100 origin-center"><SatoJar holesCount={holes} isOver={isOverJar} /></div>
+              <div className="scale-[0.3] md:scale-75 origin-center"><AwaleMini seedsCount={seeds} isWrong={isWrong} /></div>
             </div>
 
-            <div className="w-full max-w-xl flex-1 flex flex-col justify-start pt-0 md:pt-2">
+            <div className="w-full max-w-xl flex-1 flex flex-col justify-start pt-0 pb-10">
               {!isFinished ? (
                 !showExplanation ? (
                   <div className="text-center">
@@ -256,15 +256,15 @@ export default function MysteresPage() {
                       <p>Temps : <span className="text-[#a0412d]">{timeLeft}s</span></p>
                       <p>Graines : <span className="text-[#a0412d]">{seeds}/16</span></p>
                     </div>
-                    <div className="grid grid-cols-1 gap-3">
+                    <div className="grid grid-cols-1 gap-2 sm:gap-3">
                       {['a', 'b', 'c', 'd'].map((l) => (
                         <motion.div key={l} drag dragSnapToOrigin
                           onDrag={(_, info) => { const jar = jarRef.current?.getBoundingClientRect(); if (jar) setIsOverJar(info.point.x > jar.left && info.point.x < jar.right && info.point.y > jar.top && info.point.y < jar.bottom); }}
                           onDragEnd={(_, info) => handleDragEnd(info, l.toUpperCase() === currentQuestions[qIndex].correct_answer)}
-                          className="p-4 bg-[#faf9f8] border border-gray-100 rounded-2xl shadow-sm cursor-grab active:cursor-grabbing flex items-center group touch-none z-50"
+                          className="p-3 sm:p-4 bg-[#faf9f8] border border-gray-100 rounded-2xl shadow-sm cursor-grab active:cursor-grabbing flex items-center group touch-none z-50"
                         >
-                          <span className="w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center font-bold text-[#a0412d] mr-4 uppercase">{l}</span>
-                          <span className="font-bold text-gray-600 text-sm">{currentQuestions[qIndex]?.[`choice_${l}`]}</span>
+                          <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-white shadow-sm flex items-center justify-center font-bold text-[#a0412d] mr-3 sm:mr-4 uppercase text-xs sm:text-base">{l}</span>
+                          <span className="font-bold text-gray-600 text-xs sm:text-sm">{currentQuestions[qIndex]?.[`choice_${l}`]}</span>
                         </motion.div>
                       ))}
                     </div>
