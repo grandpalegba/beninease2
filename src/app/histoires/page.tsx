@@ -41,39 +41,43 @@ export default function SeriesHistoiresPage() {
               key={serie.id} 
               className="w-full h-full shrink-0 snap-center flex flex-col items-center justify-center px-6 pb-20 pt-8"
             >
-              {/* Carte Unique */}
+              {/* Carte Unique - Modèle ProfileCard */}
               <motion.div 
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: Math.min(index * 0.1, 0.5), duration: 0.5 }}
-                className="w-full max-w-[360px] aspect-[4/5] relative rounded-[2.5rem] overflow-hidden shadow-2xl bg-neutral-900 mb-8 flex flex-col"
+                className="w-full max-w-[360px] aspect-[4/5] relative rounded-2xl overflow-hidden shadow-xl bg-white border border-gray-100 flex flex-col"
               >
-                <img 
-                  src={serie.affiche_url || "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5"} 
-                  alt={serie.titre}
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/10 pointer-events-none" />
+                {/* Image avec masque dégradé */}
+                <div className="absolute inset-0 w-full h-[60%] overflow-hidden bg-gray-50">
+                  <img 
+                    src={serie.affiche_url || "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5"} 
+                    alt={serie.titre}
+                    className="w-full h-full object-cover"
+                    style={{ maskImage: "linear-gradient(to bottom, black 70%, transparent 100%)", WebkitMaskImage: "linear-gradient(to bottom, black 70%, transparent 100%)" }}
+                  />
+                </div>
                 
-                <div className="relative z-10 p-8 h-full flex flex-col justify-end text-white text-center">
-                  <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/60 mb-3">Série • Épisode 1</span>
-                  <h3 className="text-3xl font-black mb-4 leading-tight tracking-tight drop-shadow-lg">
+                {/* Contenu (Bas de carte) */}
+                <div className="mt-auto p-8 relative z-10 flex flex-col text-left">
+                  <h3 className="text-3xl font-black mb-3 leading-tight tracking-tighter text-gray-900">
                     {serie.titre}
                   </h3>
-                  <p className="text-sm font-light text-white/90 line-clamp-4 leading-relaxed drop-shadow">
+                  <p className="text-sm font-light text-gray-500 line-clamp-4 leading-relaxed">
                     {serie.synopsis || "Une collection d'histoires immersives à découvrir sans plus attendre."}
                   </p>
                 </div>
               </motion.div>
 
               {/* Bouton centré en dessous */}
-              <Link 
-                href="/histoires/explorer"
-                className="pointer-events-auto flex items-center justify-center gap-3 bg-black text-white px-10 py-5 rounded-full shadow-xl font-bold text-[11px] uppercase tracking-[0.2em] transition-transform hover:scale-105 active:scale-95"
-              >
-                Explorer les histoires
-                <ArrowRight size={16} />
-              </Link>
+              <div className="mt-8">
+                <Link 
+                  href="/histoires/explorer"
+                  className="flex items-center justify-center bg-black text-white px-10 py-5 rounded-full shadow-xl font-bold text-[11px] uppercase tracking-[0.2em] transition-transform hover:scale-105 active:scale-95"
+                >
+                  Explorer les histoires
+                </Link>
+              </div>
             </div>
           ))}
         </div>

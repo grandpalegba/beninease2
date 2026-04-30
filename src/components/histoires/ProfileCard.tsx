@@ -90,8 +90,8 @@ export function ProfileCard({ profil, serie }: ProfileCardProps) {
 
         {/* ── Miniature de la Série ── */}
         {serie && (
-          <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
-            <div className="h-12 w-9 relative rounded overflow-hidden shadow-sm bg-gray-100 shrink-0">
+          <div className="flex items-center gap-4 pt-5 border-t border-gray-100 mt-2">
+            <div className="h-14 w-10 relative rounded-lg overflow-hidden shadow-md bg-gray-100 shrink-0 border border-gray-200">
               {serie.affiche_url && (
                 <Image
                   src={serie.affiche_url}
@@ -101,11 +101,11 @@ export function ProfileCard({ profil, serie }: ProfileCardProps) {
                 />
               )}
             </div>
-            <div>
-              <p className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">
+            <div className="flex flex-col">
+              <span className="text-[10px] text-[#008751] uppercase font-bold tracking-[0.2em] mb-0.5">
                 Série
-              </p>
-              <h4 className="text-sm font-bold text-gray-900">
+              </span>
+              <h4 className="text-sm font-black text-gray-900 leading-tight">
                 {serie.titre}
               </h4>
             </div>
