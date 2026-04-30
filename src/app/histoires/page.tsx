@@ -51,72 +51,70 @@ export default function SeriesHistoiresPage() {
       <motion.div 
         className="flex-1 w-full flex relative cursor-grab active:cursor-grabbing"
         animate={{ x: `-${currentIndex * 100}%` }}
-        transition={{ type: "spring", stiffness: 250, damping: 28 }}
+        transition={{ type: "spring", stiffness: 250, damping: 30 }}
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
-        dragElastic={0.4}
+        dragElastic={0.6}
         onDragEnd={handleDragEnd}
+        dragTransition={{ power: 0.1, timeConstant: 200 }}
       >
         {series.map((serie, index) => (
           <div 
             key={serie.id || `serie-${index}`} 
-            className="w-full h-full shrink-0 flex flex-col items-center justify-center px-6"
+            className="w-full h-full shrink-0 flex flex-col items-center justify-center px-4"
           >
-            {/* Carte Entièrement Cliquable */}
-            <Link 
-              href="/histoires/explorer"
-              className="w-full max-w-[400px] sm:max-w-[650px] h-[70vh] sm:h-[400px] relative rounded-[2rem] overflow-hidden shadow-2xl bg-white border border-gray-100 flex flex-col sm:flex-row transition-transform active:scale-[0.98]"
-            >
-              {/* Image : Haut sur mobile, Gauche sur desktop */}
-              <div className="w-full h-[40%] sm:w-[40%] sm:h-full overflow-hidden bg-gray-50 shrink-0 border-b sm:border-b-0 sm:border-r border-gray-50">
-                <img 
-                  src={serie.affiche_url || "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5"} 
-                  alt={serie.titre}
-                  className="w-full h-full object-cover"
-                  draggable={false}
-                />
-              </div>
-              
-              {/* Contenu : Bas sur mobile, Droite sur desktop */}
-              <div className="flex-1 p-6 sm:p-10 flex flex-col text-left overflow-y-auto hide-scrollbar">
-                <h3 className="text-2xl sm:text-3xl font-black mb-2 leading-tight tracking-[0.05em] text-gray-900 uppercase">
-                  {serie.titre}
-                </h3>
-                
-                {serie.sous_titre && (
-                  <p className="text-base sm:text-lg font-bold italic text-gray-900 mb-6 leading-snug">
-                    {serie.sous_titre}
-                  </p>
-                )}
-                
-                <div className="w-10 h-1 bg-[#008751] mb-6 rounded-full opacity-20 shrink-0" />
-
-                <p className="text-sm sm:text-base font-normal text-gray-500 leading-relaxed">
-                  {serie.synopsis}
-                </p>
-
-                {/* Petite indication visuelle pour le mobile */}
-                <div className="mt-auto pt-6 text-[10px] uppercase tracking-widest text-[#008751] font-bold sm:hidden">
-                  Appuyer pour explorer
-                </div>
-              </div>
-            </Link>
-
-            {/* Bouton centré en dessous */}
-            <div className="shrink-0 mt-8 mb-4">
+            {/* Carte Horizontale Forcee (Design Screenshot) */}
+            <div className="flex flex-col items-center justify-center w-full max-w-[800px] h-full pt-20 pb-10">
               <Link 
                 href="/histoires/explorer"
-                className="flex items-center justify-center bg-black text-white px-12 py-5 rounded-full shadow-xl font-bold text-[11px] uppercase tracking-[0.2em] transition-transform hover:scale-105 active:scale-95"
+                className="w-full h-[280px] sm:h-[400px] relative rounded-[2rem] overflow-hidden shadow-2xl bg-white border border-[#3b82f6] flex flex-row transition-transform active:scale-[0.98]"
               >
-                Explorer les histoires
+                {/* Côté Gauche : Affiche (40%) */}
+                <div className="w-[40%] h-full overflow-hidden bg-gray-50 shrink-0 border-r border-gray-100">
+                  <img 
+                    src={serie.affiche_url || "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5"} 
+                    alt={serie.titre}
+                    className="w-full h-full object-cover"
+                    draggable={false}
+                  />
+                </div>
+                
+                {/* Côté Droit : Contenu Typographique (60%) */}
+                <div className="flex-1 p-4 sm:p-10 flex flex-col text-left overflow-y-auto hide-scrollbar">
+                  <h3 className="text-xl sm:text-4xl font-black mb-1 sm:mb-2 leading-tight tracking-[0.05em] text-gray-900 uppercase">
+                    {serie.titre}
+                  </h3>
+                  
+                  {serie.sous_titre && (
+                    <p className="text-xs sm:text-xl font-bold italic text-gray-900 mb-3 sm:mb-6 leading-tight">
+                      {serie.sous_titre}
+                    </p>
+                  )}
+                  
+                  <div className="w-8 sm:w-12 h-0.5 sm:h-1 bg-[#008751] mb-3 sm:mb-6 rounded-full opacity-30 shrink-0" />
+
+                  <p className="text-[10px] sm:text-base font-normal text-gray-500 leading-relaxed">
+                    {serie.synopsis}
+                  </p>
+                </div>
               </Link>
+
+              {/* Bouton EXPLORER LES HISTOIRES - Position Equilibrée */}
+              <div className="shrink-0 mt-8 sm:mt-12">
+                <Link 
+                  href="/histoires/explorer"
+                  className="flex items-center justify-center bg-black text-white px-10 sm:px-16 py-4 sm:py-6 rounded-full shadow-2xl font-bold text-[10px] sm:text-[13px] uppercase tracking-[0.25em] transition-transform hover:scale-105 active:scale-95"
+                >
+                  Explorer les histoires
+                </Link>
+              </div>
             </div>
           </div>
         ))}
       </motion.div>
 
-      {/* Indicateur de position élégant */}
-      <div className="absolute top-10 left-0 w-full flex justify-center gap-1.5 px-6 pointer-events-none">
+      {/* Indicateurs de position en haut (Design Screenshot) */}
+      <div className="absolute top-24 sm:top-28 left-0 w-full flex justify-center gap-1.5 px-6 pointer-events-none z-20">
         {series.map((_, i) => (
           <div 
             key={i} 
