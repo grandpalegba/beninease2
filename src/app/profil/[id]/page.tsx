@@ -228,6 +228,7 @@ export default function ProfilHistoirePage() {
               <div className="w-16 h-16 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center text-white border border-white/20 group-hover:opacity-0 transition-opacity">
                 <Play fill="currentColor" size={32} />
               </div>
+            </div>
             <div className="absolute bottom-6 left-8 text-white pointer-events-none group-hover:opacity-0 transition-opacity">
               <p className="font-bold text-lg uppercase tracking-tight">Présentation</p>
             </div>
