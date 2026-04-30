@@ -59,16 +59,16 @@ export function EvaluationModule({ episode, profilId, seriesInfo }: EvaluationMo
   return (
     <div className="bg-white rounded-[2.5rem] overflow-hidden border border-gray-100 shadow-sm grid grid-cols-1 lg:grid-cols-2 items-center font-sans">
       {/* GAUCHE : VIDÉO */}
-      <div className="bg-black relative aspect-video flex items-center justify-center group self-center lg:self-auto rounded-3xl overflow-hidden shadow-2xl mx-4 lg:mx-0">
+      <div className="bg-black relative aspect-video flex items-center justify-center group self-center lg:self-auto rounded-[2rem] overflow-hidden shadow-2xl m-4 lg:m-6">
         {videoId ? (
           <iframe 
             src={embedUrl} 
-            className="w-full h-full rounded-3xl" 
+            className="w-full h-full" 
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
           />
         ) : (
-          <video src={episode.video_url} controls className="w-full h-full object-cover rounded-3xl" />
+          <video src={episode.video_url} controls className="w-full h-full object-cover pointer-events-auto" />
         )}
         {!videoId && (
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10">

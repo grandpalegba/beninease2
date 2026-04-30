@@ -233,7 +233,7 @@ export default function ProfilHistoirePage() {
 
           {/* Finance Block : Horizontal Histogram */}
           <div className="h-full">
-            <HistogrammeBeninois stats={stats} title="Présentation" subtitle={profil.bio_courte || "Découvrez la vision et l'impact"} />
+            <HistogrammeBeninois stats={stats} title="Présentation" subtitle="Introduction et Parcours" />
           </div>
         </div>
 
