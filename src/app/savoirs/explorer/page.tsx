@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from "@supabase/supabase-js";
 import { toast, Toaster } from "sonner";
 import { confetti } from "tsparticles-confetti";
-import { ChevronLeft } from 'lucide-react';
+import BackButton from "@/components/ui/BackButton";
 
 // --- CONFIGURATION SUPABASE ---
 const SUPABASE_URL = "https://wtjhkqkqmexddroqwawk.supabase.co";
@@ -219,13 +219,7 @@ function SavoirsContent() {
           <motion.div key={currentM.id} initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }} className="h-full flex flex-col items-center justify-center p-6 relative">
             
             {/* BOUTON RETOUR (Vers la transition) */}
-            <button 
-              onClick={() => router.push('/savoirs')}
-              className="absolute top-6 left-6 z-50 px-4 py-2 bg-white/80 backdrop-blur-md rounded-full flex items-center gap-2 shadow-sm border border-gray-100 active:scale-95 transition-all hover:bg-white"
-            >
-              <ChevronLeft size={18} className="text-[#a0412d]" strokeWidth={2.5} />
-              <span className="text-[10px] font-black uppercase tracking-widest text-gray-900">Retour</span>
-            </button>
+            <BackButton href="/savoirs" iconColor="#a0412d" />
 
             <motion.div
               drag="both" dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }} dragElastic={0.4}
@@ -254,13 +248,7 @@ function SavoirsContent() {
           </motion.div>
         ) : (
           <motion.div key="ritual" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-[150] flex flex-col items-center p-4 pb-20 overflow-hidden">
-            <button
-              onClick={() => router.push('/savoirs')}
-              className="absolute top-6 left-6 z-[160] px-4 py-2 bg-[#faf9f8] rounded-full flex items-center gap-2 shadow-sm border border-gray-100 active:scale-95 transition-transform"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a0412d" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-              <span className="text-[10px] font-black uppercase tracking-widest text-[#a0412d]">Retour</span>
-            </button>
+            <BackButton href="/savoirs" iconColor="#a0412d" />
             <div className="w-12 h-1 bg-gray-100 rounded-full mb-8 shrink-0 mt-14" />
 
             {/* ZONE VISUELLE */}

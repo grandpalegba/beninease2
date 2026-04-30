@@ -2,10 +2,11 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/utils/supabase/client";
-import { Loader2, AlertCircle, ChevronLeft } from "lucide-react";
+import { Loader2, AlertCircle } from "lucide-react";
 import CardDeck from "@/components/ui/CardDeck";
 import { TresorCard } from "@/components/tresors/TresorCard";
 import { useRouter } from "next/navigation";
+import BackButton from "@/components/ui/BackButton";
 
 interface Tresor {
   id: string;
@@ -81,13 +82,7 @@ export default function TresorsPage() {
       <div className="fixed inset-0 pattern-bg -z-10 opacity-[0.03]"></div>
 
       {/* BOUTON RETOUR */}
-      <button 
-        onClick={() => router.push('/tresors')}
-        className="absolute top-6 left-6 z-50 px-4 py-2 bg-white/80 backdrop-blur-md rounded-full flex items-center gap-2 shadow-sm border border-gray-100 active:scale-95 transition-all hover:bg-white"
-      >
-        <ChevronLeft size={18} className="text-[#008751]" strokeWidth={2.5} />
-        <span className="text-[10px] font-black uppercase tracking-widest text-gray-900">Retour</span>
-      </button>
+      <BackButton href="/tresors" />
 
       <div className="flex-1 overflow-hidden">
         <CardDeck

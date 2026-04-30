@@ -5,8 +5,10 @@ import { supabase } from "@/utils/supabase/client";
 import { Play, Loader2, X, Share2, Check } from "lucide-react";
 import { CategoryPattern } from "@/components/talents/CategoryPattern";
 import { useSearchParams } from "next/navigation";
+import BackButton from "@/components/ui/BackButton";
 
 interface Talent {
+// ...
   id: string;
   prenom_talent: string;
   nom_talent: string;
@@ -241,6 +243,7 @@ const TalentsContent = () => {
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
     >
+      <BackButton href="/" className="absolute top-4 left-4" />
 
 
       {/* Duel Cards Section */}

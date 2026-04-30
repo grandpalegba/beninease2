@@ -8,9 +8,10 @@ import { HistogrammeBeninois } from "@/components/histoires/HistogrammeBeninois"
 import type { ProfilAvecSerie, Episode } from "@/data/series";
 import { useWallet } from "@/store/wallet";
 import Image from "next/image";
-import { ChevronLeft, Loader2, Sparkles, TrendingUp, TrendingDown, X, Play, ArrowRight, Users } from "lucide-react";
+import { Loader2, Sparkles, TrendingUp, TrendingDown, X, Play, ArrowRight, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import BackButton from "@/components/ui/BackButton";
 
 function getYoutubeID(url: string) {
   if (!url) return null;
@@ -151,14 +152,7 @@ export default function ProfilHistoirePage() {
         
         {/* --- HEADER BLOCK : Identité | Affiche | Valeur --- */}
         <header className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-sm border border-gray-100 flex flex-col md:flex-row items-center md:justify-between gap-6 md:gap-10 relative overflow-hidden">
-          {/* Bouton Retour Flottant */}
-          <button 
-            onClick={() => router.push('/histoires')}
-            className="absolute left-4 top-4 md:relative md:left-0 md:top-0 w-12 h-12 bg-gray-50 border border-gray-100 rounded-full shadow-sm flex items-center justify-center text-gray-400 hover:text-black transition-all hover:scale-110 z-20"
-            title="Retour aux cartes"
-          >
-            <ChevronLeft size={24} />
-          </button>
+          <BackButton href="/histoires" className="absolute left-4 top-4 md:relative md:left-0 md:top-0" />
 
           {/* GAUCHE : Identité */}
           <div className="flex items-center gap-6 w-full md:w-auto pt-8 md:pt-0">

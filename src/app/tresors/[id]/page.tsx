@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/utils/supabase/client";
-import { Loader2, ArrowLeft } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { JourneyMap } from "@/components/tresors/JourneyMap";
+import BackButton from "@/components/ui/BackButton";
 import { PrestigeBars } from "@/components/tresors/PrestigeBars";
 import { JetonsRadar } from "@/components/tresors/JetonsRadar";
 import { PullQuote } from "@/components/tresors/PullQuote";
@@ -175,12 +176,7 @@ export default function TresorDetailPage() {
       onTouchEnd={handleTouchEnd}
     >
       {/* BOUTON RETOUR */}
-      <button 
-        onClick={() => router.push('/tresors')}
-        className="fixed top-6 left-6 z-[100] p-4 bg-white/80 backdrop-blur-md rounded-full shadow-lg border border-gray-100 text-gray-900 hover:scale-110 active:scale-90 transition-all group"
-      >
-        <ArrowLeft size={24} strokeWidth={1.5} className="group-hover:-translate-x-1 transition-transform" />
-      </button>
+      <BackButton href="/tresors" className="fixed top-6 left-6" />
 
       {/* ── SECTION HAUTE : Image & Infos Clés ── */}
       <section className="max-w-[1400px] mx-auto pt-12 px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-12">

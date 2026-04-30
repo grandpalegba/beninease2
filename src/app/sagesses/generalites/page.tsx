@@ -4,8 +4,9 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { ChevronLeft, Play } from 'lucide-react';
+import { Play } from 'lucide-react';
 import ContactModal from '@/components/ContactModal';
+import BackButton from '@/components/ui/BackButton';
 
 const GeneralitesPage = () => {
   const router = useRouter();
@@ -15,12 +16,7 @@ const GeneralitesPage = () => {
     <div className="min-h-screen bg-white text-[#1a1a1a] pb-32">
       {/* Navbar Minimalist */}
       <nav className="absolute top-0 left-0 right-0 z-50 px-6 py-6 flex justify-start pointer-events-none">
-        <button 
-          onClick={() => router.back()} 
-          className="p-3 bg-white/80 backdrop-blur-md rounded-full shadow-sm border border-neutral-100 hover:bg-white transition-all pointer-events-auto"
-        >
-          <ChevronLeft size={20} />
-        </button>
+        <BackButton className="relative top-0 left-0 pointer-events-auto" />
       </nav>
 
       <main className="max-w-4xl mx-auto px-6 pt-24 flex flex-col items-center">
