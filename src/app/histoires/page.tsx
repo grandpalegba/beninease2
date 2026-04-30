@@ -60,52 +60,56 @@ export default function SeriesHistoiresPage() {
         {series.map((serie, index) => (
           <div 
             key={serie.id || `serie-${index}`} 
-            className="w-full h-full shrink-0 flex flex-col items-center justify-center px-4"
+            className="w-full h-full shrink-0 flex flex-col items-center justify-center px-6"
           >
-            <div className="flex flex-col items-center justify-center w-full max-w-[600px] h-full pt-12 pb-8">
-              {/* Carte Unique - Design Paysage (Image sur le côté) */}
-              <div 
-                className="w-full h-[380px] relative rounded-[2rem] overflow-hidden shadow-2xl bg-white border border-gray-100 flex flex-row mb-8"
-              >
-                {/* Côté Gauche : Affiche */}
-                <div className="w-[40%] h-full overflow-hidden bg-gray-50 shrink-0 border-r border-gray-50">
-                  <img 
-                    src={serie.affiche_url || "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5"} 
-                    alt={serie.titre}
-                    className="w-full h-full object-cover"
-                    draggable={false}
-                  />
-                </div>
+            {/* Carte Entièrement Cliquable */}
+            <Link 
+              href="/histoires/explorer"
+              className="w-full max-w-[400px] sm:max-w-[650px] h-[70vh] sm:h-[400px] relative rounded-[2rem] overflow-hidden shadow-2xl bg-white border border-gray-100 flex flex-col sm:flex-row transition-transform active:scale-[0.98]"
+            >
+              {/* Image : Haut sur mobile, Gauche sur desktop */}
+              <div className="w-full h-[40%] sm:w-[40%] sm:h-full overflow-hidden bg-gray-50 shrink-0 border-b sm:border-b-0 sm:border-r border-gray-50">
+                <img 
+                  src={serie.affiche_url || "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5"} 
+                  alt={serie.titre}
+                  className="w-full h-full object-cover"
+                  draggable={false}
+                />
+              </div>
+              
+              {/* Contenu : Bas sur mobile, Droite sur desktop */}
+              <div className="flex-1 p-6 sm:p-10 flex flex-col text-left overflow-y-auto hide-scrollbar">
+                <h3 className="text-2xl sm:text-3xl font-black mb-2 leading-tight tracking-[0.05em] text-gray-900 uppercase">
+                  {serie.titre}
+                </h3>
                 
-                {/* Côté Droit : Contenu Typographique */}
-                <div className="w-[60%] p-6 py-8 flex flex-col text-left overflow-y-auto hide-scrollbar">
-                  <h3 className="text-2xl font-black mb-1 leading-tight tracking-[0.05em] text-gray-900 uppercase">
-                    {serie.titre}
-                  </h3>
-                  
-                  {serie.sous_titre && (
-                    <p className="text-sm font-bold italic text-gray-900 mb-4 leading-snug">
-                      {serie.sous_titre}
-                    </p>
-                  )}
-                  
-                  <div className="w-8 h-0.5 bg-[#008751] mb-4 rounded-full opacity-20" />
-
-                  <p className="text-xs font-normal text-gray-500 leading-relaxed">
-                    {serie.synopsis}
+                {serie.sous_titre && (
+                  <p className="text-base sm:text-lg font-bold italic text-gray-900 mb-6 leading-snug">
+                    {serie.sous_titre}
                   </p>
+                )}
+                
+                <div className="w-10 h-1 bg-[#008751] mb-6 rounded-full opacity-20 shrink-0" />
+
+                <p className="text-sm sm:text-base font-normal text-gray-500 leading-relaxed">
+                  {serie.synopsis}
+                </p>
+
+                {/* Petite indication visuelle pour le mobile */}
+                <div className="mt-auto pt-6 text-[10px] uppercase tracking-widest text-[#008751] font-bold sm:hidden">
+                  Appuyer pour explorer
                 </div>
               </div>
+            </Link>
 
-              {/* Bouton centré en dessous */}
-              <div className="shrink-0 mb-4">
-                <Link 
-                  href="/histoires/explorer"
-                  className="flex items-center justify-center bg-black text-white px-12 py-5 rounded-full shadow-xl font-bold text-[11px] uppercase tracking-[0.2em] transition-transform hover:scale-105 active:scale-95"
-                >
-                  Explorer les histoires
-                </Link>
-              </div>
+            {/* Bouton centré en dessous */}
+            <div className="shrink-0 mt-8 mb-4">
+              <Link 
+                href="/histoires/explorer"
+                className="flex items-center justify-center bg-black text-white px-12 py-5 rounded-full shadow-xl font-bold text-[11px] uppercase tracking-[0.2em] transition-transform hover:scale-105 active:scale-95"
+              >
+                Explorer les histoires
+              </Link>
             </div>
           </div>
         ))}
