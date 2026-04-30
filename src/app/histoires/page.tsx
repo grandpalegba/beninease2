@@ -30,23 +30,30 @@ export default function SeriesHistoiresPage() {
 
   const handleDragEnd = (event: any, info: any) => {
     const threshold = 50;
-    if (info.offset.x < -threshold && currentIndex < series.length - 1) {
-      setCurrentIndex(prev => prev + 1);
-    } else if (info.offset.x > threshold && currentIndex > 0) {
-      setCurrentIndex(prev => prev - 1);
+    const velocityThreshold = 500;
+    
+    if (info.offset.x < -threshold || info.velocity.x < -velocityThreshold) {
+      if (currentIndex < series.length - 1) {
+        setCurrentIndex(prev => prev + 1);
+      }
+    } else if (info.offset.x > threshold || info.velocity.x > velocityThreshold) {
+      if (currentIndex > 0) {
+        setCurrentIndex(prev => prev - 1);
+      }
     }
   };
 
   return (
-    <div className="h-[100dvh] w-full bg-white flex flex-col overflow-hidden relative font-sans touch-none">
+    <div className="h-[100dvh] w-full bg-white flex flex-col overflow-hidden relative font-sans touch-none select-none">
       
-      {/* Container principal du carrousel avec Framer Motion pour un swipe infaillible */}
+      {/* Container principal du carrousel avec Framer Motion */}
       <motion.div 
-        className="flex-1 w-full flex relative"
+        className="flex-1 w-full flex relative cursor-grab active:cursor-grabbing"
         animate={{ x: `-${currentIndex * 100}%` }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        transition={{ type: "spring", stiffness: 250, damping: 28 }}
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
+        dragElastic={0.4}
         onDragEnd={handleDragEnd}
       >
         {series.map((serie, index) => (
@@ -54,43 +61,47 @@ export default function SeriesHistoiresPage() {
             key={serie.id || `serie-${index}`} 
             className="w-full h-full shrink-0 flex flex-col items-center justify-center px-6"
           >
-            <div className="flex flex-col items-center justify-center w-full max-w-sm h-full pt-12 pb-12">
-              {/* Carte Unique - Format Portrait Long (Modèle ProfileCard) */}
+            <div className="flex flex-col items-center justify-center w-full max-w-sm h-full pt-12 pb-8">
+              {/* Carte Unique - Design Inspiré de l'Image Utilisateur */}
               <div 
-                className="w-full flex-1 relative rounded-3xl overflow-hidden shadow-2xl bg-white border border-gray-100 flex flex-col mb-10"
+                className="w-full flex-1 relative rounded-[2.5rem] overflow-hidden shadow-2xl bg-white border border-gray-100 flex flex-col mb-8"
               >
-                {/* Affiche avec masque dégradé plus haut */}
-                <div className="relative w-full h-[55%] overflow-hidden bg-gray-50 shrink-0">
+                {/* Affiche avec masque dégradé (Modèle ProfileCard) */}
+                <div className="relative w-full h-[50%] overflow-hidden bg-gray-50 shrink-0 pointer-events-none">
                   <img 
                     src={serie.affiche_url || "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5"} 
                     alt={serie.titre}
                     className="w-full h-full object-cover"
                     style={{ 
-                      maskImage: "linear-gradient(to bottom, black 80%, transparent 100%)", 
-                      WebkitMaskImage: "linear-gradient(to bottom, black 80%, transparent 100%)" 
+                      maskImage: "linear-gradient(to bottom, black 85%, transparent 100%)", 
+                      WebkitMaskImage: "linear-gradient(to bottom, black 85%, transparent 100%)" 
                     }}
                     draggable={false}
                   />
                 </div>
                 
-                {/* Contenu : Titre, Sous-titre, Synopsis COMPLET */}
-                <div className="flex-1 p-8 pt-2 overflow-y-auto hide-scrollbar flex flex-col text-left">
-                  <h3 className="text-4xl font-black mb-1 leading-tight tracking-tighter text-gray-900">
+                {/* Contenu Typographique (Bas de carte) */}
+                <div className="flex-1 p-8 pt-4 overflow-y-auto hide-scrollbar flex flex-col text-left">
+                  <h3 className="text-3xl font-black mb-2 leading-tight tracking-[0.1em] text-gray-900 uppercase">
                     {serie.titre}
                   </h3>
+                  
                   {serie.sous_titre && (
-                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#008751] mb-6 leading-relaxed">
+                    <p className="text-lg font-bold italic text-gray-900 mb-5 leading-snug">
                       {serie.sous_titre}
                     </p>
                   )}
-                  <p className="text-sm font-light text-gray-500 leading-relaxed pb-4">
+                  
+                  <div className="w-10 h-1 bg-[#008751] mb-6 rounded-full opacity-20" />
+
+                  <p className="text-base font-normal text-gray-600 leading-relaxed pb-6">
                     {serie.synopsis}
                   </p>
                 </div>
               </div>
 
               {/* Bouton centré en dessous */}
-              <div className="shrink-0 mb-6">
+              <div className="shrink-0 mb-4">
                 <Link 
                   href="/histoires/explorer"
                   className="flex items-center justify-center bg-black text-white px-12 py-5 rounded-full shadow-xl font-bold text-[11px] uppercase tracking-[0.2em] transition-transform hover:scale-105 active:scale-95"
@@ -99,24 +110,22 @@ export default function SeriesHistoiresPage() {
                 </Link>
               </div>
             </div>
-          ))}
-        </motion.div>
+          </div>
+        ))}
+      </motion.div>
 
-        {/* Indicateur de position (facultatif mais élégant) */}
-        <div className="absolute top-10 left-0 w-full flex justify-center gap-1.5 px-6 pointer-events-none">
-          {series.map((_, i) => (
-            <div 
-              key={i} 
-              className={`h-1 rounded-full transition-all duration-300 ${i === currentIndex ? "w-8 bg-black" : "w-2 bg-gray-200"}`}
-            />
-          ))}
-        </div>
+      {/* Indicateur de position élégant */}
+      <div className="absolute top-10 left-0 w-full flex justify-center gap-1.5 px-6 pointer-events-none">
+        {series.map((_, i) => (
+          <div 
+            key={i} 
+            className={`h-1 rounded-full transition-all duration-300 ${i === currentIndex ? "w-8 bg-black" : "w-2 bg-gray-200"}`}
+          />
+        ))}
+      </div>
 
-      {/* Global CSS for hide-scrollbar */}
       <style dangerouslySetInnerHTML={{__html: `
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
       `}} />
     </div>
   );
