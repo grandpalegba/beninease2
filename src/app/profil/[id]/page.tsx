@@ -221,16 +221,13 @@ export default function ProfilHistoirePage() {
             )}
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none transition-opacity z-10">
               {!mainVideoId && (
-                <h3 className="text-4xl md:text-5xl font-black text-white text-center tracking-tighter drop-shadow-2xl bg-black/40 px-8 py-4 rounded-[2rem] backdrop-blur-md mb-4">
+                <h3 className="text-xl md:text-2xl font-bold text-white text-center tracking-[0.2em] uppercase drop-shadow-2xl bg-black/40 px-8 py-4 rounded-[2rem] backdrop-blur-md mb-4">
                   Présentation
                 </h3>
               )}
               <div className="w-16 h-16 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center text-white border border-white/20 group-hover:opacity-0 transition-opacity">
                 <Play fill="currentColor" size={32} />
               </div>
-            </div>
-            <div className="absolute bottom-6 left-8 text-white pointer-events-none group-hover:opacity-0 transition-opacity">
-              <p className="font-bold text-lg uppercase tracking-tight">Présentation</p>
             </div>
           </div>
 
