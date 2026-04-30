@@ -13,8 +13,9 @@ export function useSeries() {
       setError(null);
 
       const { data, error: fetchError } = await supabase
-        .from("series_histoires")
-        .select("*");
+        .from("series")
+        .select("*")
+        .order("numero", { ascending: true });
 
       if (fetchError) throw fetchError;
 

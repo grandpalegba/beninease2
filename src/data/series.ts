@@ -6,12 +6,14 @@
 
 export type Serie = {
   id: string;
+  numero?: number;
   titre: string;
+  sous_titre?: string;
   synopsis: string | null;
   affiche_url: string | null;
-  episode_numero: number;
-  episode_titre: string | null;
-  episode_question: string | null;
+  episode_numero?: number;
+  episode_titre?: string | null;
+  episode_question?: string | null;
   created_at?: string;
 };
 
