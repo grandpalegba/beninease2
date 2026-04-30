@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from "@supabase/supabase-js";
 import { toast, Toaster } from "sonner";
 import { confetti } from "tsparticles-confetti";
+import { ChevronLeft } from 'lucide-react';
 
 // --- CONFIGURATION SUPABASE ---
 const SUPABASE_URL = "https://wtjhkqkqmexddroqwawk.supabase.co";

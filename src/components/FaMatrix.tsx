@@ -7,6 +7,7 @@ import { SIGNS, type FongbeSign } from '@/data/fongbe';
 import { useRouter } from 'next/navigation';
 import { BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import BeninFrame from './BeninFrame';
 
 /**
  * Renders a small version of the ideogram dots
