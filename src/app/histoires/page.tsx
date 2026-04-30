@@ -119,10 +119,3 @@ export default function SeriesHistoiresPage() {
     </div>
   );
 }
-
-      <style dangerouslySetInnerHTML={{__html: `
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-      `}} />
-    </div>
-  );
-}
