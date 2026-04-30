@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Loader2, RotateCcw } from "lucide-react";
+import { X, Loader2, RotateCcw, Pin } from "lucide-react";
 import { SIGNS, shuffle, valueToMatrixIndex, type FongbeSign } from "@/data/fongbe";
 import { DYNAMICS_MATRIX, DYNAMICS_AXIS } from "@/data/dynamics";
 import { type LifeCase, useLifeCases } from "@/features/consultation/useLifeCases";
@@ -53,6 +53,47 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
   const [confirmCloseOpen, setConfirmCloseOpen] = useState(false);
   const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [hasPinned, setHasPinned] = useState(false);
+
+  useEffect(() => {
+    const pinned = localStorage.getItem('beninease_pinned_case');
+    if (pinned) setHasPinned(true);
+  }, []);
+
+  const handlePin = () => {
+    if (!lifeCase || !revealed) return;
+    const dataToPin = {
+      caseId: lifeCase.id,
+      intuitiveChoice,
+      finalChoice,
+      revealed
+    };
+    localStorage.setItem('beninease_pinned_case', JSON.stringify(dataToPin));
+    setHasPinned(true);
+    toast.success("Consultation épinglée. Vous pouvez la reprendre plus tard.");
+  };
+
+  const handleResumePinned = () => {
+    try {
+      const pinnedStr = localStorage.getItem('beninease_pinned_case');
+      if (!pinnedStr) return;
+      const data = JSON.parse(pinnedStr);
+      const foundCase = cases.find(c => c.id === data.caseId);
+      if (foundCase) {
+        setLifeCase(foundCase);
+        setIntuitiveChoice(data.intuitiveChoice);
+        setFinalChoice(data.finalChoice);
+        setRevealed(data.revealed);
+        setPhase("revealed");
+        toast.success("Consultation restaurée.");
+      } else {
+        toast.error("Le cas pratique épinglé est introuvable.");
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const restart = useCallback(() => {
     setLifeCase(null);
@@ -111,6 +152,8 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
       });
 
       toast.success("Votre sagesse a été scellée.", { id: toastId });
+      localStorage.removeItem('beninease_pinned_case');
+      setHasPinned(false);
       onComplete?.();
       restart();
     } catch (error: any) {
@@ -140,6 +183,17 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
               onPickCase={handlePickCase}
               initialCaseId={lifeCase?.id}
             />
+            {hasPinned && (
+              <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-50">
+                <button 
+                  onClick={handleResumePinned}
+                  className="px-6 py-3 bg-[#00693e] text-white rounded-full shadow-xl font-bold text-[10px] uppercase tracking-widest flex items-center gap-2 hover:scale-105 transition-transform whitespace-nowrap"
+                >
+                  <Pin size={14} />
+                  Reprendre l'épingle
+                </button>
+              </div>
+            )}
           </motion.div>
         )}
 
@@ -241,9 +295,18 @@ const SandMatrix = ({ onComplete }: { onComplete?: () => void }) => {
                 </div>
               </div>
 
-              <button onClick={() => setConfirmCloseOpen(true)} className="absolute top-6 right-6 p-3 bg-white rounded-full shadow-lg hover:scale-110 transition-transform">
-                <X size={20} />
-              </button>
+              <div className="absolute top-6 right-6 flex items-center gap-4">
+                <button 
+                  onClick={handlePin} 
+                  className="p-3 bg-white rounded-full shadow-lg hover:scale-110 transition-transform text-neutral-400 hover:text-[#00693e]"
+                  title="Épingler pour plus tard"
+                >
+                  <Pin size={20} />
+                </button>
+                <button onClick={() => setConfirmCloseOpen(true)} className="p-3 bg-white rounded-full shadow-lg hover:scale-110 transition-transform">
+                  <X size={20} />
+                </button>
+              </div>
             </div>
           </motion.div>
         )}
