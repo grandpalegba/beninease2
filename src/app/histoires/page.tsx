@@ -28,60 +28,65 @@ export default function SeriesHistoiresPage() {
   }
 
   return (
-    <div className="min-h-[100dvh] w-full bg-white flex flex-col overflow-hidden relative font-sans">
+    <div className="h-[100dvh] w-full bg-white flex flex-col overflow-hidden relative font-sans">
       
       {/* Lateral Swipe Carousel */}
-      <div className="flex-1 w-full flex flex-col relative h-full">
+      <div className="flex-1 w-full relative">
         <div 
           className="flex overflow-x-auto snap-x snap-mandatory w-full h-full hide-scrollbar items-center"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
           {series.map((serie, index) => (
             <div 
-              key={serie.id} 
-              className="w-full h-full shrink-0 snap-center flex flex-col items-center justify-center px-6 pb-20 pt-8"
+              key={serie.id || index} 
+              className="w-full h-full shrink-0 snap-center flex flex-col items-center justify-center px-6"
             >
-              {/* Carte Unique - Modèle ProfileCard Premium */}
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: Math.min(index * 0.1, 0.5), duration: 0.5 }}
-                className="w-full max-w-[360px] aspect-[4/5] relative rounded-2xl overflow-hidden shadow-xl bg-white border border-gray-100 flex flex-col"
-              >
-                {/* Affiche avec masque dégradé (Modèle ProfileCard) */}
-                <div className="absolute inset-0 w-full h-[60%] overflow-hidden bg-gray-50">
-                  <img 
-                    src={serie.affiche_url || "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5"} 
-                    alt={serie.titre}
-                    className="w-full h-full object-cover"
-                    style={{ maskImage: "linear-gradient(to bottom, black 70%, transparent 100%)", WebkitMaskImage: "linear-gradient(to bottom, black 70%, transparent 100%)" }}
-                  />
-                </div>
-                
-                {/* Contenu : Titre, Sous-titre, Synopsis */}
-                <div className="mt-auto p-8 relative z-10 flex flex-col text-left">
-                  <h3 className="text-3xl font-black mb-1 leading-tight tracking-tighter text-gray-900">
-                    {serie.titre}
-                  </h3>
-                  {serie.sous_titre && (
-                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#008751] mb-4">
-                      {serie.sous_titre}
-                    </p>
-                  )}
-                  <p className="text-sm font-light text-gray-500 line-clamp-3 leading-relaxed">
-                    {serie.synopsis}
-                  </p>
-                </div>
-              </motion.div>
-
-              {/* Bouton centré en dessous */}
-              <div className="mt-8">
-                <Link 
-                  href="/histoires/explorer"
-                  className="flex items-center justify-center bg-black text-white px-10 py-5 rounded-full shadow-xl font-bold text-[11px] uppercase tracking-[0.2em] transition-transform hover:scale-105 active:scale-95"
+              <div className="flex flex-col items-center justify-center w-full max-w-sm h-full pt-12 pb-12">
+                {/* Carte Unique - Format Portrait Long (Modèle ProfileCard) */}
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: Math.min(index * 0.1, 0.4), duration: 0.6 }}
+                  className="w-full flex-1 relative rounded-3xl overflow-hidden shadow-2xl bg-white border border-gray-100 flex flex-col mb-10"
                 >
-                  Explorer les histoires
-                </Link>
+                  {/* Affiche avec masque dégradé plus haut */}
+                  <div className="relative w-full h-[55%] overflow-hidden bg-gray-50 shrink-0">
+                    <img 
+                      src={serie.affiche_url || "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5"} 
+                      alt={serie.titre}
+                      className="w-full h-full object-cover"
+                      style={{ 
+                        maskImage: "linear-gradient(to bottom, black 80%, transparent 100%)", 
+                        WebkitMaskImage: "linear-gradient(to bottom, black 80%, transparent 100%)" 
+                      }}
+                    />
+                  </div>
+                  
+                  {/* Contenu : Titre, Sous-titre, Synopsis COMPLET */}
+                  <div className="flex-1 p-8 pt-2 overflow-y-auto hide-scrollbar flex flex-col text-left">
+                    <h3 className="text-4xl font-black mb-1 leading-tight tracking-tighter text-gray-900">
+                      {serie.titre}
+                    </h3>
+                    {serie.sous_titre && (
+                      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#008751] mb-6 leading-relaxed">
+                        {serie.sous_titre}
+                      </p>
+                    )}
+                    <p className="text-sm font-light text-gray-500 leading-relaxed pb-4">
+                      {serie.synopsis}
+                    </p>
+                  </div>
+                </motion.div>
+
+                {/* Bouton centré en dessous */}
+                <div className="shrink-0 mb-6">
+                  <Link 
+                    href="/histoires/explorer"
+                    className="flex items-center justify-center bg-black text-white px-12 py-5 rounded-full shadow-xl font-bold text-[11px] uppercase tracking-[0.2em] transition-transform hover:scale-105 active:scale-95"
+                  >
+                    Explorer les histoires
+                  </Link>
+                </div>
               </div>
             </div>
           ))}
