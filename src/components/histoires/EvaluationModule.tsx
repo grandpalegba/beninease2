@@ -70,6 +70,13 @@ export function EvaluationModule({ episode, profilId, seriesInfo }: EvaluationMo
         ) : (
           <video src={episode.video_url} controls className="w-full h-full object-cover rounded-3xl" />
         )}
+        {!videoId && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10">
+            <h3 className="text-4xl md:text-5xl font-black text-white text-center tracking-tighter drop-shadow-2xl bg-black/40 px-8 py-4 rounded-[2rem] backdrop-blur-md">
+              Épisode {episode.numero || 1}
+            </h3>
+          </div>
+        )}
         <div className="absolute bottom-6 left-8 text-white pointer-events-none group-hover:opacity-0 transition-opacity z-10">
           <p className="font-bold text-lg uppercase tracking-tight">{episode.titre}</p>
           <p className="text-sm opacity-70">Documentaire • 12:45</p>

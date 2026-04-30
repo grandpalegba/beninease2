@@ -78,13 +78,20 @@ export default function ProfilHistoirePage() {
           }
         }
 
-        const mockTitles = ["Episode 1", "Episode 2", "Episode 3", "Episode 4"];
-        const video_urls: Episode[] = mockTitles.map((titre, index) => ({
-          id: `mock-${index + 1}`,
-          titre: titre,
+        // On utilise les vrais épisodes de la série s'ils existent, sinon un mock de secours
+        const episodesToMap = allEpisodes.length > 0 ? allEpisodes : [
+          { episode_titre: "La conviction pure", episode_question: "Agir par conviction sans aucune garantie." },
+          { episode_titre: "Épisode 2", episode_question: "Analyse de la souveraineté culturelle" },
+          { episode_titre: "Épisode 3", episode_question: "L'impact de la tradition" },
+          { episode_titre: "Épisode 4", episode_question: "Le retour aux sources" }
+        ];
+
+        const video_urls: Episode[] = episodesToMap.map((dbEp, index) => ({
+          id: dbEp.id || `mock-${index + 1}`,
+          titre: dbEp.episode_titre || `Épisode ${index + 1}`,
           video_url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-          numero: index + 1,
-          episode_question: null
+          numero: dbEp.episode_numero || (index + 1),
+          episode_question: dbEp.episode_question || null
         }));
 
         setProfil({
@@ -212,8 +219,16 @@ export default function ProfilHistoirePage() {
             ) : (
               <video src={profil.video_urls[0]?.video_url || "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"} className="w-full h-full object-cover pointer-events-none" draggable={false} />
             )}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none group-hover:opacity-0 transition-opacity z-10">
+            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none transition-opacity z-10">
+              {!mainVideoId && (
+                <h3 className="text-4xl md:text-5xl font-black text-white text-center tracking-tighter drop-shadow-2xl bg-black/40 px-8 py-4 rounded-[2rem] backdrop-blur-md mb-4">
+                  Présentation
+                </h3>
+              )}
               <div className="w-16 h-16 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center text-white border border-white/20 group-hover:opacity-0 transition-opacity">
+                <Play fill="currentColor" size={32} />
+              </div>
+            </div>
                 <Play fill="currentColor" size={32} />
               </div>
             </div>

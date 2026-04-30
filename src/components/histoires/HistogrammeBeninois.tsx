@@ -28,7 +28,7 @@ export function HistogrammeBeninois({ stats, title, subtitle }: HistogrammeBenin
   ];
 
   return (
-    <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm h-full flex flex-col justify-center space-y-6 font-sans">
+    <div className="p-10 md:p-12 flex flex-col justify-center space-y-6 min-h-full bg-white font-sans">
       {(title || subtitle) && (
         <div>
           {title && <h2 className="text-2xl font-black text-black tracking-tighter leading-none mb-2">{title}</h2>}
