@@ -251,6 +251,7 @@ const FaMatrix = () => {
         )}
       </AnimatePresence>
     </div>
+  );
 };
 
 export default FaMatrix;
