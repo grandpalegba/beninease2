@@ -241,13 +241,13 @@ export default function MysteresPage() {
               <span className="text-[10px] font-black uppercase tracking-widest text-[#a0412d]">Retour</span>
             </button>
 
-            <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-1 md:gap-16 mt-16 md:mt-4 mb-4 md:mb-20 h-[100px] md:h-[280px] shrink-0">
-              <div className="flex flex-col items-center scale-[0.35] md:scale-75 origin-center"><div className="flex gap-3">{/* Okpele columns */}<div className="flex flex-col">{[...Array(4)].map((_, i) => <OkpeleSeed key={i} active={activeOkpeleSeeds > i} />)}</div><div className="flex flex-col">{[...Array(4)].map((_, i) => <OkpeleSeed key={i} active={activeOkpeleSeeds > i + 4} />)}</div></div></div>
-              <div ref={jarRef} className="z-10 scale-[0.45] md:scale-100 origin-center"><SatoJar holesCount={holes} isOver={isOverJar} /></div>
-              <div className="scale-[0.3] md:scale-75 origin-center"><AwaleMini seedsCount={seeds} isWrong={isWrong} /></div>
+            <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-1 md:gap-16 mt-4 md:mt-4 mb-2 md:mb-20 h-[80px] md:h-[280px] shrink-0">
+              <div className="flex flex-col items-center scale-[0.3] md:scale-75 origin-center"><div className="flex gap-3">{/* Okpele columns */}<div className="flex flex-col">{[...Array(4)].map((_, i) => <OkpeleSeed key={i} active={activeOkpeleSeeds > i} />)}</div><div className="flex flex-col">{[...Array(4)].map((_, i) => <OkpeleSeed key={i} active={activeOkpeleSeeds > i + 4} />)}</div></div></div>
+              <div ref={jarRef} className="z-10 scale-[0.35] md:scale-100 origin-center"><SatoJar holesCount={holes} isOver={isOverJar} /></div>
+              <div className="scale-[0.25] md:scale-75 origin-center"><AwaleMini seedsCount={seeds} isWrong={isWrong} /></div>
             </div>
 
-            <div className="w-full max-w-xl flex-1 flex flex-col justify-start pt-0 pb-10">
+            <div className="w-full max-w-xl flex-1 flex flex-col justify-start pt-0">
               {!isFinished ? (
                 !showExplanation ? (
                   <div className="text-center">

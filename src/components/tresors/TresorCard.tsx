@@ -26,14 +26,14 @@ export function TresorCard({ tresor }: TresorCardProps) {
       className="group cursor-pointer flex w-full h-full shrink-0 flex-col rounded-3xl bg-[#FFFFFF] border border-gray-100 overflow-hidden shadow-xl transition-all duration-300 relative"
     >
       {/* ── Image avec masque dégradé (Look Ibrahim Sow / ProfileCard) ── */}
-      <div className="absolute top-8 left-8 right-8 h-[55%] overflow-hidden bg-[#000000] rounded-[2rem] pointer-events-none">
+      <div className="absolute top-4 md:top-8 left-4 md:left-8 right-4 md:right-8 h-[50%] md:h-[55%] overflow-hidden bg-[#000000] rounded-[1.5rem] md:rounded-[2rem] pointer-events-none">
         {tresor.image_url ? (
           <Image
             src={tresor.image_url}
             alt={tresor.nom}
             fill
             sizes="(max-width: 640px) 85vw, 400px"
-            className="object-contain p-6 transition-transform duration-700 group-hover:scale-110"
+            className="object-contain p-4 md:p-6 transition-transform duration-700 group-hover:scale-110"
             draggable={false}
             priority
           />
@@ -45,12 +45,12 @@ export function TresorCard({ tresor }: TresorCardProps) {
       </div>
 
       {/* ── Contenu ── */}
-      <div className="flex flex-col p-10 mt-auto bg-transparent relative z-10 pointer-events-none justify-end h-full">
-        <div className="mb-6">
-          <h3 className="text-3xl md:text-4xl text-black leading-tight tracking-tight font-bold font-display">
+      <div className="flex flex-col p-6 md:p-10 mt-auto bg-transparent relative z-10 pointer-events-none justify-end h-full">
+        <div className="mb-4 md:mb-6">
+          <h3 className="text-2xl md:text-4xl text-black leading-tight tracking-tight font-bold font-display">
             {tresor.nom}
           </h3>
-          <p className="text-sm md:text-base font-medium text-gray-500 mt-3 font-sans leading-relaxed">
+          <p className="text-xs md:text-base font-medium text-gray-500 mt-2 md:mt-3 font-sans leading-relaxed">
             {tresor.sous_titre?.replace(/\.\s*$/, '')}
           </p>
         </div>

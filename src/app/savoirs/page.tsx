@@ -223,16 +223,16 @@ function SavoirsContent() {
                 else if (info.offset.y < -50) startRitual();
               }}
               onClick={startRitual}
-              className="w-full max-w-lg h-full max-h-[82vh] -mt-12 md:-mt-20 bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-pointer flex flex-col"
+              className="w-full max-w-lg h-full max-h-[72vh] md:max-h-[82vh] -mt-12 md:-mt-20 bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-pointer flex flex-col"
             >
-              <div className="h-[50%] md:h-[55%] w-full overflow-hidden bg-gray-100 pointer-events-none">
+              <div className="h-[40%] md:h-[55%] w-full overflow-hidden bg-gray-100 pointer-events-none">
                 <img src={`https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/mysteres-assets/${currentM.id}.jpg`} className="h-full w-full object-cover" alt="" />
               </div>
-              <div className="p-6 md:p-7 flex flex-col flex-1 bg-white select-none pointer-events-none">
-                <h2 className="text-[15px] md:text-[17px] font-bold font-display uppercase tracking-[0.15em] text-[#1a1a1a] leading-tight">
+              <div className="p-5 md:p-7 flex flex-col flex-1 bg-white select-none pointer-events-none">
+                <h2 className="text-[14px] md:text-[17px] font-bold font-display uppercase tracking-[0.15em] text-[#1a1a1a] leading-tight">
                   {currentM.title}
                 </h2>
-                <p className="text-[10px] md:text-[11px] font-sans font-bold text-[#a0412d] mt-2 italic uppercase">
+                <p className="text-[9px] md:text-[11px] font-sans font-bold text-[#a0412d] mt-1.5 italic uppercase">
                   {currentM.subtitle}
                 </p>
                 <div className="mt-6 pt-4 border-t border-gray-50 flex-1 overflow-y-auto no-scrollbar">
@@ -253,12 +253,12 @@ function SavoirsContent() {
             <div className="w-12 h-1 bg-gray-100 rounded-full mb-8 shrink-0 mt-14" />
 
             {/* ZONE VISUELLE */}
-            <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-4 md:gap-20 h-[160px] mb-12 md:mb-20 shrink-0">
-              <OkpeleRitual activeSeeds={Math.ceil(timeLeft / 8)} />
-              <div ref={jarRef} className="z-10 flex items-center justify-center">
+            <div className="w-full max-w-5xl flex flex-row items-center justify-center gap-2 md:gap-20 h-[80px] md:h-[160px] mb-8 md:mb-20 shrink-0 mt-2 md:mt-0">
+              <div className="scale-[0.35] md:scale-100 origin-center"><OkpeleRitual activeSeeds={Math.ceil(timeLeft / 8)} /></div>
+              <div ref={jarRef} className="z-10 flex items-center justify-center scale-[0.45] md:scale-100 origin-center">
                 <SatoJar holesCount={holes} isOver={isOverJar} />
               </div>
-              <AwaleMini seedsCount={seeds} isWrong={isWrong} />
+              <div className="scale-[0.35] md:scale-100 origin-center"><AwaleMini seedsCount={seeds} isWrong={isWrong} /></div>
             </div>
 
             {/* ZONE QUESTION ET LABELS */}

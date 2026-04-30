@@ -3,10 +3,12 @@
 import { useHistoires } from "@/hooks/useHistoires";
 import { ProfileCard } from "@/components/histoires/ProfileCard";
 import CardDeck from "@/components/ui/CardDeck";
-import { Loader2, AlertCircle } from "lucide-react";
+import { Loader2, AlertCircle, ChevronLeft } from "lucide-react";
 import { useMemo } from "react";
+import { useRouter } from "next/navigation";
 
 export default function HistoiresPage() {
+  const router = useRouter();
   const { profils, loading, error, refetch } = useHistoires();
 
   // SHUFFLE : On mélange les profils une seule fois grâce à useMemo
@@ -35,7 +37,16 @@ export default function HistoiresPage() {
   }
 
   return (
-    <div className="h-screen w-full bg-white flex flex-col overflow-hidden">
+    <div className="h-screen w-full bg-white flex flex-col overflow-hidden relative">
+      
+      {/* BOUTON RETOUR */}
+      <button 
+        onClick={() => router.push('/histoires')}
+        className="absolute top-6 left-6 z-50 px-4 py-2 bg-white/80 backdrop-blur-md rounded-full flex items-center gap-2 shadow-sm border border-gray-100 active:scale-95 transition-all hover:bg-white"
+      >
+        <ChevronLeft size={18} className="text-[#008751]" strokeWidth={2.5} />
+        <span className="text-[10px] font-black uppercase tracking-widest text-gray-900">Retour</span>
+      </button>
 
       {/* --- CARROUSEL FAÇON TINDER/BUMBLE --- */}
       <div className="flex-1 overflow-hidden">
