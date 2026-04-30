@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { supabase } from "@/utils/supabase/client";
 import { cn } from "@/lib/utils";
+import { Play } from "lucide-react";
 
 function getYoutubeID(url: string) {
   if (!url) return null;
@@ -68,13 +69,21 @@ export function EvaluationModule({ episode, profilId, seriesInfo }: EvaluationMo
             allowFullScreen
           />
         ) : (
-          <video src={episode.video_url} controls className="w-full h-full object-cover pointer-events-auto" />
+          <video 
+            src={episode.video_url} 
+            className="w-full h-full object-cover pointer-events-none" 
+            draggable={false}
+            poster="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
+          />
         )}
         {!videoId && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10">
-            <h3 className="text-xl md:text-2xl font-bold text-white text-center tracking-[0.2em] uppercase drop-shadow-2xl bg-black/40 px-8 py-4 rounded-[2rem] backdrop-blur-md">
+          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none transition-opacity z-10">
+            <h3 className="text-xl md:text-2xl font-bold text-white text-center tracking-[0.2em] uppercase drop-shadow-2xl bg-black/40 px-8 py-4 rounded-[2rem] backdrop-blur-md mb-4">
               Épisode {episode.numero || 1}
             </h3>
+            <div className="w-16 h-16 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center text-white border border-white/20 group-hover:opacity-0 transition-opacity">
+              <Play fill="currentColor" size={32} />
+            </div>
           </div>
         )}
       </div>
