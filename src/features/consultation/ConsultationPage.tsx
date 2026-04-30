@@ -101,14 +101,14 @@ export default function ConsultationPage() {
   return (
     <main className="h-[100dvh] bg-white text-foreground font-sans antialiased flex flex-col items-center justify-start overflow-hidden pb-20 relative">
       
-      {/* BOUTON RETOUR */}
-      <BackButton href="/sagesses" />
-
-      {/* Title Section */}
-      <div className="w-full text-center shrink-0 z-10 pt-8">
+      {/* Header Area */}
+      <div className="w-full shrink-0 z-50 pt-6 px-6 flex flex-col items-center gap-4 md:gap-8">
+        <div className="w-full flex items-center justify-start md:absolute md:top-6 md:left-6 md:w-auto">
+          <BackButton href="/sagesses" className="relative top-0 left-0 md:absolute" />
+        </div>
 
         {/* Tab Selector - Pill Style */}
-        <div className="bg-[#f0f1f1] p-1 rounded-full flex gap-1 shadow-none mx-auto w-fit">
+        <div className="bg-[#f0f1f1] p-1 rounded-full flex gap-0.5 sm:gap-1 shadow-none overflow-x-auto no-scrollbar max-w-full">
           <button
             onClick={() => setActiveView('fa')}
             className={`px-6 py-2 rounded-full text-[10px] font-bold tracking-[0.05em] transition-all ${
