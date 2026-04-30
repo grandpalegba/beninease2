@@ -31,15 +31,15 @@ export default function SeriesHistoiresPage() {
     <div className="h-[100dvh] w-full bg-white flex flex-col overflow-hidden relative font-sans">
       
       {/* Lateral Swipe Carousel */}
-      <div className="flex-1 w-full relative">
+      <div className="flex-1 w-full relative min-h-0">
         <div 
-          className="flex overflow-x-auto snap-x snap-mandatory w-full h-full hide-scrollbar items-center"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          className="flex overflow-x-auto overflow-y-hidden snap-x snap-mandatory w-full h-full hide-scrollbar items-center touch-pan-x"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
         >
           {series.map((serie, index) => (
             <div 
-              key={serie.id || index} 
-              className="w-full h-full shrink-0 snap-center flex flex-col items-center justify-center px-6"
+              key={serie.id || `serie-${index}`} 
+              className="w-full h-full shrink-0 snap-center flex flex-col items-center justify-center px-6 relative"
             >
               <div className="flex flex-col items-center justify-center w-full max-w-sm h-full pt-12 pb-12">
                 {/* Carte Unique - Format Portrait Long (Modèle ProfileCard) */}
