@@ -66,13 +66,13 @@ export function ProfileCard({ profil, serie }: ProfileCardProps) {
       <div className="flex flex-col p-6 mt-auto bg-transparent relative z-10 pointer-events-none justify-end h-full">
         
         {/* Nom + Affiche Série (Disposition Face à Face) */}
-        <div className="flex items-center justify-between gap-4 mb-5">
-          <div className="flex flex-col">
-            <h3 className="font-display font-black text-2xl sm:text-3xl text-gray-900 leading-tight tracking-tighter">
+        <div className="flex items-center justify-between gap-4 mb-5 w-full">
+          <div className="flex flex-col min-w-0">
+            <h3 className="font-display font-black text-2xl sm:text-3xl text-gray-900 leading-tight tracking-tighter truncate">
               {profil.nom_complet}
             </h3>
             {profil.profession && (
-              <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#008751] mt-1">
+              <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#008751] mt-1 truncate">
                 {profil.profession}
               </p>
             )}
@@ -80,13 +80,17 @@ export function ProfileCard({ profil, serie }: ProfileCardProps) {
 
           {serie && (
             <div className="h-16 w-12 sm:h-20 sm:w-14 relative rounded-xl overflow-hidden shadow-xl bg-gray-100 shrink-0 border border-gray-100">
-              {serie.affiche_url && (
+              {serie.affiche_url ? (
                 <Image
                   src={serie.affiche_url}
                   alt={serie.titre}
                   fill
                   className="object-cover"
                 />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                   <span className="text-[8px] text-gray-400 font-bold text-center px-1">SÉRIE</span>
+                </div>
               )}
             </div>
           )}
