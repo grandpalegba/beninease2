@@ -78,19 +78,14 @@ export default function ProfilHistoirePage() {
           }
         }
 
-        // On mappe les vidéos du profil aux épisodes de la série par index
-        const video_urls: Episode[] = Array.isArray(pData.video_urls)
-          ? pData.video_urls.map((v: any, index: number) => {
-            const dbEpisode = allEpisodes[index]; // On prend l'épisode correspondant à l'index (1er -> Ep 1, etc.)
-            return {
-              id: v.id ?? dbEpisode?.id ?? "",
-              titre: dbEpisode?.episode_titre || v.titre || "Épisode " + (index + 1),
-              video_url: v.video_url ?? "",
-              numero: dbEpisode?.episode_numero || (index + 1),
-              episode_question: dbEpisode?.episode_question || null
-            };
-          })
-          : [];
+        const mockTitles = ["Présentation", "Episode 1", "Episode 2", "Episode 3", "Episode 4"];
+        const video_urls: Episode[] = mockTitles.map((titre, index) => ({
+          id: `mock-${index}`,
+          titre: titre,
+          video_url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+          numero: index + 1,
+          episode_question: null
+        }));
 
         setProfil({
           ...pData,
@@ -205,8 +200,8 @@ export default function ProfilHistoirePage() {
         {/* --- HERO GRID --- */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
           
-          {/* Main Video Block (6 columns) */}
-          <div className="lg:col-span-6 bg-black rounded-[2.5rem] relative aspect-video overflow-hidden group shadow-xl border border-gray-100 select-none">
+          {/* Main Video Block (8 columns) */}
+          <div className="lg:col-span-8 bg-black rounded-[2.5rem] relative aspect-video overflow-hidden group shadow-xl border border-gray-100 select-none">
             {mainVideoId ? (
               <iframe 
                 src={`https://www.youtube.com/embed/${mainVideoId}`} 
@@ -222,15 +217,6 @@ export default function ProfilHistoirePage() {
                 <Play fill="currentColor" size={32} />
               </div>
             </div>
-          </div>
-
-          {/* Serie Poster Block (2 columns) */}
-          <div className="lg:col-span-2 rounded-[2.5rem] overflow-hidden relative shadow-lg border-4 border-white group select-none aspect-[2/3] hidden lg:block">
-            {profil.serie?.affiche_url ? (
-              <Image src={profil.serie.affiche_url} alt="Serie" fill className="object-cover transition-transform duration-700 group-hover:scale-110 pointer-events-none" draggable={false} />
-            ) : (
-              <div className="w-full h-full bg-gray-200" />
-            )}
           </div>
 
           {/* Finance Block : Horizontal Histogram (4 columns) */}

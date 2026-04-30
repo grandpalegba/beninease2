@@ -30,7 +30,7 @@ export function Guardians() {
           className="max-w-3xl mb-16 text-center mx-auto"
         >
           <h2 className="font-display text-4xl md:text-6xl font-semibold tracking-tight text-zinc-950 leading-[1.05]">
-            Les Forces Compagnes.
+            Les Guides du Retour
           </h2>
           <p className="mt-6 text-lg text-zinc-600 max-w-2xl mx-auto font-light leading-relaxed">
             Chaque groupe de 60 appels active l'influence d'une divinité qui protège une étape du Retour.
