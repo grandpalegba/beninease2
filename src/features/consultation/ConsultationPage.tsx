@@ -6,8 +6,9 @@ import SandMatrix from '@/components/SandMatrix';
 import SynchronicityWall from '@/components/SynchronicityWall';
 import FaMatrix from '@/components/FaMatrix';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, ArrowRight, RotateCcw } from 'lucide-react';
+import { CheckCircle2, ArrowRight, RotateCcw, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 type View = 'fa' | 'matrix' | 'wall';
 
@@ -17,6 +18,7 @@ type View = 'fa' | 'matrix' | 'wall';
  * Layout matching the provided mockups: Title and Selector at the top.
  */
 export default function ConsultationPage() {
+  const router = useRouter();
   const { cases, loading, error } = useLifeCases();
   const [isCompleted, setIsCompleted] = useState(false);
   const [activeView, setActiveView] = useState<View>('fa');
@@ -96,7 +98,17 @@ export default function ConsultationPage() {
   }
 
   return (
-    <main className="h-[100dvh] bg-white text-foreground font-sans antialiased flex flex-col items-center justify-start overflow-hidden pb-20">
+    <main className="h-[100dvh] bg-white text-foreground font-sans antialiased flex flex-col items-center justify-start overflow-hidden pb-20 relative">
+      
+      {/* BOUTON RETOUR */}
+      <button 
+        onClick={() => router.push('/sagesses')}
+        className="absolute top-6 left-6 z-50 px-4 py-2 bg-white/80 backdrop-blur-md rounded-full flex items-center gap-2 shadow-sm border border-gray-100 active:scale-95 transition-all hover:bg-white"
+      >
+        <ChevronLeft size={18} className="text-[#008751]" strokeWidth={2.5} />
+        <span className="text-[10px] font-black uppercase tracking-widest text-gray-900">Retour</span>
+      </button>
+
       {/* Title Section */}
       <div className="w-full text-center shrink-0 z-10 pt-8">
 
