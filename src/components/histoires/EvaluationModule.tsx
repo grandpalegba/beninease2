@@ -70,7 +70,7 @@ export function EvaluationModule({ episode, profilId, seriesInfo }: EvaluationMo
         ) : (
           <video src={episode.video_url} controls className="w-full h-full object-cover rounded-3xl" />
         )}
-        <div className="absolute bottom-6 left-8 text-white pointer-events-none group-hover:opacity-0 transition-opacity">
+        <div className="absolute bottom-6 left-8 text-white pointer-events-none group-hover:opacity-0 transition-opacity z-10">
           <p className="font-bold text-lg uppercase tracking-tight">{episode.titre}</p>
           <p className="text-sm opacity-70">Documentaire • 12:45</p>
         </div>

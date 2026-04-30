@@ -9,9 +9,11 @@ interface HistogrammeBeninoisProps {
     impact: number; // 0-100
     count: number;
   };
+  title?: string;
+  subtitle?: string;
 }
 
-export function HistogrammeBeninois({ stats }: HistogrammeBeninoisProps) {
+export function HistogrammeBeninois({ stats, title, subtitle }: HistogrammeBeninoisProps) {
   // Fonction de sécurité pour garantir une valeur entre 0 et 100
   // Si la valeur est null ou 0, on met 50 par défaut pour l'harmonie visuelle
   const safeValue = (val: number | null | undefined) => {
@@ -27,6 +29,12 @@ export function HistogrammeBeninois({ stats }: HistogrammeBeninoisProps) {
 
   return (
     <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm h-full flex flex-col justify-center space-y-6 font-sans">
+      {(title || subtitle) && (
+        <div>
+          {title && <h2 className="text-2xl font-black text-black tracking-tighter leading-none mb-2">{title}</h2>}
+          {subtitle && <p className="text-gray-400 font-medium italic text-xs leading-relaxed">{subtitle}</p>}
+        </div>
+      )}
       <div className="mb-2">
         <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">
           {stats.count || 0} AVIS

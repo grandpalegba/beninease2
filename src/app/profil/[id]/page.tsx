@@ -78,9 +78,9 @@ export default function ProfilHistoirePage() {
           }
         }
 
-        const mockTitles = ["Présentation", "Episode 1", "Episode 2", "Episode 3", "Episode 4"];
+        const mockTitles = ["Episode 1", "Episode 2", "Episode 3", "Episode 4"];
         const video_urls: Episode[] = mockTitles.map((titre, index) => ({
-          id: `mock-${index}`,
+          id: `mock-${index + 1}`,
           titre: titre,
           video_url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
           numero: index + 1,
@@ -197,11 +197,11 @@ export default function ProfilHistoirePage() {
           </div>
         </header>
 
-        {/* --- HERO GRID --- */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+        {/* --- HERO SECTION --- */}
+        <div className="bg-white rounded-[2.5rem] overflow-hidden border border-gray-100 shadow-sm grid grid-cols-1 lg:grid-cols-2 items-center font-sans mb-6">
           
-          {/* Main Video Block (8 columns) */}
-          <div className="lg:col-span-8 bg-black rounded-[2.5rem] relative aspect-video overflow-hidden group shadow-xl border border-gray-100 select-none">
+          {/* Main Video Block (Presentation) */}
+          <div className="bg-black relative aspect-video flex items-center justify-center group self-center lg:self-auto rounded-[2rem] overflow-hidden shadow-2xl m-4 lg:m-6">
             {mainVideoId ? (
               <iframe 
                 src={`https://www.youtube.com/embed/${mainVideoId}`} 
@@ -210,18 +210,21 @@ export default function ProfilHistoirePage() {
                 allowFullScreen
               />
             ) : (
-              <video src={profil.video_urls[0]?.video_url} className="w-full h-full object-cover pointer-events-none" draggable={false} />
+              <video src={profil.video_urls[0]?.video_url || "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"} className="w-full h-full object-cover pointer-events-none" draggable={false} />
             )}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none group-hover:opacity-0 transition-opacity">
-              <div className="w-16 h-16 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center text-white border border-white/20">
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none group-hover:opacity-0 transition-opacity z-10">
+              <div className="w-16 h-16 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center text-white border border-white/20 group-hover:opacity-0 transition-opacity">
                 <Play fill="currentColor" size={32} />
               </div>
             </div>
+            <div className="absolute bottom-6 left-8 text-white pointer-events-none group-hover:opacity-0 transition-opacity">
+              <p className="font-bold text-lg uppercase tracking-tight">Présentation</p>
+            </div>
           </div>
 
-          {/* Finance Block : Horizontal Histogram (4 columns) */}
-          <div className="lg:col-span-4">
-            <HistogrammeBeninois stats={stats} />
+          {/* Finance Block : Horizontal Histogram */}
+          <div className="h-full">
+            <HistogrammeBeninois stats={stats} title="Présentation" subtitle={profil.bio_courte || "Découvrez la vision et l'impact"} />
           </div>
         </div>
 
