@@ -60,42 +60,38 @@ export default function SeriesHistoiresPage() {
         {series.map((serie, index) => (
           <div 
             key={serie.id || `serie-${index}`} 
-            className="w-full h-full shrink-0 flex flex-col items-center justify-center px-6"
+            className="w-full h-full shrink-0 flex flex-col items-center justify-center px-4"
           >
-            <div className="flex flex-col items-center justify-center w-full max-w-sm h-full pt-12 pb-8">
-              {/* Carte Unique - Design Inspiré de l'Image Utilisateur */}
+            <div className="flex flex-col items-center justify-center w-full max-w-[600px] h-full pt-12 pb-8">
+              {/* Carte Unique - Design Paysage (Image sur le côté) */}
               <div 
-                className="w-full flex-1 relative rounded-[2.5rem] overflow-hidden shadow-2xl bg-white border border-gray-100 flex flex-col mb-8"
+                className="w-full h-[380px] relative rounded-[2rem] overflow-hidden shadow-2xl bg-white border border-gray-100 flex flex-row mb-8"
               >
-                {/* Affiche avec masque dégradé (Modèle ProfileCard) */}
-                <div className="relative w-full h-[50%] overflow-hidden bg-gray-50 shrink-0 pointer-events-none">
+                {/* Côté Gauche : Affiche */}
+                <div className="w-[40%] h-full overflow-hidden bg-gray-50 shrink-0 border-r border-gray-50">
                   <img 
                     src={serie.affiche_url || "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5"} 
                     alt={serie.titre}
                     className="w-full h-full object-cover"
-                    style={{ 
-                      maskImage: "linear-gradient(to bottom, black 85%, transparent 100%)", 
-                      WebkitMaskImage: "linear-gradient(to bottom, black 85%, transparent 100%)" 
-                    }}
                     draggable={false}
                   />
                 </div>
                 
-                {/* Contenu Typographique (Bas de carte) */}
-                <div className="flex-1 p-8 pt-4 overflow-y-auto hide-scrollbar flex flex-col text-left">
-                  <h3 className="text-3xl font-black mb-2 leading-tight tracking-[0.1em] text-gray-900 uppercase">
+                {/* Côté Droit : Contenu Typographique */}
+                <div className="w-[60%] p-6 py-8 flex flex-col text-left overflow-y-auto hide-scrollbar">
+                  <h3 className="text-2xl font-black mb-1 leading-tight tracking-[0.05em] text-gray-900 uppercase">
                     {serie.titre}
                   </h3>
                   
                   {serie.sous_titre && (
-                    <p className="text-lg font-bold italic text-gray-900 mb-5 leading-snug">
+                    <p className="text-sm font-bold italic text-gray-900 mb-4 leading-snug">
                       {serie.sous_titre}
                     </p>
                   )}
                   
-                  <div className="w-10 h-1 bg-[#008751] mb-6 rounded-full opacity-20" />
+                  <div className="w-8 h-0.5 bg-[#008751] mb-4 rounded-full opacity-20" />
 
-                  <p className="text-base font-normal text-gray-600 leading-relaxed pb-6">
+                  <p className="text-xs font-normal text-gray-500 leading-relaxed">
                     {serie.synopsis}
                   </p>
                 </div>
