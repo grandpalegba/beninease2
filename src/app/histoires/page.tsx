@@ -9,6 +9,7 @@ import { motion } from "framer-motion";
 export default function SeriesHistoiresPage() {
   const { series, loading, error, refetch } = useSeries();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const router = useRouter();
 
   if (loading) {
     return (
@@ -30,8 +31,8 @@ export default function SeriesHistoiresPage() {
   }
 
   const handleDragEnd = (event: any, info: any) => {
-    const threshold = 50;
-    const velocityThreshold = 500;
+    const threshold = 30; // Seuil plus bas pour faciliter le swipe à la souris
+    const velocityThreshold = 200;
     
     if (info.offset.x < -threshold || info.velocity.x < -velocityThreshold) {
       if (currentIndex < series.length - 1) {
@@ -51,26 +52,25 @@ export default function SeriesHistoiresPage() {
       <motion.div 
         className="flex-1 w-full flex relative cursor-grab active:cursor-grabbing"
         animate={{ x: `-${currentIndex * 100}%` }}
-        transition={{ type: "spring", stiffness: 250, damping: 30 }}
+        transition={{ type: "spring", stiffness: 200, damping: 25 }}
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
-        dragElastic={0.6}
+        dragElastic={0.8}
         onDragEnd={handleDragEnd}
-        dragTransition={{ power: 0.1, timeConstant: 200 }}
       >
         {series.map((serie, index) => (
           <div 
             key={serie.id || `serie-${index}`} 
             className="w-full h-full shrink-0 flex flex-col items-center justify-center px-4"
           >
-            {/* Carte Horizontale Forcee (Design Screenshot) */}
-            <div className="flex flex-col items-center justify-center w-full max-w-[800px] h-full pt-20 pb-10">
-              <Link 
-                href="/histoires/explorer"
-                className="w-full h-[280px] sm:h-[400px] relative rounded-[2rem] overflow-hidden shadow-2xl bg-white border border-[#3b82f6] flex flex-row transition-transform active:scale-[0.98]"
+            <div className="flex flex-col items-center justify-center w-full max-w-[850px] h-full pt-10 pb-6">
+              {/* Carte Horizontale Sans Contour et Plus Haute */}
+              <motion.div 
+                onTap={() => router.push("/histoires/explorer")}
+                className="w-full h-[320px] sm:h-[480px] relative rounded-[2.5rem] overflow-hidden shadow-2xl bg-white flex flex-row transition-transform active:scale-[0.98]"
               >
-                {/* Côté Gauche : Affiche (40%) */}
-                <div className="w-[40%] h-full overflow-hidden bg-gray-50 shrink-0 border-r border-gray-100">
+                {/* Côté Gauche : Affiche (45% pour mieux voir l'image) */}
+                <div className="w-[45%] h-full overflow-hidden bg-gray-50 shrink-0">
                   <img 
                     src={serie.affiche_url || "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5"} 
                     alt={serie.titre}
@@ -79,31 +79,31 @@ export default function SeriesHistoiresPage() {
                   />
                 </div>
                 
-                {/* Côté Droit : Contenu Typographique (60%) */}
-                <div className="flex-1 p-4 sm:p-10 flex flex-col text-left overflow-y-auto hide-scrollbar">
-                  <h3 className="text-xl sm:text-4xl font-black mb-1 sm:mb-2 leading-tight tracking-[0.05em] text-gray-900 uppercase">
+                {/* Côté Droit : Contenu Typographique */}
+                <div className="flex-1 p-5 sm:p-12 flex flex-col text-left overflow-y-auto hide-scrollbar pointer-events-none">
+                  <h3 className="text-xl sm:text-5xl font-black mb-1 sm:mb-2 leading-tight tracking-[0.05em] text-gray-900 uppercase">
                     {serie.titre}
                   </h3>
                   
                   {serie.sous_titre && (
-                    <p className="text-xs sm:text-xl font-bold italic text-gray-900 mb-3 sm:mb-6 leading-tight">
+                    <p className="text-xs sm:text-2xl font-bold italic text-gray-900 mb-4 sm:mb-8 leading-tight">
                       {serie.sous_titre}
                     </p>
                   )}
                   
-                  <div className="w-8 sm:w-12 h-0.5 sm:h-1 bg-[#008751] mb-3 sm:mb-6 rounded-full opacity-30 shrink-0" />
+                  <div className="w-10 sm:w-16 h-0.5 sm:h-1 bg-[#008751] mb-4 sm:mb-8 rounded-full opacity-30 shrink-0" />
 
-                  <p className="text-[10px] sm:text-base font-normal text-gray-500 leading-relaxed">
+                  <p className="text-[10px] sm:text-lg font-normal text-gray-500 leading-relaxed">
                     {serie.synopsis}
                   </p>
                 </div>
-              </Link>
+              </motion.div>
 
-              {/* Bouton EXPLORER LES HISTOIRES - Position Equilibrée */}
-              <div className="shrink-0 mt-8 sm:mt-12">
+              {/* Bouton EXPLORER LES HISTOIRES */}
+              <div className="shrink-0 mt-10 sm:mt-16">
                 <Link 
                   href="/histoires/explorer"
-                  className="flex items-center justify-center bg-black text-white px-10 sm:px-16 py-4 sm:py-6 rounded-full shadow-2xl font-bold text-[10px] sm:text-[13px] uppercase tracking-[0.25em] transition-transform hover:scale-105 active:scale-95"
+                  className="flex items-center justify-center bg-black text-white px-10 sm:px-20 py-4 sm:py-7 rounded-full shadow-2xl font-bold text-[10px] sm:text-[14px] uppercase tracking-[0.3em] transition-transform hover:scale-105 active:scale-95"
                 >
                   Explorer les histoires
                 </Link>
@@ -113,15 +113,12 @@ export default function SeriesHistoiresPage() {
         ))}
       </motion.div>
 
-      {/* Indicateurs de position en haut (Design Screenshot) */}
-      <div className="absolute top-24 sm:top-28 left-0 w-full flex justify-center gap-1.5 px-6 pointer-events-none z-20">
-        {series.map((_, i) => (
-          <div 
-            key={i} 
-            className={`h-1 rounded-full transition-all duration-300 ${i === currentIndex ? "w-8 bg-black" : "w-2 bg-gray-200"}`}
-          />
-        ))}
-      </div>
+      <style dangerouslySetInnerHTML={{__html: `
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+      `}} />
+    </div>
+  );
+}
 
       <style dangerouslySetInnerHTML={{__html: `
         .hide-scrollbar::-webkit-scrollbar { display: none; }
