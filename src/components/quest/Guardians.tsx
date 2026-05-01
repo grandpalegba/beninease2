@@ -32,6 +32,56 @@ export function Guardians() {
           <h2 className="font-display text-4xl md:text-6xl font-semibold tracking-tight text-zinc-950 leading-[1.05]">
             Les Guides du Retour
           </h2>
+
+          {/* Navigation par vignettes step (œufs progressifs) - Déplacée et Réduite */}
+          <div className="relative pt-16 pb-8">
+            <div className="grid grid-cols-6 gap-2 md:gap-4 max-w-[320px] md:max-w-[480px] mx-auto">
+              {GUARDIANS.map((g, idx) => {
+                const isActive = idx === active;
+                return (
+                  <button
+                    key={g.name}
+                    onClick={() => setActive(idx)}
+                    className="relative flex flex-col items-center text-center group"
+                  >
+                    {/* Cheval noir au-dessus de la vignette active */}
+                    {isActive && (
+                      <motion.div
+                        layoutId="horse"
+                        className="absolute -top-10 md:-top-14 left-1/2 -translate-x-1/2 w-10 md:w-16 aspect-square z-10"
+                        transition={{ type: "spring", stiffness: 200, damping: 25 }}
+                      >
+                        <Image
+                          src={BLACK_HORSE}
+                          alt="Cheval du Retour"
+                          fill
+                          className="object-contain drop-shadow-md"
+                        />
+                      </motion.div>
+                    )}
+
+                    <div
+                      className={`relative w-full aspect-square rounded-full overflow-hidden transition-all duration-500 ${
+                        isActive ? "scale-110" : "opacity-40 group-hover:opacity-100"
+                      }`}
+                    >
+                      <Image src={g.step} alt={`Étape ${idx + 1}`} fill className="object-contain" />
+                    </div>
+
+                    <div className="mt-3 text-[7px] md:text-[8px] uppercase tracking-[0.2em] text-zinc-400 font-mono">
+                      Phase {g.phase}
+                    </div>
+                    <div className={`mt-1 font-display text-[8px] md:text-[10px] font-semibold tracking-tight transition-colors ${
+                      isActive ? "text-zinc-950" : "text-zinc-500"
+                    }`}>
+                      {g.name}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           <p className="mt-6 text-lg text-zinc-600 max-w-2xl mx-auto font-light leading-relaxed">
             Chaque groupe de 60 appels active l'influence d'une divinité qui protège une étape du Retour.
             Le cheval noir suit la divinité en cours.
@@ -76,54 +126,7 @@ export function Guardians() {
           </AnimatePresence>
         </div>
 
-        {/* Navigation par vignettes step (œufs progressifs) */}
-        <div className="relative pt-20">
-          <div className="grid grid-cols-6 gap-3 md:gap-6 max-w-4xl mx-auto">
-            {GUARDIANS.map((g, idx) => {
-              const isActive = idx === active;
-              return (
-                <button
-                  key={g.name}
-                  onClick={() => setActive(idx)}
-                  className="relative flex flex-col items-center text-center group"
-                >
-                  {/* Cheval noir au-dessus de la vignette active */}
-                  {isActive && (
-                    <motion.div
-                      layoutId="horse"
-                      className="absolute -top-16 md:-top-20 left-1/2 -translate-x-1/2 w-14 md:w-20 aspect-square z-10"
-                      transition={{ type: "spring", stiffness: 200, damping: 25 }}
-                    >
-                      <Image
-                        src={BLACK_HORSE}
-                        alt="Cheval du Retour"
-                        fill
-                        className="object-contain drop-shadow-md"
-                      />
-                    </motion.div>
-                  )}
 
-                  <div
-                    className={`relative w-full aspect-square rounded-full overflow-hidden transition-all duration-500 ${
-                      isActive ? "scale-110" : "opacity-60 group-hover:opacity-100"
-                    }`}
-                  >
-                    <Image src={g.step} alt={`Étape ${idx + 1}`} fill className="object-contain" />
-                  </div>
-
-                  <div className="mt-3 text-[10px] uppercase tracking-[0.25em] text-zinc-400 font-mono">
-                    Phase {g.phase}
-                  </div>
-                  <div className={`mt-1 font-display text-xs md:text-sm font-semibold tracking-tight transition-colors ${
-                    isActive ? "text-zinc-950" : "text-zinc-500"
-                  }`}>
-                    {g.name}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
       </div>
     </section>
   );
