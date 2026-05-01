@@ -10,7 +10,7 @@ const GUARDIANS = [
   { phase: "III", name: "Abuela Wata", role: "La Traversée", desc: "Mère des eaux, elle guide le voyage transatlantique inverse. Elle ramène ceux qui furent emportés par l'océan vers leur terre d'origine.", img: "/quest/deity-wata.jpg", step: "/quest/step-3.png" },
   { phase: "IV", name: "Avô Heviosso", role: "Le Ciel", desc: "Maître du tonnerre et de la justice, il purifie le chemin de sa foudre. Il rappelle que le Retour exige vérité et rectitude.", img: "/quest/deity-heviosso.jpg", step: "/quest/step-4.png" },
   { phase: "V", name: "Baba Sakpata", role: "L'Ancrage", desc: "Seigneur de la terre du Bénin, il accueille les trésors et les voix. Il enracine la renaissance dans le sol des ancêtres.", img: "/quest/deity-sakpata.jpg", step: "/quest/step-5.png" },
-  { phase: "VI", name: "Yony", role: "La Bénédiction", desc: "Protectrice des femmes et des foyers, elle ouvre la Porte du Retour. Sa bénédiction scelle l'accomplissement de l'Odyssée.", img: "/quest/deity-yony.png", step: "/quest/step-6.png" },
+  { phase: "VI", name: "Yony", role: "La Bénédiction", desc: "Protectrice des femmes et des foyers, elle ouvre la Porte du Retour. Sa bénédiction scelle l'accomplissement de l'Odyssée.", img: "/quest/deity-yony.jpg", step: "/quest/step-6.png" },
 ];
 
 const BLACK_HORSE = "/quest/black-horse.png";
