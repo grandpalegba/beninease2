@@ -18,7 +18,7 @@ export default function SagessesTransitionPage() {
           href="/sagesses/explorer"
           className="flex items-center justify-center bg-black text-white px-12 sm:px-24 py-6 sm:py-8 rounded-full shadow-2xl font-bold text-[11px] sm:text-[15px] uppercase tracking-[0.3em] transition-transform hover:scale-105 active:scale-95"
         >
-          Explorer les sagesses du Bénin
+          Explorer les sagesses
         </Link>
       </motion.div>
 
