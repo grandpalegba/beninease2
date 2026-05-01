@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { CategoryPattern } from "@/components/talents/CategoryPattern";
 
 const PAGES = [
+  { name: "Projets", href: "/projets", id: "startup-innovation" },
   { name: "Trésors", href: "/tresors", id: "vision" },
   { name: "Histoires", href: "/histoires", id: "mythes-legendes" },
   { name: "Savoirs", href: "/savoirs", id: "sagesse" },
