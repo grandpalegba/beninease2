@@ -4,14 +4,14 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import Image from "next/image";
 
-export default function ProjetsTransitionPage() {
+export default function AmazonesTransitionPage() {
   return (
     <div className="h-screen w-full bg-white flex flex-col items-center justify-center p-6 relative overflow-hidden font-sans">
       {/* Background Image */}
       <div className="absolute inset-0 -z-10">
         <Image 
           src="/projects-bg.png" 
-          alt="Projets du Bénin" 
+          alt="Les Amazones" 
           fill 
           className="object-cover opacity-[0.15]" 
         />
@@ -25,14 +25,14 @@ export default function ProjetsTransitionPage() {
         className="text-center z-10"
       >
         <h1 className="mb-12 font-display text-4xl sm:text-6xl font-black tracking-[-0.05em] text-black uppercase">
-          Les Projets <br /> <span className="text-[#B8860B]">du Bénin</span>
+          Les <span className="text-[#B8860B]">Amazones</span>
         </h1>
 
         <Link 
-          href="/projets/explorer"
+          href="/amazones/explorer"
           className="group relative flex items-center justify-center bg-black text-white px-12 sm:px-24 py-6 sm:py-8 rounded-full shadow-2xl font-black text-[11px] sm:text-[14px] uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95"
         >
-          <span className="relative z-10">Explorer les projets</span>
+          <span className="relative z-10">Explorer les Amazones</span>
           <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#B8860B] to-[#FFD700] opacity-0 group-hover:opacity-20 transition-opacity blur-xl" />
         </Link>
       </motion.div>

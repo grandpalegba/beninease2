@@ -22,7 +22,7 @@ const FRAGMENTS = [
   {
     id: 3,
     title: "La Parole de Pouvoir",
-    fragment: "Ils lui transmirent la Phrase Clé : « À mɔn, Gbè hin azi bô ayidjlè, amɔ̌ Acɛ na tɔn. » (Tu as vu, l’univers porte l’œuf que la terre convoite, et pourtant la puissance se manifestera.)",
+    fragment: "Ils lui transmirent la Phrase Clé : À mɔn, Gbè hin azi bô ayidjlè, amɔ̌ Acɛ na tɔn. (Tu as vu, l’univers porte l’œuf que la terre convoite, et pourtant la puissance se manifestera.)",
     image: "afraka_3.jpg",
     className: "md:col-span-1 md:row-span-1 h-[250px]"
   },
@@ -36,7 +36,7 @@ const FRAGMENTS = [
   {
     id: 5,
     title: "La Fragmentation",
-    fragment: "Mais comme le corps d'Osiris, l'Œuf fut fragmenté par la colonisation. Ses 256 cellules furent dispersées à travers le monde, emportées pour bâtir un monde fondé sur la division.",
+    fragment: "Mais comme le corps d'Osiris, l'Œuf fut fragmenté par la colonisation. Ses 256 cellules furent dispersées à travers le monde, emportées pour bâtir un système fondé sur la division.",
     image: "afraka_5.jpg",
     className: "md:col-span-1 md:row-span-1 h-[250px]"
   },
@@ -50,7 +50,7 @@ const FRAGMENTS = [
   {
     id: 7,
     title: "Le Rechargement",
-    fragment: "Pour que la puissance jaillisse à nouveau, chaque trésor doit être spirituellement « rechargé » par le passage des Gardiens sur ces 16 lieux de passage. Chaque territoire réveille une part du code.",
+    fragment: "Pour que la puissance jaillisse à nouveau, chaque trésor doit être spirituellement rechargé par le passage des Gardiens sur ces 16 sites ancestraux. Chaque territoire réveille une part du code.",
     image: "afraka_7.jpg",
     className: "md:col-span-2 md:row-span-1 h-[250px]"
   },

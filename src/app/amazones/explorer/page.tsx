@@ -4,13 +4,13 @@ import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-export default function ProjetsExplorerPage() {
+export default function AmazonesExplorerPage() {
   return (
     <div className="min-h-screen bg-[#F9F9F7] pt-32 pb-24 px-6 font-sans">
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-12">
           <Link 
-            href="/projets"
+            href="/amazones"
             className="flex items-center gap-2 text-[10px] uppercase tracking-widest font-black text-gray-400 hover:text-black transition-colors"
           >
             <ArrowLeft size={16} />
@@ -18,7 +18,7 @@ export default function ProjetsExplorerPage() {
           </Link>
           <div className="h-[1px] flex-1 bg-black/5 mx-8" />
           <span className="text-[10px] uppercase tracking-[0.3em] font-black text-gray-300">
-            Répertoire d'Innovation
+            Héritage & Courage
           </span>
         </div>
 
@@ -28,10 +28,10 @@ export default function ProjetsExplorerPage() {
           className="max-w-2xl"
         >
           <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tight text-black mb-6">
-            Projets <br /> <span className="text-[#B8860B]">Stratégiques</span>
+            Les <span className="text-[#B8860B]">Amazones</span>
           </h1>
           <p className="text-lg text-gray-500 font-medium leading-relaxed mb-12">
-            Découvrez les initiatives qui façonnent le futur du Bénin, entre préservation du patrimoine et innovation technologique.
+            Découvrez l'histoire et l'influence des guerrières du Danxomè, symboles de l'excellence et de la détermination béninoise.
           </p>
         </motion.div>
 
