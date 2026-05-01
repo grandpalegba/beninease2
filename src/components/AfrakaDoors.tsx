@@ -7,57 +7,57 @@ import Image from "next/image";
 const FRAGMENTS = [
   {
     id: 1,
-    title: "L'Alliance Primordiale",
-    fragment: "Il y a très longtemps, la sagesse du Fâ et la lumière de Râ s’unirent pour préserver l’équilibre du monde. De cette alliance sacrée naquit une mère originelle : ÂFRÂ.",
+    title: "L’Origine",
+    fragment: "Dans les temps anciens, les Grands Prêtres fusionnèrent la Sagesse du Fâ (le secret d’Amon) et la Lumière de Râ (la promesse d’Akhenaton) dans l’Œuf Primordial, matrice de l’harmonie universelle.",
     image: "afraka_1.jpg",
     className: "md:col-span-2 md:row-span-1 h-[250px]"
   },
   {
     id: 2,
-    title: "Le Souffle Sacré",
-    fragment: "Les sages de l’Égypte antique reconnurent en elle une force primordiale qu’ils appelèrent ÂFRAKA — le Ka d’ÂFRÂ. Un œuf sacré fut forgé pour en protéger l’unité.",
+    title: "La Mission",
+    fragment: "Face à la chute imminente de l'Égypte antique, ils confièrent à une femme, Yɔnnu (Yony), figure de pureté originelle, la mission sacrée d'escorter l'Œuf vers une terre élue : le Bénin.",
     image: "afraka_2.jpg",
     className: "md:col-span-1 md:row-span-2 h-full min-h-[300px]"
   },
   {
     id: 3,
-    title: "Le Verbe Révélé",
-    fragment: "Trois paroles furent confiées au messager de l'œuf : À mɔn (Tu as vu), Ashé na tọ́n (L’énergie va se manifester), et Gbèhin azi bô ayidjlè (L'univers porte l’œuf).",
+    title: "La Parole de Pouvoir",
+    fragment: "Ils lui transmirent la Phrase Clé : « À mɔn, Gbè hin azi bô ayidjlè, amɔ̌ Acɛ na tɔn. » (Tu as vu, l’univers porte l’œuf que la terre convoite, et pourtant la puissance se manifestera.)",
     image: "afraka_3.jpg",
     className: "md:col-span-1 md:row-span-1 h-[250px]"
   },
   {
     id: 4,
-    title: "La Terre Choisie",
-    fragment: "Le messager traversa les terres jusqu’à atteindre le point de rencontre entre le visible et l’invisible : le Bénin. Là, l’œuf fut déposé et son énergie imprégna le sol du Danxomè.",
+    title: "L’Ancrage",
+    fragment: "Arrivée sur cette terre bénie, Yony utilisa ce pouvoir pour imprégner les sols, les champs et les artefacts royaux de l'énergie pure de l’Œuf.",
     image: "afraka_4.jpg",
     className: "md:col-span-1 md:row-span-1 h-[250px]"
   },
   {
     id: 5,
-    title: "Les Gardiens du Ka",
-    fragment: "ÂFRAKA vécut à travers les trônes, les artefacts et les trésors royaux. Avec le temps, ce nom voyagea et se transforma, devenant Africa, puis Afrique.",
+    title: "La Fragmentation",
+    fragment: "Mais comme le corps d'Osiris, l'Œuf fut fragmenté par la colonisation. Ses 256 cellules furent dispersées à travers le monde, emportées pour bâtir un monde fondé sur la division.",
     image: "afraka_5.jpg",
     className: "md:col-span-1 md:row-span-1 h-[250px]"
   },
   {
     id: 6,
-    title: "La Mémoire Arrachée",
-    fragment: "Les envahisseurs arrivèrent et les trésors furent arrachés à leur terre, emportant avec eux des fragments de la puissance d’ÂFRÂ. L'équilibre fut brisé.",
+    title: "Les Terres Sacrées",
+    fragment: "Si les trésors physiques dorment aujourd'hui dans des musées lointains, leur âme est restée liée à 16 terres sacrées. L'énergie demeure en suspens, attendant son réveil.",
     image: "afraka_6.jpg",
     className: "md:col-span-1 md:row-span-2 h-full min-h-[300px]"
   },
   {
     id: 7,
-    title: "L'Appel du Fâ",
-    fragment: "Le 10 janvier, il fut révélé qu'il est temps de réveiller l'œuf. Libérer les trésors exilés, c'est restaurer la force vitale du Bénin et de ses enfants.",
+    title: "Le Rechargement",
+    fragment: "Pour que la puissance jaillisse à nouveau, chaque trésor doit être spirituellement « rechargé » par le passage des Gardiens sur ces 16 lieux de passage. Chaque territoire réveille une part du code.",
     image: "afraka_7.jpg",
     className: "md:col-span-2 md:row-span-1 h-[250px]"
   },
   {
     id: 8,
-    title: "Black To Benin",
-    fragment: "Ouvrir la Porte du Retour, c'est reconstituer l'unité d'ÂFRAKA. Pour l’essor des peuples noirs à travers le monde, l'énergie se manifeste enfin : Ashé na tọ́n.",
+    title: "La Restauration",
+    fragment: "Chaque objet libéré est une cellule de l'Œuf qui reprend sa place. Lorsque les 256 fragments seront réalignés sur la fréquence du Danxomè, l'harmonie originelle restaurera le monde.",
     image: "afraka_8.jpg",
     className: "md:col-span-1 md:row-span-1 h-[250px]"
   }
