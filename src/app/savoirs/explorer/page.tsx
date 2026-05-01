@@ -186,7 +186,7 @@ function SavoirsContent() {
   const startRitual = () => {
     if (currentQuestions.length > 0) {
       setHoles([0, 1, 2, 3]); setSeeds(16); setTimeLeft(64); setQIndex(0); setExplanations([]); setIsFinished(false);
-      router.push('/savoirs?ritual=true');
+      router.push('/savoirs/explorer?ritual=true');
     } else { toast.error("Rituel en préparation..."); }
   };
 
@@ -306,7 +306,7 @@ function SavoirsContent() {
                   <div className="bg-white p-4 rounded-[2rem] text-left mb-4 space-y-2 border border-gray-50 max-h-40 overflow-y-auto no-scrollbar">
                     {explanations.map((exp, i) => <p key={i} className="text-[11px] font-sans text-gray-500 flex items-start"><span className="text-[#a0412d] mr-2">✦</span> {exp}</p>)}
                   </div>
-                  <button onClick={() => router.push('/savoirs')} className="w-full py-3 bg-[#a0412d] text-white rounded-full font-sans font-bold uppercase tracking-widest text-[10px] shadow-lg">Autre mystère</button>
+                  <button onClick={() => router.push('/savoirs/explorer')} className="w-full py-3 bg-[#a0412d] text-white rounded-full font-sans font-bold uppercase tracking-widest text-[10px] shadow-lg">Autre mystère</button>
                 </div>
               )}
             </div>

@@ -65,21 +65,22 @@ export function ProfileCard({ profil, serie }: ProfileCardProps) {
       {/* ── Contenu ── */}
       <div className="flex flex-col p-6 mt-auto bg-transparent relative z-10 pointer-events-none justify-end h-full">
         
-        {/* Nom + Affiche Série (Disposition Face à Face) */}
-        <div className="flex items-center justify-between gap-4 mb-5 w-full">
-          <div className="flex flex-col min-w-0">
-            <h3 className="font-display font-black text-2xl sm:text-3xl text-gray-900 leading-tight tracking-tighter truncate">
-              {profil.nom_complet}
-            </h3>
-            {profil.profession && (
-              <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#008751] mt-1 truncate">
-                {profil.profession}
-              </p>
-            )}
-          </div>
+        {/* Nom + Profession */}
+        <div className="flex flex-col mb-4">
+          <h3 className="font-display font-black text-2xl sm:text-3xl text-gray-900 leading-tight tracking-tighter truncate">
+            {profil.nom_complet}
+          </h3>
+          {profil.profession && (
+            <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#008751] mt-1 truncate">
+              {profil.profession}
+            </p>
+          )}
+        </div>
 
-          {serie && (
-            <div className="h-16 w-12 sm:h-20 sm:w-14 relative rounded-xl overflow-hidden shadow-xl bg-gray-100 shrink-0 border border-gray-100">
+        {/* ── Affiche Série (Au dessus de la valeur) ── */}
+        {serie && (
+          <div className="flex justify-end mb-3">
+            <div className="h-20 w-16 sm:h-24 sm:w-18 relative rounded-xl overflow-hidden shadow-2xl bg-gray-100 border border-white/20">
               {serie.affiche_url ? (
                 <Image
                   src={serie.affiche_url}
@@ -93,8 +94,8 @@ export function ProfileCard({ profil, serie }: ProfileCardProps) {
                 </div>
               )}
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Valeur en noix bénies */}
         <div className="flex items-center justify-between rounded-2xl bg-gray-50/80 backdrop-blur-sm border border-gray-100 px-5 py-4 mb-2">

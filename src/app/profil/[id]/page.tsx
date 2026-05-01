@@ -199,26 +199,16 @@ export default function ProfilHistoirePage() {
           
           {/* Main Video Block (Presentation) */}
           <div className="bg-black relative aspect-video flex items-center justify-center group self-center lg:self-auto rounded-[2rem] overflow-hidden shadow-2xl m-4 lg:m-6">
-            {mainVideoId ? (
-              <iframe 
-                src={`https://www.youtube.com/embed/${mainVideoId}`} 
-                className="w-full h-full pointer-events-auto" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            ) : (
-              <video src={profil.video_urls[0]?.video_url || "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"} className="w-full h-full object-cover pointer-events-none" draggable={false} />
-            )}
-            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none transition-opacity z-10">
-              {!mainVideoId && (
-                <h3 className="text-xl md:text-2xl font-bold text-white text-center tracking-[0.2em] uppercase drop-shadow-2xl bg-black/40 px-8 py-4 rounded-[2rem] backdrop-blur-md mb-4">
-                  Présentation
-                </h3>
-              )}
-              <div className="w-16 h-16 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center text-white border border-white/20 group-hover:opacity-0 transition-opacity">
+            <div className="absolute inset-0 flex flex-col items-center justify-center transition-opacity z-10 bg-black/60">
+              <h3 className="text-xl md:text-2xl font-black text-white text-center tracking-[0.3em] uppercase drop-shadow-2xl px-8 py-4 rounded-[2rem] mb-4">
+                Présentation
+              </h3>
+              <div className="w-16 h-16 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center text-white border border-white/20">
                 <Play fill="currentColor" size={32} />
               </div>
             </div>
+            {/* Poster background or colored backdrop */}
+            <div className="absolute inset-0 bg-[#008751]/20" />
           </div>
 
           {/* Finance Block : Horizontal Histogram */}

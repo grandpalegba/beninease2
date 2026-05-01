@@ -150,7 +150,7 @@ const FaMatrix = () => {
               {SIGNS.map((sign, i) => (
                 <div 
                   key={`h-${i}`} 
-                  className="w-6 h-10 md:w-12 md:h-16 relative"
+                  className="w-6 h-10 md:w-10 md:h-16 relative"
                 >
                   <motion.span 
                     initial={{ opacity: 0, y: -5, rotate: -45 }}
@@ -170,7 +170,7 @@ const FaMatrix = () => {
             {SIGNS.map((rowSign, rIndex) => (
               <div key={`r-${rIndex}`} className="flex gap-[2px]">
                 {/* Left Header */}
-                <div className="w-10 h-6 md:w-16 md:h-12 flex items-center justify-end pr-3 md:pr-4 flex-shrink-0">
+                <div className="w-10 h-6 md:w-16 md:h-10 flex items-center justify-end pr-3 md:pr-4 flex-shrink-0">
                   <motion.span 
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -200,6 +200,10 @@ const FaMatrix = () => {
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-start bg-white select-none relative">
+      <style>{`
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      `}</style>
       {/* Desktop View / Always visible but scaled on mobile if not in modal */}
       <div className="w-full h-full overflow-auto no-scrollbar flex flex-col items-center p-2 md:p-8">
         <div className="md:hidden mb-4 mt-0">
@@ -236,7 +240,7 @@ const FaMatrix = () => {
               </button>
             </div>
             
-            <div className="flex-1 overflow-auto p-4 flex items-start justify-center bg-white cursor-grab active:cursor-grabbing">
+            <div className="flex-1 overflow-auto p-4 flex items-start justify-center bg-white cursor-grab active:cursor-grabbing no-scrollbar">
               <div className="scale-[0.85] origin-top-left sm:scale-100">
                 <MatrixContent isModal />
               </div>

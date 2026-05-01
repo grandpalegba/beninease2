@@ -61,31 +61,16 @@ export function EvaluationModule({ episode, profilId, seriesInfo }: EvaluationMo
     <div className="bg-white rounded-[2.5rem] overflow-hidden border border-gray-100 shadow-sm grid grid-cols-1 lg:grid-cols-2 items-center font-sans">
       {/* GAUCHE : VIDÉO */}
       <div className="bg-black relative aspect-video flex items-center justify-center group self-center lg:self-auto rounded-[2rem] overflow-hidden shadow-2xl m-4 lg:m-6">
-        {videoId ? (
-          <iframe 
-            src={embedUrl} 
-            className="w-full h-full" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
-        ) : (
-          <video 
-            src={episode.video_url} 
-            className="w-full h-full object-cover pointer-events-none" 
-            draggable={false}
-            poster="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
-          />
-        )}
-        {!videoId && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none transition-opacity z-10">
-            <h3 className="text-xl md:text-2xl font-bold text-white text-center tracking-[0.2em] uppercase drop-shadow-2xl bg-black/40 px-8 py-4 rounded-[2rem] backdrop-blur-md mb-4">
-              Épisode {episode.numero || 1}
-            </h3>
-            <div className="w-16 h-16 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center text-white border border-white/20 group-hover:opacity-0 transition-opacity">
-              <Play fill="currentColor" size={32} />
-            </div>
+        <div className="absolute inset-0 flex flex-col items-center justify-center transition-opacity z-10 bg-black/60">
+          <h3 className="text-xl md:text-2xl font-black text-white text-center tracking-[0.3em] uppercase drop-shadow-2xl px-8 py-4 rounded-[2rem] mb-4">
+            Épisode {episode.numero || 1}
+          </h3>
+          <div className="w-16 h-16 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center text-white border border-white/20">
+            <Play fill="currentColor" size={32} />
           </div>
-        )}
+        </div>
+        {/* Subtle pattern or color for the placeholder */}
+        <div className="absolute inset-0 bg-[#3b6934]/10" />
       </div>
 
       {/* DROITE : ÉVALUATION */}

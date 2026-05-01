@@ -114,74 +114,81 @@ const ConsultationModal = ({ consultation, onClose }: Props) => {
           >
             {/* Top bar */}
             <div
-              className="flex items-center justify-between px-5 pt-4 pb-3"
-              style={{ borderBottom: "1px solid #ececec", background: "#ffffff" }}
+              className="flex items-center px-6 py-5 relative"
+              style={{ borderBottom: "1px solid #f0f1f1", background: "#ffffff" }}
             >
-              <div className="flex items-center gap-2">
+              {/* Traffic light dots */}
+              <div className="flex items-center gap-1.5 absolute left-6">
                 <span className="w-2.5 h-2.5 rounded-full" style={{ background: "#008751" }} />
                 <span className="w-2.5 h-2.5 rounded-full" style={{ background: "#fcd116" }} />
                 <span className="w-2.5 h-2.5 rounded-full" style={{ background: "#e8112d" }} />
+              </div>
+
+              {/* Centered Title */}
+              <div className="flex-1 flex justify-center">
                 <span
-                  className="ml-3 font-label text-[10px] uppercase tracking-[0.2em] font-bold"
-                  style={{ color: "#5a5c5c" }}
+                  className="font-label text-[11px] uppercase tracking-[0.3em] font-black"
+                  style={{ color: "#1a1a1a" }}
                 >
                   {view === "case" ? "Le cas tiré" : "La parole du bokônon"}
                 </span>
               </div>
+
+              {/* Close Button */}
               <button
                 onClick={handleClose}
-                className="p-2 rounded-full transition-colors hover:bg-[#f0f1f1]"
-                style={{ color: "#5a5c5c" }}
+                className="p-1 rounded-full transition-colors hover:bg-gray-100 absolute right-6 text-gray-400 hover:text-black"
                 aria-label="Fermer"
               >
-                <X size={18} />
+                <X size={20} strokeWidth={2.5} />
               </button>
             </div>
 
-            {/* Swipe indicator */}
+            {/* Swipe indicator / Navigation */}
             <div
-              className="flex items-center justify-center gap-2 py-2"
-              style={{ background: "#fafafa" }}
+              className="flex items-center justify-center gap-6 py-3"
+              style={{ background: "#ffffff", borderBottom: "1px solid #f0f1f1" }}
             >
-              <button
-                onClick={() => setView("case")}
-                className="p-1 rounded-full transition-colors hover:bg-[#ececec]"
-                aria-label="Vue précédente"
-                disabled={view === "case"}
-                style={{ opacity: view === "case" ? 0.3 : 1, color: "#5a5c5c" }}
-              >
-                <ChevronLeft size={16} />
-              </button>
-              <div className="flex items-center gap-1.5">
-                <span
-                  className="rounded-full transition-all"
-                  style={{
-                    background: view === "case" ? "#00693e" : "#cfd1d1",
-                    width: view === "case" ? 16 : 6,
-                    height: 6,
-                  }}
-                />
-                <span
-                  className="rounded-full transition-all"
-                  style={{
-                    background: view === "bokonon" ? "#00693e" : "#cfd1d1",
-                    width: view === "bokonon" ? 16 : 6,
-                    height: 6,
-                  }}
-                />
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => setView("case")}
+                  className="p-1 rounded-full transition-colors hover:bg-[#f0f1f1]"
+                  aria-label="Vue précédente"
+                  disabled={view === "case"}
+                  style={{ opacity: view === "case" ? 0.3 : 1, color: "#9ca3af" }}
+                >
+                  <ChevronLeft size={16} strokeWidth={3} />
+                </button>
+                <div className="flex items-center gap-2">
+                  <span
+                    className="rounded-full transition-all duration-300"
+                    style={{
+                      background: view === "case" ? "#1a1a1a" : "#e5e7eb",
+                      width: view === "case" ? 20 : 6,
+                      height: 6,
+                    }}
+                  />
+                  <span
+                    className="rounded-full transition-all duration-300"
+                    style={{
+                      background: view === "bokonon" ? "#1a1a1a" : "#e5e7eb",
+                      width: view === "bokonon" ? 20 : 6,
+                      height: 6,
+                    }}
+                  />
+                </div>
+                <button
+                  onClick={() => setView("bokonon")}
+                  className="p-1 rounded-full transition-colors hover:bg-[#f0f1f1]"
+                  aria-label="Vue suivante"
+                  disabled={view === "bokonon"}
+                  style={{ opacity: view === "bokonon" ? 0.3 : 1, color: "#9ca3af" }}
+                >
+                  <ChevronRight size={16} strokeWidth={3} />
+                </button>
               </div>
-              <button
-                onClick={() => setView("bokonon")}
-                className="p-1 rounded-full transition-colors hover:bg-[#ececec]"
-                aria-label="Vue suivante"
-                disabled={view === "bokonon"}
-                style={{ opacity: view === "bokonon" ? 0.3 : 1, color: "#5a5c5c" }}
-              >
-                <ChevronRight size={16} />
-              </button>
               <span
-                className="ml-2 font-label text-[9px] uppercase tracking-[0.2em] hidden sm:inline"
-                style={{ color: "#5a5c5c" }}
+                className="font-label text-[9px] uppercase tracking-[0.25em] font-black text-gray-400"
               >
                 Swipe
               </span>
@@ -243,45 +250,38 @@ const PhotoPanel = ({
   animate?: boolean;
 }) => (
   <div
-    className="p-5 md:p-7 flex items-center justify-center"
-    style={{ background: "#f7f1e6" }}
+    className="p-6 md:p-8 flex items-center justify-center"
+    style={{ background: "#fcfaf6" }}
   >
     <div
-      className="relative aspect-[4/5] w-full rounded-xl overflow-hidden select-none"
+      className="relative aspect-[4/5] w-full rounded-2xl overflow-hidden shadow-2xl"
       style={{ background: "#ececec" }}
     >
-      {photo &&
-        (animate ? (
-          <motion.img
-            src={photo}
-            alt={caption}
-            draggable={false}
-            className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
-            initial={{ scale: 1.05 }}
-            animate={{ scale: [1.05, 1.08, 1.05] }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          />
-        ) : (
-          <img
-            src={photo}
-            alt={caption}
-            draggable={false}
-            className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
-          />
-        ))}
+      {photo && (
+        <motion.img
+          src={photo}
+          alt={caption}
+          draggable={false}
+          className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+          animate={animate ? { scale: [1, 1.05, 1] } : {}}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        />
+      )}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+      
       <div
-        className="absolute bottom-3 left-3 px-2.5 py-1.5 rounded-lg backdrop-blur-md"
-        style={{ background: "rgba(0,0,0,0.45)" }}
+        className="absolute bottom-4 left-4 px-3 py-2 rounded-xl backdrop-blur-md bg-black/40 border border-white/10"
       >
-        <span className="font-headline italic text-[12px] text-white">{caption}</span>
+        <span className="font-headline italic text-[11px] text-white tracking-wide">{caption}</span>
       </div>
+      
       <button
         type="button"
         aria-label={ariaLabel}
-        className="absolute bottom-3 right-3 w-10 h-10 rounded-full flex items-center justify-center text-white transition-transform hover:scale-110"
-        style={{ background: "rgba(0,0,0,0.45)", backdropFilter: "blur(6px)" }}
+        className="absolute bottom-4 right-4 w-12 h-12 rounded-full flex items-center justify-center text-white transition-transform hover:scale-110 shadow-lg active:scale-95"
+        style={{ background: "rgba(0,0,0,0.5)", backdropFilter: "blur(12px)" }}
       >
-        <Play size={16} fill="currentColor" className="ml-0.5" />
+        <Play size={20} fill="currentColor" className="ml-1" />
       </button>
     </div>
   </div>
@@ -320,24 +320,68 @@ const BokononView = ({ photo, consultation, submitted, onSubmit, relevance, setR
   const reflection = isProfile ? "La sagesse est un voyage, pas une destination." : consultation?.reflection;
 
   return (
-    <div className="grid md:grid-cols-2 gap-0">
+    <div className="grid md:grid-cols-2 gap-0 h-full">
       <PhotoPanel photo={photo} caption={isProfile ? `${consultation.firstName} ${consultation.lastName}` : consultation?.author} ariaLabel="Écouter la parole" animate />
-      <div className="p-5 md:p-7 flex flex-col" style={{ background: "#ffffff" }}>
-        <p className="font-label text-[10px] uppercase tracking-[0.2em] font-bold mb-2" style={{ color: "#5a5c5c" }}>Sa parole</p>
-        <blockquote className="font-headline italic text-base md:text-lg leading-relaxed pl-4 mb-5" style={{ borderLeft: "3px solid #fbd115", color: "rgba(45, 47, 47, 0.9)" }}>
+      <div className="p-6 md:p-10 flex flex-col justify-center" style={{ background: "#ffffff" }}>
+        <p className="font-label text-[10px] uppercase tracking-[0.3em] font-black mb-4 text-gray-400">Sa parole</p>
+        <blockquote className="font-headline italic text-lg md:text-xl leading-relaxed pl-6 mb-10 text-gray-800 relative">
+          <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#fbd115] rounded-full" />
           "{reflection}"
         </blockquote>
+        
         {!submitted ? (
-          <div className="space-y-4 pt-4" style={{ borderTop: "1px solid #ececec" }}>
-            <p className="font-label text-[10px] uppercase tracking-[0.2em] font-bold text-center" style={{ color: "#5a5c5c" }}>Votre évaluation</p>
-            <SegmentedTrack label="Pertinence" value={relevance[0]} onChange={(v: number) => setRelevance([v])} />
-            <SegmentedTrack label="Clarté" value={clarity[0]} onChange={(v: number) => setClarity([v])} />
-            <SegmentedTrack label="Profondeur" value={depth[0]} onChange={(v: number) => setDepth([v])} />
-            <button onClick={onSubmit} className="w-full py-3 rounded-md text-sm font-bold uppercase tracking-[0.15em] text-white transition-all" style={{ background: "#00693e" }}>Valider l'évaluation</button>
+          <div className="space-y-8 pt-6 border-t border-gray-50">
+            <p className="font-label text-[10px] uppercase tracking-[0.3em] font-black text-center text-gray-400 mb-2">Votre évaluation</p>
+            
+            <EvaluationSlider label="Pertinence" value={relevance[0]} onChange={(v) => setRelevance([v])} color="#008751" />
+            <EvaluationSlider label="Clarté" value={clarity[0]} onChange={(v) => setClarity([v])} color="#fcd116" />
+            <EvaluationSlider label="Profondeur" value={depth[0]} onChange={(v) => setDepth([v])} color="#e8112d" />
+            
+            <button 
+              onClick={onSubmit} 
+              className="w-full py-5 rounded-2xl text-[11px] font-black uppercase tracking-[0.25em] text-white transition-all shadow-lg active:scale-[0.98] mt-4" 
+              style={{ background: "#00693e" }}
+            >
+              Valider l'évaluation
+            </button>
           </div>
         ) : (
           <BokononCard photo={photo} consultation={consultation} relevance={relevance[0]} clarity={clarity[0]} depth={depth[0]} />
         )}
+      </div>
+    </div>
+  );
+};
+
+const EvaluationSlider = ({ label, value, onChange, color }: { label: string, value: number, onChange: (v: number) => void, color: string }) => {
+  return (
+    <div className="space-y-3">
+      <div className="flex justify-between items-center">
+        <span className="text-[11px] font-black uppercase tracking-wider text-gray-800">{label}</span>
+        <span className="text-[11px] font-black tabular-nums text-gray-900">{value}%</span>
+      </div>
+      <div className="relative h-6 flex items-center group">
+        {/* Track */}
+        <div className="absolute w-full h-[3px] rounded-full bg-gray-100" />
+        {/* Active Track */}
+        <div 
+          className="absolute h-[3px] rounded-full transition-all duration-300" 
+          style={{ width: `${value}%`, background: color }} 
+        />
+        {/* Input */}
+        <input 
+          type="range" 
+          min="0" 
+          max="100" 
+          value={value} 
+          onChange={(e) => onChange(parseInt(e.target.value))}
+          className="absolute w-full h-full opacity-0 cursor-pointer z-10"
+        />
+        {/* Thumb Visual */}
+        <div 
+          className="absolute w-5 h-5 bg-white rounded-full shadow-md border-2 border-gray-50 pointer-events-none transition-transform duration-200 group-active:scale-125"
+          style={{ left: `calc(${value}% - 10px)` }}
+        />
       </div>
     </div>
   );
