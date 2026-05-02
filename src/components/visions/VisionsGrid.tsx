@@ -2,6 +2,7 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+import { Plus, Minus } from 'lucide-react';
 import { useVisionsStore, GRID_SIZE } from '@/store/visions';
 import { VisionCell } from './VisionCell';
 
@@ -11,7 +12,23 @@ const GRID_PX = GRID_SIZE * CELL_SIZE;
 export const VisionsGrid = () => {
   const { cells, selectedCells, setSelectedCells } = useVisionsStore();
   const wrapperRef = useRef<any>(null);
+  const [zoomLevel, setZoomLevel] = useState<number>(0.8);
   const [selectionStart, setSelectionStart] = useState<{ x: number, y: number } | null>(null);
+
+  // Handlers for zoom in/out
+  const handleZoomIn = () => {
+    if (wrapperRef.current) {
+      wrapperRef.current.zoomIn();
+      setZoomLevel(prev => Math.min(prev + 0.2, 4));
+    }
+  };
+
+  const handleZoomOut = () => {
+    if (wrapperRef.current) {
+      wrapperRef.current.zoomOut();
+      setZoomLevel(prev => Math.max(prev - 0.2, 0.1));
+    }
+  };
 
   // Center on the flag
   useEffect(() => {
@@ -84,18 +101,27 @@ export const VisionsGrid = () => {
 
   return (
     <div className="w-full h-full bg-[#f9f9f9] overflow-hidden cursor-grab active:cursor-grabbing relative">
-      <TransformWrapper
-        ref={wrapperRef}
-        initialScale={0.8}
-        minScale={0.1}
-        maxScale={4}
-        centerOnInit={false}
-        limitToBounds={false}
-      >
-        <TransformComponent
-          wrapperStyle={{ width: "100vw", height: "100vh" }}
-          contentStyle={{ width: `${GRID_PX}px`, height: `${GRID_PX}px` }}
+        <TransformWrapper
+          ref={wrapperRef}
+          initialScale={zoomLevel}
+          minScale={0.1}
+          maxScale={4}
+          centerOnInit={false}
+          limitToBounds={false}
         >
+          {/* Zoom Controls */}
+          <div className="absolute top-4 left-4 z-20 flex flex-col gap-2">
+            <button onClick={handleZoomIn} className="bg-white/80 p-2 rounded-full shadow-md hover:bg-white">
+              <Plus size={16} />
+            </button>
+            <button onClick={handleZoomOut} className="bg-white/80 p-2 rounded-full shadow-md hover:bg-white">
+              <Minus size={16} />
+            </button>
+          </div>
+          <TransformComponent
+            wrapperStyle={{ width: "100vw", height: "100vh" }}
+            contentStyle={{ width: `${GRID_PX}px`, height: `${GRID_PX}px` }}
+          >
           <div 
             className="grid relative"
             style={{
@@ -135,7 +161,7 @@ export const VisionsGrid = () => {
         <div className="fixed bottom-32 left-1/2 -translate-x-1/2 z-[200] pointer-events-none">
           <div className="bg-black text-white text-[10px] font-black uppercase tracking-[0.3em] px-6 py-3 rounded-full flex items-center gap-3 shadow-2xl animate-bounce">
             <span className="w-2 h-2 rounded-full bg-[#D4AF37] inline-block" />
-            Cliquez sur une 2e cellule pour définir le bloc (max 8×8)
+            Sélectionner l'espace à acquérir
           </div>
         </div>
       )}

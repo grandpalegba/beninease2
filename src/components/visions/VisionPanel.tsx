@@ -225,26 +225,24 @@ export const VisionPanel = () => {
           {/* Footer CTA */}
           {step !== 'success' && (
             <div className="p-8 border-t border-zinc-100 bg-zinc-50">
-              {step === 'details' ? (
-                <button 
-                  onClick={() => setStep('upload')}
-                  className="w-full bg-black text-white py-6 rounded-full font-black text-xs uppercase tracking-[0.3em] flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-black/10"
-                >
-                  {singleCell ? "Conquérir ce territoire" : "Inscrire ma vision"}
-                  <span className="bg-white/20 px-3 py-1 rounded-full">{capturePrice}€</span>
-                </button>
-              ) : (
-                <button 
-                  onClick={handleCapture}
-                  className="w-full bg-black text-white py-6 rounded-full font-black text-xs uppercase tracking-[0.3em] flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-[0.98] transition-all"
-                >
-                  Payer et Activer
-                  <span className="bg-white/20 px-3 py-1 rounded-full">{capturePrice}€</span>
-                </button>
-              )}
-              <p className="text-[9px] text-center text-zinc-400 mt-4 font-bold uppercase tracking-widest">
-                100% des fonds sont reversés au financement du projet
-              </p>
+                  {step === 'details' ? (
+                    <button 
+                      onClick={() => setStep('upload')}
+                      className="w-full bg-black text-white py-6 rounded-full font-black text-xs uppercase tracking-[0.3em] flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-black/10"
+                    >
+                      Confirmer la sélection
+                      <span className="bg-white/20 px-3 py-1 rounded-full">{capturePrice}€</span>
+                    </button>
+                  ) : (
+                    <button 
+                      onClick={handleCapture}
+                      className="w-full bg-black text-white py-6 rounded-full font-black text-xs uppercase tracking-[0.3em] flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                    >
+                      Payer et Activer
+                      <span className="bg-white/20 px-3 py-1 rounded-full">{capturePrice}€</span>
+                    </button>
+                  )}
+  
             </div>
           )}
         </motion.div>

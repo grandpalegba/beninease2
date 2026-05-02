@@ -73,7 +73,7 @@ const Header = ({ hideTop = false }: { hideTop?: boolean }) => {
             </div>
             <span className="text-[9px] md:text-lg font-black tracking-[1px] md:tracking-[2px] uppercase flex items-center">
               <span className="text-white">BLACK</span>
-              <span className="text-[#FFD700] mx-1 md:mx-1.5">TO</span>
+              <span className="text-black mx-1 md:mx-1.5">TO</span>
               <span className="text-white">BENIN</span>
             </span>
           </Link>
