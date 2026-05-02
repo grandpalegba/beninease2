@@ -53,7 +53,7 @@ const Header = ({ hideTop = false }: { hideTop?: boolean }) => {
   };
 
   // List of main pages where we show the HeaderSwipe
-  const isMainPage = ["/", "/sagesses", "/savoirs", "/histoires", "/talents", "/tresors", "/amazones"].includes(pathname);
+  const isMainPage = ["/", "/sagesses", "/savoirs", "/histoires", "/talents", "/tresors"].includes(pathname);
 
   return (
     <>
@@ -71,8 +71,10 @@ const Header = ({ hideTop = false }: { hideTop?: boolean }) => {
             <div className="relative w-5 h-5 md:w-7 md:h-7">
               <Image src="/logo.png" alt="logo" fill className="object-contain" />
             </div>
-            <span className="text-[9px] md:text-lg font-black tracking-[1px] md:tracking-[2px] uppercase flex items-center text-white">
-              Yonyverse
+            <span className="text-[9px] md:text-lg font-black tracking-[1px] md:tracking-[2px] uppercase flex items-center">
+              <span className="text-white">BLACK</span>
+              <span className="text-[#FFD700] mx-1 md:mx-1.5">TO</span>
+              <span className="text-white">BENIN</span>
             </span>
           </Link>
         </div>
