@@ -7,8 +7,8 @@ import { cn } from "@/lib/utils";
 import { CategoryPattern } from "@/components/talents/CategoryPattern";
 
 const PAGES = [
-  { name: "Visions", href: "/visions", id: "startup-innovation" },
-  { name: "Trésors", href: "/tresors", id: "vision" },
+  { name: "Visions", href: "/visions", id: "vision" },
+  { name: "Trésors", href: "/tresors", id: "startup-innovation" },
   { name: "Histoires", href: "/histoires", id: "mythes-legendes" },
   { name: "Savoirs", href: "/savoirs", id: "sagesse" },
   { name: "Sagesses", href: "/sagesses", id: "parole-aines" },
