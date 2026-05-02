@@ -20,9 +20,11 @@ export interface VisionCellData {
 export interface VisionsState {
   cells: Record<string, VisionCellData>; // Key: "x-y"
   selectedCells: { x: number; y: number }[];
+  isPanelOpen: boolean;
   fundingGoal: number;
   totalFunded: number;
   
   setSelectedCells: (cells: { x: number; y: number }[]) => void;
+  setIsPanelOpen: (isOpen: boolean) => void;
   captureCells: (cells: VisionCellData[]) => void;
 }

@@ -34,10 +34,12 @@ export const useVisionsStore = create<VisionsState>((set) => ({
     }
   },
   selectedCells: [],
+  isPanelOpen: false,
   fundingGoal: 100000,
   totalFunded: 80,
 
   setSelectedCells: (cells) => set({ selectedCells: cells }),
+  setIsPanelOpen: (isOpen) => set({ isPanelOpen: isOpen }),
 
   captureCells: (newCells) => set((state) => {
     const nextCells = { ...state.cells };

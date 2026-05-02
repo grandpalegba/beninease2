@@ -14,6 +14,7 @@ export const VisionsGrid = () => {
   const wrapperRef = useRef<any>(null);
   const [zoomLevel, setZoomLevel] = useState<number>(0.8);
   const [selectionStart, setSelectionStart] = useState<{ x: number, y: number } | null>(null);
+  const [hoverPos, setHoverPos] = useState<{ x: number, y: number } | null>(null);
 
   // Handlers for zoom in/out
   const handleZoomIn = () => {
@@ -77,12 +78,27 @@ export const VisionsGrid = () => {
     }
   };
 
+  const isGhostSelected = (x: number, y: number) => {
+    if (!selectionStart || !hoverPos) return false;
+    const x1 = Math.min(selectionStart.x, hoverPos.x);
+    const x2 = Math.max(selectionStart.x, hoverPos.x);
+    const y1 = Math.min(selectionStart.y, hoverPos.y);
+    const y2 = Math.max(selectionStart.y, hoverPos.y);
+    
+    // Limit to 8x8
+    const finalX2 = Math.min(x2, x1 + 7);
+    const finalY2 = Math.min(y2, y1 + 7);
+
+    return x >= x1 && x <= finalX2 && y >= y1 && y <= finalY2;
+  };
+
   const renderCells = () => {
     const grid = [];
     for (let y = 0; y < GRID_SIZE; y++) {
       for (let x = 0; x < GRID_SIZE; x++) {
         const key = `${x}-${y}`;
         const isSelected = selectedCells.some(c => c.x === x && c.y === y);
+        const isGhost = isGhostSelected(x, y);
 
         grid.push(
           <VisionCell
@@ -91,7 +107,9 @@ export const VisionsGrid = () => {
             y={y}
             data={cells[key]}
             isSelected={isSelected}
+            isGhostSelected={isGhost}
             onClick={() => handleCellClick(x, y)}
+            onMouseEnter={() => setHoverPos({ x, y })}
           />
         );
       }
@@ -100,7 +118,10 @@ export const VisionsGrid = () => {
   };
 
   return (
-    <div className="w-full h-full bg-[#f9f9f9] overflow-hidden cursor-grab active:cursor-grabbing relative">
+    <div 
+      onMouseLeave={() => setHoverPos(null)}
+      className="w-full h-full bg-[#f9f9f9] overflow-hidden cursor-grab active:cursor-grabbing relative"
+    >
         <TransformWrapper
           ref={wrapperRef}
           initialScale={zoomLevel}

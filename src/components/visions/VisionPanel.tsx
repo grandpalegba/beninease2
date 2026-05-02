@@ -8,11 +8,11 @@ import { cn } from '@/lib/utils';
 import { VisionCellData } from '@/types/visions';
 
 export const VisionPanel = () => {
-  const { selectedCells, cells, setSelectedCells, captureCells } = useVisionsStore();
+  const { selectedCells, cells, setSelectedCells, captureCells, isPanelOpen, setIsPanelOpen } = useVisionsStore();
   const [step, setStep] = useState<'details' | 'upload' | 'success'>('details');
   const [mediaType, setMediaType] = useState<'photo' | 'video'>('photo');
 
-  if (selectedCells.length === 0) return null;
+  if (!isPanelOpen || selectedCells.length === 0) return null;
 
   // Calculate selection dimensions
   const minX = Math.min(...selectedCells.map(c => c.x));
@@ -81,6 +81,7 @@ export const VisionPanel = () => {
             <button 
               onClick={() => {
                 setSelectedCells([]);
+                setIsPanelOpen(false);
                 setStep('details');
               }}
               className="p-2 hover:bg-zinc-100 rounded-full transition-colors"
@@ -212,6 +213,7 @@ export const VisionPanel = () => {
                 <button 
                   onClick={() => {
                     setSelectedCells([]);
+                    setIsPanelOpen(false);
                     setStep('details');
                   }}
                   className="px-8 py-4 bg-zinc-100 rounded-full font-black text-xs uppercase tracking-[0.2em] hover:bg-zinc-200 transition-all"

@@ -11,18 +11,22 @@ interface VisionCellProps {
   y: number;
   data?: VisionCellData;
   isSelected: boolean;
+  isGhostSelected?: boolean;
   onClick: () => void;
+  onMouseEnter?: () => void;
 }
 
-export const VisionCell = React.memo(({ x, y, data, isSelected, onClick }: VisionCellProps) => {
+export const VisionCell = React.memo(({ x, y, data, isSelected, isGhostSelected, onClick, onMouseEnter }: VisionCellProps) => {
   const isHot = (data?.captureCount || 0) >= 3;
 
   return (
     <div 
       onClick={onClick}
+      onMouseEnter={onMouseEnter}
       className={cn(
         "relative w-full h-full border-[0.5px] border-black/5 cursor-pointer transition-colors duration-150",
-        isSelected && "bg-[#D4AF37]/30 border-[#D4AF37]/60"
+        isSelected && "bg-[#D4AF37]/30 border-[#D4AF37]/60",
+        isGhostSelected && !isSelected && "bg-[#D4AF37]/10 border-[#D4AF37]/30"
       )}
     >
 
