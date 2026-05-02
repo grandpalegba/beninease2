@@ -23,7 +23,7 @@ export function CtaFinal() {
             className="max-w-2xl mb-14"
           >
             <h3 className="font-display text-3xl md:text-5xl font-semibold tracking-tight text-zinc-950 leading-[1.05]">
-              Votre statut évolue avec chaque Libération et Retour au Bénin.
+              Votre statut évolue avec chaque Libération de trésor.
             </h3>
           </motion.div>
 
@@ -47,7 +47,7 @@ export function CtaFinal() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-5 text-white">
                     <div className="text-[10px] uppercase tracking-[0.25em] text-zinc-300 mb-1 font-mono">
-                      {r.treasures} trésors
+                      {r.treasures} trésors libérés
                     </div>
                     <div className="font-display text-2xl font-semibold">{r.name}</div>
                     <div className="text-sm text-zinc-300 mt-1">{r.desc}</div>
