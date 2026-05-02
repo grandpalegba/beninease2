@@ -33,27 +33,25 @@ export const useVisionsStore = create<VisionsState>((set) => ({
       ]
     }
   },
-  selectedCell: null,
+  selectedCells: [],
   fundingGoal: 100000,
   totalFunded: 80,
 
-  selectCell: (x, y) => set({ 
-    selectedCell: y === null ? null : { x, y: y as number } 
-  }),
+  setSelectedCells: (cells) => set({ selectedCells: cells }),
 
-  captureCell: (newCell) => set((state) => {
-    const key = `${newCell.x}-${newCell.y}`;
-    const previousCell = state.cells[key];
-    
-    // Add transaction to total funded
-    const newTotalFunded = state.totalFunded + newCell.price;
+  captureCells: (newCells) => set((state) => {
+    const nextCells = { ...state.cells };
+    let addedFunding = 0;
+
+    newCells.forEach(cell => {
+      const key = `${cell.x}-${cell.y}`;
+      nextCells[key] = cell;
+      addedFunding += cell.price;
+    });
 
     return {
-      cells: {
-        ...state.cells,
-        [key]: newCell,
-      },
-      totalFunded: newTotalFunded,
+      cells: nextCells,
+      totalFunded: state.totalFunded + addedFunding,
     };
   }),
 }));

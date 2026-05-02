@@ -8,42 +8,59 @@ import { cn } from '@/lib/utils';
 import { VisionCellData } from '@/types/visions';
 
 export const VisionPanel = () => {
-  const { selectedCell, cells, selectCell, captureCell } = useVisionsStore();
+  const { selectedCells, cells, setSelectedCells, captureCells } = useVisionsStore();
   const [step, setStep] = useState<'details' | 'upload' | 'success'>('details');
   const [mediaType, setMediaType] = useState<'photo' | 'video'>('photo');
 
-  if (!selectedCell) return null;
+  if (selectedCells.length === 0) return null;
 
-  const key = `${selectedCell.x}-${selectedCell.y}`;
-  const cellData = cells[key];
-  const currentPrice = cellData ? cellData.price : BASE_PRICE;
-  const capturePrice = cellData ? cellData.price * 2 : BASE_PRICE;
+  // Calculate selection dimensions
+  const minX = Math.min(...selectedCells.map(c => c.x));
+  const maxX = Math.max(...selectedCells.map(c => c.x));
+  const minY = Math.min(...selectedCells.map(c => c.y));
+  const maxY = Math.max(...selectedCells.map(c => c.y));
+  const width = maxX - minX + 1;
+  const height = maxY - minY + 1;
+
+  // Calculate total price
+  const baseSelectionPrice = selectedCells.reduce((acc, curr) => {
+    const cellData = cells[`${curr.x}-${curr.y}`];
+    const currentPrice = cellData ? cellData.price : BASE_PRICE;
+    return acc + (cellData ? currentPrice * 2 : currentPrice);
+  }, 0);
+
+  const capturePrice = mediaType === 'video' ? baseSelectionPrice * 2 : baseSelectionPrice;
+
+  // If only one cell is selected, show details
+  const singleCell = selectedCells.length === 1 ? cells[`${selectedCells[0].x}-${selectedCells[0].y}`] : null;
 
   const handleCapture = () => {
-    // Mock capture for now
-    const mockNewCell: VisionCellData = {
-      x: selectedCell.x,
-      y: selectedCell.y,
-      ownerName: "Nouvel Explorateur",
-      mediaUrl: mediaType === 'photo' ? "https://images.unsplash.com/photo-1531297484001-80022131f5a1" : "",
-      mediaType: mediaType,
-      whatsappLink: "https://wa.me/22900000000",
-      description: "Une nouvelle vision pour le Bénin.",
-      price: capturePrice,
-      captureCount: (cellData?.captureCount || 0) + 1,
-      history: [
-        ...(cellData?.history || []),
-        { ownerName: cellData?.ownerName || "Initial", price: currentPrice, date: new Date().toLocaleDateString() }
-      ]
-    };
+    const newCells: VisionCellData[] = selectedCells.map(c => {
+      const existing = cells[`${c.x}-${c.y}`];
+      return {
+        x: c.x,
+        y: c.y,
+        ownerName: "Nouvel Explorateur",
+        mediaUrl: mediaType === 'photo' ? "https://images.unsplash.com/photo-1531297484001-80022131f5a1" : "",
+        mediaType: mediaType,
+        whatsappLink: "https://wa.me/22900000000",
+        description: "Une nouvelle vision pour le Bénin.",
+        price: (existing ? existing.price * 2 : BASE_PRICE) * (mediaType === 'video' ? 2 : 1),
+        captureCount: (existing?.captureCount || 0) + 1,
+        history: [
+          ...(existing?.history || []),
+          { ownerName: existing?.ownerName || "Initial", price: existing?.price || BASE_PRICE, date: new Date().toLocaleDateString() }
+        ]
+      };
+    });
     
-    captureCell(mockNewCell);
+    captureCells(newCells);
     setStep('success');
   };
 
   return (
     <AnimatePresence>
-      {selectedCell && (
+      {selectedCells.length > 0 && (
         <motion.div
           initial={{ x: "100%" }}
           animate={{ x: 0 }}
@@ -54,12 +71,16 @@ export const VisionPanel = () => {
           {/* Header */}
           <div className="p-6 border-b border-zinc-100 flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-black uppercase tracking-tighter">Territoire {selectedCell.x}×{selectedCell.y}</h2>
-              <p className="text-[10px] text-zinc-400 uppercase tracking-widest font-bold">Localisation dans la Vision</p>
+              <h2 className="text-2xl font-black uppercase tracking-tighter">
+                Territoire {width}×{height}
+              </h2>
+              <p className="text-[10px] text-zinc-400 uppercase tracking-widest font-bold">
+                {selectedCells.length} cellule{selectedCells.length > 1 ? 's' : ''} sélectionnée{selectedCells.length > 1 ? 's' : ''}
+              </p>
             </div>
             <button 
               onClick={() => {
-                selectCell(0, null);
+                setSelectedCells([]);
                 setStep('details');
               }}
               className="p-2 hover:bg-zinc-100 rounded-full transition-colors"
@@ -71,25 +92,34 @@ export const VisionPanel = () => {
           <div className="flex-1 overflow-y-auto p-8">
             {step === 'details' && (
               <div className="space-y-8">
-                {/* Current Owner */}
-                {cellData ? (
+                {/* Multi-cell selection info */}
+                {selectedCells.length > 1 && (
+                  <div className="p-5 bg-zinc-50 rounded-2xl space-y-2">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Sélection</p>
+                    <p className="text-lg font-black">{selectedCells.length} cellules · {width}×{height}</p>
+                    <p className="text-xs text-zinc-400">Cliquez sur une 2e cellule pour définir le bloc (max 8×8)</p>
+                  </div>
+                )}
+
+                {/* Single cell — Current Owner */}
+                {singleCell ? (
                   <div className="space-y-6">
                     <div className="aspect-square rounded-3xl overflow-hidden bg-zinc-100 relative shadow-xl">
-                      {cellData.mediaType === 'photo' ? (
-                        <img src={cellData.mediaUrl} alt="" className="w-full h-full object-cover" />
+                      {singleCell.mediaType === 'photo' ? (
+                        <img src={singleCell.mediaUrl} alt="" className="w-full h-full object-cover" />
                       ) : (
-                        <video src={cellData.mediaUrl} className="w-full h-full object-cover" controls />
+                        <video src={singleCell.mediaUrl} className="w-full h-full object-cover" controls />
                       )}
                     </div>
                     
                     <div>
                       <h3 className="text-sm font-black uppercase tracking-widest text-[#D4AF37] mb-2">Propriétaire Actuel</h3>
-                      <p className="text-xl font-bold">{cellData.ownerName}</p>
-                      <p className="text-sm text-zinc-500 mt-2 leading-relaxed">{cellData.description}</p>
+                      <p className="text-xl font-bold">{singleCell.ownerName}</p>
+                      <p className="text-sm text-zinc-500 mt-2 leading-relaxed">{singleCell.description}</p>
                     </div>
 
                     <a 
-                      href={cellData.whatsappLink}
+                      href={singleCell.whatsappLink}
                       target="_blank"
                       className="flex items-center gap-3 p-4 bg-zinc-50 rounded-2xl text-sm font-bold hover:bg-zinc-100 transition-colors"
                     >
@@ -104,7 +134,7 @@ export const VisionPanel = () => {
                         <h4 className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Historique des conquêtes</h4>
                       </div>
                       <div className="space-y-4">
-                        {cellData.history.map((h, i) => (
+                        {singleCell.history.map((h, i) => (
                           <div key={i} className="flex justify-between items-center text-sm">
                             <span className="font-medium text-zinc-600">{h.ownerName}</span>
                             <span className="font-bold">{h.price}€</span>
@@ -113,14 +143,14 @@ export const VisionPanel = () => {
                       </div>
                     </div>
                   </div>
-                ) : (
+                ) : selectedCells.length === 1 ? (
                   <div className="py-12 text-center space-y-4">
                     <div className="w-20 h-20 bg-zinc-50 rounded-full flex items-center justify-center mx-auto">
                       <ArrowRight size={32} className="text-zinc-200" />
                     </div>
                     <p className="text-zinc-400 font-medium italic">Ce territoire est encore vierge. Soyez le premier à y inscrire votre vision.</p>
                   </div>
-                )}
+                ) : null}
               </div>
             )}
 
@@ -132,19 +162,29 @@ export const VisionPanel = () => {
                   <div className="space-y-3">
                     <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Type de média</label>
                     <div className="flex gap-4">
-                      {['photo', 'video'].map((type) => (
+                      {(['photo', 'video'] as const).map((type) => (
                         <button
                           key={type}
-                          onClick={() => setMediaType(type as any)}
+                          onClick={() => setMediaType(type)}
                           className={cn(
-                            "flex-1 py-3 rounded-xl border-2 font-bold text-xs uppercase tracking-widest transition-all",
+                            "flex-1 py-4 rounded-xl border-2 font-bold text-xs uppercase tracking-widest transition-all",
                             mediaType === type ? "border-black bg-black text-white" : "border-zinc-100 text-zinc-400"
                           )}
                         >
-                          {type}
+                          <span>{type}</span>
+                          {type === 'video' && (
+                            <span className="ml-2 text-[8px] bg-[#D4AF37]/20 text-[#A07820] px-1.5 py-0.5 rounded-full font-black">
+                              ×2
+                            </span>
+                          )}
                         </button>
                       ))}
                     </div>
+                    {mediaType === 'video' && (
+                      <p className="text-[10px] text-[#A07820] font-bold bg-[#D4AF37]/10 px-4 py-2 rounded-xl">
+                        Vidéo = prix doublé · {capturePrice}€ au total
+                      </p>
+                    )}
                   </div>
 
                   <div className="aspect-video rounded-2xl border-2 border-dashed border-zinc-200 flex flex-col items-center justify-center gap-2 text-zinc-400 hover:border-black hover:text-black transition-all cursor-pointer">
@@ -153,7 +193,7 @@ export const VisionPanel = () => {
                   </div>
 
                   <div className="space-y-4">
-                    <input type="text" placeholder="Lien WhatsApp" className="w-full p-4 bg-zinc-50 rounded-xl text-sm border-none focus:ring-2 focus:ring-black transition-all" />
+                    <input type="text" placeholder="Lien WhatsApp (+229...)" className="w-full p-4 bg-zinc-50 rounded-xl text-sm border-none focus:ring-2 focus:ring-black transition-all" />
                     <textarea placeholder="Description de votre vision..." className="w-full p-4 bg-zinc-50 rounded-xl text-sm border-none focus:ring-2 focus:ring-black transition-all h-32" />
                   </div>
                 </div>
@@ -167,11 +207,11 @@ export const VisionPanel = () => {
                 </div>
                 <div>
                   <h3 className="text-3xl font-black uppercase tracking-tighter">Conquête Réussie</h3>
-                  <p className="text-zinc-500 mt-2">Votre vision est désormais ancrée sur le territoire.</p>
+                  <p className="text-zinc-500 mt-2">Votre vision est désormais ancrée sur {selectedCells.length > 1 ? `${selectedCells.length} territoires` : 'le territoire'}.</p>
                 </div>
                 <button 
                   onClick={() => {
-                    selectCell(0, null);
+                    setSelectedCells([]);
                     setStep('details');
                   }}
                   className="px-8 py-4 bg-zinc-100 rounded-full font-black text-xs uppercase tracking-[0.2em] hover:bg-zinc-200 transition-all"
@@ -190,7 +230,7 @@ export const VisionPanel = () => {
                   onClick={() => setStep('upload')}
                   className="w-full bg-black text-white py-6 rounded-full font-black text-xs uppercase tracking-[0.3em] flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-black/10"
                 >
-                  {cellData ? "Conquérir ce territoire" : "Inscrire ma vision"}
+                  {singleCell ? "Conquérir ce territoire" : "Inscrire ma vision"}
                   <span className="bg-white/20 px-3 py-1 rounded-full">{capturePrice}€</span>
                 </button>
               ) : (

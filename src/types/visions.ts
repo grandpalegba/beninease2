@@ -19,10 +19,10 @@ export interface VisionCellData {
 
 export interface VisionsState {
   cells: Record<string, VisionCellData>; // Key: "x-y"
-  selectedCell: { x: number; y: number } | null;
+  selectedCells: { x: number; y: number }[];
   fundingGoal: number;
   totalFunded: number;
   
-  selectCell: (x: number, y: number | null) => void;
-  captureCell: (cell: VisionCellData) => void;
+  setSelectedCells: (cells: { x: number; y: number }[]) => void;
+  captureCells: (cells: VisionCellData[]) => void;
 }

@@ -11,39 +11,23 @@ interface VisionCellProps {
   y: number;
   data?: VisionCellData;
   isSelected: boolean;
-  isFlag: boolean;
   onClick: () => void;
 }
 
-export const VisionCell = React.memo(({ x, y, data, isSelected, isFlag, onClick }: VisionCellProps) => {
+export const VisionCell = React.memo(({ x, y, data, isSelected, onClick }: VisionCellProps) => {
   const isHot = (data?.captureCount || 0) >= 3;
 
   return (
     <div 
       onClick={onClick}
       className={cn(
-        "relative w-full h-full border-[0.5px] border-black/5 cursor-pointer transition-all duration-300",
-        isSelected && "ring-2 ring-black z-20",
-        isFlag && "cursor-default pointer-events-none"
+        "relative w-full h-full border-[0.5px] border-black/5 cursor-pointer transition-colors duration-150",
+        isSelected && "bg-[#D4AF37]/30 border-[#D4AF37]/60"
       )}
     >
-      {/* Flag logic - will be handled by the grid for the 8x8 area, 
-          but we can also color the cells here if needed */}
-      {isFlag && (
-         <div className="w-full h-full flex flex-col">
-            {/* Benin Flag layout: Green left (half), Yellow top-right, Red bottom-right */}
-            <div className="absolute inset-0 flex">
-               <div className="w-2/5 h-full bg-[#008751]" />
-               <div className="w-3/5 h-full flex flex-col">
-                  <div className="h-1/2 bg-[#FCD116]" />
-                  <div className="h-1/2 bg-[#E8112D]" />
-               </div>
-            </div>
-         </div>
-      )}
 
       {/* Occupied State */}
-      {data && !isFlag && (
+      {data && (
         <div className="absolute inset-0 group">
           {data.mediaType === 'photo' ? (
             <Image 
@@ -79,7 +63,7 @@ export const VisionCell = React.memo(({ x, y, data, isSelected, isFlag, onClick 
       )}
 
       {/* Empty State Hover */}
-      {!data && !isFlag && (
+      {!data && (
         <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 bg-black/5 transition-opacity">
           <Plus size={12} className="text-black/20" />
         </div>
