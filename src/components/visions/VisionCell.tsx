@@ -27,8 +27,8 @@ export const VisionCell = React.memo(({ x, y, data, isSelected, isGhostSelected,
       onMouseEnter={onMouseEnter}
       className={cn(
         "relative w-full h-full border-[0.5px] border-black/[0.05] cursor-pointer transition-colors duration-150 z-20",
-        isSelected && "bg-black/[0.05] border-black/20 z-30",
-        isGhostSelected && !isSelected && "bg-black/[0.02]",
+        isSelected && "bg-[#FFD700]/60 border-[#FFD700] z-30",
+        isGhostSelected && !isSelected && "bg-[#FFD700]/20",
         isOccupied ? "bg-zinc-100/40" : isAnchorArea ? "bg-transparent" : "bg-white"
       )}
     >
@@ -36,7 +36,7 @@ export const VisionCell = React.memo(({ x, y, data, isSelected, isGhostSelected,
       {isOccupied && (
         <div className="absolute inset-0 flex items-center justify-center">
            <div className="w-1.5 h-1.5 rounded-full bg-black/40" />
-           <div className="absolute inset-0 bg-black/[0.02] opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+           <div className="absolute inset-0 bg-black/[0.02] opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center border border-black/10">
              <span className="text-[6px] text-black font-bold uppercase tracking-tighter">
                {data?.ownerName}
              </span>

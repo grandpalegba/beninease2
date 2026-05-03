@@ -5,7 +5,16 @@ import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { useVisionsStore, GRID_SIZE } from '@/store/visions';
 import { VisionCell } from './VisionCell';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+
+const BeninFlag = () => (
+  <div className="w-full h-full flex">
+    <div className="w-2/5 h-full bg-[#008751]" />
+    <div className="w-3/5 h-full flex flex-col">
+      <div className="h-1/2 w-full bg-[#FCD116]" />
+      <div className="h-1/2 w-full bg-[#E8112D]" />
+    </div>
+  </div>
+);
 
 export const VisionsGrid = () => {
   const { cells, selectedCells, setSelectedCells, anchors } = useVisionsStore();
@@ -14,10 +23,9 @@ export const VisionsGrid = () => {
   const [selectionStart, setSelectionStart] = useState<{ x: number, y: number } | null>(null);
   const [hoverPos, setHoverPos] = useState<{ x: number, y: number } | null>(null);
 
-  const cellSize = 40; // 40px per cell
+  const cellSize = 40; 
 
   const handleCellClick = (x: number, y: number) => {
-    // Check if it's an anchor area
     const isAnchor = anchors.some(a => 
       x >= a.x && x < a.x + a.width && y >= a.y && y < a.y + a.height
     );
@@ -52,10 +60,8 @@ export const VisionsGrid = () => {
     const x2 = Math.max(selectionStart.x, hoverPos.x);
     const y1 = Math.min(selectionStart.y, hoverPos.y);
     const y2 = Math.max(selectionStart.y, hoverPos.y);
-    
     const finalX2 = Math.min(x2, x1 + 15);
     const finalY2 = Math.min(y2, y1 + 15);
-
     return x >= x1 && x <= finalX2 && y >= y1 && y <= finalY2;
   };
 
@@ -66,8 +72,6 @@ export const VisionsGrid = () => {
         const key = `${x}-${y}`;
         const isSelected = selectedCells.some(c => c.x === x && c.y === y);
         const isGhost = isGhostSelected(x, y);
-        
-        // Is this cell over an anchor?
         const isAnchorArea = anchors.some(a => 
           x >= a.x && x < a.x + a.width && y >= a.y && y < a.y + a.height
         );
@@ -127,14 +131,18 @@ export const VisionsGrid = () => {
                   height: anchor.height * cellSize,
                 }}
               >
-                <div className="relative w-full h-full bg-white">
-                  <Image
-                    src={anchor.img}
-                    alt={anchor.name}
-                    fill
-                    className="object-contain"
-                    sizes="800px"
-                  />
+                <div className="relative w-full h-full bg-white overflow-hidden">
+                  {anchor.img === 'FLAG_SVG' ? (
+                    <BeninFlag />
+                  ) : (
+                    <Image
+                      src={anchor.img}
+                      alt={anchor.name}
+                      fill
+                      className="object-contain"
+                      sizes="800px"
+                    />
+                  )}
                 </div>
               </div>
             ))}
