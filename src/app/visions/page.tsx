@@ -4,6 +4,7 @@ import React from 'react';
 import { VisionsGrid } from '@/components/visions/VisionsGrid';
 import { VisionPanel } from '@/components/visions/VisionPanel';
 import { VisionSelectionBar } from '@/components/visions/VisionSelectionBar';
+import { VisionDetailModal } from '@/components/visions/VisionDetailModal';
 
 export default function VisionsPage() {
   return (
@@ -14,6 +15,7 @@ export default function VisionsPage() {
       {/* Interactive Components */}
       <VisionSelectionBar />
       <VisionPanel />
+      <VisionDetailModal />
     </div>
   );
 }

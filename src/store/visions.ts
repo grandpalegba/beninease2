@@ -18,25 +18,40 @@ const ANCHORS: VisionAnchor[] = [
   { id: 'peches', name: 'Route des pêches', img: '/souverains/peches.jpg', x: 25, y: 5, width: 8, height: 8 },
 ];
 
-// Initialize random locks on any cell
+const MOCK_VISIONS: VisionCellData[] = [
+  { x: 12, y: 45, ownerName: "Amina_229", type: "image", contentUrl: "https://images.unsplash.com/photo-1590283431300-985223c7df48", label: "Tissage traditionnel", isLocked: false, price: 8, captureCount: 1, history: [] },
+  { x: 34, y: 18, ownerName: "Koffi_Design", type: "video", contentUrl: "https://www.w3schools.com/html/mov_bbb.mp4", label: "Danse des masques", isLocked: false, price: 8, captureCount: 1, history: [] },
+  { x: 5, y: 52, ownerName: "Studio_Ouidah", type: "image", contentUrl: "https://images.unsplash.com/photo-1547471080-7cc2caa01a7e", label: "Pêcheur au crépuscule", isLocked: false, price: 8, captureCount: 1, history: [] },
+  { x: 48, y: 8, ownerName: "Global_Benin", type: "image", contentUrl: "https://images.unsplash.com/photo-1523805009345-7448845a9e53", label: "Architecture moderne Cotonou", isLocked: false, price: 8, captureCount: 1, history: [] },
+  { x: 22, y: 37, ownerName: "Ancestral_Soul", type: "video", contentUrl: "https://vjs.zencdn.net/v/oceans.mp4", label: "Vagues de la Route des Pêches", isLocked: false, price: 8, captureCount: 1, history: [] },
+];
+
 const INITIAL_LOCKS = new Set<string>();
 for (let i = 0; i < 40; i++) {
   const x = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
   const y = Math.floor(Math.random() * (GRID_SIZE - 2)) + 1;
   const isAnchor = ANCHORS.some(a => x >= a.x && x < a.x + a.width && y >= a.y && y < a.y + a.height);
-  if (!isAnchor) {
+  const isMock = MOCK_VISIONS.some(v => v.x === x && v.y === y);
+  if (!isAnchor && !isMock) {
     INITIAL_LOCKS.add(`${x}-${y}`);
   }
 }
 
+const INITIAL_CELLS: Record<string, VisionCellData> = {};
+MOCK_VISIONS.forEach(v => {
+  INITIAL_CELLS[`${v.x}-${v.y}`] = v;
+});
+
 export const useVisionsStore = create<VisionsState>((set, get) => ({
-  cells: {},
+  cells: INITIAL_CELLS,
   anchors: ANCHORS,
   selectedCells: [],
   isPanelOpen: false,
+  viewingVision: null,
 
   setSelectedCells: (cells) => set({ selectedCells: cells }),
   setIsPanelOpen: (isOpen) => set({ isPanelOpen: isOpen }),
+  setViewingVision: (vision) => set({ viewingVision: vision }),
 
   captureCell: (x, y, ownerName) => set((state) => {
     const key = `${x}-${y}`;

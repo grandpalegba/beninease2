@@ -4,6 +4,7 @@ import React from 'react';
 import { VisionCellData } from '@/types/visions';
 import { cn } from '@/lib/utils';
 import { Lock } from 'lucide-react';
+import { useVisionsStore } from '@/store/visions';
 
 interface VisionCellProps {
   x: number;
@@ -18,22 +19,57 @@ interface VisionCellProps {
 }
 
 export const VisionCell = React.memo(({ x, y, data, isSelected, isGhostSelected, isLocked, isAnchorArea, onClick, onMouseEnter }: VisionCellProps) => {
+  const { setViewingVision } = useVisionsStore();
   const isOccupied = !!data?.ownerName;
   const locked = isLocked || data?.isLocked;
+  const hasContent = !!data?.contentUrl;
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (hasContent) {
+      e.stopPropagation();
+      setViewingVision(data || null);
+    } else {
+      onClick();
+    }
+  };
 
   return (
     <div 
-      onClick={onClick}
+      onClick={handleClick}
       onMouseEnter={onMouseEnter}
       className={cn(
-        "relative w-full h-full border-[0.5px] border-black/[0.05] cursor-pointer transition-colors duration-150 z-20",
-        isSelected && "bg-[#FFD700]/60 border-[#FFD700] z-30",
-        isGhostSelected && !isSelected && "bg-[#FFD700]/20",
-        isOccupied ? "bg-zinc-100/40" : isAnchorArea ? "bg-transparent" : "bg-white"
+        "relative w-full h-full border-[0.5px] border-black/[0.05] cursor-pointer transition-colors duration-150 z-20 overflow-hidden",
+        isSelected && "bg-[#FFD700] border-[#FFD700] z-30",
+        isGhostSelected && !isSelected && "bg-[#FFD700]/40",
+        !isSelected && !isGhostSelected && (isOccupied ? "bg-zinc-100/40" : isAnchorArea ? "bg-transparent" : "bg-white")
       )}
     >
-      {/* Occupied State */}
-      {isOccupied && (
+      {/* Vision Content (Image/Video) */}
+      {hasContent && !isSelected && (
+        <div className="absolute inset-0">
+          {data?.type === 'video' ? (
+            <video 
+              src={data.contentUrl}
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <img 
+              src={data?.contentUrl}
+              alt={data?.label}
+              className="w-full h-full object-cover"
+            />
+          )}
+          {/* Subtle overlay for grid visibility */}
+          <div className="absolute inset-0 bg-black/5" />
+        </div>
+      )}
+
+      {/* Occupied State Indicator (only if no content) */}
+      {isOccupied && !hasContent && !isSelected && (
         <div className="absolute inset-0 flex items-center justify-center">
            <div className="w-1.5 h-1.5 rounded-full bg-black/40" />
            <div className="absolute inset-0 bg-black/[0.02] opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center border border-black/10">
@@ -45,7 +81,7 @@ export const VisionCell = React.memo(({ x, y, data, isSelected, isGhostSelected,
       )}
 
       {/* Lock State */}
-      {locked && (
+      {locked && !isSelected && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/[0.03] backdrop-blur-[0.5px]">
           <Lock size={10} className="text-black/10 animate-pulse" />
         </div>

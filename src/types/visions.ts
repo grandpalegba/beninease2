@@ -4,8 +4,8 @@ export interface VisionAnchor {
   img: string;
   x: number;
   y: number;
-  width: number; // in grid cells
-  height: number; // in grid cells
+  width: number;
+  height: number;
 }
 
 export interface VisionHistory {
@@ -24,6 +24,10 @@ export interface VisionCellData {
   price: number;
   captureCount: number;
   history: VisionHistory[];
+  // New fields for vision content
+  type?: 'image' | 'video';
+  contentUrl?: string;
+  label?: string;
 }
 
 export interface VisionsState {
@@ -31,9 +35,11 @@ export interface VisionsState {
   anchors: VisionAnchor[];
   selectedCells: { x: number; y: number }[];
   isPanelOpen: boolean;
+  viewingVision: VisionCellData | null;
   
   setSelectedCells: (cells: { x: number; y: number }[]) => void;
   setIsPanelOpen: (isOpen: boolean) => void;
+  setViewingVision: (vision: VisionCellData | null) => void;
   captureCell: (x: number, y: number, ownerName: string) => void;
   unlockCell: (x: number, y: number) => void;
 }
