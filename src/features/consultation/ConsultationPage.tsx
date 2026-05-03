@@ -104,7 +104,7 @@ export default function ConsultationPage() {
       {/* Header Area */}
       <div className="w-full shrink-0 z-50 pt-2 px-6 flex flex-col items-center gap-2 md:gap-4">
         <div className="w-full flex items-center justify-start md:absolute md:top-4 md:left-4 md:w-auto">
-          <BackButton href="/sagesses" className="relative top-0 left-0" />
+          <BackButton href="/" iconColor="#008751" />
         </div>
 
         {/* Tab Selector - Pill Style */}

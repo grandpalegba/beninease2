@@ -176,7 +176,7 @@ export default function TresorDetailPage() {
       onTouchEnd={handleTouchEnd}
     >
       {/* BOUTON RETOUR */}
-      <BackButton href="/tresors" className="fixed top-6 left-6" />
+      <BackButton href="/" className="fixed top-6 left-6" />
 
       {/* ── SECTION HAUTE : Image & Infos Clés ── */}
       <section className="max-w-[1400px] mx-auto pt-12 px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-12">
@@ -223,7 +223,7 @@ export default function TresorDetailPage() {
              {/* Bouton Action */}
              <div className="mt-auto pt-12">
                <button className="w-full py-5 bg-black hover:bg-gray-800 text-white rounded-2xl font-bold text-sm tracking-widest uppercase transition-all shadow-lg active:scale-95">
-                  Invoquer le Trésor
+                  Libérer le trésor
                </button>
              </div>
           </div>

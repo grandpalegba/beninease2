@@ -152,7 +152,7 @@ export default function ProfilHistoirePage() {
         
         {/* --- HEADER BLOCK : Identité | Affiche | Valeur --- */}
         <header className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-sm border border-gray-100 flex flex-col md:flex-row items-center md:justify-between gap-6 md:gap-10 relative overflow-hidden">
-          <BackButton href="/histoires" className="absolute left-4 top-4 md:relative md:left-0 md:top-0" />
+          <BackButton href="/" className="absolute left-4 top-4 md:relative md:left-0 md:top-0" />
 
           {/* GAUCHE : Identité */}
           <div className="flex items-center gap-6 w-full md:w-auto pt-8 md:pt-0">

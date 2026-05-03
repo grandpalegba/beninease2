@@ -5,6 +5,7 @@ import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { useVisionsStore, GRID_SIZE } from '@/store/visions';
 import { VisionCell } from './VisionCell';
 import Image from 'next/image';
+import { Plus, Minus, Maximize } from 'lucide-react';
 
 const BeninFlag = () => (
   <div className="w-full h-full flex">
@@ -108,49 +109,75 @@ export const VisionsGrid = () => {
         limitToBounds={false}
         onZoomStop={(ref) => setZoomLevel(ref.state.scale)}
       >
-        <TransformComponent wrapperClass="!w-full !h-full">
-          <div 
-            className="relative"
-            style={{ 
-              width: GRID_SIZE * cellSize, 
-              height: GRID_SIZE * cellSize,
-              display: 'grid',
-              gridTemplateColumns: `repeat(${GRID_SIZE}, ${cellSize}px)`,
-              gridTemplateRows: `repeat(${GRID_SIZE}, ${cellSize}px)`
-            }}
-          >
-            {/* Anchors Overlays (Z-10) */}
-            {anchors.map((anchor) => (
-              <div
-                key={anchor.id}
-                className="absolute z-10"
-                style={{
-                  left: anchor.x * cellSize,
-                  top: anchor.y * cellSize,
-                  width: anchor.width * cellSize,
-                  height: anchor.height * cellSize,
+        {({ zoomIn, zoomOut, resetTransform }) => (
+          <>
+            {/* Zoom Controls UI */}
+            <div className="absolute right-6 top-1/2 -translate-y-1/2 z-[400] flex flex-col gap-2">
+              <button 
+                onClick={() => zoomIn()}
+                className="w-12 h-12 bg-white rounded-full shadow-lg border border-gray-100 flex items-center justify-center text-[#008751] hover:scale-110 active:scale-95 transition-all"
+              >
+                <Plus size={20} strokeWidth={3} />
+              </button>
+              <button 
+                onClick={() => zoomOut()}
+                className="w-12 h-12 bg-white rounded-full shadow-lg border border-gray-100 flex items-center justify-center text-[#008751] hover:scale-110 active:scale-95 transition-all"
+              >
+                <Minus size={20} strokeWidth={3} />
+              </button>
+              <button 
+                onClick={() => resetTransform()}
+                className="w-12 h-12 bg-white rounded-full shadow-lg border border-gray-100 flex items-center justify-center text-[#008751] hover:scale-110 active:scale-95 transition-all mt-4"
+              >
+                <Maximize size={18} strokeWidth={3} />
+              </button>
+            </div>
+
+            <TransformComponent wrapperClass="!w-full !h-full">
+              <div 
+                className="relative"
+                style={{ 
+                  width: GRID_SIZE * cellSize, 
+                  height: GRID_SIZE * cellSize,
+                  display: 'grid',
+                  gridTemplateColumns: `repeat(${GRID_SIZE}, ${cellSize}px)`,
+                  gridTemplateRows: `repeat(${GRID_SIZE}, ${cellSize}px)`
                 }}
               >
-                <div className="relative w-full h-full bg-white overflow-hidden">
-                  {anchor.img === 'FLAG_SVG' ? (
-                    <BeninFlag />
-                  ) : (
-                    <Image
-                      src={anchor.img}
-                      alt={anchor.name}
-                      fill
-                      className="object-contain"
-                      sizes="800px"
-                    />
-                  )}
-                </div>
-              </div>
-            ))}
+                {/* Anchors Overlays (Z-10) */}
+                {anchors.map((anchor) => (
+                  <div
+                    key={anchor.id}
+                    className="absolute z-10"
+                    style={{
+                      left: anchor.x * cellSize,
+                      top: anchor.y * cellSize,
+                      width: anchor.width * cellSize,
+                      height: anchor.height * cellSize,
+                    }}
+                  >
+                    <div className="relative w-full h-full bg-white overflow-hidden">
+                      {anchor.img === 'FLAG_SVG' ? (
+                        <BeninFlag />
+                      ) : (
+                        <Image
+                          src={anchor.img}
+                          alt={anchor.name}
+                          fill
+                          className="object-contain"
+                          sizes="800px"
+                        />
+                      )}
+                    </div>
+                  </div>
+                ))}
 
-            {/* Grid Cells (Z-20) */}
-            {renderCells()}
-          </div>
-        </TransformComponent>
+                {/* Grid Cells (Z-20) */}
+                {renderCells()}
+              </div>
+            </TransformComponent>
+          </>
+        )}
       </TransformWrapper>
     </div>
   );

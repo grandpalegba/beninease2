@@ -16,7 +16,7 @@ const GeneralitesPage = () => {
     <div className="min-h-screen bg-white text-[#1a1a1a] pb-32">
       {/* Navbar Minimalist */}
       <nav className="absolute top-0 left-0 right-0 z-50 px-6 py-6 flex justify-start pointer-events-none">
-        <BackButton className="relative top-0 left-0 pointer-events-auto" />
+        <BackButton href="/" className="relative top-0 left-0 pointer-events-auto" />
       </nav>
 
       <main className="max-w-4xl mx-auto px-6 pt-16 flex flex-col items-center">
