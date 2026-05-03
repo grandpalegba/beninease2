@@ -10,7 +10,7 @@ const GUARDIANS = [
   { phase: "III", name: "Abuela Wata", role: "La Traversée", desc: "Mère des eaux, elle guide le voyage transatlantique inverse. Elle ramène ceux qui furent emportés par l'océan vers leur terre d'origine.", img: "/quest/deity-wata.jpg", step: "/quest/step-3.png" },
   { phase: "IV", name: "Avô Heviosso", role: "Le Ciel", desc: "Maître du tonnerre et de la justice, il purifie le chemin de sa foudre. Il rappelle que le Retour exige vérité et rectitude.", img: "/quest/deity-heviosso.jpg", step: "/quest/step-4.png" },
   { phase: "V", name: "Baba Sakpata", role: "L'Ancrage", desc: "Seigneur de la terre du Bénin, il accueille les trésors et les voix. Il enracine la renaissance dans le sol des ancêtres.", img: "/quest/deity-sakpata.jpg", step: "/quest/step-5.png" },
-  { phase: "VI", name: "Nonna Minona", role: "La Bénédiction", desc: "Protectrice des femmes et des foyers, elle ouvre la Porte du Retour. Sa bénédiction scelle l'accomplissement de l'Odyssée.", img: "/quest/deity-nonna.jpg", step: "/quest/step-6.png" },
+  { phase: "VI", name: "Yony", role: "La Bénédiction", desc: "Protectrice des femmes et des foyers, elle ouvre la Porte du Retour. Sa bénédiction scelle l'accomplissement de l'Odyssée.", img: "/quest/deity-yony.jpg", step: "/quest/step-6.png" },
 ];
 
 const BLACK_HORSE = "/quest/black-horse.png";
@@ -35,14 +35,14 @@ export function Guardians() {
 
           {/* Navigation par vignettes step (œufs progressifs) - Déplacée et Réduite */}
           <div className="relative pt-16 pb-8">
-            <div className="grid grid-cols-6 gap-2 md:gap-4 max-w-[320px] md:max-w-[480px] mx-auto">
+            <div className="grid grid-cols-6 gap-2 md:gap-4 max-w-[340px] md:max-w-[480px] mx-auto">
               {GUARDIANS.map((g, idx) => {
                 const isActive = idx === active;
                 return (
                   <button
                     key={g.name}
                     onClick={() => setActive(idx)}
-                    className="relative flex flex-col items-center text-center group"
+                    className="relative flex flex-col items-center text-center group min-w-0"
                   >
                     {/* Cheval noir au-dessus de la vignette active */}
                     {isActive && (
@@ -68,10 +68,10 @@ export function Guardians() {
                       <Image src={g.step} alt={`Étape ${idx + 1}`} fill className="object-contain" />
                     </div>
 
-                    <div className="mt-3 text-[7px] md:text-[8px] uppercase tracking-[0.2em] text-zinc-400 font-mono">
+                    <div className="mt-3 text-[7px] md:text-[8px] uppercase tracking-[0.2em] text-zinc-400 font-mono whitespace-nowrap">
                       Phase {g.phase}
                     </div>
-                    <div className={`mt-1 font-display text-[8px] md:text-[10px] font-semibold tracking-tight transition-colors ${
+                    <div className={`mt-1 font-display text-[8px] md:text-[10px] font-semibold tracking-tight transition-colors whitespace-nowrap ${
                       isActive ? "text-zinc-950" : "text-zinc-500"
                     }`}>
                       {g.name}
