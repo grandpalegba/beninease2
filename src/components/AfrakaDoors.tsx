@@ -7,57 +7,57 @@ import Image from "next/image";
 const FRAGMENTS = [
   {
     id: 1,
-    title: "L’Origine",
+    title: "1. ORIGINE",
     fragment: "Dans les temps anciens, les Grands Prêtres fusionnèrent la Sagesse du Fâ (le secret d’Amon) et la Lumière de Râ (la promesse d’Akhenaton) dans l’Œuf Primordial, matrice de l’harmonie universelle.",
     image: "afraka_1.jpg",
     className: "md:col-span-2 md:row-span-1 h-[250px]"
   },
   {
     id: 2,
-    title: "La Mission",
-    fragment: "Face à la chute imminente de l'Égypte antique, ils confièrent à une femme, Nyɔnu (Yony), figure de pureté originelle, la mission sacrée d'escorter l'Œuf vers une terre élue : le Bénin.",
+    title: "2. MISSION de Yony",
+    fragment: "Face à la chute imminente de l’Égypte antique, ils confièrent à une femme, Nyɔnu (Yony), figure de pureté originelle, la mission sacrée d'escorter l'Œuf vers une terre élue : le Bénin.",
     image: "afraka_2.jpg",
     className: "md:col-span-1 md:row-span-2 h-full min-h-[300px]"
   },
   {
     id: 3,
-    title: "La Parole de Pouvoir",
-    fragment: "Ils lui transmirent la Phrase Clé : À mɔn, Gbè hin azi bô ayidjlè, amɔ̌ Acɛ na tɔn. (Tu as vu, l’univers porte l’œuf que la terre convoite, et pourtant la puissance se manifestera.)",
+    title: "3. PAROLES DE POUVOIR",
+    fragment: "Ils lui transmirent la Phrase Clé : À mɔn, Gbè hin azi bô ayidjlè, amɔ̃ Acɛ na tɔn. (Tu as vu, l'univers porte l'œuf que la terre convoite, et pourtant la puissance se manifestera.)",
     image: "afraka_3.jpg",
     className: "md:col-span-1 md:row-span-1 h-[250px]"
   },
   {
     id: 4,
-    title: "L’Ancrage",
-    fragment: "Arrivée sur cette terre bénie, Nyɔnu (Yony) utilisa ce pouvoir pour imprégner les sols, les champs et les artefacts royaux de l'énergie pure de l’Œuf.",
+    title: "4. ANCRAGE",
+    fragment: "Arrivée sur cette terre bénie, Yony utilisa ce pouvoir pour imprégner et consacrer les artefacts royaux de l'énergie pure de l'Œuf, concentré de la puissance des 256 symboles du Fâ.",
     image: "afraka_4.jpg",
     className: "md:col-span-1 md:row-span-1 h-[250px]"
   },
   {
     id: 5,
-    title: "La Fragmentation",
-    fragment: "Mais comme le corps d'Osiris, l'Œuf fut fragmenté par la colonisation. Ses 256 cellules furent dispersées à travers le monde, emportées pour bâtir un système fondé sur la division.",
+    title: "5. LA FRAGMENTATION",
+    fragment: "Mais l'Œuf fut fragmenté par des Envahisseurs conscients que la dispersion des 256 trésors sacrés à travers le monde faciliterait la création d'un système mondial fondé sur la division.",
     image: "afraka_5.jpg",
     className: "md:col-span-1 md:row-span-1 h-[250px]"
   },
   {
     id: 6,
-    title: "Les Terres Sacrées",
-    fragment: "Si les trésors physiques dorment aujourd'hui dans des musées lointains, leur âme est restée liée à 16 terres sacrées. L'énergie demeure en suspens, attendant son réveil.",
+    title: "6. Alliance des 16",
+    fragment: "La prophétie annonce que la guérison exige un acte de souveraineté mondiale : l'union de 16 pays alliés pour briser les chaînes de la dispersion et restaurer l'intégrité de la mémoire.",
     image: "afraka_6.jpg",
     className: "md:col-span-1 md:row-span-2 h-full min-h-[300px]"
   },
   {
     id: 7,
-    title: "Le Rechargement",
-    fragment: "Pour que la puissance jaillisse à nouveau, chaque trésor doit être spirituellement rechargé par le passage des Gardiens sur ces 16 sites ancestraux. Chaque territoire réveille une part du code.",
+    title: "7. LA RENAISSANCE",
+    fragment: "Ce rassemblement sacré redonnera une voix aux lignées invisibilisées, célébrant la puissance créatrice des femmes et la profondeur des gardiens de savoirs, piliers de notre complétude.",
     image: "afraka_7.jpg",
     className: "md:col-span-2 md:row-span-1 h-[250px]"
   },
   {
     id: 8,
-    title: "La Restauration",
-    fragment: "Yonyverse est l'univers parallèle dans lequel la libération des 256 trésors, permet de restaurer la puissance de l'Oeuf originel et l'hamonie du monde.",
+    title: "8. LA RESTAURATION",
+    fragment: "Yonyverse est l'univers parallèle où la libération et le retour des 256 trésors permettent de restaurer la puissance de l'Œuf originel : celle de restaurer et de maintenir l'harmonie sur Terre",
     image: "afraka_8.jpg",
     className: "md:col-span-1 md:row-span-1 h-[250px]"
   }
