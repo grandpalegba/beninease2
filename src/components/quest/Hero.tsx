@@ -30,7 +30,7 @@ export function Hero() {
           </h1>
 
           <h2 className="mt-8 font-display text-2xl md:text-4xl lg:text-5xl font-medium tracking-tight leading-[1.05] text-zinc-800">
-            La Renaissance commence
+            L'Harmonie du monde commence
             <br />
             par la Porte du Retour.
           </h2>
