@@ -29,7 +29,7 @@ const FRAGMENTS = [
   {
     id: 4,
     title: "4. ANCRAGE",
-    fragment: "Arrivée sur cette terre bénie, Yony utilisa ce pouvoir pour imprégner et consacrer les artefacts royaux de l'énergie pure de l'Œuf, concentré de la puissance des 256 symboles du Fâ.",
+    fragment: "Arrivée sur cette terre bénie, Yony utilisa ce pouvoir pour imprégner et consacrer les artefacts royaux de l'énergie pure de l'Œuf, concentré de la puissance des 256 signes du Fâ.",
     image: "afraka_4.jpg",
     className: "md:col-span-1 md:row-span-1 h-[250px]"
   },
