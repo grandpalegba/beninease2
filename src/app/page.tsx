@@ -28,7 +28,7 @@ export default function Home() {
               <div className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--benin-green)" }} />
               <div className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--benin-yellow)" }} />
               <div className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--benin-red)" }} />
-              <span className="ml-2 uppercase tracking-[0.25em] font-medium">Black <span className="text-black">To</span> Benin</span>
+              <span className="ml-2 uppercase tracking-[0.25em] font-medium text-black">Yonyverse</span>
             </div>
             <div className="uppercase tracking-[0.25em]">© L'Odyssée du Retour</div>
           </div>

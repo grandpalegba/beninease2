@@ -168,7 +168,7 @@ const TalentsContent = () => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: "BLACK TO BENIN - Talents du Bénin",
+          title: "Yonyverse - Talents du Bénin",
           text: "Découvrez les Trésors, les Bâtisseurs et les Talents du patrimoine du Bénin.",
           url: shareUrl,
         });

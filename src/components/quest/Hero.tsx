@@ -24,8 +24,8 @@ export function Hero() {
           className="text-center lg:text-left"
         >
           <h1 className="font-display font-semibold tracking-tight leading-[0.9] text-zinc-950">
-            <span className="block text-[14vw] lg:text-[7.5rem] uppercase">
-              Black <span className="text-black">To</span> Benin
+            <span className="block text-[14vw] lg:text-[7.5rem] uppercase text-zinc-950">
+              Yonyverse
             </span>
           </h1>
 

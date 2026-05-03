@@ -8,7 +8,7 @@ import Providers from "@/components/Providers";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
-  title: "BLACK TO BENIN - Les Trésors du Bénin",
+  title: "Yonyverse - Les Trésors du Bénin",
   description: "Découvrez les talents et les mystères du patrimoine béninois.",
   keywords: ["Bénin", "Talents", "Culture", "Patrimoine", "Excellence"],
   icons: {
@@ -17,12 +17,12 @@ export const metadata: Metadata = {
     apple: '/favicon.png',
   },
   openGraph: {
-    title: "BLACK TO BENIN - L'Excellence Béninoise",
+    title: "Yonyverse - L'Excellence Béninoise",
     description: "Découvrez les talents et les mystères du patrimoine béninois.",
     url: "https://beninease.space",
     type: "website",
     locale: "fr_BJ",
-    siteName: "BLACK TO BENIN",
+    siteName: "Yonyverse",
   },
 };
 
