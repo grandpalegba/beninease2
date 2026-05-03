@@ -7,7 +7,7 @@ const RANKS = [
   { name: "Blackstone", desc: "La fondation", img: "/quest/hero-blackstone.png", treasures: 10 },
   { name: "Blackstar", desc: "Le guide", img: "/quest/hero-blackstar.png", treasures: 20 },
   { name: "Blacksun", desc: "Le rayonnement", img: "/quest/hero-blacksun.png", treasures: 30 },
-  { name: "Blackswan", desc: "La métamorphose rare", img: "/quest/hero-blackswan.png", treasures: 40 },
+  { name: "Blackswan", desc: "La métamorphose rare", img: "/quest/hero-blackswan.jpg", treasures: 40 },
 ];
 
 export function CtaFinal() {
