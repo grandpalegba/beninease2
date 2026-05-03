@@ -5,12 +5,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 
 const GUARDIANS = [
-  { phase: "I", name: "GrandPa Legba", role: "L'Ouverture", desc: "Gardien des carrefours, il ouvre les portes du voyage et accueille l'appel des 360 voix. Sans sa bénédiction, aucun Retour ne peut commencer.", img: "/quest/deity-legba.jpg", step: "/quest/step-1.png" },
-  { phase: "II", name: "Babu Gu", role: "L'Avancée", desc: "Forgeron divin, il donne la force et les outils pour tracer le chemin. Il transforme la volonté en mouvement sur la route du Retour.", img: "/quest/deity-gu.jpg", step: "/quest/step-2.png" },
-  { phase: "III", name: "Abuela Wata", role: "La Traversée", desc: "Mère des eaux, elle guide le voyage transatlantique inverse. Elle ramène ceux qui furent emportés par l'océan vers leur terre d'origine.", img: "/quest/deity-wata.jpg", step: "/quest/step-3.png" },
-  { phase: "IV", name: "Avô Heviosso", role: "Le Ciel", desc: "Maître du tonnerre et de la justice, il purifie le chemin de sa foudre. Il rappelle que le Retour exige vérité et rectitude.", img: "/quest/deity-heviosso.jpg", step: "/quest/step-4.png" },
-  { phase: "V", name: "Baba Sakpata", role: "L'Ancrage", desc: "Seigneur de la terre du Bénin, il accueille les trésors et les voix. Il enracine la renaissance dans le sol des ancêtres.", img: "/quest/deity-sakpata.jpg", step: "/quest/step-5.png" },
-  { phase: "VI", name: "Yony", role: "La Bénédiction", desc: "Protectrice des femmes et des foyers, elle ouvre la Porte du Retour. Sa bénédiction scelle l'accomplissement de l'Odyssée.", img: "/quest/deity-yony.jpg", step: "/quest/step-6.png" },
+  { phase: "I", name: "GrandPa Legba", role: "L'Ouverture", desc: "Gardien des carrefours, il déverrouille les portes du voyage et accueille l'appel des voix. Sans sa bénédiction, aucun mouvement vers la terre d'origine ne peut s'initier.", img: "/quest/deity-legba.jpg", step: "/quest/step-1.png" },
+  { phase: "II", name: "Nan Aïzan", role: "Le Souffle", desc: "Tisseuse de l'invisible, elle purifie l'âme des trésors libérés et réaccorde leur vibration. Elle transmute l'énergie retrouvée en un souffle d'harmonie pour la Complétude.", img: "/quest/deity-aizan.png", step: "/quest/step-2.png" },
+  { phase: "III", name: "Abuela Wata", role: "La Traversée", desc: "Mère des abysses, elle guide le voyage transatlantique inverse à travers la mémoire des eaux. Elle ramène ceux qui furent emportés par l'océan vers leur sanctuaire premier.", img: "/quest/deity-wata.jpg", step: "/quest/step-3.png" },
+  { phase: "IV", name: "Avô Heviosso", role: "La Justice", desc: "Maître du tonnerre, il foudroie les obstacles et purifie le chemin par sa lumière céleste. Il rappelle que le Retour exige une vérité absolue et une rectitude sans faille.", img: "/quest/deity-heviosso.jpg", step: "/quest/step-4.png" },
+  { phase: "V", name: "Baba Sakpata", role: "L'Ancrage", desc: "Seigneur du sol, il accueille les trésors retrouvés pour les sceller dans la terre du Bénin. Il enracine la renaissance et stabilise la force des ancêtres pour l'éternité.", img: "/quest/deity-sakpata.jpg", step: "/quest/step-5.png" },
+  { phase: "VI", name: "Yony", role: "L'Union", desc: "Éveil de la conscience, elle rassemble les 16 nations et les 256 éclats de savoir libérés. Elle est le pont final qui transforme la restitution en une Renaissance globale.", img: "/quest/deity-yony.jpg", step: "/quest/step-6.png" },
 ];
 
 const BLACK_HORSE = "/quest/black-horse.png";
