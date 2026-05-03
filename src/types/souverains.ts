@@ -1,4 +1,4 @@
-export interface VisionAnchor {
+export interface SouverainsAnchor {
   id: string;
   name: string;
   img: string;
@@ -8,13 +8,7 @@ export interface VisionAnchor {
   height: number; // in grid cells
 }
 
-export interface VisionHistory {
-  ownerName: string;
-  price: number;
-  date: string;
-}
-
-export interface VisionCellData {
+export interface SouverainsCellData {
   x: number;
   y: number;
   ownerName?: string;
@@ -22,13 +16,11 @@ export interface VisionCellData {
   isAnchor?: boolean;
   anchorId?: string;
   price: number;
-  captureCount: number;
-  history: VisionHistory[];
 }
 
-export interface VisionsState {
-  cells: Record<string, VisionCellData>;
-  anchors: VisionAnchor[];
+export interface SouverainsState {
+  cells: Record<string, SouverainsCellData>;
+  anchors: SouverainsAnchor[];
   selectedCells: { x: number; y: number }[];
   isPanelOpen: boolean;
   

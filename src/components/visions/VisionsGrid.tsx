@@ -1,80 +1,49 @@
 "use client";
 
-import React, { useRef, useEffect, useState } from 'react';
-import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-import { Plus, Minus } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { useVisionsStore, GRID_SIZE } from '@/store/visions';
 import { VisionCell } from './VisionCell';
-
-const CELL_SIZE = 40;
-const GRID_PX = GRID_SIZE * CELL_SIZE;
+import Image from 'next/image';
+import { motion } from 'framer-motion';
 
 export const VisionsGrid = () => {
-  const { cells, selectedCells, setSelectedCells } = useVisionsStore();
+  const { cells, selectedCells, setSelectedCells, anchors } = useVisionsStore();
   const wrapperRef = useRef<any>(null);
-  const [zoomLevel, setZoomLevel] = useState<number>(0.8);
+  const [zoomLevel, setZoomLevel] = useState<number>(1.2);
   const [selectionStart, setSelectionStart] = useState<{ x: number, y: number } | null>(null);
   const [hoverPos, setHoverPos] = useState<{ x: number, y: number } | null>(null);
 
-  // Handlers for zoom in/out
-  const handleZoomIn = () => {
-    if (wrapperRef.current) {
-      wrapperRef.current.zoomIn();
-      setZoomLevel(prev => Math.min(prev + 0.2, 4));
-    }
-  };
-
-  const handleZoomOut = () => {
-    if (wrapperRef.current) {
-      wrapperRef.current.zoomOut();
-      setZoomLevel(prev => Math.max(prev - 0.2, 0.1));
-    }
-  };
-
-  // Center on the flag
-  useEffect(() => {
-    if (wrapperRef.current) {
-      const centerX = (28 + 4) * CELL_SIZE;
-      const centerY = (28 + 4) * CELL_SIZE;
-      wrapperRef.current.setTransform(
-        -centerX + window.innerWidth / 2, 
-        -centerY + window.innerHeight / 2, 
-        0.8
-      );
-    }
-  }, []);
-
-  const isFlagArea = (x: number, y: number) => {
-    return x >= 28 && x <= 35 && y >= 28 && y <= 35;
-  };
+  const cellSize = 40; // 40px per cell
 
   const handleCellClick = (x: number, y: number) => {
-    if (isFlagArea(x, y)) return;
+    // Check if it's an anchor area
+    const isAnchor = anchors.some(a => 
+      x >= a.x && x < a.x + a.width && y >= a.y && y < a.y + a.height
+    );
+    if (isAnchor) return;
 
     if (!selectionStart) {
       setSelectionStart({ x, y });
       setSelectedCells([{ x, y }]);
     } else {
-      // Define the rectangle
       const x1 = Math.min(selectionStart.x, x);
       const x2 = Math.max(selectionStart.x, x);
       const y1 = Math.min(selectionStart.y, y);
       const y2 = Math.max(selectionStart.y, y);
-
-      // Limit to 8x8
-      const finalX2 = Math.min(x2, x1 + 7);
-      const finalY2 = Math.min(y2, y1 + 7);
-
+      
       const newSelection = [];
-      for (let j = y1; j <= finalY2; j++) {
-        for (let i = x1; i <= finalX2; i++) {
-          if (!isFlagArea(i, j)) {
-            newSelection.push({ x: i, y: j });
-          }
+      // Limit to 8x8 or similar
+      const finalX2 = Math.min(x2, x1 + 15);
+      const finalY2 = Math.min(y2, y1 + 15);
+
+      for (let iy = y1; iy <= finalY2; iy++) {
+        for (let ix = x1; ix <= finalX2; ix++) {
+          newSelection.push({ x: ix, y: iy });
         }
       }
       setSelectedCells(newSelection);
-      setSelectionStart(null); // Reset for next selection
+      setSelectionStart(null);
     }
   };
 
@@ -85,9 +54,8 @@ export const VisionsGrid = () => {
     const y1 = Math.min(selectionStart.y, hoverPos.y);
     const y2 = Math.max(selectionStart.y, hoverPos.y);
     
-    // Limit to 8x8
-    const finalX2 = Math.min(x2, x1 + 7);
-    const finalY2 = Math.min(y2, y1 + 7);
+    const finalX2 = Math.min(x2, x1 + 15);
+    const finalY2 = Math.min(y2, y1 + 15);
 
     return x >= x1 && x <= finalX2 && y >= y1 && y <= finalY2;
   };
@@ -120,72 +88,64 @@ export const VisionsGrid = () => {
   return (
     <div 
       onMouseLeave={() => setHoverPos(null)}
-      className="w-full h-full bg-[#f9f9f9] overflow-hidden cursor-grab active:cursor-grabbing relative"
+      className="w-full h-full bg-white overflow-hidden cursor-grab active:cursor-grabbing relative"
     >
-        <TransformWrapper
-          ref={wrapperRef}
-          initialScale={zoomLevel}
-          minScale={0.1}
-          maxScale={4}
-          centerOnInit={false}
-          limitToBounds={false}
-        >
-          {/* Zoom Controls */}
-          <div className="absolute top-4 left-4 z-20 flex flex-col gap-2">
-            <button onClick={handleZoomIn} className="bg-white/80 p-2 rounded-full shadow-md hover:bg-white">
-              <Plus size={16} />
-            </button>
-            <button onClick={handleZoomOut} className="bg-white/80 p-2 rounded-full shadow-md hover:bg-white">
-              <Minus size={16} />
-            </button>
-          </div>
-          <TransformComponent
-            wrapperStyle={{ width: "100vw", height: "100vh" }}
-            contentStyle={{ width: `${GRID_PX}px`, height: `${GRID_PX}px` }}
-          >
+      <TransformWrapper
+        ref={wrapperRef}
+        initialScale={zoomLevel}
+        minScale={0.5}
+        maxScale={4}
+        centerOnInit
+        limitToBounds={false}
+        onZoomStop={(ref) => setZoomLevel(ref.state.scale)}
+      >
+        <TransformComponent wrapperClass="!w-full !h-full">
           <div 
-            className="grid relative"
-            style={{
-              gridTemplateColumns: `repeat(${GRID_SIZE}, ${CELL_SIZE}px)`,
-              gridTemplateRows: `repeat(${GRID_SIZE}, ${CELL_SIZE}px)`,
-              width: `${GRID_PX}px`,
-              height: `${GRID_PX}px`,
-              background: 'white',
+            className="relative"
+            style={{ 
+              width: GRID_SIZE * cellSize, 
+              height: GRID_SIZE * cellSize,
+              display: 'grid',
+              gridTemplateColumns: `repeat(${GRID_SIZE}, ${cellSize}px)`,
+              gridTemplateRows: `repeat(${GRID_SIZE}, ${cellSize}px)`
             }}
           >
             {renderCells()}
 
-            {/* Benin Flag - One Single Unit */}
-            <div 
-              className="absolute flex"
-              style={{
-                left: `${28 * CELL_SIZE}px`,
-                top: `${28 * CELL_SIZE}px`,
-                width: `${8 * CELL_SIZE}px`,
-                height: `${8 * CELL_SIZE}px`,
-                pointerEvents: 'none',
-                zIndex: 10
-              }}
-            >
-               <div className="w-2/5 h-full bg-[#008751]" />
-               <div className="w-3/5 h-full flex flex-col">
-                  <div className="h-1/2 bg-[#FCD116]" />
-                  <div className="h-1/2 bg-[#E8112D]" />
-               </div>
-            </div>
+            {/* Anchors Overlays */}
+            {anchors.map((anchor) => (
+              <motion.div
+                key={anchor.id}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="absolute pointer-events-auto z-20"
+                style={{
+                  left: anchor.x * cellSize,
+                  top: anchor.y * cellSize,
+                  width: anchor.width * cellSize,
+                  height: anchor.height * cellSize,
+                  filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.15))'
+                }}
+              >
+                <div className="relative w-full h-full rounded-sm overflow-hidden bg-white group">
+                  <Image
+                    src={anchor.img}
+                    alt={anchor.name}
+                    fill
+                    className="object-contain"
+                    sizes="800px"
+                  />
+                  {/* Hover tooltip */}
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white p-2 text-center">
+                    <p className="text-[10px] font-black uppercase tracking-widest leading-tight">{anchor.name}</p>
+                    <p className="text-[8px] font-bold mt-1 opacity-60">SANCTUAIRE INVIOLABLE</p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </TransformComponent>
       </TransformWrapper>
-
-      {/* Selection Mode Hint */}
-      {selectionStart && (
-        <div className="fixed bottom-32 left-1/2 -translate-x-1/2 z-[200] pointer-events-none">
-          <div className="bg-black text-white text-[10px] font-black uppercase tracking-[0.3em] px-6 py-3 rounded-full flex items-center gap-3 shadow-2xl animate-bounce">
-            <span className="w-2 h-2 rounded-full bg-[#D4AF37] inline-block" />
-            Sélectionner l'espace à acquérir
-          </div>
-        </div>
-      )}
     </div>
   );
 };

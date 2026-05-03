@@ -3,8 +3,7 @@
 import React from 'react';
 import { VisionCellData } from '@/types/visions';
 import { cn } from '@/lib/utils';
-import Image from 'next/image';
-import { Plus } from 'lucide-react';
+import { Lock } from 'lucide-react';
 
 interface VisionCellProps {
   x: number;
@@ -12,64 +11,42 @@ interface VisionCellProps {
   data?: VisionCellData;
   isSelected: boolean;
   isGhostSelected?: boolean;
+  isLocked?: boolean;
   onClick: () => void;
   onMouseEnter?: () => void;
 }
 
-export const VisionCell = React.memo(({ x, y, data, isSelected, isGhostSelected, onClick, onMouseEnter }: VisionCellProps) => {
-  const isHot = (data?.captureCount || 0) >= 3;
+export const VisionCell = React.memo(({ x, y, data, isSelected, isGhostSelected, isLocked, onClick, onMouseEnter }: VisionCellProps) => {
+  const isOccupied = !!data?.ownerName;
+  const locked = isLocked || data?.isLocked;
 
   return (
     <div 
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       className={cn(
-        "relative w-full h-full border-[0.5px] border-black/5 cursor-pointer transition-colors duration-150",
-        isSelected && "bg-[#D4AF37]/30 border-[#D4AF37]/60",
-        isGhostSelected && !isSelected && "bg-[#D4AF37]/10 border-[#D4AF37]/30"
+        "relative w-full h-full border-[0.5px] border-black/[0.03] cursor-pointer transition-colors duration-150 bg-white",
+        isSelected && "bg-black/[0.05] border-black/20 z-10",
+        isGhostSelected && !isSelected && "bg-black/[0.02]",
+        isOccupied && "bg-zinc-50"
       )}
     >
-
       {/* Occupied State */}
-      {data && (
-        <div className="absolute inset-0 group">
-          {data.mediaType === 'photo' ? (
-            <Image 
-              src={data.mediaUrl} 
-              alt={data.ownerName}
-              fill
-              className="object-cover"
-              sizes="100px"
-            />
-          ) : (
-            <video 
-              src={data.mediaUrl}
-              className="w-full h-full object-cover"
-              muted
-              loop
-              onMouseEnter={(e) => e.currentTarget.play()}
-              onMouseLeave={(e) => e.currentTarget.pause()}
-            />
-          )}
-          
-          {/* Hot Zone Aura */}
-          {isHot && (
-            <div className="absolute inset-0 shadow-[inset_0_0_15px_rgba(212,175,55,0.5)] animate-pulse border border-[#D4AF37]/30" />
-          )}
-
-          {/* Hover Overlay */}
-          <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-            <span className="text-[6px] text-white font-bold uppercase tracking-tighter">
-              {data.ownerName}
-            </span>
-          </div>
+      {isOccupied && (
+        <div className="absolute inset-0 flex items-center justify-center">
+           <div className="w-1.5 h-1.5 rounded-full bg-black/20" />
+           <div className="absolute inset-0 bg-black/[0.02] opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+             <span className="text-[6px] text-black font-bold uppercase tracking-tighter">
+               {data?.ownerName}
+             </span>
+           </div>
         </div>
       )}
 
-      {/* Empty State Hover */}
-      {!data && (
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 bg-black/5 transition-opacity">
-          <Plus size={12} className="text-black/20" />
+      {/* Lock State */}
+      {locked && (
+        <div className="absolute inset-0 flex items-center justify-center bg-zinc-50/50 backdrop-blur-[1px]">
+          <Lock size={10} className="text-black/10 animate-pulse" />
         </div>
       )}
     </div>
