@@ -33,7 +33,6 @@ export const VisionsGrid = () => {
       const y2 = Math.max(selectionStart.y, y);
       
       const newSelection = [];
-      // Limit to 8x8 or similar
       const finalX2 = Math.min(x2, x1 + 15);
       const finalY2 = Math.min(y2, y1 + 15);
 
@@ -67,6 +66,11 @@ export const VisionsGrid = () => {
         const key = `${x}-${y}`;
         const isSelected = selectedCells.some(c => c.x === x && c.y === y);
         const isGhost = isGhostSelected(x, y);
+        
+        // Is this cell over an anchor?
+        const isAnchorArea = anchors.some(a => 
+          x >= a.x && x < a.x + a.width && y >= a.y && y < a.y + a.height
+        );
 
         grid.push(
           <VisionCell
@@ -76,6 +80,7 @@ export const VisionsGrid = () => {
             data={cells[key]}
             isSelected={isSelected}
             isGhostSelected={isGhost}
+            isAnchorArea={isAnchorArea}
             onClick={() => handleCellClick(x, y)}
             onMouseEnter={() => setHoverPos({ x, y })}
           />
@@ -93,7 +98,7 @@ export const VisionsGrid = () => {
       <TransformWrapper
         ref={wrapperRef}
         initialScale={zoomLevel}
-        minScale={0.5}
+        minScale={0.1}
         maxScale={4}
         centerOnInit
         limitToBounds={false}
@@ -110,24 +115,19 @@ export const VisionsGrid = () => {
               gridTemplateRows: `repeat(${GRID_SIZE}, ${cellSize}px)`
             }}
           >
-            {renderCells()}
-
-            {/* Anchors Overlays */}
+            {/* Anchors Overlays (Z-10) */}
             {anchors.map((anchor) => (
-              <motion.div
+              <div
                 key={anchor.id}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="absolute pointer-events-auto z-20"
+                className="absolute z-10"
                 style={{
                   left: anchor.x * cellSize,
                   top: anchor.y * cellSize,
                   width: anchor.width * cellSize,
                   height: anchor.height * cellSize,
-                  filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.15))'
                 }}
               >
-                <div className="relative w-full h-full rounded-sm overflow-hidden bg-white group">
+                <div className="relative w-full h-full bg-white">
                   <Image
                     src={anchor.img}
                     alt={anchor.name}
@@ -135,14 +135,12 @@ export const VisionsGrid = () => {
                     className="object-contain"
                     sizes="800px"
                   />
-                  {/* Hover tooltip */}
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white p-2 text-center">
-                    <p className="text-[10px] font-black uppercase tracking-widest leading-tight">{anchor.name}</p>
-                    <p className="text-[8px] font-bold mt-1 opacity-60">SANCTUAIRE INVIOLABLE</p>
-                  </div>
                 </div>
-              </motion.div>
+              </div>
             ))}
+
+            {/* Grid Cells (Z-20) */}
+            {renderCells()}
           </div>
         </TransformComponent>
       </TransformWrapper>
