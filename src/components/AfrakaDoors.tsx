@@ -15,7 +15,7 @@ const FRAGMENTS = [
   {
     id: 2,
     title: "La Mission",
-    fragment: "Face à la chute imminente de l'Égypte antique, ils confièrent à une femme, Yɔnnu (Yony), figure de pureté originelle, la mission sacrée d'escorter l'Œuf vers une terre élue : le Bénin.",
+    fragment: "Face à la chute imminente de l'Égypte antique, ils confièrent à une femme, Nonna Minona, figure de pureté originelle, la mission sacrée d'escorter l'Œuf vers une terre élue : le Bénin.",
     image: "afraka_2.jpg",
     className: "md:col-span-1 md:row-span-2 h-full min-h-[300px]"
   },
@@ -29,7 +29,7 @@ const FRAGMENTS = [
   {
     id: 4,
     title: "L’Ancrage",
-    fragment: "Arrivée sur cette terre bénie, Yony utilisa ce pouvoir pour imprégner les sols, les champs et les artefacts royaux de l'énergie pure de l’Œuf.",
+    fragment: "Arrivée sur cette terre bénie, Nonna Minona utilisa ce pouvoir pour imprégner les sols, les champs et les artefacts royaux de l'énergie pure de l’Œuf.",
     image: "afraka_4.jpg",
     className: "md:col-span-1 md:row-span-1 h-[250px]"
   },
