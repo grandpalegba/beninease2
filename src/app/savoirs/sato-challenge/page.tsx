@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from "@supabase/supabase-js";
 import { toast, Toaster } from "sonner";
 import { confetti } from "tsparticles-confetti";
+import BackButton from "@/components/ui/BackButton";
 
 // --- CONFIGURATION SUPABASE ---
 const SUPABASE_URL = "https://wtjhkqkqmexddroqwawk.supabase.co";
@@ -196,13 +197,7 @@ export default function MysteresPage() {
       <AnimatePresence mode="wait">
         {view === "gallery" ? (
           <motion.div key="gallery" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-screen flex flex-col items-center justify-center p-6 relative">
-            <button 
-              onClick={() => router.push('/savoirs')} 
-              className="absolute top-6 left-6 z-50 px-4 py-2 bg-white rounded-full flex items-center gap-2 shadow-md border border-gray-100 active:scale-95 transition-transform"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a0412d" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-              <span className="text-[10px] font-black uppercase tracking-widest text-[#a0412d]">Retour</span>
-            </button>
+            <BackButton href="/savoirs" iconColor="#a0412d" className="z-[60]" />
             <motion.div
               drag="x" dragConstraints={{ left: 0, right: 0 }}
               onDragEnd={(_, info) => {
@@ -235,7 +230,7 @@ export default function MysteresPage() {
           <motion.div key="ritual" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-50 flex flex-col items-center p-6 overflow-y-auto no-scrollbar relative">
             <button 
               onClick={() => setView("gallery")}
-              className="absolute top-6 left-6 z-50 px-4 py-2 bg-[#faf9f8] rounded-full flex items-center gap-2 shadow-sm border border-gray-100 active:scale-95 transition-transform"
+              className="absolute top-6 left-6 z-[200] px-4 py-2 bg-[#faf9f8] rounded-full flex items-center gap-2 shadow-sm border border-gray-100 active:scale-95 transition-transform"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a0412d" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
               <span className="text-[10px] font-black uppercase tracking-widest text-[#a0412d]">Retour</span>

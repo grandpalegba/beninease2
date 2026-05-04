@@ -176,7 +176,7 @@ export default function TresorDetailPage() {
       onTouchEnd={handleTouchEnd}
     >
       {/* BOUTON RETOUR */}
-      <BackButton href="/" className="fixed top-6 left-6" />
+      <BackButton href="/tresors" className="fixed top-6 left-6" />
 
       {/* ── SECTION HAUTE : Image & Infos Clés ── */}
       <section className="max-w-[1400px] mx-auto pt-12 px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-12">

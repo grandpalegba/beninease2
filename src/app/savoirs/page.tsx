@@ -184,10 +184,7 @@ function SavoirsContent() {
   }, [allQuestions, currentM]);
 
   const startRitual = () => {
-    if (currentQuestions.length > 0) {
-      setHoles([0, 1, 2, 3]); setSeeds(16); setTimeLeft(64); setQIndex(0); setExplanations([]); setIsFinished(false);
-      router.push('/savoirs/explorer?ritual=true');
-    } else { toast.error("Rituel en préparation..."); }
+    router.push('/savoirs/sato-challenge');
   };
 
   const handleDragEndChoice = (info: any, isCorrect: boolean) => {
