@@ -25,14 +25,21 @@ export function useHistoires() {
 
       if (profilesError) throw profilesError;
 
-      // 2. Fetch series (for posters)
+      // 2. Fetch episodes metadata
+      const { data: episodesData, error: epError } = await supabase
+        .from("series_histoires")
+        .select("*");
+
+      if (epError) throw epError;
+
+      // 3. Fetch series (for posters)
       const { data: seriesData, error: seriesError } = await supabase
         .from("series")
         .select("*");
 
       if (seriesError) throw seriesError;
 
-      // 3. Map manually
+      // 4. Map manually
       const enriched: ProfilAvecSerie[] = (profilesData ?? []).map((row: any) => {
         const rawVideos = row.video_urls ?? [];
         const video_urls: Episode[] = Array.isArray(rawVideos)
@@ -43,7 +50,11 @@ export function useHistoires() {
             }))
           : [];
 
-        const serie = seriesData?.find((s: any) => s.id === row.series_id) as Serie | undefined;
+        // On cherche d'abord l'épisode dans series_histoires
+        const episodeInfo = episodesData?.find((e: any) => e.id === row.series_id);
+        
+        // Puis on cherche la série correspondante dans 'series' par le titre
+        const serie = seriesData?.find((s: any) => s.titre === episodeInfo?.titre) as Serie | undefined;
 
         return {
           id: row.id,

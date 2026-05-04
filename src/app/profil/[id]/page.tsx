@@ -49,7 +49,7 @@ export default function ProfilHistoirePage() {
       try {
         let serieData = null;
         setLoading(true);
-        // 1. Fetch profile with series link
+        // 1. Fetch profile
         const { data: pData, error: pError } = await supabase
           .from("profiles_histoires")
           .select("*")
@@ -58,27 +58,37 @@ export default function ProfilHistoirePage() {
 
         if (pError) throw pError;
 
+        let serieData = null;
         let allEpisodesFromDB: any[] = [];
 
         if (pData.series_id) {
-          // 2. Fetch the parent series from 'series' table (for affiche_url)
-          const { data: parentSerie } = await supabase
-            .from("series")
+          // 2. Fetch the current episode from 'series_histoires'
+          const { data: currentEp } = await supabase
+            .from("series_histoires")
             .select("*")
             .eq("id", pData.series_id)
             .single();
-          
-          if (parentSerie) {
-            serieData = parentSerie;
-            
-            // 3. Fetch all episodes of this series from 'series_histoires'
-            const { data: epData } = await supabase
-              .from("series_histoires")
-              .select("*")
-              .eq("titre", parentSerie.titre)
-              .order("episode_numero", { ascending: true });
-            
-            if (epData) allEpisodesFromDB = epData;
+
+          if (currentEp) {
+             // 3. Fetch the parent series from 'series' table for the poster
+             const { data: parentSerie } = await supabase
+               .from("series")
+               .select("*")
+               .eq("titre", currentEp.titre)
+               .single();
+             
+             if (parentSerie) {
+               serieData = parentSerie;
+             }
+
+             // 4. Fetch all episodes of this series
+             const { data: epData } = await supabase
+               .from("series_histoires")
+               .select("*")
+               .eq("titre", currentEp.titre)
+               .order("episode_numero", { ascending: true });
+             
+             if (epData) allEpisodesFromDB = epData;
           }
         }
 

@@ -13,7 +13,7 @@ const GUARDIANS = [
   { phase: "VI", name: "Yony", role: "L'Union", desc: "Éveil de la conscience, elle rassemble les 16 nations et les 256 éclats de savoir libérés. Elle est le pont final qui transforme la restitution en une Renaissance globale.", img: "/quest/deity-yony.jpg", step: "/quest/step-6.png" },
 ];
 
-const BLACK_STAR = "/quest/star-8.svg";
+const BLACK_STAR = "/quest/star-5.svg";
 
 export function Guardians() {
   const [active, setActive] = useState(2);
