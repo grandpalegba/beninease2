@@ -4,10 +4,10 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 
 const RANKS = [
-  { name: "Blackstone", desc: "La fondation", img: "/quest/hero-blackstone.png", treasures: 10 },
-  { name: "Blackstar", desc: "Le guide", img: "/quest/hero-blackstar.png", treasures: 20 },
-  { name: "Blacksun", desc: "Le rayonnement", img: "/quest/hero-blacksun.png", treasures: 30 },
-  { name: "Blackswan", desc: "La métamorphose rare", img: "/quest/hero-blackswan.png", treasures: 40 },
+  { name: "Ahosi", desc: "", img: "/quest/hero-ahosi.png", treasures: 16 },
+  { name: "Agojie", desc: "", img: "/quest/hero-agojie.png", treasures: 32 },
+  { name: "Kpojito", desc: "", img: "/quest/hero-kpojito.png", treasures: 48 },
+  { name: "Gbeto", desc: "", img: "/quest/hero-gbeto.png", treasures: 64 },
 ];
 
 export function CtaFinal() {
@@ -50,7 +50,7 @@ export function CtaFinal() {
                       {r.treasures} trésors libérés
                     </div>
                     <div className="font-display text-2xl font-semibold">{r.name}</div>
-                    <div className="text-sm text-zinc-300 mt-1">{r.desc}</div>
+                    {r.desc && <div className="text-sm text-zinc-300 mt-1">{r.desc}</div>}
                   </div>
                 </div>
               </motion.div>
