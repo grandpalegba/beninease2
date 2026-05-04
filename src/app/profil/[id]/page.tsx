@@ -58,36 +58,38 @@ export default function ProfilHistoirePage() {
 
         if (pError) throw pError;
 
+        const getPosterUrl = (url: string | null) => {
+          if (!url) return null;
+          if (url.startsWith('http')) return url;
+          const cleanUrl = url.replace(/^\/+/, '');
+          return `https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/affiches_histoires/${cleanUrl}`;
+        };
+
+        let serieData = null;
         let allEpisodesFromDB: any[] = [];
 
         if (pData.series_id) {
-          // 2. Fetch the current episode from 'series_histoires'
-          const { data: currentEp } = await supabase
-            .from("series_histoires")
-            .select("*")
-            .eq("id", pData.series_id)
-            .single();
-
-          if (currentEp) {
-             // 3. Fetch the parent series from 'series' table for the poster
-             const { data: parentSerie } = await supabase
-               .from("series")
-               .select("*")
-               .eq("titre", currentEp.titre)
-               .single();
-             
-             if (parentSerie) {
-               serieData = parentSerie;
-             }
-
-             // 4. Fetch all episodes of this series
-             const { data: epData } = await supabase
-               .from("series_histoires")
-               .select("*")
-               .eq("titre", currentEp.titre)
-               .order("episode_numero", { ascending: true });
-             
-             if (epData) allEpisodesFromDB = epData;
+          // 2. On cherche si l'ID est celui d'une série ou d'un épisode
+          const { data: maybeSerie } = await supabase.from("series").select("*").eq("id", pData.series_id).maybeSingle();
+          
+          if (maybeSerie) {
+            serieData = { ...maybeSerie, affiche_url: getPosterUrl(maybeSerie.affiche_url) };
+            // On récupère les épisodes par titre
+            const { data: eps } = await supabase.from("series_histoires").select("*").eq("titre", maybeSerie.titre).order("episode_numero", { ascending: true });
+            if (eps) allEpisodesFromDB = eps;
+          } else {
+            // C'est peut-être un épisode ID
+            const { data: maybeEp } = await supabase.from("series_histoires").select("*").eq("id", pData.series_id).maybeSingle();
+            if (maybeEp) {
+               // On cherche la série par titre
+               const { data: parent } = await supabase.from("series").select("*").eq("titre", maybeEp.titre).maybeSingle();
+               if (parent) {
+                 serieData = { ...parent, affiche_url: getPosterUrl(parent.affiche_url) };
+               }
+               // On récupère tous les épisodes du même titre
+               const { data: eps } = await supabase.from("series_histoires").select("*").eq("titre", maybeEp.titre).order("episode_numero", { ascending: true });
+               if (eps) allEpisodesFromDB = eps;
+            }
           }
         }
 

@@ -26,18 +26,22 @@ export function useHistoires() {
       if (profilesError) throw profilesError;
 
       // 2. Fetch episodes metadata
-      const { data: episodesData, error: epError } = await supabase
+      const { data: episodesData } = await supabase
         .from("series_histoires")
         .select("*");
 
-      if (epError) throw epError;
-
       // 3. Fetch series (for posters)
-      const { data: seriesData, error: seriesError } = await supabase
+      const { data: seriesData } = await supabase
         .from("series")
         .select("*");
 
-      if (seriesError) throw seriesError;
+      const getPosterUrl = (url: string | null) => {
+        if (!url) return null;
+        if (url.startsWith('http')) return url;
+        // Supprime les éventuels slashs au début
+        const cleanUrl = url.replace(/^\/+/, '');
+        return `https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/affiches_histoires/${cleanUrl}`;
+      };
 
       // 4. Map manually
       const enriched: ProfilAvecSerie[] = (profilesData ?? []).map((row: any) => {
@@ -50,11 +54,23 @@ export function useHistoires() {
             }))
           : [];
 
-        // On cherche d'abord l'épisode dans series_histoires
-        const episodeInfo = episodesData?.find((e: any) => e.id === row.series_id);
+        // Tentative 1: Match direct row.series_id -> series.id
+        let serie = seriesData?.find((s: any) => s.id === row.series_id) as Serie | undefined;
         
-        // Puis on cherche la série correspondante dans 'series' par le titre
-        const serie = seriesData?.find((s: any) => s.titre === episodeInfo?.titre) as Serie | undefined;
+        // Tentative 2: Match via series_histoires (episode -> series par titre)
+        if (!serie) {
+          const ep = episodesData?.find((e: any) => e.id === row.series_id);
+          if (ep) {
+            serie = seriesData?.find((s: any) => s.titre === ep.titre) as Serie | undefined;
+          }
+        }
+
+        if (serie) {
+          serie = {
+            ...serie,
+            affiche_url: getPosterUrl(serie.affiche_url)
+          };
+        }
 
         return {
           id: row.id,
