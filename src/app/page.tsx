@@ -16,9 +16,7 @@ export default function Home() {
       <main>
         <Hero />
         <AfrakaDoors />
-        <Legend />
         <Pillars />
-        <Tokens />
         <Guardians />
         <CtaFinal />
         

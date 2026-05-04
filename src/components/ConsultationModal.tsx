@@ -133,12 +133,7 @@ const ConsultationModal = ({ consultation, onClose }: Props) => {
               className="flex items-center px-6 py-5 relative"
               style={{ borderBottom: "1px solid #f0f1f1", background: "#ffffff" }}
             >
-              {/* Traffic light dots */}
-              <div className="flex items-center gap-1.5 absolute left-6">
-                <span className="w-2.5 h-2.5 rounded-full" style={{ background: "#008751" }} />
-                <span className="w-2.5 h-2.5 rounded-full" style={{ background: "#fcd116" }} />
-                <span className="w-2.5 h-2.5 rounded-full" style={{ background: "#e8112d" }} />
-              </div>
+
 
               {/* Centered Title */}
               <div className="flex-1 flex justify-center">
@@ -146,7 +141,7 @@ const ConsultationModal = ({ consultation, onClose }: Props) => {
                   className="font-label text-[11px] uppercase tracking-[0.3em] font-black"
                   style={{ color: "#1a1a1a" }}
                 >
-                  {view === "case" ? "Le cas tiré" : "La parole du bokônon"}
+                  {view === "case" ? "Le cas tiré" : "Guidance proposée"}
                 </span>
               </div>
 

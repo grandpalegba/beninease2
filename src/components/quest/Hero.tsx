@@ -16,12 +16,11 @@ export function Hero() {
         }}
       />
 
-      <div className="relative z-10 max-w-7xl mx-auto grid lg:grid-cols-[1.1fr_0.9fr] gap-16 items-center">
+      <div className="relative z-10 max-w-7xl mx-auto flex flex-col items-center text-center">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: "easeOut" }}
-          className="text-center lg:text-left"
         >
           <h1 className="font-display font-semibold tracking-tight leading-[0.9] text-zinc-950">
             <span className="block text-[14vw] lg:text-[7.5rem] uppercase text-zinc-950">
@@ -30,27 +29,10 @@ export function Hero() {
           </h1>
 
           <h2 className="mt-8 font-display text-2xl md:text-4xl lg:text-5xl font-medium tracking-tight leading-[1.05] text-zinc-800">
-            L'Harmonie du monde commence
+            L&apos;Harmonie du monde commence
             <br />
             par la Porte du Retour.
           </h2>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.2, ease: "easeOut", delay: 0.2 }}
-          className="relative"
-        >
-          <div className="relative aspect-square rounded-[2rem] overflow-hidden shadow-[0_40px_120px_-30px_rgba(0,0,0,0.35)] border border-zinc-200">
-            <Image
-              src="/quest/porte-du-retour.png"
-              alt="La Porte du Retour avec l'œuf"
-              fill
-              className="object-cover"
-              priority
-            />
-          </div>
         </motion.div>
       </div>
     </section>

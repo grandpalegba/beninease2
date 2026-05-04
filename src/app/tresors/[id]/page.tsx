@@ -227,6 +227,7 @@ export default function TresorDetailPage() {
                  rarete={tresor.metrics.rarete}
                  conservation={tresor.metrics.conservation}
                  restitution={tresor.metrics.restitution}
+                 numero={tresor.numero}
                />
              </div>
 

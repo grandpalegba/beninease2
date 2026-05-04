@@ -55,23 +55,7 @@ export function Pillars() {
   return (
     <section id="dimensions" className="relative py-32 px-6 bg-white border-t border-zinc-100 text-zinc-950">
       <div className="relative max-w-7xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.7 }}
-          className="max-w-3xl mb-20"
-        >
-          <h2 className="font-display text-4xl md:text-6xl font-semibold tracking-tight text-zinc-950 leading-[1.05]">
-            Quatre dimensions.
-            <br />
-            <span className="text-zinc-400">Quatre éléments.</span>
-          </h2>
-          <p className="mt-6 text-lg text-zinc-600 max-w-2xl font-light leading-relaxed">
-            Pour lancer un Appel au Trésor, collectez des fleurs dans chaque sanctuaire.
-            Chaque dimension forge une part essentielle de l'énergie du Retour.
-          </p>
-        </motion.div>
+
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {DIMENSIONS.map((d, idx) => (

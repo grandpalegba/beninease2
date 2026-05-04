@@ -44,21 +44,7 @@ export function Guardians() {
                     onClick={() => setActive(idx)}
                     className="relative flex flex-col items-center text-center group min-w-0"
                   >
-                    {/* Étoile noire au-dessus de la vignette active */}
-                    {isActive && (
-                      <motion.div
-                        layoutId="active-indicator"
-                        className="absolute -top-5 md:-top-6 left-1/2 -translate-x-1/2 w-4 md:w-6 aspect-square z-10"
-                        transition={{ type: "spring", stiffness: 200, damping: 25 }}
-                      >
-                        <Image
-                          src={BLACK_STAR}
-                          alt="Étoile du Retour"
-                          fill
-                          className="object-contain drop-shadow-sm"
-                        />
-                      </motion.div>
-                    )}
+
 
                     <div
                       className={`relative w-full aspect-square rounded-full overflow-hidden transition-all duration-500 ${
