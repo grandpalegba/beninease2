@@ -122,9 +122,9 @@ export default function ProfilHistoirePage() {
         } as any);
 
         setStats({
-          originalite: pData.moyenne_originalite ?? 2.5,
-          authenticite: pData.moyenne_authenticite ?? 2.5,
-          impact: pData.moyenne_impact ?? 2.5,
+          originalite: pData.moyenne_originalite ?? 50,
+          authenticite: pData.moyenne_authenticite ?? 50,
+          impact: pData.moyenne_impact ?? 50,
           count: pData.total_avis ?? 0
         });
 
