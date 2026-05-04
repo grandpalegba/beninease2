@@ -26,19 +26,13 @@ export function useHistoires() {
       if (profilesError) throw profilesError;
 
       // 2. Fetch episodes metadata
-      const { data: episodesData } = await supabase
-        .from("series_histoires")
-        .select("*");
-
+      const { data: episodesData } = await supabase.from("series_histoires").select("*");
       // 3. Fetch series (for posters)
-      const { data: seriesData } = await supabase
-        .from("series")
-        .select("*");
+      const { data: seriesData } = await supabase.from("series").select("*");
 
       const getPosterUrl = (url: string | null) => {
         if (!url) return null;
         if (url.startsWith('http')) return url;
-        // Supprime les éventuels slashs au début
         const cleanUrl = url.replace(/^\/+/, '');
         return `https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/affiches_histoires/${cleanUrl}`;
       };
@@ -54,14 +48,18 @@ export function useHistoires() {
             }))
           : [];
 
-        // Tentative 1: Match direct row.series_id -> series.id
-        let serie = seriesData?.find((s: any) => s.id === row.series_id) as Serie | undefined;
-        
-        // Tentative 2: Match via series_histoires (episode -> series par titre)
+        // Stratégie de recherche de la série (pour l'affiche)
+        let serie = null;
+
+        // 1. Recherche directe par ID (si profiles_histoires.series_id pointe vers series.id)
+        serie = seriesData?.find((s: any) => s.id === row.series_id);
+
+        // 2. Recherche via l'épisode (si profiles_histoires.series_id pointe vers series_histoires.id)
         if (!serie) {
           const ep = episodesData?.find((e: any) => e.id === row.series_id);
           if (ep) {
-            serie = seriesData?.find((s: any) => s.titre === ep.titre) as Serie | undefined;
+             // On cherche la série qui a le même titre que l'épisode (ou via series_id si présent)
+             serie = seriesData?.find((s: any) => s.titre === ep.titre || s.id === ep.series_id);
           }
         }
 
@@ -84,9 +82,11 @@ export function useHistoires() {
           video_urls,
           total_investisseurs: row.total_investisseurs ?? 0,
           numero_profil: row.numero_profil ?? null,
-          serie: serie ?? null,
+          serie: serie as any ?? null,
         };
       });
+
+      console.log("📊 Enriched profiles with series:", enriched.filter(p => p.serie).length, "/", enriched.length);
 
       // Fisher-Yates shuffle
       for (let i = enriched.length - 1; i > 0; i--) {

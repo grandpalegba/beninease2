@@ -68,31 +68,35 @@ export default function ProfilHistoirePage() {
         let allEpisodesFromDB: any[] = [];
 
         if (pData.series_id) {
-          // 2. On cherche si l'ID est celui d'une série ou d'un épisode
-          const { data: maybeSerie } = await supabase.from("series").select("*").eq("id", pData.series_id).maybeSingle();
+          console.log("🔍 Profil linked to series_id:", pData.series_id);
           
-          if (maybeSerie) {
-            serieData = { ...maybeSerie, affiche_url: getPosterUrl(maybeSerie.affiche_url) };
-            // On récupère les épisodes par titre
-            const { data: eps } = await supabase.from("series_histoires").select("*").eq("titre", maybeSerie.titre).order("episode_numero", { ascending: true });
+          // 2. Recherche par ID direct dans 'series'
+          const { data: sData } = await supabase.from("series").select("*").eq("id", pData.series_id).maybeSingle();
+          
+          if (sData) {
+            console.log("✅ Match direct series found:", sData.titre);
+            serieData = { ...sData, affiche_url: getPosterUrl(sData.affiche_url) };
+            const { data: eps } = await supabase.from("series_histoires").select("*").eq("titre", sData.titre).order("episode_numero", { ascending: true });
             if (eps) allEpisodesFromDB = eps;
           } else {
-            // C'est peut-être un épisode ID
-            const { data: maybeEp } = await supabase.from("series_histoires").select("*").eq("id", pData.series_id).maybeSingle();
-            if (maybeEp) {
-               // On cherche la série par titre
-               const { data: parent } = await supabase.from("series").select("*").eq("titre", maybeEp.titre).maybeSingle();
+            // 3. Recherche via 'series_histoires' (si l'ID est celui d'un épisode)
+            const { data: eData } = await supabase.from("series_histoires").select("*").eq("id", pData.series_id).maybeSingle();
+            if (eData) {
+               console.log("✅ Match via episode found:", eData.episode_titre, "of series:", eData.titre);
+               const { data: parent } = await supabase.from("series").select("*").eq("titre", eData.titre).maybeSingle();
                if (parent) {
                  serieData = { ...parent, affiche_url: getPosterUrl(parent.affiche_url) };
                }
-               // On récupère tous les épisodes du même titre
-               const { data: eps } = await supabase.from("series_histoires").select("*").eq("titre", maybeEp.titre).order("episode_numero", { ascending: true });
+               const { data: eps } = await supabase.from("series_histoires").select("*").eq("titre", eData.titre).order("episode_numero", { ascending: true });
                if (eps) allEpisodesFromDB = eps;
+            } else {
+               console.warn("❌ No match found for series_id in series or series_histoires");
             }
           }
         }
 
         const profileVideos = Array.isArray(pData.video_urls) ? pData.video_urls : [];
+        console.log("🎞️ Episodes found in DB:", allEpisodesFromDB.length, "| Videos in Profile:", profileVideos.length);
         
         const video_urls: Episode[] = allEpisodesFromDB.map((dbEp, index) => {
           const profVideo = profileVideos[index];
