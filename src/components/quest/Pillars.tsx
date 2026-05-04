@@ -29,7 +29,7 @@ const DIMENSIONS = [
   },
   {
     code: "03",
-    name: "Concordance",
+    name: "Compétence",
     page: "Page Talents",
     symbol: "Racines",
     icon: "/quest/icon-concordance.png",

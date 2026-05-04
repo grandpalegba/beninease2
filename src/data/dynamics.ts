@@ -15,11 +15,11 @@ export const DYNAMICS_MATRIX: string[][] = [
   // Bienveillance →
   ["Protection", "Bienveillance", "Générosité", "Chaleur", "Harmonie", "Compassion", "Sincérité", "Soutien", "Acceptation", "Justesse", "Fraternité", "Sensibilité", "Clémence", "Engagement", "Douceur", "Indulgence"],
   // Créativité →
-  ["Impulsion", "Don", "Créativité", "Exaltation", "Alliance", "Résonance", "Originalité", "Renaissance", "Diversité", "Concordance", "Synergie", "Vision", "Ingéniosité", "Œuvre", "Simplicité", "Maturation"],
+  ["Impulsion", "Don", "Créativité", "Exaltation", "Alliance", "Résonance", "Originalité", "Renaissance", "Diversité", "Compétence", "Synergie", "Vision", "Ingéniosité", "Œuvre", "Simplicité", "Maturation"],
   // Gratitude →
   ["Mémoire", "Confiance", "Enchantement", "Gratitude", "Communion", "Considération", "Beauté", "Sublimation", "Déférence", "Respect", "Solidarité", "Accord", "Clarté", "Fidélité", "Modestie", "Quiétude"],
   // Cohésion →
-  ["Continuité", "Concorde", "Coopération", "Réunion", "Cohésion", "Réciprocité", "Accord", "Résistance", "Coexistence", "Régularité", "Interdépendance", "Communauté", "Structure", "Constance", "Sobriété", "Stabilité"],
+  ["Continuité", "Compétence", "Coopération", "Réunion", "Cohésion", "Réciprocité", "Accord", "Résistance", "Coexistence", "Régularité", "Interdépendance", "Communauté", "Structure", "Constance", "Sobriété", "Stabilité"],
   // Empathie →
   ["Assimilation", "Affinité", "Poésie", "Attendrissement", "Union", "Empathie", "Transparence", "Restauration", "Consentement", "Discernement", "Connexion", "Pressentiment", "Perspicacité", "Présence", "Abnégation", "Écoute"],
   // Authenticité →

@@ -16,17 +16,17 @@ export function JetonsRadar({ conscience, confiance, connaissance, competence }:
   const maxRadius = 100;
 
   const AXES = [
-    { key: "competence", label: "Concordance", color: "#008751", value: competence || 5, icon: "media__1777354591153.png" },
-    { key: "conscience", label: "Conscience", color: "#E8112D", value: conscience || 5, icon: "media__1777354591157.png" },
-    { key: "connaissance", label: "Connaissance", color: "#1A1A1A", value: connaissance || 5, icon: "media__1777354591130.png" },
-    { key: "confiance", label: "Confiance", color: "#FAC710", value: confiance || 5, icon: "media__1777354591136.png" },
+    { key: "competence", label: "Compétence", color: "#008751", value: competence || 50, icon: "media__1777354591153.png" },
+    { key: "conscience", label: "Conscience", color: "#E8112D", value: conscience || 50, icon: "media__1777354591157.png" },
+    { key: "connaissance", label: "Connaissance", color: "#1A1A1A", value: connaissance || 50, icon: "media__1777354591130.png" },
+    { key: "confiance", label: "Confiance", color: "#FAC710", value: confiance || 50, icon: "media__1777354591136.png" },
   ] as const;
 
-  // 1. Calcul des coordonnées pour chaque point (échelle 5 à 40)
+  // 1. Calcul des coordonnées pour chaque point (échelle 50 à 400)
   const points = AXES.map((axis, i) => {
     const angle = (Math.PI * 2 * i) / AXES.length - Math.PI / 2;
-    // Normalisation : 40 est le rayon max
-    const ratio = axis.value / 40; 
+    // Normalisation : 400 est le rayon max
+    const ratio = axis.value / 400; 
     const r = ratio * maxRadius;
     return {
       x: cx + r * Math.cos(angle),
@@ -45,12 +45,12 @@ export function JetonsRadar({ conscience, confiance, connaissance, competence }:
       <div className="relative" style={{ width: size, height: size }}>
         <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="overflow-visible">
           {/* Cercles de fond (Grille) */}
-          {[10, 20, 30, 40].map((val) => (
+          {[100, 200, 300, 400].map((val) => (
             <circle
               key={val}
               cx={cx}
               cy={cy}
-              r={(val / 40) * maxRadius}
+              r={(val / 400) * maxRadius}
               fill="none"
               stroke="#D4AF37"
               strokeWidth="0.5"

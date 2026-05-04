@@ -99,10 +99,10 @@ export default function TresorDetailPage() {
             },
           },
           jetons: {
-            conscience: data.jeton_conscience || 5,
-            confiance: data.jeton_confiance || 5,
-            connaissance: data.jeton_connaissance || 5,
-            competence: data.jeton_competence || 5,
+            conscience: (data.jeton_conscience || 5) * 10,
+            confiance: (data.jeton_confiance || 5) * 10,
+            connaissance: (data.jeton_connaissance || 5) * 10,
+            competence: (data.jeton_competence || 5) * 10,
           },
           citation: data.citation_texte ? {
             texte: data.citation_texte,

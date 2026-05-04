@@ -7,7 +7,7 @@ const RANKS = [
   { name: "Blackstone", desc: "La fondation", img: "/quest/hero-blackstone.png", treasures: 10 },
   { name: "Blackstar", desc: "Le guide", img: "/quest/hero-blackstar.png", treasures: 20 },
   { name: "Blacksun", desc: "Le rayonnement", img: "/quest/hero-blacksun.png", treasures: 30 },
-  { name: "Blackswan", desc: "La métamorphose rare", img: "/quest/hero-blackswan.jpg", treasures: 40 },
+  { name: "Blackswan", desc: "La métamorphose rare", img: "/quest/hero-blackswan.png", treasures: 40 },
 ];
 
 export function CtaFinal() {
@@ -23,7 +23,7 @@ export function CtaFinal() {
             className="max-w-2xl mb-14"
           >
             <h3 className="font-display text-3xl md:text-5xl font-semibold tracking-tight text-zinc-950 leading-[1.05]">
-              Votre statut évolue avec chaque Libération de trésor.
+              Le statut des Amazones évolue avec chaque Libération de trésor.
             </h3>
           </motion.div>
 

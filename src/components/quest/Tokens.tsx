@@ -5,10 +5,10 @@ import { Sparkles } from "lucide-react";
 import Image from "next/image";
 
 const COSTS = [
-  { name: "Conscience", amount: 10, icon: "/quest/icon-conscience.png", color: "var(--benin-green)" },
-  { name: "Connaissance", amount: 30, icon: "/quest/icon-connaissance.png", color: "var(--benin-yellow-deep)" },
-  { name: "Concordance", amount: 16, icon: "/quest/icon-concordance.png", color: "var(--benin-red)" },
-  { name: "Confiance", amount: 25, icon: "/quest/icon-confiance.png", color: "oklch(0.45 0 0)" },
+  { name: "Conscience", amount: 100, icon: "/quest/icon-conscience.png", color: "var(--benin-green)" },
+  { name: "Connaissance", amount: 300, icon: "/quest/icon-connaissance.png", color: "var(--benin-yellow-deep)" },
+  { name: "Compétence", amount: 160, icon: "/quest/icon-concordance.png", color: "var(--benin-red)" },
+  { name: "Confiance", amount: 250, icon: "/quest/icon-confiance.png", color: "oklch(0.45 0 0)" },
 ];
 
 const CURRENT = 222;
