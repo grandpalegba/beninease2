@@ -62,40 +62,45 @@ export function ProfileCard({ profil, serie }: ProfileCardProps) {
         )}
       </div>
 
+      {/* ── Affiche Série (Sur la photo, en bas à droite) ── */}
+      {serie && (
+        <div className="absolute top-[48%] right-6 z-20 w-20 h-28 sm:w-24 sm:h-32 rounded-xl overflow-hidden shadow-2xl bg-gray-100 border-2 border-white transition-transform duration-500 pointer-events-none">
+          {serie.affiche_url ? (
+            <Image
+              src={serie.affiche_url}
+              alt={serie.titre}
+              fill
+              className="object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gray-200">
+               <span className="text-[8px] text-gray-400 font-bold text-center px-1">SÉRIE</span>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* ── Contenu ── */}
       <div className="flex flex-col p-6 mt-auto bg-transparent relative z-10 pointer-events-none justify-end h-full">
         
-        {/* Nom + Profession */}
+        {/* Nom + Profession + Bio Courte */}
         <div className="flex flex-col mb-4">
           <h3 className="font-display font-black text-2xl sm:text-3xl text-gray-900 leading-tight tracking-tighter truncate">
             {profil.nom_complet}
           </h3>
-          {profil.profession && (
-            <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#008751] mt-1 truncate">
-              {profil.profession}
-            </p>
-          )}
-        </div>
-
-        {/* ── Affiche Série (Plus grande, remplace la valeur) ── */}
-        {serie && (
-          <div className="flex justify-center mt-4">
-            <div className="h-32 w-24 relative rounded-xl overflow-hidden shadow-2xl bg-gray-100 border-2 border-white transform rotate-2 hover:rotate-0 transition-transform duration-300">
-              {serie.affiche_url ? (
-                <Image
-                  src={serie.affiche_url}
-                  alt={serie.titre}
-                  fill
-                  className="object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                   <span className="text-[8px] text-gray-400 font-bold text-center px-1">SÉRIE</span>
-                </div>
-              )}
-            </div>
+          <div className="flex flex-col gap-1 mt-1">
+            {profil.profession && (
+              <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#008751] truncate">
+                {profil.profession}
+              </p>
+            )}
+            {profil.bio_courte && (
+              <p className="text-xs sm:text-sm text-gray-500 font-medium leading-relaxed line-clamp-2 mt-2">
+                {profil.bio_courte}
+              </p>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

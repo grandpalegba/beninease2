@@ -192,7 +192,6 @@ export default function ProfilHistoirePage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
               </div>
               <div className="hidden md:block">
-                <p className="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] mb-1">Série</p>
                 <p className="text-lg font-black text-black leading-none tracking-tighter">{profil.serie.titre}</p>
               </div>
             </div>
