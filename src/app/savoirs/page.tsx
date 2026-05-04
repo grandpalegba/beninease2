@@ -184,7 +184,7 @@ function SavoirsContent() {
   }, [allQuestions, currentM]);
 
   const startRitual = () => {
-    router.push('/savoirs/sato-challenge');
+    router.push(`/savoirs/sato-challenge?id=${currentM.id}`);
   };
 
   const handleDragEndChoice = (info: any, isCorrect: boolean) => {

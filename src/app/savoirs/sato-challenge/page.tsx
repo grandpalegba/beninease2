@@ -1,7 +1,5 @@
-"use client";
-
-import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect, useRef, useMemo, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from "@supabase/supabase-js";
 import { toast, Toaster } from "sonner";
@@ -100,8 +98,11 @@ const AwaleMini = ({ seedsCount, isWrong }: { seedsCount: number, isWrong: boole
   </motion.div>
 );
 
-export default function MysteresPage() {
+function SatoChallengeContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const mysteryId = searchParams?.get('id');
+
   // --- ÉTATS ---
   const [loading, setLoading] = useState(true);
   const [mysteres, setMysteres] = useState<any[]>([]);
@@ -109,7 +110,7 @@ export default function MysteresPage() {
   const [allQuestions, setAllQuestions] = useState<any[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const [view, setView] = useState<"gallery" | "ritual">("gallery");
+  const [view, setView] = useState<"gallery" | "ritual">("ritual");
   const [timeLeft, setTimeLeft] = useState(64);
   const [holes, setHoles] = useState([0, 1, 2, 3]);
   const [seeds, setSeeds] = useState(16);
@@ -133,18 +134,25 @@ export default function MysteresPage() {
         const themeMap = tData.reduce((acc: any, t: any) => ({ ...acc, [t.id]: t.name }), {});
         setThemes(themeMap);
       }
-      if (mData) setMysteres(mData.sort(() => Math.random() - 0.5));
+      
+      if (mData) {
+        setMysteres(mData);
+        if (mysteryId) {
+          const idx = mData.findIndex(m => String(m.id) === String(mysteryId));
+          if (idx !== -1) setCurrentIndex(idx);
+        }
+      }
       if (qData) setAllQuestions(qData);
       setLoading(false);
     }
     fetchData();
-  }, []);
+  }, [mysteryId]);
 
   const currentM = mysteres[currentIndex];
   const currentQuestions = useMemo(() => {
     if (!currentM) return [];
     return allQuestions
-      .filter(q => q.mystere_id === currentM.id)
+      .filter(q => String(q.mystere_id) === String(currentM.id))
       .sort((a, b) => a.question_number - b.question_number)
       .slice(0, 4);
   }, [allQuestions, currentM]);
@@ -211,16 +219,16 @@ export default function MysteresPage() {
               className="w-full max-w-[340px] h-[610px] bg-white rounded-[40px] shadow-2xl overflow-hidden border-[6px] border-white cursor-pointer flex flex-col"
             >
               <div className="pt-5 pb-3 px-7 text-center">
-                <span className="font-lato text-[11px] font-medium text-gray-400 uppercase tracking-[0.35em]">{themes[currentM.theme_id]}</span>
+                <span className="font-lato text-[11px] font-medium text-gray-400 uppercase tracking-[0.35em]">{themes[currentM?.theme_id]}</span>
               </div>
               <div className="h-[55%] w-full overflow-hidden">
-                <img src={`https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/mysteres-assets/${currentM.id}.jpg`} className="h-full w-full object-cover" alt="" />
+                <img src={`https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/mysteres-assets/${currentM?.id}.jpg`} className="h-full w-full object-cover" alt="" />
               </div>
               <div className="p-7 flex flex-col flex-1 bg-white">
-                <h2 className="font-lato text-[24px] font-black leading-[1.1] tracking-[0.05em] uppercase">{currentM.title}</h2>
-                <p className="font-lato text-[11px] font-bold text-[#a0412d] mt-1 italic tracking-[0.12em] uppercase">{currentM.subtitle}</p>
+                <h2 className="font-lato text-[24px] font-black leading-[1.1] tracking-[0.05em] uppercase">{currentM?.title}</h2>
+                <p className="font-lato text-[11px] font-bold text-[#a0412d] mt-1 italic tracking-[0.12em] uppercase">{currentM?.subtitle}</p>
                 <div className="mt-6 pt-4 border-t border-gray-50 flex-1 overflow-y-auto no-scrollbar">
-                  <p className="font-lato text-[15px] text-gray-500 italic leading-[1.8]">"{currentM.mise_en_abyme}"</p>
+                  <p className="font-lato text-[15px] text-gray-500 italic leading-[1.8]">"{currentM?.mise_en_abyme}"</p>
                 </div>
               </div>
             </motion.div>
@@ -229,7 +237,7 @@ export default function MysteresPage() {
         ) : (
           <motion.div key="ritual" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-50 flex flex-col items-center p-6 overflow-y-auto no-scrollbar relative">
             <button 
-              onClick={() => setView("gallery")}
+              onClick={() => router.push('/savoirs')}
               className="absolute top-6 left-6 z-[200] px-4 py-2 bg-[#faf9f8] rounded-full flex items-center gap-2 shadow-sm border border-gray-100 active:scale-95 transition-transform"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a0412d" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
@@ -255,7 +263,7 @@ export default function MysteresPage() {
                       {['a', 'b', 'c', 'd'].map((l) => (
                         <motion.div key={l} drag dragSnapToOrigin
                           onDrag={(_, info) => { const jar = jarRef.current?.getBoundingClientRect(); if (jar) setIsOverJar(info.point.x > jar.left && info.point.x < jar.right && info.point.y > jar.top && info.point.y < jar.bottom); }}
-                          onDragEnd={(_, info) => handleDragEnd(info, l.toUpperCase() === currentQuestions[qIndex].correct_answer)}
+                          onDragEnd={(_, info) => handleDragEnd(info, l.toUpperCase() === currentQuestions[qIndex]?.correct_answer)}
                           className="p-3 sm:p-4 bg-[#faf9f8] border border-gray-100 rounded-2xl shadow-sm cursor-grab active:cursor-grabbing flex items-center group touch-none z-50"
                         >
                           <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-white shadow-sm flex items-center justify-center font-bold text-[#a0412d] mr-3 sm:mr-4 uppercase text-xs sm:text-base">{l}</span>
@@ -276,7 +284,7 @@ export default function MysteresPage() {
                   <div className="bg-[#faf9f8] p-6 rounded-[2rem] text-left mb-6 space-y-3">
                     {explanations.map((exp, i) => <p key={i} className="text-sm text-gray-600 flex items-start"><span className="text-[#a0412d] mr-2">✦</span> {exp}</p>)}
                   </div>
-                  <button onClick={() => setView("gallery")} className="w-full py-4 bg-[#a0412d] text-white rounded-full font-bold uppercase tracking-widest text-[10px]">Découvrir un autre mystère</button>
+                  <button onClick={() => router.push('/savoirs')} className="w-full py-4 bg-[#a0412d] text-white rounded-full font-bold uppercase tracking-widest text-[10px]">Découvrir un autre mystère</button>
                 </div>
               )}
             </div>
@@ -284,5 +292,13 @@ export default function MysteresPage() {
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+export default function MysteresPage() {
+  return (
+    <Suspense fallback={<div className="h-screen flex items-center justify-center bg-[#faf9f8]"><div className="w-10 h-10 border-4 border-[#a0412d] border-t-transparent rounded-full animate-spin" /></div>}>
+      <SatoChallengeContent />
+    </Suspense>
   );
 }

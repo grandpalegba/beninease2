@@ -48,21 +48,19 @@ export const DoorCard = ({ id, title, fragment, image, className }: DoorCardProp
 
         {/* VERSO : FRAGMENT */}
         <div 
-          className="absolute inset-0 w-full h-full backface-hidden rounded-2xl bg-[#f4f4f5] border border-zinc-200 p-8 flex flex-col justify-center items-center text-center shadow-inner"
+          className="absolute inset-0 w-full h-full backface-hidden rounded-2xl bg-[#f4f4f5] border border-zinc-200 p-6 md:p-8 flex flex-col justify-start items-center text-center shadow-inner overflow-y-auto no-scrollbar"
           style={{ 
             backfaceVisibility: "hidden",
-            transform: "rotateY(180deg)"
+            transform: "rotateY(180deg)",
+            WebkitBackfaceVisibility: "hidden"
           }}
         >
-          <span className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.3em] mb-4">
+          <span className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.3em] mb-4 mt-2 md:mt-4">
             {title}
           </span>
-          <p className="text-sm md:text-base text-zinc-600 font-sans leading-loose tracking-wide">
+          <p className="text-sm md:text-[15px] text-zinc-600 font-sans leading-relaxed tracking-wide">
             {fragment}
           </p>
-          <div className="absolute top-4 right-4 opacity-10">
-            <span className="text-4xl font-black text-zinc-900">{id}</span>
-          </div>
         </div>
       </motion.div>
     </div>
