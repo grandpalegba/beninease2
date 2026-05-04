@@ -77,10 +77,10 @@ export function ProfileCard({ profil, serie }: ProfileCardProps) {
           )}
         </div>
 
-        {/* ── Affiche Série (Au dessus de la valeur) ── */}
+        {/* ── Affiche Série (Plus grande, remplace la valeur) ── */}
         {serie && (
-          <div className="flex justify-end mb-3">
-            <div className="h-20 w-16 sm:h-24 sm:w-18 relative rounded-xl overflow-hidden shadow-2xl bg-gray-100 border border-white/20">
+          <div className="flex justify-center mt-4">
+            <div className="h-32 w-24 relative rounded-xl overflow-hidden shadow-2xl bg-gray-100 border-2 border-white transform rotate-2 hover:rotate-0 transition-transform duration-300">
               {serie.affiche_url ? (
                 <Image
                   src={serie.affiche_url}
@@ -96,20 +96,6 @@ export function ProfileCard({ profil, serie }: ProfileCardProps) {
             </div>
           </div>
         )}
-
-        {/* Valeur en noix bénies */}
-        <div className="flex items-center justify-between rounded-2xl bg-gray-50/80 backdrop-blur-sm border border-gray-100 px-5 py-4 mb-2">
-          <span className="text-[9px] sm:text-[10px] uppercase tracking-widest text-gray-400 font-bold">
-            Valeur en noix bénies
-          </span>
-          <span className="flex items-center gap-1.5 font-black text-lg sm:text-xl tabular-nums text-gray-900">
-            <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-amber-500" />
-            {displayPrice.toFixed(2)}
-            <span className="text-[10px] sm:text-xs font-bold text-gray-400 ml-0.5">
-              NB
-            </span>
-          </span>
-        </div>
       </div>
     </div>
   );

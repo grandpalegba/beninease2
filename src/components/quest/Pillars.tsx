@@ -68,7 +68,7 @@ export function Pillars() {
             <span className="text-zinc-400">Quatre éléments.</span>
           </h2>
           <p className="mt-6 text-lg text-zinc-600 max-w-2xl font-light leading-relaxed">
-            Pour lancer un Appel au Trésor, collectez des jetons dans chaque sanctuaire.
+            Pour lancer un Appel au Trésor, collectez des fleurs dans chaque sanctuaire.
             Chaque dimension forge une part essentielle de l'énergie du Retour.
           </p>
         </motion.div>

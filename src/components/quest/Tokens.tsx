@@ -66,7 +66,7 @@ export function Tokens() {
           </h2>
           <p className="mt-6 text-lg text-zinc-600 max-w-2xl mx-auto font-light leading-relaxed">
             Un trésor ne s'ébranle que lorsque <span className="font-medium text-zinc-900">360 personnes</span> ont
-            lancé le même appel. Dépensez vos jetons. Faites entendre votre voix.
+            lancé le même appel. Dépensez vos fleurs. Faites entendre votre voix.
           </p>
         </motion.div>
 

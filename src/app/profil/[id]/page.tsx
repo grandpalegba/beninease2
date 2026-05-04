@@ -96,9 +96,15 @@ export default function ProfilHistoirePage() {
           };
         });
 
+        const final_video_urls: Episode[] = video_urls.length > 0 ? video_urls : profileVideos.map((pv, idx) => ({
+          ...pv,
+          numero: pv.numero || (idx + 1),
+          titre: pv.titre || `Épisode ${idx + 1}`
+        }));
+
         setProfil({
           ...pData,
-          video_urls: video_urls.length > 0 ? video_urls : profileVideos, // Fallback si pas d'épisodes en DB
+          video_urls: final_video_urls,
           serie: serieData as any,
         } as any);
 
@@ -150,9 +156,9 @@ export default function ProfilHistoirePage() {
 
       <main className="max-w-7xl mx-auto space-y-6">
         
-        {/* --- HEADER BLOCK : Identité | Affiche | Valeur --- */}
+        {/* --- HEADER BLOCK : Identité | Affiche --- */}
         <header className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-sm border border-gray-100 flex flex-col md:flex-row items-center md:justify-between gap-6 md:gap-10 relative overflow-hidden">
-          <BackButton href="/" className="absolute left-4 top-4 md:relative md:left-0 md:top-0" />
+          <BackButton href="/histoires/explorer" className="absolute left-4 top-4 md:relative md:left-0 md:top-0" />
 
           {/* GAUCHE : Identité */}
           <div className="flex items-center gap-6 w-full md:w-auto pt-8 md:pt-0">
@@ -167,31 +173,19 @@ export default function ProfilHistoirePage() {
             </div>
           </div>
 
-          {/* CENTRE : Affiche de la Série (Plus grande, remplace la citation) */}
+          {/* CENTRE/DROITE : Affiche de la Série (Plus grande, remplace la valeur financière) */}
           {profil.serie?.affiche_url && (
-            <div className="flex-1 flex justify-center py-4 md:py-0">
-              <div className="relative w-20 h-28 md:w-24 md:h-32 rounded-2xl overflow-hidden shadow-2xl border-4 border-white transform hover:scale-105 transition-transform duration-500">
+            <div className="flex items-center justify-center md:justify-end gap-6 w-full md:w-auto pt-6 md:pt-0 border-t md:border-none border-gray-50">
+              <div className="relative w-28 h-40 md:w-32 md:h-44 rounded-2xl overflow-hidden shadow-2xl border-4 border-white transform hover:scale-105 transition-transform duration-500">
                 <Image src={profil.serie.affiche_url} alt={profil.serie.titre} fill className="object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
               </div>
-            </div>
-          )}
-
-          {/* DROITE : Valeur Financière */}
-          <div className="flex items-center justify-between md:justify-end gap-6 w-full md:w-auto pt-6 md:pt-0 border-t md:border-none border-gray-50">
-            <div className="text-left md:text-right">
-              <p className="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] mb-2">Valeur Actuelle</p>
-              <div className="flex items-center md:justify-end gap-3">
-                <p className="text-3xl md:text-4xl font-black text-black leading-none tracking-tighter tabular-nums">
-                  {profil.valeur_noix_benies.toFixed(2)}
-                  <span className="text-xs ml-1 text-gray-400">NB</span>
-                </p>
-                <span className="px-3 py-1 rounded-full bg-green-50 text-[11px] font-black text-green-600 border border-green-100">
-                  +0.0%
-                </span>
+              <div className="hidden md:block">
+                <p className="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] mb-1">Série</p>
+                <p className="text-lg font-black text-black leading-none tracking-tighter">{profil.serie.titre}</p>
               </div>
             </div>
-          </div>
+          )}
         </header>
 
         {/* --- HERO SECTION --- */}

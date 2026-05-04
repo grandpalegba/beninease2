@@ -13,7 +13,7 @@ const GUARDIANS = [
   { phase: "VI", name: "Yony", role: "L'Union", desc: "Éveil de la conscience, elle rassemble les 16 nations et les 256 éclats de savoir libérés. Elle est le pont final qui transforme la restitution en une Renaissance globale.", img: "/quest/deity-yony.jpg", step: "/quest/step-6.png" },
 ];
 
-const BLACK_HORSE = "/quest/black-horse.png";
+const BLACK_STAR = "/quest/star-8.svg";
 
 export function Guardians() {
   const [active, setActive] = useState(2);
@@ -44,18 +44,18 @@ export function Guardians() {
                     onClick={() => setActive(idx)}
                     className="relative flex flex-col items-center text-center group min-w-0"
                   >
-                    {/* Cheval noir au-dessus de la vignette active */}
+                    {/* Étoile noire au-dessus de la vignette active */}
                     {isActive && (
                       <motion.div
-                        layoutId="horse"
-                        className="absolute -top-10 md:-top-14 left-1/2 -translate-x-1/2 w-10 md:w-16 aspect-square z-10"
+                        layoutId="active-indicator"
+                        className="absolute -top-10 md:-top-14 left-1/2 -translate-x-1/2 w-8 md:w-12 aspect-square z-10"
                         transition={{ type: "spring", stiffness: 200, damping: 25 }}
                       >
                         <Image
-                          src={BLACK_HORSE}
-                          alt="Cheval du Retour"
+                          src={BLACK_STAR}
+                          alt="Étoile du Retour"
                           fill
-                          className="object-contain drop-shadow-md"
+                          className="object-contain drop-shadow-sm"
                         />
                       </motion.div>
                     )}
@@ -84,7 +84,7 @@ export function Guardians() {
 
           <p className="mt-6 text-lg text-zinc-600 max-w-2xl mx-auto font-light leading-relaxed">
             Chaque groupe de 60 appels active l'influence d'une divinité qui protège une étape du Retour.
-            Le cheval noir suit la divinité en cours.
+            L'étoile noire suit la divinité en cours.
           </p>
         </motion.div>
 

@@ -21,6 +21,7 @@ export type Serie = {
 export type Episode = {
   id: string;
   titre: string;
+  numero?: number;
   video_url: string;
   episode_question?: string | null;
 };

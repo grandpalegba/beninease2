@@ -211,7 +211,7 @@ export default function TresorDetailPage() {
           {/* Radar des Jetons (Sous l'image) */}
           <div className="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-sm flex-1 flex flex-col">
              <div className="mb-10 text-center">
-                <p className="text-[9px] font-black uppercase tracking-[0.4em] text-gray-400 mb-2">NOMBRE DE JETONS POUR APPELER LE TRÉSOR</p>
+                <p className="text-[9px] font-black uppercase tracking-[0.4em] text-gray-400 mb-2">NOMBRE DE FLEURS POUR APPELER LE TRÉSOR</p>
              </div>
              <JetonsRadar 
                 conscience={tresor.jetons.conscience}
