@@ -65,7 +65,6 @@ export default function ProfilHistoirePage() {
           return `https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/affiches_histoires/${cleanUrl}`;
         };
 
-        let serieData = null;
         let allEpisodesFromDB: any[] = [];
 
         if (pData.series_id) {
