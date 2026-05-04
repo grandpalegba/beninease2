@@ -65,6 +65,22 @@ const ConsultationModal = ({ consultation, onClose }: Props) => {
   const isProfile = consultation && 'firstName' in consultation;
   const storageBaseUrl = "https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/profile-photos/";
   
+  // Default values for cases where data is missing (e.g. from the Wall)
+  const defaultLifeCase = {
+    label: "Question de Vie",
+    title: "L'Harmonie du Destin",
+    quote: "La sagesse du Fâ est une boussole pour l'âme.",
+    photoUrl: "/assets/talents/guide-moise.jpg",
+    persona: "Consultant anonyme"
+  };
+
+  const defaultSignX = { name: "Gbe", code: [1, 1, 1, 1] as [number, number, number, number] };
+  const defaultSignY = { name: "Gbe", code: [1, 1, 1, 1] as [number, number, number, number] };
+
+  const effectiveCase = consultation?.lifeCase || defaultLifeCase;
+  const effectiveSignX = consultation?.signX || defaultSignX;
+  const effectiveSignY = consultation?.signY || defaultSignY;
+
   let bokononPhoto = "";
   if (consultation) {
     if (isProfile && consultation.imageUrl) {
@@ -77,7 +93,7 @@ const ConsultationModal = ({ consultation, onClose }: Props) => {
     }
   }
   
-  const casePhoto = consultation?.lifeCase?.photoUrl ?? null;
+  const casePhoto = effectiveCase.photoUrl;
 
   const handleDragEnd = (_: unknown, info: PanInfo) => {
     const offset = info.offset.x;
@@ -213,7 +229,7 @@ const ConsultationModal = ({ consultation, onClose }: Props) => {
                   }
                 >
                   {view === "case" ? (
-                    <CaseView photo={casePhoto} consultation={consultation} />
+                    <CaseView photo={casePhoto} lifeCase={effectiveCase} signX={effectiveSignX} signY={effectiveSignY} />
                   ) : (
                     <BokononView
                       photo={bokononPhoto}
@@ -287,33 +303,38 @@ const PhotoPanel = ({
   </div>
 );
 
-const CaseView = ({ photo, consultation }: { photo: string | null; consultation: any }) => (
-  <div className="grid md:grid-cols-2 gap-0">
-    <PhotoPanel photo={photo} caption={consultation.lifeCase?.persona} ariaLabel="Écouter le cas" />
-    <div className="p-5 md:p-7 flex flex-col" style={{ background: "#ffffff" }}>
-      <span className="font-label text-[10px] uppercase tracking-[0.2em] font-bold" style={{ color: "#5a5c5c" }}>
-        {consultation.lifeCase?.label}
-      </span>
-      <h3 className="font-headline text-2xl md:text-3xl leading-tight mt-2 mb-3" style={{ color: "#00693e" }}>
-        {consultation.lifeCase?.title}
-      </h3>
-      <blockquote className="italic text-sm leading-relaxed pl-3 mb-5" style={{ borderLeft: "3px solid #fbd115", color: "rgba(45, 47, 47, 0.85)" }}>
-        "{consultation.lifeCase?.quote}"
-      </blockquote>
-      <div className="flex items-center gap-3 mb-3 pt-4" style={{ borderTop: "1px solid #ececec" }}>
-        <div className="rounded-md flex items-center justify-center p-1.5" style={{ background: "#f0f1f1" }}>
-          <DotIdeogram leftCode={consultation.signX?.code || [1,1,1,1]} rightCode={consultation.signY?.code || [1,1,1,1]} size={56} color="#00693e" />
-        </div>
-        <div>
-          <p className="font-label text-[10px] uppercase tracking-[0.2em] font-bold" style={{ color: "#5a5c5c" }}>Signe révélé</p>
-          <p className="font-display text-xl" style={{ color: "#00693e" }}>
-            {consultation.signY?.name} · {consultation.signX?.name}
-          </p>
+const CaseView = ({ photo, lifeCase, signX, signY }: { photo: string | null; lifeCase: any; signX: any; signY: any }) => {
+  const isMeji = signX.name === signY.name;
+  const signName = isMeji ? `${signY.name}-Meji` : `${signY.name} · ${signX.name}`;
+
+  return (
+    <div className="grid md:grid-cols-2 gap-0">
+      <PhotoPanel photo={photo} caption={lifeCase.persona} ariaLabel="Écouter le cas" />
+      <div className="p-5 md:p-7 flex flex-col" style={{ background: "#ffffff" }}>
+        <span className="font-label text-[10px] uppercase tracking-[0.2em] font-bold" style={{ color: "#5a5c5c" }}>
+          {lifeCase.label}
+        </span>
+        <h3 className="font-headline text-2xl md:text-3xl leading-tight mt-2 mb-3" style={{ color: "#00693e" }}>
+          {lifeCase.title}
+        </h3>
+        <blockquote className="italic text-sm leading-relaxed pl-3 mb-5" style={{ borderLeft: "3px solid #fbd115", color: "rgba(45, 47, 47, 0.85)" }}>
+          "{lifeCase.quote}"
+        </blockquote>
+        <div className="flex items-center gap-4 mb-3 pt-4" style={{ borderTop: "1px solid #ececec" }}>
+          <div className="rounded-xl flex items-center justify-center p-2.5 bg-[#f0f1f1] border border-gray-100 shadow-sm">
+            <DotIdeogram leftCode={signX.code} rightCode={signY.code} size={64} color="#00693e" />
+          </div>
+          <div>
+            <p className="font-label text-[10px] uppercase tracking-[0.2em] font-black text-gray-400 mb-0.5">Signe révélé</p>
+            <p className="font-display text-xl font-bold uppercase tracking-widest" style={{ color: "#00693e" }}>
+              {signName}
+            </p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const BokononView = ({ photo, consultation, submitted, onSubmit, relevance, setRelevance, clarity, setClarity, depth, setDepth }: any) => {
   const isProfile = consultation && 'firstName' in consultation;

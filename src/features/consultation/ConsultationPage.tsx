@@ -100,7 +100,7 @@ export default function ConsultationPage() {
 
   return (
     <main className="h-[100dvh] bg-white text-foreground font-sans antialiased flex flex-col items-center justify-start overflow-hidden pb-20 relative">
-      <BackButton href="/" iconColor="#008751" />
+      <BackButton href="/" iconColor="#008751" className="z-[60]" />
       
       {/* Header Area */}
       <div className="w-full shrink-0 z-50 pt-6 px-6 flex flex-col items-center gap-2 md:gap-4">

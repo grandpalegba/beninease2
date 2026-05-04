@@ -7,7 +7,7 @@ export default function ConditionalHeader() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const isRitual = searchParams?.get('ritual') === 'true';
-  const hidesTop = isRitual || pathname?.startsWith('/sagesses');
+  const hidesTop = isRitual || pathname?.startsWith('/sagesses') || pathname?.startsWith('/savoirs');
   const hidesHeader = 
     pathname?.includes('/mysteres/sato-challenge') || 
     pathname?.startsWith('/savoirs/sato-challenge') || 
