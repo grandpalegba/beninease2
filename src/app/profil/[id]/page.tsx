@@ -58,7 +58,6 @@ export default function ProfilHistoirePage() {
 
         if (pError) throw pError;
 
-        let serieData = null;
         let allEpisodesFromDB: any[] = [];
 
         if (pData.series_id) {
