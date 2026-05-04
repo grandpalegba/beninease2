@@ -179,6 +179,10 @@ function SatoChallengeContent() {
 
   // --- TIMER LOGIC ---
   useEffect(() => {
+    setTimeLeft(64);
+  }, [qIndex]);
+
+  useEffect(() => {
     if (timeLeft <= 0 || isFinished || showExplanation || view !== "ritual") return;
     const timer = setInterval(() => setTimeLeft(p => p - 1), 1000);
     return () => clearInterval(timer);
