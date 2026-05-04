@@ -25,10 +25,12 @@ export function useHistoires() {
 
       if (profilesError) throw profilesError;
 
-      // 2. Fetch episodes metadata
-      const { data: episodesData } = await supabase.from("series_histoires").select("*");
-      // 3. Fetch series (for posters)
-      const { data: seriesData } = await supabase.from("series").select("*");
+      // 2. Fetch series/episodes metadata
+      const { data: seriesHistoiresData, error: sError } = await supabase
+        .from("series_histoires")
+        .select("*");
+
+      if (sError) throw sError;
 
       const getPosterUrl = (url: string | null) => {
         if (!url) return null;
@@ -37,7 +39,7 @@ export function useHistoires() {
         return `https://wtjhkqkqmexddroqwawk.supabase.co/storage/v1/object/public/affiches_histoires/${cleanUrl}`;
       };
 
-      // 4. Map manually
+      // 3. Map manually
       const enriched: ProfilAvecSerie[] = (profilesData ?? []).map((row: any) => {
         const rawVideos = row.video_urls ?? [];
         const video_urls: Episode[] = Array.isArray(rawVideos)
@@ -48,25 +50,19 @@ export function useHistoires() {
             }))
           : [];
 
-        // Stratégie de recherche de la série (pour l'affiche)
-        let serie = null;
-
-        // 1. Recherche directe par ID (si profiles_histoires.series_id pointe vers series.id)
-        serie = seriesData?.find((s: any) => s.id === row.series_id);
-
-        // 2. Recherche via l'épisode (si profiles_histoires.series_id pointe vers series_histoires.id)
-        if (!serie) {
-          const ep = episodesData?.find((e: any) => e.id === row.series_id);
-          if (ep) {
-             // On cherche la série qui a le même titre que l'épisode (ou via series_id si présent)
-             serie = seriesData?.find((s: any) => s.titre === ep.titre || s.id === ep.series_id);
-          }
-        }
-
-        if (serie) {
+        // Liaison directe Profils ↔ Séries (via integer ID)
+        const serieRow = seriesHistoiresData?.find((s: any) => s.id === row.series_id);
+        
+        let serie: Serie | null = null;
+        if (serieRow) {
           serie = {
-            ...serie,
-            affiche_url: getPosterUrl(serie.affiche_url)
+            id: String(serieRow.id),
+            titre: serieRow.titre ?? "",
+            synopsis: serieRow.synopsis ?? "",
+            affiche_url: getPosterUrl(serieRow.affiche_url),
+            episode_titre: serieRow.episode_titre ?? null,
+            episode_question: serieRow.episode_question ?? null,
+            episode_numero: serieRow.episode_numero ?? null
           };
         }
 
@@ -82,11 +78,9 @@ export function useHistoires() {
           video_urls,
           total_investisseurs: row.total_investisseurs ?? 0,
           numero_profil: row.numero_profil ?? null,
-          serie: serie as any ?? null,
+          serie,
         };
       });
-
-      console.log("📊 Enriched profiles with series:", enriched.filter(p => p.serie).length, "/", enriched.length);
 
       // Fisher-Yates shuffle
       for (let i = enriched.length - 1; i > 0; i--) {
