@@ -48,7 +48,7 @@ export function Guardians() {
                     {isActive && (
                       <motion.div
                         layoutId="active-indicator"
-                        className="absolute -top-10 md:-top-14 left-1/2 -translate-x-1/2 w-8 md:w-12 aspect-square z-10"
+                        className="absolute -top-5 md:-top-6 left-1/2 -translate-x-1/2 w-4 md:w-6 aspect-square z-10"
                         transition={{ type: "spring", stiffness: 200, damping: 25 }}
                       >
                         <Image

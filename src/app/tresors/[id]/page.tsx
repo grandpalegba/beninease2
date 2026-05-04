@@ -10,6 +10,7 @@ import { PrestigeBars } from "@/components/tresors/PrestigeBars";
 import { JetonsRadar } from "@/components/tresors/JetonsRadar";
 import { PullQuote } from "@/components/tresors/PullQuote";
 import Image from "next/image";
+import { LiberationStatus } from "@/components/tresors/LiberationStatus";
 
 export interface TresorDetail {
   id: string;
@@ -208,7 +209,7 @@ export default function TresorDetailPage() {
             </div>
           </div>
 
-          {/* Radar des Jetons (Sous l'image) */}
+           {/* Radar des Jetons (Sous l'image) */}
           <div className="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-sm flex-1 flex flex-col">
              <div className="mb-10 text-center">
                 <p className="text-[9px] font-black uppercase tracking-[0.4em] text-gray-400 mb-2">NOMBRE DE FLEURS POUR APPELER LE TRÉSOR</p>
@@ -220,8 +221,17 @@ export default function TresorDetailPage() {
                 competence={tresor.jetons.competence}
              />
              
+             {/* Statut de Libération */}
+             <div className="mt-8">
+               <LiberationStatus
+                 rarete={tresor.metrics.rarete}
+                 conservation={tresor.metrics.conservation}
+                 restitution={tresor.metrics.restitution}
+               />
+             </div>
+
              {/* Bouton Action */}
-             <div className="mt-auto pt-12">
+             <div className="mt-6">
                <button className="w-full py-5 bg-black hover:bg-gray-800 text-white rounded-2xl font-bold text-sm tracking-widest uppercase transition-all shadow-lg active:scale-95">
                   Libérer le trésor
                </button>
