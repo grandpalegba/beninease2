@@ -9,6 +9,18 @@ export async function createSupabaseServerClient() {
 
   if (!supabaseUrl || !supabaseAnonKey) {
     console.error("🚨 [ERREUR CRITIQUE SERVEUR] Variables d'environnement Supabase manquantes !");
+    // On retourne une instance "vide" ou on throw une erreur plus propre
+    // Pour le build, on veut éviter le crash immédiat de @supabase/ssr
+    return createServerClient(
+      supabaseUrl || "https://placeholder.supabase.co",
+      supabaseAnonKey || "placeholder",
+      {
+        cookies: {
+          getAll() { return []; },
+          setAll() {},
+        },
+      }
+    );
   }
 
   return createServerClient(

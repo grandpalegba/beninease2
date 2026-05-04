@@ -13,6 +13,17 @@ export function createSupabaseMiddlewareClient(request: NextRequest) {
 
   if (!supabaseUrl || !supabaseAnonKey) {
     console.error("🚨 [ERREUR CRITIQUE MIDDLEWARE] Variables d'environnement Supabase manquantes !");
+    const supabase = createServerClient(
+      supabaseUrl || "https://placeholder.supabase.co",
+      supabaseAnonKey || "placeholder",
+      {
+        cookies: {
+          getAll() { return []; },
+          setAll() {},
+        },
+      }
+    );
+    return { supabase, response: supabaseResponse };
   }
 
   const supabase = createServerClient(
