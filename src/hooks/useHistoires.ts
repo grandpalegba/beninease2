@@ -25,9 +25,9 @@ export function useHistoires() {
 
       if (profilesError) throw profilesError;
 
-      // 2. Fetch series
+      // 2. Fetch series (for posters)
       const { data: seriesData, error: seriesError } = await supabase
-        .from("series_histoires")
+        .from("series")
         .select("*");
 
       if (seriesError) throw seriesError;

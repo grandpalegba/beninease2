@@ -49,6 +49,7 @@ export default function ProfilHistoirePage() {
       try {
         let serieData = null;
         setLoading(true);
+        // 1. Fetch profile with series link
         const { data: pData, error: pError } = await supabase
           .from("profiles_histoires")
           .select("*")
@@ -57,35 +58,34 @@ export default function ProfilHistoirePage() {
 
         if (pError) throw pError;
 
+        let serieData = null;
         let allEpisodesFromDB: any[] = [];
+
         if (pData.series_id) {
-          // 1. On récupère la série actuelle pour avoir le titre de référence
-          const { data: currentSerie } = await supabase
-            .from("series_histoires")
+          // 2. Fetch the parent series from 'series' table (for affiche_url)
+          const { data: parentSerie } = await supabase
+            .from("series")
             .select("*")
             .eq("id", pData.series_id)
             .single();
           
-          if (currentSerie) {
-            serieData = currentSerie;
-            // 2. On récupère TOUS les épisodes de cette même série (par titre)
-            // On récupère les titres et questions définis par le USER dans le schéma
+          if (parentSerie) {
+            serieData = parentSerie;
+            
+            // 3. Fetch all episodes of this series from 'series_histoires'
             const { data: epData } = await supabase
               .from("series_histoires")
               .select("*")
-              .eq("titre", currentSerie.titre)
+              .eq("titre", parentSerie.titre)
               .order("episode_numero", { ascending: true });
             
             if (epData) allEpisodesFromDB = epData;
           }
         }
 
-        // On fusionne les infos de la table 'series_histoires' (titres/questions) 
-        // avec les vidéos attachées au profil (profiles_histoires.video_urls)
         const profileVideos = Array.isArray(pData.video_urls) ? pData.video_urls : [];
         
         const video_urls: Episode[] = allEpisodesFromDB.map((dbEp, index) => {
-          // On cherche si une vidéo correspond à cet index dans le profil
           const profVideo = profileVideos[index];
           return {
             id: dbEp.id || `ep-${index + 1}`,
