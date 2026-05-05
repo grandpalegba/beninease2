@@ -15,8 +15,8 @@ export default function Home() {
     <div className="min-h-screen bg-white">
       <main>
         <Hero />
-        <AfrakaDoors />
         <Guardians />
+        <AfrakaDoors />
         <CtaFinal />
         
         <footer className="border-t border-zinc-100 py-10 px-6 bg-white">
