@@ -24,6 +24,11 @@ export const metadata: Metadata = {
     locale: "fr_BJ",
     siteName: "Yonyverse",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Yonyverse - Les Jeux Mondiaux du Fâ",
+    description: "Les Jeux Mondiaux du Fâ. Libération des Trésors du Bénin.",
+  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
