@@ -16,8 +16,8 @@ export default function Home() {
       <main>
         <Hero />
         <Guardians />
-        <AfrakaDoors />
         <CtaFinal />
+        <AfrakaDoors />
         
         <footer className="border-t border-zinc-100 py-10 px-6 bg-white">
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
