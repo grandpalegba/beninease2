@@ -63,6 +63,7 @@ const FRAGMENTS = [
   }
 ];
 
+import { motion } from "framer-motion";
 import useEmblaCarousel from "embla-carousel-react";
 
 export const AfrakaDoors = () => {
@@ -76,6 +77,19 @@ export const AfrakaDoors = () => {
     <section className="bg-white py-12 md:py-24 px-6 md:px-12 overflow-hidden">
       <div className="max-w-[1400px] mx-auto">
         
+        {/* TITRE DE SECTION */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+          className="mb-14 text-center md:text-left"
+        >
+          <h2 className="font-display text-4xl md:text-6xl font-semibold tracking-tight text-zinc-950 leading-[1.05]">
+            La légende de Yony
+          </h2>
+        </motion.div>
+
         {/* VIEW MOBILE : DIAPORAMA (Carousel) */}
         <div className="md:hidden">
           <div className="overflow-hidden" ref={emblaRef}>

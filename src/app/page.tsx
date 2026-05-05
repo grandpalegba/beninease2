@@ -4,9 +4,9 @@
  */
 import { AfrakaDoors } from "@/components/AfrakaDoors";
 import { Hero } from "@/components/quest/Hero";
-import { Legend } from "@/components/quest/Legend";
-import { Pillars } from "@/components/quest/Pillars";
-import { Tokens } from "@/components/quest/Tokens";
+import { Vision } from "@/components/quest/Vision";
+import { Architecture } from "@/components/quest/Architecture";
+import { Protagonistes } from "@/components/quest/Protagonistes";
 import { Guardians } from "@/components/quest/Guardians";
 import { CtaFinal } from "@/components/quest/CtaFinal";
 
@@ -15,6 +15,9 @@ export default function Home() {
     <div className="min-h-screen bg-white">
       <main>
         <Hero />
+        <Vision />
+        <Architecture />
+        <Protagonistes />
         <Guardians />
         <CtaFinal />
         <AfrakaDoors />
