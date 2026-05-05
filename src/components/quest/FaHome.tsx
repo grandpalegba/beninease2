@@ -23,7 +23,7 @@ export function FaHome() {
             La Géométrie Sacrée du Fâ
           </h2>
           <p className="mt-8 text-xl text-zinc-400 font-light leading-relaxed max-w-3xl mx-auto">
-            La Matrice du 16 : La structure des jeux repose sur le système de divination ancestral béninois.
+            <span className="font-medium text-white">La Matrice du 16 :</span> La structure des jeux s'appuie sur la science du Fâ, l'une des plus grandes traditions majeures du patrimoine béninois. Ce système de connaissances universelles organise la rencontre des nations autour d'une combinatoire mathématique sacrée.
           </p>
         </motion.div>
 
