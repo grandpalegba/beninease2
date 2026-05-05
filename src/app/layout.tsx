@@ -9,7 +9,7 @@ import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "Yonyverse - Les Jeux Mondiaux du Fâ",
-  description: "Les Jeux Mondiaux du Fâ. Libération des Trésors du Bénin.",
+  description: "Libération des Trésors du Bénin.",
   keywords: ["Bénin", "Talents", "Culture", "Patrimoine", "Excellence", "Fâ", "Jeux Mondiaux", "Yonyverse"],
   icons: {
     icon: '/favicon.png',
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Yonyverse - Les Jeux Mondiaux du Fâ",
-    description: "Les Jeux Mondiaux du Fâ. Libération des Trésors du Bénin.",
+    description: "Libération des Trésors du Bénin.",
     url: "https://beninease.space",
     type: "website",
     locale: "fr_BJ",
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Yonyverse - Les Jeux Mondiaux du Fâ",
-    description: "Les Jeux Mondiaux du Fâ. Libération des Trésors du Bénin.",
+    description: "Libération des Trésors du Bénin.",
   },
 };
 
