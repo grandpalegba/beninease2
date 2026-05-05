@@ -32,9 +32,7 @@ export default function ProfilHistoirePage() {
   const solde = useWallet((s) => s.solde);
   const investir = useWallet((s) => s.investir);
 
-  const [open, setOpen] = useState(false);
-  const [montant, setMontant] = useState(50);
-  const [feedback, setFeedback] = useState<{ type: "ok" | "err"; msg: string } | null>(null);
+
   
   const [stats, setStats] = useState({
     originalite: 2.5,
@@ -143,16 +141,7 @@ export default function ProfilHistoirePage() {
 
   if (!profil) return null;
 
-  function handleInvest() {
-    if (!profil) return;
-    const res = investir(profil.id, montant);
-    if (res.ok) {
-      setFeedback({ type: "ok", msg: `Investissement validé · ${montant} Noix` });
-      setTimeout(() => { setOpen(false); setFeedback(null); }, 900);
-    } else {
-      setFeedback({ type: "err", msg: res.error ?? "Erreur" });
-    }
-  }
+
 
   const mainVideoId = getYoutubeID(profil.video_urls[0]?.video_url);
 
@@ -221,25 +210,6 @@ export default function ProfilHistoirePage() {
           </div>
         </div>
 
-        {/* --- ACTIONS SECTION --- */}
-        <div className="flex flex-col md:flex-row gap-6 items-center justify-between bg-white/50 p-4 rounded-[2rem] border border-gray-100">
-           <div className="flex items-center gap-4 px-6 w-full md:w-auto">
-              <div className="w-12 h-12 bg-white border border-gray-100 rounded-xl flex items-center justify-center text-gray-400 shadow-sm">
-                <Users size={24} />
-              </div>
-              <div>
-                <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Nb d&apos;investisseurs</p>
-                <p className="text-2xl font-black text-black leading-none tracking-tighter">{profil.total_investisseurs ?? 0}</p>
-              </div>
-           </div>
-
-           <button 
-              onClick={() => setOpen(true)}
-              className="w-full md:w-[300px] bg-black text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-xs hover:bg-gray-800 transition-all shadow-xl shadow-black/10 active:scale-95"
-            >
-              Donner de l&apos;écho
-            </button>
-        </div>
 
         {/* --- EVALUATION MODULE --- */}
         <section className="space-y-8 pb-10">
@@ -247,72 +217,7 @@ export default function ProfilHistoirePage() {
         </section>
       </main>
 
-      {/* --- INVEST MODAL --- */}
-      {open && (
-        <div className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-300" onClick={() => setOpen(false)}>
-          <div className="w-full max-w-md rounded-[2.5rem] bg-white p-8 relative shadow-2xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
-            <div className="absolute top-0 right-0 p-8">
-              <button onClick={() => setOpen(false)} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-black transition-colors">
-                <X size={20} />
-              </button>
-            </div>
-            
-            <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-2">Acquisition</p>
-            <h3 className="text-3xl font-black text-black tracking-tighter mb-8">{profil.nom_complet}</h3>
 
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Montant (NB)</p>
-                <input 
-                  type="number" 
-                  value={montant}
-                  onChange={(e) => setMontant(Number(e.target.value))}
-                  className="w-full bg-gray-50 rounded-2xl p-5 text-4xl font-black focus:outline-none border-2 border-transparent focus:border-[#3b6934] transition-all"
-                />
-              </div>
-
-              <div className="grid grid-cols-4 gap-2">
-                {[25, 50, 100, 250].map(v => (
-                  <button 
-                    key={v}
-                    onClick={() => setMontant(v)}
-                    className={cn(
-                      "py-3 rounded-xl font-black text-xs transition-all",
-                      montant === v ? "bg-[#3b6934] text-white" : "bg-gray-50 text-gray-400 hover:bg-gray-100"
-                    )}
-                  >
-                    {v}
-                  </button>
-                ))}
-              </div>
-
-              <div className="p-6 bg-gray-50 rounded-2xl space-y-3">
-                <div className="flex justify-between text-xs font-bold text-gray-400 uppercase">
-                  <span>Cours actuel</span>
-                  <span className="text-black">{profil.valeur_noix_benies.toFixed(2)} NB</span>
-                </div>
-                <div className="flex justify-between text-xs font-bold text-gray-400 uppercase">
-                  <span>Solde disponible</span>
-                  <span className="text-[#008751]">{solde.toFixed(0)} NB</span>
-                </div>
-              </div>
-
-              <button 
-                onClick={handleInvest}
-                className="w-full bg-[#0F172A] text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-sm shadow-xl active:scale-95 transition-all"
-              >
-                Confirmer l'achat
-              </button>
-              
-              {feedback && (
-                <p className={cn("text-center text-xs font-bold uppercase", feedback.type === 'ok' ? 'text-green-600' : 'text-red-600')}>
-                  {feedback.msg}
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
     </motion.div>
   );
 }
