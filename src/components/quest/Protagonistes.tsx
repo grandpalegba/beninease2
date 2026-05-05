@@ -56,17 +56,7 @@ export function Protagonistes() {
           ))}
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="max-w-max mx-auto px-8 py-4 rounded-full bg-zinc-950 text-white flex items-center justify-center shadow-2xl"
-        >
-          <span className="font-display text-xl font-medium tracking-wide uppercase">
-            240 experts par nation
-          </span>
-        </motion.div>
+
       </div>
     </section>
   );

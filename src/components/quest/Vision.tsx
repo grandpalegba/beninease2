@@ -60,17 +60,7 @@ export function Vision() {
           ))}
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="max-w-3xl mx-auto text-center p-8 rounded-3xl bg-zinc-50 border border-zinc-100"
-        >
-          <p className="text-xl md:text-2xl font-light text-zinc-800 leading-relaxed italic">
-            "Tout repose sur la Puissance du 16 — une matrice d’équilibre et d’excellence."
-          </p>
-        </motion.div>
+
       </div>
     </section>
   );

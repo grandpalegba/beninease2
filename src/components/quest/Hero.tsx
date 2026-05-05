@@ -52,15 +52,7 @@ export function Hero() {
         </motion.div>
       </div>
 
-      {/* Mention discrète */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1, delay: 0.5 }}
-        className="absolute bottom-10 left-0 right-0 flex justify-center text-[10px] uppercase tracking-[0.3em] text-zinc-400 font-medium"
-      >
-        Bénin — Monde | 2026
-      </motion.div>
+
     </section>
   );
 }
