@@ -69,8 +69,7 @@ export function Guardians() {
           </div>
 
           <p className="mt-6 text-lg text-zinc-600 max-w-2xl mx-auto font-light leading-relaxed">
-            Chaque groupe de 60 appels active l'influence d'une divinité qui protège une étape du Retour.
-            L'étoile noire suit la divinité en cours.
+            Chaque appel active l'influence d'une divinité qui protège l'étape du Retour.
           </p>
         </motion.div>
 
