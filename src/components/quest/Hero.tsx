@@ -26,7 +26,7 @@ export function Hero() {
               YONYVERSE
             </span>
             <span className="block text-4xl md:text-5xl lg:text-6xl text-zinc-800 font-medium mt-2">
-              un escape game mondial.
+              Les Jeux Mondiaux du Fâ
             </span>
           </h1>
 
