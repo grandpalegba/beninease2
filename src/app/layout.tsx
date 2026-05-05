@@ -8,17 +8,17 @@ import Providers from "@/components/Providers";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
-  title: "Yonyverse - Les Trésors du Bénin",
-  description: "Découvrez les talents et les mystères du patrimoine béninois.",
-  keywords: ["Bénin", "Talents", "Culture", "Patrimoine", "Excellence"],
+  title: "Yonyverse - Les Jeux Mondiaux du Fâ",
+  description: "Les Jeux Mondiaux du Fâ. Libération des Trésors du Bénin.",
+  keywords: ["Bénin", "Talents", "Culture", "Patrimoine", "Excellence", "Fâ", "Jeux Mondiaux", "Yonyverse"],
   icons: {
     icon: '/favicon.png',
     shortcut: '/favicon.png',
     apple: '/favicon.png',
   },
   openGraph: {
-    title: "Yonyverse - L'Excellence Béninoise",
-    description: "Découvrez les talents et les mystères du patrimoine béninois.",
+    title: "Yonyverse - Les Jeux Mondiaux du Fâ",
+    description: "Les Jeux Mondiaux du Fâ. Libération des Trésors du Bénin.",
     url: "https://beninease.space",
     type: "website",
     locale: "fr_BJ",
