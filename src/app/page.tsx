@@ -7,6 +7,10 @@ import { Hero } from "@/components/quest/Hero";
 import { Vision } from "@/components/quest/Vision";
 import { Architecture } from "@/components/quest/Architecture";
 import { Protagonistes } from "@/components/quest/Protagonistes";
+import { Alliance } from "@/components/quest/Alliance";
+import { JetonsHome } from "@/components/quest/JetonsHome";
+import { ProjetsHome } from "@/components/quest/ProjetsHome";
+import { Experience } from "@/components/quest/Experience";
 import { Guardians } from "@/components/quest/Guardians";
 import { CtaFinal } from "@/components/quest/CtaFinal";
 
@@ -18,6 +22,10 @@ export default function Home() {
         <Vision />
         <Architecture />
         <Protagonistes />
+        <Alliance />
+        <JetonsHome />
+        <ProjetsHome />
+        <Experience />
         <Guardians />
         <CtaFinal />
         <AfrakaDoors />
