@@ -22,8 +22,11 @@ export function Hero() {
           transition={{ duration: 1, ease: "easeOut" }}
         >
           <h1 className="font-display font-semibold tracking-tight text-zinc-950 mb-8 leading-[1.1]">
-            <span className="block text-4xl md:text-6xl lg:text-7xl">
-              YONYVERSE est un escape game mondial.
+            <span className="block text-[14vw] md:text-[8rem] uppercase text-zinc-950">
+              YONYVERSE
+            </span>
+            <span className="block text-4xl md:text-5xl lg:text-6xl text-zinc-800 font-medium mt-2">
+              un escape game mondial.
             </span>
           </h1>
 
