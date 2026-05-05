@@ -8,7 +8,7 @@ import { Vision } from "@/components/quest/Vision";
 import { Architecture } from "@/components/quest/Architecture";
 import { Protagonistes } from "@/components/quest/Protagonistes";
 import { Alliance } from "@/components/quest/Alliance";
-import { JetonsHome } from "@/components/quest/JetonsHome";
+import { FaHome } from "@/components/quest/FaHome";
 import { ProjetsHome } from "@/components/quest/ProjetsHome";
 import { Experience } from "@/components/quest/Experience";
 import { Guardians } from "@/components/quest/Guardians";
@@ -23,7 +23,7 @@ export default function Home() {
         <Architecture />
         <Protagonistes />
         <Alliance />
-        <JetonsHome />
+        <FaHome />
         <ProjetsHome />
         <Experience />
         <Guardians />

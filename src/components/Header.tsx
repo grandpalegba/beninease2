@@ -111,14 +111,7 @@ const Header = ({ hideTop = false }: { hideTop?: boolean }) => {
                 </div>
               )}
             </div>
-          ) : (
-            <Link 
-              href="/login" 
-              className="px-4 py-1.5 md:px-6 md:py-2 bg-[#008751] text-white text-[9px] md:text-[11px] font-black uppercase tracking-widest rounded-full hover:bg-[#006b40] transition-all"
-            >
-              Connexion
-            </Link>
-          )}
+          ) : null}
         </div>
       </footer>
     </>
