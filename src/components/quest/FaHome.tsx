@@ -23,7 +23,7 @@ export function FaHome() {
             La Géométrie Sacrée du Fâ
           </h2>
           <p className="mt-8 text-xl text-zinc-400 font-light leading-relaxed max-w-3xl mx-auto">
-            <span className="font-medium text-white">La Matrice du 16 :</span> La structure des jeux s'appuie sur la science du Fâ, l'une des plus grandes traditions majeures du patrimoine béninois. Ce système de connaissances universelles organise la rencontre des nations autour d'une combinatoire mathématique sacrée.
+            La structure des jeux s'appuie sur la science du Fâ, l'une des plus grandes traditions majeures du patrimoine béninois.
           </p>
         </motion.div>
 
@@ -82,9 +82,7 @@ export function FaHome() {
               className="p-8 border border-zinc-800 bg-zinc-900 rounded-3xl"
             >
               <p className="text-xl md:text-2xl font-display font-medium leading-relaxed tracking-wide text-white">
-                Yonyverse = <br />
-                <span className="text-[#FCD116]">Les Jeux Mondiaux du Fâ</span> <br />
-                et des Valeurs Féminines.
+                Les Jeux sont construits autour des cultures, des traditions de <span className="text-[#FCD116]">16 pays-clés</span>.
               </p>
             </motion.div>
           </div>

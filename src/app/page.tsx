@@ -2,13 +2,10 @@
  * PAGE PUBLIQUE - ACCUEIL
  * Role: Vitrine principale du site BeninEase.
  */
-import { AfrakaDoors } from "@/components/AfrakaDoors";
 import { Hero } from "@/components/quest/Hero";
 import { Vision } from "@/components/quest/Vision";
 import { MissionStructure } from "@/components/quest/MissionStructure";
 import { FaHome } from "@/components/quest/FaHome";
-import { ProjetsHome } from "@/components/quest/ProjetsHome";
-import { Guardians } from "@/components/quest/Guardians";
 import { CtaFinal } from "@/components/quest/CtaFinal";
 
 export default function Home() {
@@ -19,10 +16,7 @@ export default function Home() {
         <Vision />
         <MissionStructure />
         <FaHome />
-        <ProjetsHome />
-        <Guardians />
         <CtaFinal />
-        <AfrakaDoors />
         
         <footer className="border-t border-zinc-100 py-10 px-6 bg-white">
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-zinc-500">

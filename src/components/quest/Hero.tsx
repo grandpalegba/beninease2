@@ -26,14 +26,14 @@ export function Hero() {
               YONYVERSE
             </span>
             <span className="block text-4xl md:text-5xl lg:text-6xl text-zinc-800 font-medium mt-2">
-              Les Jeux Mondiaux du Fâ et des Valeurs Féminines
+              Les Jeux Mondiaux du Fâ
             </span>
           </h1>
 
           <p className="mt-8 text-xl md:text-2xl lg:text-3xl font-light text-zinc-600 leading-relaxed max-w-3xl mx-auto">
-            Un défi collectif où les nations collaborent pour une mission unique :
+            Un défi collectif où les nations collaborent pour libérer
             <br className="hidden md:block" />
-            <span className="font-medium text-zinc-950"> libérer 256 trésors du Bénin</span> conservés dans des musées à travers le monde.
+            <span className="font-medium text-zinc-950"> 256 trésors du Bénin</span> exilés à travers le monde.
           </p>
         </motion.div>
       </div>

@@ -8,7 +8,7 @@ import Providers from "@/components/Providers";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
-  title: "Yonyverse - Les Jeux Mondiaux du Fâ et des Valeurs Féminines",
+  title: "Yonyverse - Les Jeux Mondiaux du Fâ",
   description: "Libération des Trésors du Bénin.",
   keywords: ["Bénin", "Talents", "Culture", "Patrimoine", "Excellence", "Fâ", "Jeux Mondiaux", "Yonyverse"],
   icons: {
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     apple: '/favicon.png',
   },
   openGraph: {
-    title: "Yonyverse - Les Jeux Mondiaux du Fâ et des Valeurs Féminines",
+    title: "Yonyverse - Les Jeux Mondiaux du Fâ",
     description: "Libération des Trésors du Bénin.",
     url: "https://beninease.space",
     type: "website",
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Yonyverse - Les Jeux Mondiaux du Fâ et des Valeurs Féminines",
+    title: "Yonyverse - Les Jeux Mondiaux du Fâ",
     description: "Libération des Trésors du Bénin.",
   },
 };
