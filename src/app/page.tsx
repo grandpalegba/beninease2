@@ -5,12 +5,9 @@
 import { AfrakaDoors } from "@/components/AfrakaDoors";
 import { Hero } from "@/components/quest/Hero";
 import { Vision } from "@/components/quest/Vision";
-import { Architecture } from "@/components/quest/Architecture";
-import { Protagonistes } from "@/components/quest/Protagonistes";
-import { Alliance } from "@/components/quest/Alliance";
+import { MissionStructure } from "@/components/quest/MissionStructure";
 import { FaHome } from "@/components/quest/FaHome";
 import { ProjetsHome } from "@/components/quest/ProjetsHome";
-import { Experience } from "@/components/quest/Experience";
 import { Guardians } from "@/components/quest/Guardians";
 import { CtaFinal } from "@/components/quest/CtaFinal";
 
@@ -20,12 +17,9 @@ export default function Home() {
       <main>
         <Hero />
         <Vision />
-        <Architecture />
-        <Protagonistes />
-        <Alliance />
+        <MissionStructure />
         <FaHome />
         <ProjetsHome />
-        <Experience />
         <Guardians />
         <CtaFinal />
         <AfrakaDoors />
