@@ -11,27 +11,23 @@ const RESSOURCES = [
 
 const MODULES = [
   { 
-    name: "Sagesse", 
-    place: "L'Oracle", 
-    action: "Résoudre des énigmes de vie par la science du Fâ", 
+    name: "Sagesses", 
+    action: "Résoudre des énigmes de vie par la science du Fâ pour gagner des jetons de conscience", 
     token: "Jeton de Conscience" 
   },
   { 
-    name: "Savoir", 
-    place: "L'Académie", 
-    action: "Relever des défis de culture générale", 
+    name: "Savoirs", 
+    action: "Relever des défis de culture générale pour récolter des jetons de connaissance", 
     token: "Jeton de Connaissance" 
   },
   { 
     name: "Talents", 
-    place: "La Scène", 
-    action: "Remporter des duels artistiques", 
+    action: "Remporter des duels artistiques pour s'emparer de jetons de compétence", 
     token: "Jeton de Compétence" 
   },
   { 
     name: "Histoires", 
-    place: "Le Cénacle", 
-    action: "Partager des récits de vie authentiques", 
+    action: "Partager des récits de vie authentiques pour rafler des jetons de confiance", 
     token: "Jeton de Confiance" 
   }
 ];
@@ -71,7 +67,7 @@ export function Vision() {
           ))}
         </div>
 
-        <div className="space-y-4 max-w-4xl mx-auto">
+        <div className="space-y-6 max-w-4xl mx-auto">
           {MODULES.map((mod, idx) => (
             <motion.div
               key={mod.name}
@@ -79,22 +75,18 @@ export function Vision() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: idx * 0.1 }}
-              className="group grid grid-cols-1 md:grid-cols-4 gap-4 items-center p-6 bg-white border border-zinc-200 rounded-3xl hover:border-zinc-950 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+              className="group grid grid-cols-1 md:grid-cols-4 gap-6 items-center p-8 bg-white border border-zinc-200 rounded-[2rem] hover:border-zinc-950 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
             >
               <div className="flex flex-col">
-                <span className="text-[10px] uppercase tracking-widest text-zinc-400 font-bold mb-1">Module</span>
-                <span className="text-lg font-semibold text-zinc-950">{mod.name}</span>
+                <span className="text-[10px] uppercase tracking-widest text-zinc-400 font-bold mb-1">Espace</span>
+                <span className="text-2xl font-semibold text-zinc-950">{mod.name}</span>
               </div>
-              <div className="flex flex-col">
-                <span className="text-[10px] uppercase tracking-widest text-zinc-400 font-bold mb-1">Lieu</span>
-                <span className="text-zinc-700 italic font-medium">{mod.place}</span>
-              </div>
-              <div className="flex flex-col md:col-span-1">
+              <div className="flex flex-col md:col-span-2">
                 <span className="text-[10px] uppercase tracking-widest text-zinc-400 font-bold mb-1">Mission</span>
-                <span className="text-sm text-zinc-600 leading-snug">{mod.action}</span>
+                <span className="text-base text-zinc-600 leading-relaxed">{mod.action}</span>
               </div>
               <div className="flex flex-col items-start md:items-end">
-                <div className="px-4 py-2 bg-zinc-950 text-[#FCD116] text-[10px] font-bold uppercase tracking-widest rounded-full shadow-lg group-hover:scale-105 transition-transform">
+                <div className="px-5 py-2.5 bg-zinc-950 text-[#FCD116] text-[10px] font-bold uppercase tracking-widest rounded-full shadow-lg group-hover:scale-105 transition-transform">
                   {mod.token}
                 </div>
               </div>
