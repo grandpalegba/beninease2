@@ -3,6 +3,7 @@
  * Role: Vitrine principale du site BeninEase.
  */
 import { Hero } from "@/components/quest/Hero";
+import { Delegation } from "@/components/quest/Delegation";
 import { Vision } from "@/components/quest/Vision";
 import { FaHome } from "@/components/quest/FaHome";
 import { CtaFinal } from "@/components/quest/CtaFinal";
@@ -12,6 +13,7 @@ export default function Home() {
     <div className="min-h-screen bg-white">
       <main>
         <Hero />
+        <Delegation />
         <Vision />
         <FaHome />
         <CtaFinal />
