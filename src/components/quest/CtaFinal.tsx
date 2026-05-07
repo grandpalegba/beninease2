@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { NationsCarousel } from "./NationsCarousel";
 
 const RANKS = [
   { name: "Ahosi", desc: "", img: "/quest/hero-ahosi.png", treasures: 16 },
@@ -13,6 +14,8 @@ const RANKS = [
 export function CtaFinal() {
   return (
     <section className="relative bg-white border-t border-zinc-100">
+      <NationsCarousel />
+      
       <div className="px-6 py-24">
         <div className="max-w-7xl mx-auto">
           <motion.div
