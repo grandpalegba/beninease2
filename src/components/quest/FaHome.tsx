@@ -1,11 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { NATIONS, flagEmoji } from "./Pantheon";
 
 export function FaHome() {
-  // Generate 16 dots to represent the "Matrice du 16"
-  const dots = Array.from({ length: 16 });
-
   return (
     <section className="relative py-32 px-6 bg-zinc-950 text-white overflow-hidden">
       <div className="relative max-w-6xl mx-auto">
@@ -29,33 +27,40 @@ export function FaHome() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 lg:gap-24 items-center mb-20">
           
-          {/* Visual representation of the Fa Matrix (4x4 grid) */}
+          {/* Visual representation of the Nations (4x4 grid) */}
           <motion.div 
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="relative aspect-square max-w-md mx-auto w-full flex items-center justify-center p-8 bg-zinc-900/50 rounded-full border border-zinc-800"
+            className="relative aspect-square max-w-md mx-auto w-full flex items-center justify-center p-8 bg-zinc-900/30 rounded-full border border-zinc-800/50 shadow-[0_0_50px_rgba(252,209,22,0.05)]"
           >
-            <div className="grid grid-cols-4 gap-4 md:gap-6">
-              {dots.map((_, i) => (
+            <div className="grid grid-cols-4 gap-4 md:gap-8 z-10">
+              {NATIONS.map((n, i) => (
                 <motion.div
-                  key={i}
+                  key={n.code}
                   initial={{ opacity: 0, scale: 0 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: i * 0.05 }}
-                  className="w-4 h-4 md:w-6 md:h-6 bg-[#FCD116] rounded-full shadow-[0_0_15px_rgba(252,209,22,0.4)]"
-                />
+                  className="flex flex-col items-center gap-1"
+                >
+                  <span className="text-2xl md:text-3xl drop-shadow-[0_0_8px_rgba(252,209,22,0.3)]">
+                    {flagEmoji(n.code)}
+                  </span>
+                  <span className="text-[7px] md:text-[9px] uppercase tracking-widest text-zinc-500 font-medium">
+                    {n.name.substring(0, 8)}
+                  </span>
+                </motion.div>
               ))}
             </div>
             
             {/* Connecting lines for the sacred geometry feel */}
-            <svg className="absolute inset-0 w-full h-full opacity-20 pointer-events-none" viewBox="0 0 100 100">
-              <circle cx="50" cy="50" r="40" fill="none" stroke="#FCD116" strokeWidth="0.5" />
-              <line x1="10" y1="50" x2="90" y2="50" stroke="#FCD116" strokeWidth="0.5" />
-              <line x1="50" y1="10" x2="50" y2="90" stroke="#FCD116" strokeWidth="0.5" />
-              <circle cx="50" cy="50" r="20" fill="none" stroke="#FCD116" strokeWidth="0.5" strokeDasharray="2 2" />
+            <svg className="absolute inset-0 w-full h-full opacity-10 pointer-events-none" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="45" fill="none" stroke="#FCD116" strokeWidth="0.2" />
+              <line x1="5" y1="50" x2="95" y2="50" stroke="#FCD116" strokeWidth="0.2" />
+              <line x1="50" y1="5" x2="50" y2="95" stroke="#FCD116" strokeWidth="0.2" />
+              <circle cx="50" cy="50" r="25" fill="none" stroke="#FCD116" strokeWidth="0.2" strokeDasharray="1 1" />
             </svg>
           </motion.div>
 
