@@ -37,7 +37,7 @@ export function Hero() {
           </p>
 
           <div className="mt-12 text-sm md:text-base font-bold uppercase tracking-[0.2em] text-zinc-950">
-            16 Nations Fondatrices — 4 arènes de Défis — 1000 Trésors à rapatrier
+            16 Nations Fondatrices — 4 arènes de Défis — 256 Trésors à rapatrier
           </div>
         </motion.div>
       </div>

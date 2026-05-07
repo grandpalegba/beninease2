@@ -9,6 +9,33 @@ const RESSOURCES = [
   "confiance"
 ];
 
+const MODULES = [
+  { 
+    name: "Sagesse", 
+    place: "L'Oracle", 
+    action: "Résoudre des énigmes de vie par la science du Fâ", 
+    token: "Jeton de Conscience" 
+  },
+  { 
+    name: "Savoir", 
+    place: "L'Académie", 
+    action: "Relever des défis de culture générale", 
+    token: "Jeton de Connaissance" 
+  },
+  { 
+    name: "Talents", 
+    place: "La Scène", 
+    action: "Remporter des duels artistiques", 
+    token: "Jeton de Compétence" 
+  },
+  { 
+    name: "Histoires", 
+    place: "Le Cénacle", 
+    action: "Partager des récits de vie authentiques", 
+    token: "Jeton de Confiance" 
+  }
+];
+
 export function Vision() {
   return (
     <section className="relative py-32 px-6 bg-zinc-50 border-t border-zinc-100 text-zinc-950 overflow-hidden">
@@ -21,15 +48,15 @@ export function Vision() {
           className="text-center mb-16"
         >
           <h2 className="font-display text-4xl md:text-5xl font-semibold tracking-tight text-zinc-950 leading-[1.05]">
-            Libérer les trésors, ensemble
+            Libération des trésors
           </h2>
           <p className="mt-8 text-xl text-zinc-600 font-light leading-relaxed max-w-2xl mx-auto">
             Chaque trésor est verrouillé par une clé cryptographique.
-            Pour l’ouvrir, il faut réunir un équilibre précis de ressources :
+            Pour l’ouvrir, il faut réunir un équilibre unique et précis de ressources :
           </p>
         </motion.div>
 
-        <div className="flex flex-wrap justify-center gap-4 mb-20">
+        <div className="flex flex-wrap justify-center gap-4 mb-32">
           {RESSOURCES.map((res, idx) => (
             <motion.div
               key={res}
@@ -44,18 +71,36 @@ export function Vision() {
           ))}
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="max-w-2xl mx-auto text-center p-8 md:p-12 rounded-[2rem] bg-zinc-950 text-white shadow-2xl"
-        >
-          <p className="text-xl md:text-2xl font-light leading-relaxed">
-            <span className="text-[#FCD116]">👉</span> Aucun pays ne peut réussir seul.<br />
-            <span className="font-medium">La libération est forcément collective.</span>
-          </p>
-        </motion.div>
+        <div className="space-y-4 max-w-4xl mx-auto">
+          {MODULES.map((mod, idx) => (
+            <motion.div
+              key={mod.name}
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: idx * 0.1 }}
+              className="group grid grid-cols-1 md:grid-cols-4 gap-4 items-center p-6 bg-white border border-zinc-200 rounded-3xl hover:border-zinc-950 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+            >
+              <div className="flex flex-col">
+                <span className="text-[10px] uppercase tracking-widest text-zinc-400 font-bold mb-1">Module</span>
+                <span className="text-lg font-semibold text-zinc-950">{mod.name}</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] uppercase tracking-widest text-zinc-400 font-bold mb-1">Lieu</span>
+                <span className="text-zinc-700 italic font-medium">{mod.place}</span>
+              </div>
+              <div className="flex flex-col md:col-span-1">
+                <span className="text-[10px] uppercase tracking-widest text-zinc-400 font-bold mb-1">Mission</span>
+                <span className="text-sm text-zinc-600 leading-snug">{mod.action}</span>
+              </div>
+              <div className="flex flex-col items-start md:items-end">
+                <div className="px-4 py-2 bg-zinc-950 text-[#FCD116] text-[10px] font-bold uppercase tracking-widest rounded-full shadow-lg group-hover:scale-105 transition-transform">
+                  {mod.token}
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
   );
