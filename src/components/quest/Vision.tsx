@@ -40,11 +40,10 @@ export function Vision() {
           className="text-center mb-16"
         >
           <h2 className="font-display text-4xl md:text-5xl font-semibold tracking-tight text-zinc-950 leading-[1.05]">
-            Libération des trésors
+            Libération des trésors et Activations des Huacas
           </h2>
           <p className="mt-8 text-xl text-zinc-600 font-light leading-relaxed max-w-2xl mx-auto">
-            Chaque trésor est verrouillé par une clé cryptographique.
-            Pour l’ouvrir, il faut réunir un équilibre unique et précis de ressources :
+            Chaque trésor est verrouillé par une clé cryptographique. Pour l’ouvrir, il faut réunir un équilibre unique et précis de ressources :
           </p>
         </motion.div>
 
