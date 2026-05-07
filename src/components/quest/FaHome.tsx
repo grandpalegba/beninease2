@@ -78,11 +78,25 @@ export function FaHome() {
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+            >
+              <h3 className="font-display text-2xl md:text-3xl font-semibold mb-4 text-white">
+                Les Nations-Mères
+              </h3>
+              <p className="text-zinc-400 font-light text-lg leading-relaxed">
+                Le <span className="text-white font-medium">Bénin</span> (Gbe Medji) et le <span className="text-white font-medium">Pérou</span> (Yeku Medji) sont les deux Nations-Mères au cœur de la matrice du Fâ.
+              </p>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.4 }}
               className="p-8 border border-zinc-800 bg-zinc-900 rounded-3xl"
             >
               <p className="text-xl md:text-2xl font-display font-medium leading-relaxed tracking-wide text-white">
-                Les Jeux sont construits autour des cultures, des traditions de <span className="text-[#FCD116]">16 pays-clés</span>.
+                Les Défis sont construits autour des cultures, des traditions de <span className="text-[#FCD116]">16 Nations-Mères</span>.
               </p>
             </motion.div>
           </div>
