@@ -26,14 +26,14 @@ export function Hero() {
               YONYVERSE
             </span>
             <span className="block text-4xl md:text-5xl lg:text-6xl text-zinc-800 font-medium mt-2">
-              Les Jeux Mondiaux du Fâ
+              Matrice du Fâ
             </span>
           </h1>
 
-          <p className="mt-8 text-xl md:text-2xl lg:text-3xl font-light text-zinc-600 leading-relaxed max-w-3xl mx-auto">
-            Un défi collectif où les nations collaborent pour libérer
+          <p className="mt-8 text-xl md:text-2xl lg:text-3xl font-light text-zinc-600 leading-relaxed max-w-4xl mx-auto">
+            Un Escape Game Culturel où les Nations du monde
             <br className="hidden md:block" />
-            <span className="font-medium text-zinc-950"> 256 trésors du Bénin</span> exilés à travers le monde.
+            collaborent pour libérer <span className="font-medium text-zinc-950">256 Trésors du Bénin</span>.
           </p>
         </motion.div>
       </div>
