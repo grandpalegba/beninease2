@@ -30,7 +30,7 @@ export function Hero() {
             </span>
           </h1>
 
-          <p className="mt-8 text-xl md:text-2xl lg:text-3xl font-light text-zinc-600 leading-relaxed max-w-4xl mx-auto">
+          <p className="mt-8 text-xl md:text-2xl lg:text-3xl font-light text-zinc-600 leading-[1.75] max-w-4xl mx-auto">
             L'Escape Game Culturel où les Nations du monde
             <br className="hidden md:block" />
             ont <span className="font-medium text-zinc-950">256 jours</span> pour libérer les Trésors du Bénin.
