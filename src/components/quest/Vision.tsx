@@ -12,23 +12,19 @@ const RESSOURCES = [
 const MODULES = [
   { 
     name: "Sagesses", 
-    action: "Résoudre des énigmes de vie par la science du Fâ pour gagner des jetons de conscience", 
-    token: "Jeton de Conscience" 
+    action: "Résoudre des énigmes de vie par la science du Fâ pour gagner des jetons de conscience" 
   },
   { 
     name: "Savoirs", 
-    action: "Relever des défis de culture générale pour récolter des jetons de connaissance", 
-    token: "Jeton de Connaissance" 
+    action: "Relever des défis de culture générale pour récolter des jetons de connaissance" 
   },
   { 
     name: "Talents", 
-    action: "Remporter des duels artistiques pour s'emparer de jetons de compétence", 
-    token: "Jeton de Compétence" 
+    action: "Remporter des duels artistiques pour s'emparer de jetons de compétence" 
   },
   { 
     name: "Histoires", 
-    action: "Partager des récits de vie authentiques pour rafler des jetons de confiance", 
-    token: "Jeton de Confiance" 
+    action: "Partager des récits de vie authentiques pour rafler des jetons de confiance" 
   }
 ];
 
@@ -81,14 +77,9 @@ export function Vision() {
                 <span className="text-[10px] uppercase tracking-widest text-zinc-400 font-bold mb-1">Espace</span>
                 <span className="text-2xl font-semibold text-zinc-950">{mod.name}</span>
               </div>
-              <div className="flex flex-col md:col-span-2">
+              <div className="flex flex-col md:col-span-3">
                 <span className="text-[10px] uppercase tracking-widest text-zinc-400 font-bold mb-1">Mission</span>
                 <span className="text-base text-zinc-600 leading-relaxed">{mod.action}</span>
-              </div>
-              <div className="flex flex-col items-start md:items-end">
-                <div className="px-5 py-2.5 bg-zinc-950 text-[#FCD116] text-[10px] font-bold uppercase tracking-widest rounded-full shadow-lg group-hover:scale-105 transition-transform">
-                  {mod.token}
-                </div>
               </div>
             </motion.div>
           ))}
