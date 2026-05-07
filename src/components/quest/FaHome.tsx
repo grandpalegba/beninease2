@@ -48,8 +48,8 @@ export function FaHome() {
                   <span className="text-2xl md:text-3xl drop-shadow-[0_0_8px_rgba(252,209,22,0.3)]">
                     {flagEmoji(n.code)}
                   </span>
-                  <span className="text-[7px] md:text-[9px] uppercase tracking-widest text-zinc-500 font-medium">
-                    {n.name.substring(0, 8)}
+                  <span className="text-[6px] md:text-[8px] uppercase tracking-widest text-zinc-500 font-medium text-center leading-tight">
+                    {n.name}
                   </span>
                 </motion.div>
               ))}

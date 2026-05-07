@@ -11,7 +11,7 @@ export const NATIONS = [
   { code: "ID", name: "Indonésie", points: 3744, cycle: 10 },
   { code: "JP", name: "Japon", points: 3690, cycle: 11 },
   { code: "PG", name: "Papouasie-Nouvelle-Guinée", points: 3611, cycle: 12 },
-  { code: "CL", name: "Île de Pâques", points: 3580, cycle: 13 },
+  { code: "CL", name: "Chili", points: 3580, cycle: 13 },
   { code: "MX", name: "Mexique", points: 3501, cycle: 14 },
   { code: "BR", name: "Brésil", points: 3422, cycle: 15 },
   { code: "PE", name: "Pérou", points: 3388, cycle: 16 },

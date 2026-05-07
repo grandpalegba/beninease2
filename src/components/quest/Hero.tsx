@@ -35,7 +35,7 @@ export function Hero() {
           </p>
 
           <div className="mt-12 text-sm md:text-base font-bold uppercase tracking-[0.2em] text-zinc-950">
-            16 Nations-Mères — 4 arènes de Défis — 256 Trésors à rapatrier — 256 sites archéologiques à réveiller
+            16 Nations-Mères — 4 arènes de Défis
           </div>
         </motion.div>
       </div>
