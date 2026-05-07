@@ -26,15 +26,19 @@ export function Hero() {
               YONYVERSE
             </span>
             <span className="block text-4xl md:text-5xl lg:text-6xl text-zinc-800 font-medium mt-2">
-              Matrice du Fâ
+              Explorer la Matrice du Fâ
             </span>
           </h1>
 
           <p className="mt-8 text-xl md:text-2xl lg:text-3xl font-light text-zinc-600 leading-relaxed max-w-4xl mx-auto">
-            Un Escape Game Culturel où les Nations du monde
+            L'Escape Game Culturel où les Nations du monde
             <br className="hidden md:block" />
-            collaborent pour libérer <span className="font-medium text-zinc-950">256 Trésors du Bénin</span>.
+            ont <span className="font-medium text-zinc-950">256 jours</span> pour libérer les Trésors du Bénin.
           </p>
+
+          <div className="mt-12 text-sm md:text-base font-bold uppercase tracking-[0.2em] text-zinc-950">
+            16 Nations Fondatrices — 4 arènes de Défis — 1000 Trésors à rapatrier
+          </div>
         </motion.div>
       </div>
     </section>
