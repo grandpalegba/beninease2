@@ -10,33 +10,6 @@ const RANKS = [
   { name: "Gbeto", desc: "", img: "/quest/hero-gbeto.png", treasures: 64 },
 ];
 
-const ROLES = [
-  { 
-    name: "Les Paqos", 
-    arena: "Arène Sagesses", 
-    desc: "Les maîtres spirituels qui canalisent l'énergie de la Terre.", 
-    img: "/quest/paqos.png" 
-  },
-  { 
-    name: "Les Chasquis", 
-    arena: "Arène Savoirs", 
-    desc: "Les messagers rapides qui font circuler le savoir entre les nations.", 
-    img: "/quest/chasquis.png" 
-  },
-  { 
-    name: "Les Kumpis", 
-    arena: "Arène Talents", 
-    desc: "Les artisans d'excellence qui tissent la beauté de la compétition.", 
-    img: "/quest/kumpis.png" 
-  },
-  { 
-    name: "Les Quipucamayocs", 
-    arena: "Arène Histoires", 
-    desc: "Les gardiens des données et des récits, maîtres de la mémoire.", 
-    img: "/quest/quipucamayocs.png" 
-  },
-];
-
 export function CtaFinal() {
   return (
     <section className="relative bg-white border-t border-zinc-100">
@@ -54,7 +27,7 @@ export function CtaFinal() {
             </h3>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-32">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {RANKS.map((r, idx) => (
               <motion.div
                 key={r.name}
@@ -79,44 +52,6 @@ export function CtaFinal() {
                     <div className="font-display text-2xl font-semibold">{r.name}</div>
                   </div>
                 </div>
-              </motion.div>
-            ))}
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="text-center mb-20"
-          >
-            <h2 className="font-display text-3xl md:text-5xl font-semibold tracking-tight text-zinc-950">
-              Les Gardiens du Savoir
-            </h2>
-            <p className="mt-4 text-zinc-500 font-light">Les fonctions de soutien au sein de chaque délégation</p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {ROLES.map((role, idx) => (
-              <motion.div
-                key={role.name}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
-                className="flex flex-col"
-              >
-                <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden mb-6 shadow-xl border border-zinc-100">
-                  <Image 
-                    src={role.img}
-                    alt={role.name}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#FCD116] mb-2">{role.arena}</div>
-                <h4 className="text-xl font-semibold text-zinc-950 mb-3">{role.name}</h4>
-                <p className="text-sm text-zinc-500 font-light leading-relaxed">{role.desc}</p>
               </motion.div>
             ))}
           </div>

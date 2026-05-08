@@ -4,7 +4,6 @@
  */
 import { Hero } from "@/components/quest/Hero";
 import { Delegation } from "@/components/quest/Delegation";
-import { Vision } from "@/components/quest/Vision";
 import { FaHome } from "@/components/quest/FaHome";
 import { CtaFinal } from "@/components/quest/CtaFinal";
 
@@ -14,7 +13,6 @@ export default function Home() {
       <main>
         <Hero />
         <Delegation />
-        <Vision />
         <FaHome />
         <CtaFinal />
         
