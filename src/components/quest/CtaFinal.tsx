@@ -44,7 +44,7 @@ export function CtaFinal() {
                     className="absolute bottom-0 left-0 right-0 pt-12 px-5 text-white text-center"
                     style={{ paddingBottom: '4rem' }}
                   >
-                    <div className="font-display text-2xl font-semibold mb-4">{r.name}</div>
+                    <div className="font-display text-2xl font-semibold mb-8">{r.name}</div>
                     <div className="text-[10px] uppercase tracking-[0.25em] text-zinc-300 font-mono">
                       {r.treasures} trésors libérés
                     </div>
