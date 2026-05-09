@@ -22,20 +22,20 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: "easeOut" }}
         >
-          <h1 className="font-display font-semibold tracking-tight text-zinc-950 mb-8 leading-[1.1]">
-            <span className="block text-[14vw] md:text-[8rem] uppercase text-zinc-950">
+          <h1 className="font-display font-semibold tracking-tight text-[#1B2A4A] mb-8 leading-[1.1]">
+            <span className="block text-[14vw] md:text-[8rem] uppercase">
               YONYVERSE
             </span>
-            <span className="block text-xl md:text-2xl lg:text-3xl text-zinc-800 font-medium mt-6 uppercase tracking-[0.15em] leading-relaxed">
+            <span className="block text-xl md:text-2xl lg:text-3xl font-medium mt-6 uppercase tracking-[0.15em] leading-relaxed opacity-90">
               Mise en lumière du Féminin <br /> et des cultures du monde
             </span>
           </h1>
 
-          <div className="mt-20 space-y-4">
-            <div className="text-xl md:text-2xl font-semibold text-zinc-950">
+          <div className="mt-20 space-y-4 text-[#1B2A4A]">
+            <div className="text-xl md:text-2xl font-semibold">
               Première Odyssée : Yony Games
             </div>
-            <div className="text-lg md:text-xl font-light text-zinc-500 italic">
+            <div className="text-lg md:text-xl font-light italic opacity-70">
               « Libérer les trésors, révéler les lieux magiques »
             </div>
 
