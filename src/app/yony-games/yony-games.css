@@ -672,17 +672,18 @@
   margin: 1.5rem 0; 
 }
 .yony-games .space-card {
-  background: var(--off);
-  border: 1px solid var(--grey);
+  background: var(--navy);
+  border: 1px solid var(--navy-d);
   border-radius: 10px;
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  transition: transform 0.3s ease;
+  color: var(--white);
+  transition: transform 0.3s ease, background 0.3s ease;
 }
-.yony-games .space-card:hover { transform: translateY(-5px); background: var(--grey); }
+.yony-games .space-card:hover { transform: translateY(-5px); background: var(--navy-d); }
 .yony-games .space-tag {
   font-family: 'Outfit', sans-serif;
   font-size: 11px;
@@ -708,11 +709,11 @@
 }
 .yony-games .space-desc {
   font-size: 13px;
-  color: var(--navy);
+  color: var(--white);
   line-height: 1.5;
   margin-bottom: 1.5rem;
   flex-grow: 1;
-  opacity: 0.7;
+  opacity: 0.8;
 }
 .yony-games .btn-arena {
   background: transparent;

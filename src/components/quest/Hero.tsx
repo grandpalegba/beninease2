@@ -25,17 +25,18 @@ export function Hero() {
             <span className="block text-[14vw] md:text-[8rem] uppercase text-zinc-950">
               YONYVERSE
             </span>
-            <span className="block text-4xl md:text-5xl lg:text-6xl text-zinc-800 font-medium mt-2">
-              Explorer la Matrice du Fâ et la Magie de la Vallée sacrée
+            <span className="block text-2xl md:text-3xl lg:text-4xl text-zinc-800 font-medium mt-6 uppercase tracking-[0.2em]">
+              L'Univers des Traditions Sacrées
             </span>
           </h1>
 
-          <p className="mt-8 text-xl md:text-2xl lg:text-3xl font-light text-zinc-600 leading-[1.95] max-w-5xl mx-auto">
-            L'Escape Game Culturel où les Nations du monde ont <span className="font-medium text-zinc-950">256 jours</span> pour libérer <span className="font-medium text-zinc-950">256 Trésors du Bénin</span> et réactiver la Puissance de <span className="font-medium text-zinc-950">256 sites archéologiques du Pérou</span>.
-          </p>
-
-          <div className="mt-12 text-sm md:text-base font-bold uppercase tracking-[0.2em] text-zinc-950">
-            16 Nations-Mères — 4 arènes de Défis
+          <div className="mt-20 space-y-4">
+            <div className="text-xl md:text-2xl font-semibold text-zinc-950">
+              Première Odyssée : Yony Games
+            </div>
+            <div className="text-lg md:text-xl font-light text-zinc-500 italic">
+              « Libérer les trésors, révéler les lieux magiques »
+            </div>
           </div>
         </motion.div>
       </div>

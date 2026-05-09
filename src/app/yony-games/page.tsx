@@ -106,8 +106,7 @@ export default function YonyGamesPage() {
           </section>
  
   
-          <Delegation />
-          <FaHome />
+
           <CtaFinal />
 
 
