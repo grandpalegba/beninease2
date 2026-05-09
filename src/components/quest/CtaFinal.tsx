@@ -14,8 +14,8 @@ export function CtaFinal() {
   return (
     <section className="relative bg-transparent border-t border-zinc-100">
       <div className="px-6 py-24">
-        <div className="max-w-7xl mx-auto">
-          <div className="section-header-block">
+        <div className="max-w-5xl mx-auto">
+          <div className="section-header-block w-full">
             <h2 className="section-title-big">Statuts des <em>Amazones</em></h2>
           </div>
           <p style={{ marginTop: '0.5rem', fontSize: '17px', color: 'rgba(0,0,0,0.6)', marginBottom: '3rem', textAlign: 'center' }}>
