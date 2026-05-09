@@ -4,12 +4,12 @@ import { motion } from "framer-motion";
 
 export function Delegation() {
   return (
-    <section className="relative py-32 px-6 bg-transparent text-zinc-950 overflow-hidden">
+    <section className="relative py-32 px-6 bg-[#1B2A4A] text-white overflow-hidden">
       <div className="absolute inset-0 opacity-10 pointer-events-none">
         <div 
           className="absolute inset-0" 
           style={{
-            backgroundImage: "radial-gradient(circle at 1px 1px, rgba(0,0,0,0.05) 1px, transparent 0)",
+            backgroundImage: "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0)",
             backgroundSize: "32px 32px"
           }}
         />
@@ -36,7 +36,7 @@ export function Delegation() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="p-10 rounded-[2rem] bg-white border border-zinc-100 shadow-[0_8px_30px_rgba(0,0,0,0.02)] text-left flex flex-col justify-between hover:shadow-[0_8px_40px_rgba(0,0,0,0.04)] transition-all duration-500"
+            className="p-10 rounded-[2rem] bg-white/5 border border-white/10 shadow-2xl text-left flex flex-col justify-between hover:bg-white/10 transition-all duration-500"
           >
             <div>
               <div className="text-4xl font-bold text-[#FCD116] mb-4">16</div>
@@ -52,7 +52,7 @@ export function Delegation() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.4 }}
-            className="p-10 rounded-[2rem] bg-white border border-zinc-100 shadow-[0_8px_30px_rgba(0,0,0,0.02)] text-left flex flex-col justify-between hover:shadow-[0_8px_40px_rgba(0,0,0,0.04)] transition-all duration-500"
+            className="p-10 rounded-[2rem] bg-white/5 border border-white/10 shadow-2xl text-left flex flex-col justify-between hover:bg-white/10 transition-all duration-500"
           >
             <div>
               <div className="text-4xl font-bold text-[#FCD116] mb-4">240</div>

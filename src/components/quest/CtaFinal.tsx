@@ -20,7 +20,7 @@ export function CtaFinal() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
-            className="max-w-2xl mb-14"
+            className="max-w-2xl mb-24"
           >
             <h3 className="font-display text-2xl md:text-4xl font-semibold tracking-tight text-zinc-950 leading-[1.05]">
               Le statut des Amazones évolue avec chaque Libération de trésor.
@@ -45,7 +45,7 @@ export function CtaFinal() {
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
-                  <div className="absolute inset-0 flex flex-col items-center justify-center p-5 text-white text-center">
+                  <div className="absolute bottom-0 left-0 right-0 p-5 text-white text-center">
                     <div className="text-[10px] uppercase tracking-[0.25em] text-zinc-300 mb-1 font-mono">
                       {r.treasures} trésors libérés
                     </div>

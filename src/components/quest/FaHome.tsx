@@ -5,7 +5,7 @@ import { NATIONS, flagEmoji } from "./Pantheon";
 
 export function FaHome() {
   return (
-    <section className="relative py-24 px-6 bg-transparent text-zinc-950 overflow-hidden">
+    <section className="relative py-24 px-6 bg-[#1B2A4A] text-white overflow-hidden">
       <div className="relative max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -27,7 +27,7 @@ export function FaHome() {
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="bg-white rounded-[2.5rem] border border-zinc-100 p-8 md:p-12 shadow-[0_10px_50px_rgba(0,0,0,0.03)]"
+          className="bg-white/5 backdrop-blur-sm rounded-[2.5rem] border border-white/10 p-8 md:p-12 shadow-2xl"
         >
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 md:gap-10">
             {NATIONS.map((n, i) => (
@@ -42,7 +42,7 @@ export function FaHome() {
                 <span className="text-3xl md:text-4xl transition-transform duration-300 group-hover:scale-110">
                   {flagEmoji(n.code)}
                 </span>
-                <span className="text-[10px] md:text-xs uppercase tracking-widest text-zinc-400 font-bold text-center group-hover:text-zinc-950 transition-colors">
+                <span className="text-[10px] md:text-xs uppercase tracking-widest text-white/40 font-bold text-center group-hover:text-white transition-colors">
                   {n.name}
                 </span>
               </motion.div>
