@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 export function Delegation() {
   return (
-    <section className="relative pb-24 bg-white overflow-hidden border-b border-zinc-100" style={{ paddingTop: '6rem', paddingLeft: '2rem', paddingRight: '2rem' }}>
+    <section className="relative bg-white overflow-hidden border-b border-zinc-100" style={{ paddingTop: '6rem', paddingBottom: '6rem', paddingLeft: '2rem', paddingRight: '2rem' }}>
       <div className="max-w-5xl mx-auto">
         
         {/* Header Block */}
