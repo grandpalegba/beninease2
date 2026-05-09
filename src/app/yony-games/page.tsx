@@ -69,7 +69,7 @@ export default function YonyGamesPage() {
           <section className="content-section">
             <div className="max-w-5xl mx-auto">
               <div className="section-header-block">
-                <h2 className="section-title-big">Les 6 <em>espaces des jeux</em></h2>
+                <h2 className="section-title-big">Les 6 <em>arènes des jeux</em></h2>
               </div>
               
               <p style={{ marginTop: '1rem', fontSize: '15px', color: 'rgba(255,255,255,0.6)', marginBottom: '2rem', textAlign: 'center' }}>
@@ -106,7 +106,8 @@ export default function YonyGamesPage() {
           </section>
  
   
-
+  
+          <Delegation />
           <CtaFinal />
 
 

@@ -318,11 +318,11 @@
   font-size: clamp(30px, 4vw, 46px);
   font-weight: 700;
   text-transform: none;
-  color: var(--navy);
+  color: var(--blue);
   letter-spacing: .02em;
   line-height: 1.05;
 }
-.yony-games .section-title-big em { color: var(--gold-l); font-style: normal; }
+.yony-games .section-title-big em { color: var(--blue); font-style: normal; }
 
 /* ─── KEY FIGURES ────────────────────────────────────── */
 .yony-games .kf-section { padding: 2.5rem 0; }

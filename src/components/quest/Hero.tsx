@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 
 export function Hero() {
@@ -25,8 +26,8 @@ export function Hero() {
             <span className="block text-[14vw] md:text-[8rem] uppercase text-zinc-950">
               YONYVERSE
             </span>
-            <span className="block text-2xl md:text-3xl lg:text-4xl text-zinc-800 font-medium mt-6 uppercase tracking-[0.2em]">
-              L'Univers des Traditions Sacrées
+            <span className="block text-lg md:text-xl lg:text-2xl text-zinc-800 font-medium mt-6 uppercase tracking-[0.2em]">
+              Mise en lumière du Féminin et des cultures du monde
             </span>
           </h1>
 
@@ -36,6 +37,12 @@ export function Hero() {
             </div>
             <div className="text-lg md:text-xl font-light text-zinc-500 italic">
               « Libérer les trésors, révéler les lieux magiques »
+            </div>
+
+            <div className="mt-12">
+              <Link href="/yony-games" className="inline-block bg-[#2E5FA3] text-white px-10 py-4 rounded-full font-bold uppercase tracking-widest hover:bg-[#1B2A4A] transition-all transform hover:-translate-y-1 shadow-lg shadow-blue-500/20">
+                Découvrir Yony Games
+              </Link>
             </div>
           </div>
         </motion.div>

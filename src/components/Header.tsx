@@ -58,7 +58,7 @@ const Header = ({ hideTop = false }: { hideTop?: boolean }) => {
   return (
     <>
       {/* HEADER SWIPE (Top) */}
-      {isMainPage && !hideTop && <HeaderSwipe />}
+      {/* TOP MENU REMOVED */}
 
       {/* DOCK (Bottom) */}
       <footer className="fixed bottom-0 left-0 right-0 z-[200] h-20 bg-[#1B2A4A] border-t border-white/10 flex items-center justify-between px-8 rounded-t-[2.5rem] shadow-[0_-10px_40px_rgba(0,0,0,0.3)] font-sans">
