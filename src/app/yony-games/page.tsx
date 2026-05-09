@@ -120,7 +120,7 @@ export default function YonyGamesPage() {
           {/* Section: Les 6 Arènes (Gallery) */}
           <section className="content-section">
             <div className="section-header-block">
-              <h2 className="section-title-big">Les 6 <em>Arènes de Pouvoir</em></h2>
+              <h2 className="section-title-big">Les 6 <em>espaces des jeux</em></h2>
             </div>
             
             <p style={{ marginTop: '2rem', fontSize: '15px', color: 'rgba(255,255,255,0.6)', marginBottom: '2rem', textAlign: 'center' }}>
@@ -130,54 +130,32 @@ export default function YonyGamesPage() {
             <div className="spaces">
               <div className="space-card">
                 <div className="space-tag s1">Sagesses</div>
-                <div className="space-token-icon">👁️</div>
                 <p className="space-desc">Défis de discernement et résolutions de cas de vie ancestraux.</p>
-                <button className="btn-arena">S'engager dans cette arène</button>
               </div>
               <div className="space-card">
                 <div className="space-tag s2">Savoirs</div>
-                <div className="space-token-icon">📜</div>
                 <p className="space-desc">Culture générale, traditions orales et maîtrise des langues.</p>
-                <button className="btn-arena">S'engager dans cette arène</button>
               </div>
               <div className="space-card">
                 <div className="space-tag s3">Talents</div>
-                <div className="space-token-icon">🎨</div>
                 <p className="space-desc">Duels artistiques, artisanat et performances traditionnelles.</p>
-                <button className="btn-arena">S'engager dans cette arène</button>
               </div>
               <div className="space-card">
                 <div className="space-tag s4">Histoires</div>
-                <div className="space-token-icon">🗣️</div>
                 <p className="space-desc">Partage de récits de vie et transmission de la mémoire.</p>
-                <button className="btn-arena">S'engager dans cette arène</button>
               </div>
               <div className="space-card">
                 <div className="space-tag s5">Portails</div>
-                <div className="space-token-icon">⛩️</div>
                 <p className="space-desc">Présence physique et activation des lieux partenaires (QR Codes).</p>
-                <button className="btn-arena">S'engager dans cette arène</button>
               </div>
               <div className="space-card">
                 <div className="space-tag s6">Voyages</div>
-                <div className="space-token-icon">🤝</div>
                 <p className="space-desc">Cérémonies d'harmonisation et convergence mondiale en live.</p>
-                <button className="btn-arena">S'engager dans cette arène</button>
               </div>
             </div>
           </section>
 
-          {/* Section: Mur des Convergences (Social Proof) */}
-          <section className="wall-preview">
-            <h2 className="section-title-big">Le Mur des <em>Convergences</em></h2>
-            <p style={{ marginTop: '1rem', color: 'rgba(255,255,255,0.5)' }}>Le mouvement est lancé. Voici l'état de construction de la mémoire mondiale.</p>
-            <div className="wall-grid">
-              {[...Array(60)].map((_, i) => (
-                <div key={i} className={`wall-brick ${i < 24 ? 'active' : ''}`}></div>
-              ))}
-            </div>
-            <div style={{ fontSize: '12px', color: 'var(--gold)', fontWeight: 'bold' }}>24 / 512 TRÉSORS LIBÉRÉS</div>
-          </section>
+
 
         </div>
 
