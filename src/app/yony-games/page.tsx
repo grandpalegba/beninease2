@@ -13,19 +13,12 @@ export default function YonyGamesPage() {
         {/* ─── COVER ─── */}
         <section className="cover">
           <div className="cover-stripe-top"></div>
-          <div className="cover-geo">
-            <div className="cover-geo-circle1"></div>
-            <div className="cover-geo-circle2"></div>
-            <div className="cover-geo-circle3"></div>
-            <div className="cover-geo-circle4"></div>
-            <div className="cover-geo-circle5"></div>
-            <div className="cover-geo-circle6"></div>
-          </div>
+
           
           <div className="cover-header">
             <div className="cover-logo">
               <Image 
-                src="/logo.png" 
+                src="/yony-games-logo.png" 
                 alt="Yony Games Logo" 
                 width={52} 
                 height={52} 
@@ -33,16 +26,13 @@ export default function YonyGamesPage() {
               />
               <div className="cover-logo-text">
                 <span className="cover-logo-name">YONY GAMES</span>
-                <span className="cover-logo-tagline">L'épopée de la mémoire</span>
               </div>
             </div>
-            <div className="cover-badge">Présentation Officielle</div>
+
           </div>
 
           <div className="cover-body">
-            <div className="cover-eyebrow">
-              <span>Vision & Stratégie</span>
-            </div>
+
             <h1 className="cover-title">
               Jeux de Valorisation du <em>Féminin</em> et des <em>Traditions</em> du Monde
             </h1>
@@ -66,10 +56,7 @@ export default function YonyGamesPage() {
             </div>
           </div>
 
-          <div className="cover-footer">
-            <div className="cover-date">2026 — 2027</div>
-            <div className="cover-doc-type">PROGRAMME</div>
-          </div>
+
         </section>
 
         {/* ─── MAIN CONTENT ─── */}
@@ -127,7 +114,6 @@ export default function YonyGamesPage() {
                 "L'originalité des Yony Games, c'est d'avoir compris qu'un événement culturel mondial pouvait être sublimé par la convergence des sagesses ancestrales. Depuis les cérémonies d'ouverture jusqu'au choix des sites, nous mettons à profit l'incroyable richesse du patrimoine mondial — et de la mémoire des femmes."
               </p>
               <div className="quote-author">YONY</div>
-              <div className="quote-role">Fondatrice & Visionnaire</div>
             </div>
           </section>
 
@@ -164,7 +150,7 @@ export default function YonyGamesPage() {
                 <div className="num41-digit">41</div>
                 <div className="num41-text">
                   <h3 className="num41-headline">Preuve de <em>Convergence</em></h3>
-                  <p className="num41-sub">Une symétrie sacrée entre l'Afrique et l'Amérique</p>
+
                 </div>
               </div>
               <div className="num41-cols">
@@ -307,7 +293,6 @@ export default function YonyGamesPage() {
             <div className="formula-block">
               <div className="formula-eq">
                 Score Final = Σ (Points Trésors + Points Sites) × Multiplicateur de Solidarité (1 → 16)
-                <span>Calculé en temps réel sur la blockchain de la mémoire</span>
               </div>
             </div>
           </section>
@@ -407,37 +392,12 @@ export default function YonyGamesPage() {
           </section>
 
           {/* Section: Closing */}
-          <section className="content-section" style={{ marginBottom: '5rem' }}>
-            <div className="closing">
-              <div className="closing-label">Rejoignez l'Épopée</div>
-              <h2 className="closing-text">
-                Les <em>Yony Games</em> ne sont pas un jeu, c'est un <strong>serment</strong> prêté à la mémoire de nos ancêtres.
-              </h2>
-            </div>
-          </section>
+
 
         </div>
 
         {/* ─── FOOTER ─── */}
-        <footer className="bg-[#1B2A4A] text-white py-12 px-8 text-center mt-12">
-          <div className="max-w-4xl mx-auto">
-            <Image 
-              src="/logo.png" 
-              alt="Yony Games Logo" 
-              width={64} 
-              height={64} 
-              className="mx-auto mb-6 opacity-80"
-            />
-            <p className="text-xl font-light italic mb-8 opacity-60">
-              "Le futur appartient à ceux qui se souviennent de leur passé."
-            </p>
-            <div className="flex justify-center gap-8 text-xs uppercase tracking-widest opacity-40">
-              <span>Bénin</span>
-              <span>Pérou</span>
-              <span>Monde</span>
-            </div>
-          </div>
-        </footer>
+
       </main>
     </div>
   );
