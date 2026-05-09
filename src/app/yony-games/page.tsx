@@ -58,21 +58,7 @@ export default function YonyGamesPage() {
         {/* ─── MAIN CONTENT ─── */}
         <div className="main">
           
-          {/* Section: Chiffres-Clés */}
-          <section className="kf-section">
-            <div className="section-header-block">
-              <h2 className="section-title-big">L'Ingénierie <em>de la Victoire</em></h2>
-            </div>
-            
-            <div className="kf-grid" style={{ marginTop: '2rem' }}>
 
-
-
-
-            </div>
-
-
-          </section>
 
           {/* Section: Les Équipes (Action-Oriented) */}
           <section className="content-section">
