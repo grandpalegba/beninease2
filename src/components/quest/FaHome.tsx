@@ -8,8 +8,8 @@ export function FaHome() {
     <section
       className="relative overflow-hidden"
       style={{
-        background: "#1B2A4A",
-        backgroundColor: "#1B2A4A",
+        background: "#0E1A30",
+        backgroundColor: "#0E1A30",
         color: "#ffffff",
         paddingTop: "6rem",
         paddingBottom: "6rem",
@@ -149,7 +149,7 @@ export function FaHome() {
             >
               <p style={{ fontSize: "16px", fontWeight: 600, color: "#ffffff", lineHeight: 1.6 }}>
                 Les Défis sont construits autour des cultures, des traditions de{" "}
-                <span style={{ color: "#D4922A" }}>16 Nations-Mères</span>.
+                <span style={{ color: "#D4922A" }}>16 Nations Hôtes</span> de l'édition.
               </p>
             </div>
           </motion.div>
