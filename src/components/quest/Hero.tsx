@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 export function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden px-6 py-28 bg-white">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden px-6 bg-white">
       <div
         className="absolute inset-0 opacity-[0.04] pointer-events-none"
         style={{
@@ -26,8 +26,8 @@ export function Hero() {
             <span className="block text-[14vw] md:text-[8rem] uppercase text-zinc-950">
               YONYVERSE
             </span>
-            <span className="block text-lg md:text-xl lg:text-2xl text-zinc-800 font-medium mt-6 uppercase tracking-[0.2em]">
-              Mise en lumière du Féminin et des cultures du monde
+            <span className="block text-xl md:text-2xl lg:text-3xl text-zinc-800 font-medium mt-6 uppercase tracking-[0.15em] leading-relaxed">
+              Mise en lumière du Féminin <br /> et des cultures du monde
             </span>
           </h1>
 

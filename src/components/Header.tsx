@@ -53,12 +53,12 @@ const Header = ({ hideTop = false }: { hideTop?: boolean }) => {
   };
 
   // List of main pages where we show the HeaderSwipe
-  const isMainPage = ["/", "/sagesses", "/savoirs", "/histoires", "/talents", "/tresors", "/visions", "/yony-games"].includes(pathname);
+  const isMainPage = ["/sagesses", "/savoirs", "/histoires", "/talents", "/tresors", "/visions", "/yony-games"].includes(pathname);
 
   return (
     <>
       {/* HEADER SWIPE (Top) */}
-      {/* TOP MENU REMOVED */}
+      {isMainPage && !hideTop && <HeaderSwipe />}
 
       {/* DOCK (Bottom) */}
       <footer className="fixed bottom-0 left-0 right-0 z-[200] h-20 bg-[#1B2A4A] border-t border-white/10 flex items-center justify-between px-8 rounded-t-[2.5rem] shadow-[0_-10px_40px_rgba(0,0,0,0.3)] font-sans">
