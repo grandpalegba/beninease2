@@ -4,12 +4,12 @@ import { motion } from "framer-motion";
 
 export function Delegation() {
   return (
-    <section className="relative pt-32 pb-24 px-6 bg-white overflow-hidden border-b border-zinc-100">
+    <section className="relative pb-24 px-6 bg-white overflow-hidden border-b border-zinc-100" style={{ paddingTop: '6rem' }}>
       <div className="max-w-5xl mx-auto">
         
         {/* Header Block */}
-        <div className="section-header-block">
-          <h2 className="section-title-big">L'Organisation des <em>Nations</em></h2>
+        <div style={{ textAlign: 'center', marginBottom: '0.5rem' }}>
+          <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: 'clamp(30px, 4vw, 46px)', fontWeight: 700, color: '#2E5FA3', letterSpacing: '0.02em', lineHeight: 1.05 }}>L'Organisation des <em style={{ color: '#2E5FA3', fontStyle: 'normal' }}>Nations</em></h2>
         </div>
         <p style={{ marginTop: '0.5rem', fontSize: '17px', color: 'rgba(0,0,0,0.6)', marginBottom: '4rem', textAlign: 'center' }}>
           Une délégation de 256 personnes par nation.
