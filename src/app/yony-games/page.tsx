@@ -34,8 +34,7 @@ export default function YonyGamesPage() {
 
           <div className="cover-body">
             <h1 className="cover-title" style={{ color: 'var(--gold)', letterSpacing: '0.05em', marginBottom: '1.5rem' }}>
-              <span className="block whitespace-nowrap">OLYMPIADES DES SAGESSES ANCESTRALES</span>
-              <span className="block whitespace-nowrap">DU MONDE</span>
+              OLYMPIADES DES SAGESSES ANCESTRALES
             </h1>
             
             <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '18px', maxWidth: '600px', margin: '0 auto 3rem auto', lineHeight: 1.6 }}>
