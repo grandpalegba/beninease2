@@ -69,7 +69,7 @@ const Header = ({ hideTop = false }: { hideTop?: boolean }) => {
         )}>
           <Link href="/" className="flex items-center gap-1.5 md:gap-2">
             <div className="relative w-5 h-5 md:w-7 md:h-7">
-              <Image src={pathname === "/yony-games" ? "/yony-games-logo.png" : "/logo.png"} alt="logo" fill className="object-contain" />
+              <Image src="/logo.png" alt="logo" fill className="object-contain" />
             </div>
             <span className="text-[10px] md:text-xl font-black tracking-[3px] md:tracking-[5px] uppercase flex items-center text-white">
               Yonyverse
