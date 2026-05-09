@@ -55,8 +55,7 @@ export default function YonyGamesPage() {
             </div>
           </div>
         </section>
-
-        {/* ─── MAIN CONTENT ─── */}
+        <Delegation />
         <div className="main">
           
 
