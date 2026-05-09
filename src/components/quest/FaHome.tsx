@@ -5,22 +5,18 @@ import { NATIONS, flagEmoji } from "./Pantheon";
 
 export function FaHome() {
   return (
-    <section className="relative py-24 px-6 bg-[#1B2A4A] text-white overflow-hidden">
-      <div className="relative max-w-4xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
-          className="text-center mb-16"
-        >
-          <div className="text-[10px] uppercase tracking-[0.3em] text-[#D4922A] font-bold mb-4">
-            L'Organisation des Jeux
-          </div>
-          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight leading-[1.05]">
-            Les 16 Nations <em>Hôtes</em>
+    <section className="relative py-24 bg-[#1B2A4A] text-white overflow-hidden" style={{ paddingLeft: '2rem', paddingRight: '2rem' }}>
+      <div className="relative max-w-5xl mx-auto">
+
+        {/* Header — same pattern as other sections but on dark bg */}
+        <div style={{ textAlign: 'center', marginBottom: '0.5rem' }}>
+          <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: 'clamp(30px, 4vw, 46px)', fontWeight: 700, color: '#ffffff', letterSpacing: '0.02em', lineHeight: 1.05 }}>
+            La Géométrie Sacrée du <em style={{ color: '#D4922A', fontStyle: 'normal' }}>Fâ</em>
           </h2>
-        </motion.div>
+        </div>
+        <p style={{ marginTop: '0.5rem', fontSize: '17px', color: 'rgba(255,255,255,0.55)', marginBottom: '4rem', textAlign: 'center' }}>
+          La structure des jeux s'appuie sur la science du Fâ, l'une des plus grandes traditions majeures du patrimoine béninois.
+        </p>
 
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
@@ -53,4 +49,3 @@ export function FaHome() {
     </section>
   );
 }
-

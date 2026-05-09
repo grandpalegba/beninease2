@@ -56,12 +56,8 @@ export default function YonyGamesPage() {
           </div>
         </section>
         <Delegation />
+        <FaHome />
         <div className="main">
-          
-
-
-
-
           {/* Section: Les 6 Arènes (Gallery) */}
           <section className="content-section">
             <div className="max-w-5xl mx-auto">
@@ -69,7 +65,7 @@ export default function YonyGamesPage() {
                 <h2 className="section-title-big">Les 6 <em>arènes des jeux</em></h2>
               </div>
               
-              <p style={{ marginTop: '0.5rem', fontSize: '17px', color: 'rgba(0,0,0,0.6)', marginBottom: '1rem', textAlign: 'center' }}>
+              <p style={{ marginTop: '0.5rem', fontSize: '17px', color: 'rgba(0,0,0,0.6)', marginBottom: '2.5rem', textAlign: 'center' }}>
                 Les Amazones répartissent leurs soutiens en fonction de leur domaine d'expertise.
               </p>
 

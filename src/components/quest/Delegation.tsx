@@ -11,7 +11,7 @@ export function Delegation() {
         <div style={{ textAlign: 'center', marginBottom: '0.5rem' }}>
           <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: 'clamp(30px, 4vw, 46px)', fontWeight: 700, color: '#2E5FA3', letterSpacing: '0.02em', lineHeight: 1.05 }}>L'Organisation des <em style={{ color: '#2E5FA3', fontStyle: 'normal' }}>Nations</em></h2>
         </div>
-        <p style={{ marginTop: '0.5rem', fontSize: '17px', color: 'rgba(0,0,0,0.6)', marginBottom: '4rem', textAlign: 'center' }}>
+        <p style={{ marginTop: '0.5rem', fontSize: '17px', color: 'rgba(0,0,0,0.6)', marginBottom: '2.5rem', textAlign: 'center' }}>
           Une délégation de 256 personnes par nation.
         </p>
 

@@ -18,7 +18,7 @@ export function CtaFinal() {
           <div className="section-header-block w-full">
             <h2 className="section-title-big">Statuts des <em>Amazones</em></h2>
           </div>
-          <p style={{ marginTop: '0.5rem', fontSize: '17px', color: 'rgba(0,0,0,0.6)', marginBottom: '3rem', textAlign: 'center' }}>
+          <p style={{ marginTop: '0.5rem', fontSize: '17px', color: 'rgba(0,0,0,0.6)', marginBottom: '2.5rem', textAlign: 'center' }}>
             Le statut des Amazones évolue en fonction de la libération des trésors.
           </p>
 
