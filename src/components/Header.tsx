@@ -53,7 +53,7 @@ const Header = ({ hideTop = false }: { hideTop?: boolean }) => {
   };
 
   // List of main pages where we show the HeaderSwipe
-  const isMainPage = ["/", "/sagesses", "/savoirs", "/histoires", "/talents", "/tresors", "/visions"].includes(pathname);
+  const isMainPage = ["/", "/sagesses", "/savoirs", "/histoires", "/talents", "/tresors", "/visions", "/yony-games"].includes(pathname);
 
   return (
     <>

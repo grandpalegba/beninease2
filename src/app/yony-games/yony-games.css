@@ -1,0 +1,1149 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,200;0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=Outfit:wght@200;300;400;500;600;700;800;900&display=swap');
+
+/* ── Elegant title font override ── */
+.yony-games .section-title-big,
+.yony-games .cover-title,
+.yony-games .kf-title,
+.yony-games .kf-card-n,
+.yony-games .mission-title,
+.yony-games .actor-name,
+.yony-games .num41-headline,
+.yony-games .num41-digit,
+.yony-games .num41-col-title,
+.yony-games .ceremony-title,
+.yony-games .mur-card-title,
+.yony-games .mur-soleil-title,
+.yony-games .tension-title,
+.yony-games .pioneer-title,
+.yony-games .score-title,
+.yony-games .fa-title,
+.yony-games .lib-n,
+.yony-games .kf-bud-amount,
+.yony-games .cover-stat-n,
+.yony-games .quote-author,
+.yony-games .closing-text,
+.yony-games .cer-level-title,
+.yony-games .space-tag {
+  font-family: 'DM Sans', sans-serif !important;
+  letter-spacing: 0.04em;
+}
+
+.yony-games .section-title-big { font-weight: 600; }
+.yony-games .cover-title { font-weight: 500; }
+.yony-games .kf-title { font-weight: 600; }
+.yony-games .mission-title { font-weight: 600; }
+.yony-games .actor-name { font-weight: 600; }
+.yony-games .num41-headline { font-weight: 600; }
+.yony-games .ceremony-title { font-weight: 600; }
+.yony-games .tension-title { font-weight: 600; }
+.yony-games .closing-text { font-weight: 300; font-size: 18px; }
+
+.yony-games {
+  --navy:   #1B2A4A;
+  --navy-d: #0E1A30;
+  --blue:   #2E5FA3;
+  --blue-l: #5B87C5;
+  --blue-p: #C8D8F0;
+  --red:    #CC2936;
+  --red-l:  #E05060;
+  --gold:   #D4922A;
+  --gold-l: #F0BE68;
+  --white:  #FFFFFF;
+  --off:    #F5F3EF;
+  --grey:   #E8E4DC;
+  --grey-m: #9E9688;
+  --ink:    #1A1614;
+  
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  background: var(--off);
+  color: var(--ink);
+  letter-spacing: 0.03em;
+  min-height: 100vh;
+}
+
+.yony-games *, .yony-games *::before, .yony-games *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ─── COVER ─────────────────────────────────────────── */
+.yony-games .cover {
+  background: var(--navy-d);
+  min-height: 55vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+.yony-games .cover-stripe-top {
+  height: 8px;
+  background: linear-gradient(90deg, var(--red) 33.33%, var(--blue) 33.33%, var(--blue) 66.66%, var(--gold) 66.66%);
+}
+.yony-games .cover-geo {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.yony-games .cover-geo-circle1,
+.yony-games .cover-geo-circle2,
+.yony-games .cover-geo-circle3,
+.yony-games .cover-geo-circle4,
+.yony-games .cover-geo-circle5,
+.yony-games .cover-geo-circle6 {
+  position: absolute;
+  border-radius: 50%;
+  opacity: .22;
+}
+/* red */ .yony-games .cover-geo-circle1 { background: #a22634; width: 100px; height: 100px; right: 40px;  top: 10px; }
+/* orange */ .yony-games .cover-geo-circle2 { background: #e57429; width: 80px; height: 80px; right: 150px; top: 20px; opacity: .18; }
+/* yellow */ .yony-games .cover-geo-circle3 { background: #c39e3b; width: 70px; height: 70px; right: 10px; top: 100px; opacity: .2; }
+/* teal */   .yony-games .cover-geo-circle4 { background: #276c84; width: 90px; height: 90px; right: 110px; top: 90px; opacity: .2; }
+/* dark blue */ .yony-games .cover-geo-circle5 { background: #1e4e8d; width: 120px; height: 120px; right: -10px; top: 50px; opacity: .15; }
+/* mid blue */  .yony-games .cover-geo-circle6 { background: #3b5d9a; width: 70px; height: 70px; right: 230px; top: 5px; opacity: .15; }
+
+.yony-games .cover-geo-rect {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 220px;
+  display: flex;
+}
+.yony-games .cover-geo-rect div:nth-child(1) { flex: 2; background: var(--red); opacity: .85; }
+.yony-games .cover-geo-rect div:nth-child(2) { flex: 1.5; background: var(--blue); opacity: .7; }
+.yony-games .cover-geo-rect div:nth-child(3) { flex: 1; background: var(--navy); opacity: .9; }
+.yony-games .cover-geo-rect div:nth-child(4) { flex: 2; background: var(--gold); opacity: .6; }
+
+.yony-games .cover-geo-dots {
+  position: absolute;
+  bottom: 240px;
+  left: 0;
+  width: 160px;
+  height: 100px;
+  background-image: radial-gradient(circle, rgba(255,255,255,.18) 1.5px, transparent 1.5px);
+  background-size: 14px 14px;
+}
+.yony-games .cover-geo-lines {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 6px;
+  bottom: 0;
+  background: repeating-linear-gradient(180deg, var(--red) 0, var(--red) 18px, transparent 18px, transparent 26px);
+  opacity: .5;
+}
+
+.yony-games .cover-header {
+  padding: 2rem 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 2;
+}
+.yony-games .cover-logo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.75rem;
+}
+.yony-games .cover-logo-text {
+  display: flex;
+  flex-direction: column;
+}
+.yony-games .cover-logo-img {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+.yony-games .cover-logo-name {
+  font-family: 'Outfit', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--white);
+  line-height: 1.2;
+}
+.yony-games .cover-logo-tagline {
+  font-family: 'Outfit', sans-serif;
+  font-style: italic;
+  font-size: 10px;
+  color: rgba(255,255,255,.45);
+  letter-spacing: .05em;
+  margin-top: 2px;
+}
+.yony-games .cover-badge {
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 6px;
+  padding: .4rem 1rem;
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--gold-l);
+}
+
+.yony-games .cover-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2rem 3rem 3rem;
+  position: relative;
+  z-index: 2;
+  max-width: 760px;
+}
+.yony-games .cover-eyebrow {
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+}
+.yony-games .cover-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(28px, 4.5vw, 52px);
+  font-weight: 600;
+  color: var(--white);
+  line-height: 1.15;
+  letter-spacing: .12em;
+  text-transform: none;
+  margin-bottom: 1.5rem;
+}
+.yony-games .cover-title em { color: var(--gold-l); font-style: normal; }
+.yony-games .cover-desc {
+  font-size: 17px;
+  font-style: italic;
+  color: rgba(255,255,255,.65);
+  max-width: 540px;
+  line-height: 1.7;
+  margin-bottom: 2.5rem;
+}
+.yony-games .cover-stats-row {
+  display: flex;
+  gap: 0;
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 8px;
+  overflow: hidden;
+  width: fit-content;
+}
+.yony-games .cover-stat {
+  padding: 1rem 1.75rem;
+  text-align: center;
+  border-right: 1px solid rgba(255,255,255,.1);
+}
+.yony-games .cover-stat:last-child { border-right: none; }
+.yony-games .cover-stat-n {
+  font-family: 'Outfit', sans-serif;
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--gold-l);
+  line-height: 1;
+}
+.yony-games .cover-stat-l {
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.4);
+  margin-top: 3px;
+}
+
+.yony-games .cover-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 220px;
+  z-index: 3;
+  padding: 1.5rem 3rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+.yony-games .cover-date {
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.6);
+}
+.yony-games .cover-doc-type {
+  font-family: 'Outfit', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--white);
+}
+
+/* ─── MAIN ───────────────────────────────────────────── */
+.yony-games .main { max-width: 900px; margin: 0 auto; padding: 0 2rem 5rem; }
+
+/* ─── SECTION HEADER ─────────────────────────────────── */
+.yony-games .section-header-block {
+  background: var(--navy);
+  margin: 0 -2rem;
+  padding: 2rem 2rem 2rem;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+.yony-games .section-header-block::after {
+  content: '';
+  position: absolute;
+  right: 0; top: 0;
+  width: 90px; height: 90px;
+  border-radius: 50%;
+  background: var(--blue);
+  opacity: .18;
+  transform: translate(30%, -30%);
+}
+.yony-games .section-title-big {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(30px, 4vw, 46px);
+  font-weight: 700;
+  text-transform: none;
+  color: var(--white);
+  letter-spacing: .02em;
+  line-height: 1.05;
+}
+.yony-games .section-title-big em { color: var(--gold-l); font-style: normal; }
+
+/* ─── KEY FIGURES ────────────────────────────────────── */
+.yony-games .kf-section { padding: 2.5rem 0; }
+.yony-games .kf-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: .04em;
+  color: var(--navy);
+  margin-bottom: 2rem;
+  padding-bottom: .75rem;
+  border-bottom: 1px solid rgba(204,41,54,0.2);
+}
+.yony-games .kf-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  border: 1.5px solid var(--grey);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+.yony-games .kf-card {
+  padding: 1.75rem 1.5rem;
+  background: var(--white);
+  border-right: 1px solid var(--grey);
+  position: relative;
+}
+.yony-games .kf-card:last-child { border-right: none; }
+.yony-games .kf-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+}
+.yony-games .kf-card.c1::before { background: var(--red); }
+.yony-games .kf-card.c2::before { background: var(--blue); }
+.yony-games .kf-card.c3::before { background: var(--gold); }
+.yony-games .kf-card.c4::before { background: var(--navy); }
+.yony-games .kf-card-n {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 900;
+  font-size: 52px;
+  line-height: 1;
+  margin-bottom: .25rem;
+}
+.yony-games .kf-card.c1 .kf-card-n { color: var(--red); }
+.yony-games .kf-card.c2 .kf-card-n { color: var(--blue); }
+.yony-games .kf-card.c3 .kf-card-n { color: var(--gold); }
+.yony-games .kf-card.c4 .kf-card-n { color: var(--navy); }
+.yony-games .kf-card-pre {
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--grey-m);
+  margin-bottom: 4px;
+}
+.yony-games .kf-card-label { font-size: 13px; color: var(--navy); line-height: 1.4; font-weight: 500; }
+
+.yony-games .kf-budget-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+}
+.yony-games .kf-bud {
+  background: var(--navy);
+  border-radius: 8px;
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.yony-games .kf-bud::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+.yony-games .kf-bud.b1::before { background: var(--red); }
+.yony-games .kf-bud.b2::before { background: var(--blue); }
+.yony-games .kf-bud.b3::before { background: var(--gold); }
+.yony-games .kf-bud-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.45);
+  margin-bottom: .5rem;
+}
+.yony-games .kf-bud-amount {
+  font-family: 'Outfit', sans-serif;
+  font-size: 38px;
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: .3rem;
+}
+.yony-games .kf-bud.b1 .kf-bud-amount { color: var(--red); }
+.yony-games .kf-bud.b2 .kf-bud-amount { color: var(--blue-l); }
+.yony-games .kf-bud.b3 .kf-bud-amount { color: var(--gold-l); }
+.yony-games .kf-bud-note { font-size: 12px; color: rgba(255,255,255,.5); line-height: 1.4; }
+
+/* ─── QUOTE ──────────────────────────────────────────── */
+.yony-games .quote-block {
+  background: var(--navy);
+  border-radius: 10px;
+  padding: 2rem 2.5rem;
+  margin: 2rem 0;
+  position: relative;
+  overflow: hidden;
+}
+.yony-games .quote-block::before {
+  content: '\201C';
+  position: absolute;
+  top: -20px; left: 20px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 130px;
+  font-weight: 900;
+  color: rgba(255,255,255,.06);
+  line-height: 1;
+  pointer-events: none;
+}
+.yony-games .quote-block::after {
+  content: '';
+  position: absolute;
+  right: 0; bottom: 0;
+  width: 80px; height: 80px;
+  background: var(--red);
+  opacity: .15;
+  border-radius: 50%;
+  transform: translate(30%, 30%);
+}
+.yony-games .quote-text {
+  font-size: 16px;
+  font-style: italic;
+  color: rgba(255,255,255,.8);
+  line-height: 1.75;
+  max-width: 640px;
+  position: relative;
+}
+.yony-games .quote-author {
+  margin-top: 1.25rem;
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--gold-l);
+  position: relative;
+}
+.yony-games .quote-role {
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  font-style: italic;
+  color: rgba(255,255,255,.35);
+  margin-top: 2px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* ─── TWO-COLUMN CONTENT ──────────────────────────────── */
+.yony-games .content-section { padding: 2.5rem 0; }
+.yony-games .content-lead {
+  font-size: 17px;
+  color: var(--navy);
+  line-height: 1.75;
+  margin-bottom: 1.75rem;
+  font-weight: 500;
+  border-left: 4px solid var(--red);
+  padding-left: 1.25rem;
+}
+.yony-games .content-body { font-size: 15px; color: #3A3530; line-height: 1.75; }
+
+/* ─── MISSION CARDS ──────────────────────────────────── */
+.yony-games .mission-duo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 1.5rem 0;
+}
+.yony-games .mission-card {
+  border-radius: 10px;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+.yony-games .mission-card.benin {
+  background: var(--navy);
+}
+.yony-games .mission-card.peru {
+  background: #2A0E14;
+}
+.yony-games .mission-card-geo {
+  position: absolute;
+  top: 0; right: 0;
+  width: 100px; height: 100px;
+  border-radius: 50%;
+  transform: translate(35%, -35%);
+  opacity: .2;
+}
+.yony-games .mission-card.benin .mission-card-geo { background: var(--blue); }
+.yony-games .mission-card.peru .mission-card-geo { background: var(--red); }
+.yony-games .mission-country {
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .25em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  position: relative;
+}
+.yony-games .mission-card.benin .mission-country { color: var(--blue-l); }
+.yony-games .mission-card.peru .mission-country { color: var(--red-l); }
+.yony-games .mission-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+  color: var(--white);
+  margin-bottom: 10px;
+  line-height: 1.15;
+  position: relative;
+}
+.yony-games .mission-desc {
+  font-size: 13px;
+  color: rgba(255,255,255,.6);
+  line-height: 1.65;
+  position: relative;
+}
+.yony-games .mission-count {
+  font-family: 'Outfit', sans-serif;
+  font-size: 68px;
+  font-weight: 900;
+  line-height: 1;
+  margin-top: 1.25rem;
+  opacity: .2;
+  position: relative;
+  color: var(--white);
+}
+
+/* ─── GOLD RULE ───────────────────────────────────────── */
+.yony-games .gold-rule {
+  background: #FBF5E6;
+  border: 1.5px solid rgba(212,146,42,.3);
+  border-left: 5px solid var(--gold);
+  border-radius: 6px;
+  padding: 1.25rem 1.5rem;
+  margin: 1rem 0;
+  font-size: 15px;
+  color: #5A3E10;
+  line-height: 1.65;
+}
+.yony-games .gold-rule strong { font-weight: 700; color: #3A2808; }
+
+/* ─── ACTORS ──────────────────────────────────────────── */
+.yony-games .actors-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 1rem 0;
+}
+.yony-games .actor-card {
+  background: var(--white);
+  border: 1.5px solid var(--grey);
+  border-radius: 8px;
+  padding: 1.5rem;
+  border-top: 4px solid;
+}
+.yony-games .actor-card.a1 { border-top-color: var(--red); }
+.yony-games .actor-card.a2 { border-top-color: var(--gold); }
+.yony-games .actor-card.a3 { border-top-color: var(--blue); }
+.yony-games .actor-card.a4 { border-top-color: var(--navy); grid-column: 1 / -1; }
+.yony-games .actor-icon { font-size: 24px; margin-bottom: 10px; }
+.yony-games .actor-role {
+  font-family: 'Outfit', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--grey-m);
+  margin-bottom: 4px;
+}
+.yony-games .actor-name {
+  font-family: 'Outfit', sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--navy);
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+.yony-games .actor-desc { font-size: 13px; color: #4A4540; line-height: 1.55; }
+.yony-games .actor-card.a4 .actor-inner { display: flex; gap: 1.5rem; align-items: flex-start; }
+
+/* ─── SPACES ──────────────────────────────────────────── */
+.yony-games .spaces { display: flex; flex-direction: column; gap: 6px; margin: 1rem 0; }
+.yony-games .space-row {
+  display: flex;
+  align-items: stretch;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--grey);
+}
+.yony-games .space-tag {
+  display: flex;
+  align-items: center;
+  padding: .75rem 1.25rem;
+  min-width: 190px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--white);
+}
+.yony-games .space-tag.s1 { background: #a22634; }
+.yony-games .space-tag.s2 { background: #e57429; }
+.yony-games .space-tag.s3 { background: #c39e3b; }
+.yony-games .space-tag.s4 { background: #276c84; }
+.yony-games .space-tag.s5 { background: #1e4e8d; }
+.yony-games .space-tag.s6 { background: #3b5d9a; }
+.yony-games .space-desc {
+  flex: 1;
+  background: var(--white);
+  padding: .75rem 1rem;
+  font-size: 13px;
+  color: #3A3530;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+}
+.yony-games .space-token {
+  padding: .75rem 1.1rem;
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  background: #ffffff;
+  border-left: 1px solid var(--grey);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  min-width: 160px;
+}
+.yony-games .space-token.t1 { color: #a22634; }
+.yony-games .space-token.t2 { color: #e57429; }
+.yony-games .space-token.t3 { color: #c39e3b; }
+.yony-games .space-token.t4 { color: #276c84; }
+.yony-games .space-token.t5 { color: #1e4e8d; }
+.yony-games .space-token.t6 { color: #3b5d9a; }
+
+/* ─── LIBERATION ──────────────────────────────────────── */
+.yony-games .lib-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  border: 1.5px solid var(--grey);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 1rem 0;
+}
+.yony-games .lib-step {
+  background: var(--white);
+  padding: 1.25rem .75rem;
+  text-align: center;
+  border-right: 1px solid var(--grey);
+}
+.yony-games .lib-step:last-child { border-right: none; }
+.yony-games .lib-n {
+  font-family: 'Outfit', sans-serif;
+  font-size: 36px;
+  font-weight: 900;
+  color: var(--navy);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.yony-games .lib-l { font-size: 11px; color: var(--grey-m); line-height: 1.4; }
+
+/* ─── SCORE ───────────────────────────────────────────── */
+.yony-games .score-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 1rem 0;
+}
+.yony-games .score-card {
+  border-radius: 8px;
+  padding: 1.5rem;
+  border: 1.5px solid;
+}
+.yony-games .score-card.s1 { background: #FBF5E6; border-color: rgba(212,146,42,.3); }
+.yony-games .score-card.s2 { background: var(--blue-p); border-color: rgba(46,95,163,.2); }
+.yony-games .score-card.s3 { background: #E6EFF8; border-color: rgba(27,42,74,.2); }
+.yony-games .score-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 10px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.yony-games .score-card.s1 .score-label { color: var(--gold); }
+.yony-games .score-card.s2 .score-label { color: var(--blue); }
+.yony-games .score-card.s3 .score-label { color: var(--navy); }
+.yony-games .score-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+.yony-games .score-card.s1 .score-title { color: #5A3E10; }
+.yony-games .score-card.s2 .score-title { color: var(--blue); }
+.yony-games .score-card.s3 .score-title { color: var(--navy); }
+.yony-games .score-desc { font-size: 13px; line-height: 1.6; color: #4A4540; }
+.yony-games .score-val {
+  font-family: 'Outfit', sans-serif;
+  font-size: 32px;
+  font-weight: 900;
+  margin-top: 1rem;
+  opacity: .35;
+  line-height: 1;
+}
+.yony-games .score-card.s1 .score-val { color: var(--gold); }
+.yony-games .score-card.s2 .score-val { color: var(--blue); }
+.yony-games .score-card.s3 .score-val { color: var(--navy); }
+
+/* ─── FORMULA ─────────────────────────────────────────── */
+.yony-games .formula-block {
+  background: var(--navy);
+  border-radius: 8px;
+  padding: 1.5rem 2rem;
+  margin: 1rem 0;
+  text-align: center;
+}
+.yony-games .formula-eq {
+  font-family: 'Outfit', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--gold-l);
+  letter-spacing: .02em;
+  line-height: 1.8;
+}
+.yony-games .formula-eq span {
+  display: block;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-style: italic;
+  font-weight: 300;
+  color: rgba(255,255,255,.45);
+  margin-top: 4px;
+}
+
+/* ─── CEREMONIES ──────────────────────────────────────── */
+.yony-games .ceremony-block {
+  background: var(--navy);
+  border-radius: 12px;
+  padding: 2.5rem;
+  margin: 1rem 0;
+}
+.yony-games .ceremony-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .25em;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: .5rem;
+}
+.yony-games .ceremony-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 22px;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: var(--white);
+  margin-bottom: 4px;
+  letter-spacing: .03em;
+}
+.yony-games .ceremony-sub {
+  font-style: italic;
+  font-size: 13px;
+  color: rgba(255,255,255,.4);
+  margin-bottom: 1.5rem;
+}
+.yony-games .ceremony-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 1rem;
+}
+.yony-games .cer-step {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 8px;
+  padding: 1rem .75rem;
+  text-align: center;
+}
+.yony-games .cer-icon { font-size: 20px; margin-bottom: 6px; }
+.yony-games .cer-label { font-size: 11.5px; color: rgba(255,255,255,.55); line-height: 1.4; }
+.yony-games .ceremony-levels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.yony-games .cer-level {
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 8px;
+  padding: 1.25rem;
+}
+.yony-games .cer-level-tag {
+  font-family: 'Outfit', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--gold-l);
+  margin-bottom: 5px;
+}
+.yony-games .cer-level-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--white);
+  margin-bottom: 6px;
+}
+.yony-games .cer-level-desc { font-size: 12px; color: rgba(255,255,255,.5); line-height: 1.5; }
+
+/* ─── FA BLOCK ────────────────────────────────────────── */
+.yony-games .fa-block {
+  background: #EBF5F2;
+  border: 1.5px solid rgba(46,95,163,.2);
+  border-left: 5px solid var(--blue);
+  border-radius: 8px;
+  padding: 2rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  margin: 1rem 0;
+}
+.yony-games .fa-number {
+  font-family: 'Outfit', sans-serif;
+  font-size: 72px;
+  font-weight: 900;
+  color: var(--navy);
+  line-height: 1;
+  opacity: .7;
+  flex-shrink: 0;
+}
+.yony-games .fa-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+.yony-games .fa-desc { font-size: 14px; color: #3A4A5A; line-height: 1.7; }
+
+/* ─── NOMBRE 41 ───────────────────────────────────────── */
+.yony-games .num41-block {
+  background: var(--navy);
+  border-radius: 12px;
+  padding: 2.5rem;
+  margin: 1rem 0;
+  position: relative;
+  overflow: hidden;
+}
+.yony-games .num41-block::before {
+  content: '41';
+  position: absolute;
+  right: 2rem; top: -10px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 160px;
+  font-weight: 900;
+  color: rgba(255,255,255,.04);
+  line-height: 1;
+  pointer-events: none;
+}
+.yony-games .num41-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 1.75rem;
+}
+.yony-games .num41-digit {
+  font-family: 'Outfit', sans-serif;
+  font-size: 84px;
+  font-weight: 900;
+  color: var(--gold-l);
+  line-height: 1;
+  flex-shrink: 0;
+}
+.yony-games .num41-headline {
+  font-family: 'Outfit', sans-serif;
+  font-size: 24px;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: var(--white);
+  letter-spacing: .02em;
+  line-height: 1.1;
+  margin-bottom: 5px;
+}
+.yony-games .num41-sub {
+  font-style: italic;
+  font-size: 13px;
+  color: rgba(255,255,255,.4);
+}
+.yony-games .num41-cols {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.yony-games .num41-col {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 8px;
+  padding: 1.25rem;
+}
+.yony-games .num41-col-tag {
+  font-family: 'Outfit', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.yony-games .num41-col.benin .num41-col-tag { color: var(--blue-l); }
+.yony-games .num41-col.peru .num41-col-tag { color: var(--red-l); }
+.yony-games .num41-col.yony .num41-col-tag { color: var(--gold-l); }
+.yony-games .num41-col-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--white);
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+.yony-games .num41-col-icon { font-size: 20px; margin-bottom: 8px; }
+.yony-games .num41-col-desc { font-size: 12.5px; color: rgba(255,255,255,.5); line-height: 1.55; }
+
+/* ─── MUR DE CONVERGENCE ──────────────────────────────── */
+.yony-games .mur-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 1rem 0;
+}
+.yony-games .mur-card {
+  border-radius: 8px;
+  padding: 1.5rem;
+  border: 1.5px solid;
+  position: relative;
+}
+.yony-games .mur-card.m1 { background: #FBF5E6; border-color: rgba(212,146,42,.25); }
+.yony-games .mur-card.m2 { background: #FBEAE8; border-color: rgba(204,41,54,.2); }
+.yony-games .mur-card.m3 { background: var(--blue-p); border-color: rgba(46,95,163,.2); }
+.yony-games .mur-card.m4 { background: #EBF5F2; border-color: rgba(27,42,74,.15); }
+.yony-games .mur-card-n {
+  position: absolute;
+  right: 1.25rem; top: .75rem;
+  font-family: 'Outfit', sans-serif;
+  font-size: 42px;
+  font-weight: 900;
+  opacity: .08;
+  color: var(--ink);
+}
+.yony-games .mur-card-tag {
+  font-family: 'Outfit', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+.yony-games .mur-card.m1 .mur-card-tag { color: var(--gold); }
+.yony-games .mur-card.m2 .mur-card-tag { color: var(--red); }
+.yony-games .mur-card.m3 .mur-card-tag { color: var(--blue); }
+.yony-games .mur-card.m4 .mur-card-tag { color: var(--navy); }
+.yony-games .mur-card-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+.yony-games .mur-card.m1 .mur-card-title { color: #5A3E10; }
+.yony-games .mur-card.m2 .mur-card-title { color: var(--red); }
+.yony-games .mur-card.m3 .mur-card-title { color: var(--blue); }
+.yony-games .mur-card.m4 .mur-card-title { color: var(--navy); }
+.yony-games .mur-card-desc { font-size: 13px; line-height: 1.6; color: #3A3530; }
+
+/* ─── TENSIONS ────────────────────────────────────────── */
+.yony-games .tensions { display: flex; flex-direction: column; gap: 8px; margin: 1rem 0; }
+.yony-games .tension {
+  display: flex;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--grey);
+  background: var(--white);
+}
+.yony-games .tension-bar { width: 5px; flex-shrink: 0; }
+.yony-games .tension.t1 .tension-bar { background: var(--gold); }
+.yony-games .tension.t2 .tension-bar { background: var(--blue); }
+.yony-games .tension.t3 .tension-bar { background: var(--red); }
+.yony-games .tension.t4 .tension-bar { background: #7B5EA7; }
+.yony-games .tension-body { padding: 1rem 1.25rem; }
+.yony-games .tension-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+.yony-games .tension.t1 .tension-label { color: var(--gold); }
+.yony-games .tension.t2 .tension-label { color: var(--blue); }
+.yony-games .tension.t3 .tension-label { color: var(--red); }
+.yony-games .tension.t4 .tension-label { color: #7B5EA7; }
+.yony-games .tension-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+.yony-games .tension-desc { font-size: 13px; color: #4A4540; line-height: 1.6; }
+
+/* ─── CLOSING ─────────────────────────────────────────── */
+.yony-games .closing {
+  background: var(--navy);
+  border-radius: 10px;
+  padding: 3rem;
+  text-align: center;
+  margin-top: 3rem;
+  position: relative;
+  overflow: hidden;
+}
+.yony-games .closing::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--red) 33.33%, var(--blue) 33.33%, var(--blue) 66.66%, var(--gold) 66.66%);
+}
+.yony-games .closing-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--gold-l);
+  margin-bottom: 1rem;
+}
+.yony-games .closing-text {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(20px, 3vw, 30px);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--white);
+  line-height: 1.5;
+  max-width: 620px;
+  margin: 0 auto;
+  letter-spacing: .02em;
+}
+.yony-games .closing-text em { color: var(--gold-l); font-style: normal; }
+.yony-games .closing-text strong { color: var(--red); font-style: normal; }
+
+/* ─── SECTION DIVIDER ────────────────────────────────── */
+.yony-games .sec-divider {
+  height: 2px;
+  background: linear-gradient(90deg, var(--red) 0%, var(--blue) 50%, var(--gold) 100%);
+  margin: 3rem 0 0;
+  opacity: .35;
+}
+
+/* ─── PIONEER ────────────────────────────────────────── */
+.yony-games .pioneer-duo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: .75rem 0;
+}
+.yony-games .pioneer-card {
+  background: var(--white);
+  border: 1.5px solid var(--grey);
+  border-radius: 8px;
+  padding: 1.25rem;
+}
+.yony-games .pioneer-badge {
+  font-family: 'Outfit', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 5px;
+}
+.yony-games .pioneer-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+.yony-games .pioneer-desc { font-size: 13px; color: #4A4540; line-height: 1.5; }
+.yony-games .pioneer-val {
+  display: inline-block;
+  margin-top: 10px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--navy);
+  background: var(--off);
+  border: 1.5px solid var(--grey);
+  padding: 4px 12px;
+  border-radius: 5px;
+}
+
+.yony-games p { margin-bottom: .5rem; }

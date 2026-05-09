@@ -12,6 +12,7 @@ const PAGES = [
   { name: "Savoirs", href: "/savoirs", id: "sagesse" },
   { name: "Sagesses", href: "/sagesses", id: "parole-aines" },
   { name: "Talents", href: "/talents", id: "beninois-monde" },
+  { name: "Yony Games", href: "/yony-games", id: "vision" },
 ];
 
 export const HeaderSwipe = () => {
