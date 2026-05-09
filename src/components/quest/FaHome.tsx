@@ -35,18 +35,7 @@ export function FaHome() {
             <em style={{ color: "#D4922A", fontStyle: "normal" }}>Fâ</em>
           </h2>
         </div>
-        <p
-          style={{
-            marginTop: "0.75rem",
-            fontSize: "17px",
-            color: "rgba(255,255,255,0.55)",
-            marginBottom: "4rem",
-            textAlign: "center",
-          }}
-        >
-          La structure des jeux s'appuie sur la science du Fâ, l'une des plus grandes
-          traditions majeures du patrimoine béninois.
-        </p>
+
 
         {/* Two-column layout */}
         <div
