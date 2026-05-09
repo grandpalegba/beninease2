@@ -50,7 +50,7 @@ export default function YonyGamesPage() {
               </div>
               <div className="cover-stat">
                 <div className="cover-stat-n">256</div>
-                <div className="cover-stat-l">Jours de jeu</div>
+                <div className="cover-stat-l">16 cycles de 16 jours</div>
               </div>
             </div>
           </div>
