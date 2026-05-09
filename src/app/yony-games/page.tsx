@@ -65,22 +65,10 @@ export default function YonyGamesPage() {
             </div>
             
             <div className="kf-grid" style={{ marginTop: '2rem' }}>
-              <div className="kf-card c1">
-                <div className="kf-card-pre">Nations</div>
-                <div className="kf-card-n">16</div>
-                <div className="kf-card-label">Pays hôtes mobilisés pour chaque cycle de 256 jours</div>
-              </div>
-              <div className="kf-card c2">
-                <div className="kf-card-pre">Trésors & Sites</div>
-                <div className="kf-card-n">512</div>
-                <div className="kf-card-label">256 trésors béninois + 256 sites archéologiques péruviens</div>
-              </div>
 
-              <div className="kf-card c4">
-                <div className="kf-card-pre">Signes du Fâ</div>
-                <div className="kf-card-n">256</div>
-                <div className="kf-card-label">16 Amazones × 16 cycles = colonne vertébrale symbolique du jeu</div>
-              </div>
+
+
+
             </div>
 
 
@@ -89,7 +77,7 @@ export default function YonyGamesPage() {
           {/* Section: Les Équipes (Action-Oriented) */}
           <section className="content-section">
             <div className="section-header-block">
-              <h2 className="section-title-big">Rejoindre <em>l'Épopée</em></h2>
+              <h2 className="section-title-big">Les délégations <em>nationales</em></h2>
             </div>
             
             <div className="actors-grid" style={{ marginTop: '2rem' }}>
