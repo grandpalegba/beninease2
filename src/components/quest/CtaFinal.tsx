@@ -12,7 +12,7 @@ const RANKS = [
 
 export function CtaFinal() {
   return (
-    <section className="relative bg-white border-t border-zinc-100">
+    <section className="relative bg-transparent border-t border-white/5">
       <div className="px-6 py-24">
         <div className="max-w-7xl mx-auto">
           <motion.div
@@ -22,7 +22,7 @@ export function CtaFinal() {
             transition={{ duration: 0.7 }}
             className="max-w-2xl mb-14"
           >
-            <h3 className="font-display text-3xl md:text-5xl font-semibold tracking-tight text-zinc-950 leading-[1.05]">
+            <h3 className="font-display text-3xl md:text-5xl font-semibold tracking-tight text-white leading-[1.05]">
               Le statut des Amazones évolue avec chaque Libération de trésor.
             </h3>
           </motion.div>

@@ -5,7 +5,7 @@ import { NATIONS, flagEmoji } from "./Pantheon";
 
 export function FaHome() {
   return (
-    <section className="relative py-32 px-6 bg-zinc-950 text-white overflow-hidden">
+    <section className="relative py-32 px-6 bg-transparent text-white overflow-hidden">
       <div className="relative max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

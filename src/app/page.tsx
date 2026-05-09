@@ -12,9 +12,7 @@ export default function Home() {
     <div className="min-h-screen bg-white">
       <main>
         <Hero />
-        <Delegation />
-        <FaHome />
-        <CtaFinal />
+
         
         <footer className="border-t border-zinc-100 py-10 px-6 bg-white">
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-zinc-500">

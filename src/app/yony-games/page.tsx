@@ -4,6 +4,9 @@ import React from "react";
 import "./yony-games.css";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { Delegation } from "@/components/quest/Delegation";
+import { FaHome } from "@/components/quest/FaHome";
+import { CtaFinal } from "@/components/quest/CtaFinal";
 
 export default function YonyGamesPage() {
   return (
@@ -60,36 +63,7 @@ export default function YonyGamesPage() {
           
 
 
-          {/* Section: Les Équipes (Action-Oriented) */}
-          <section className="content-section">
-            <div className="section-header-block">
-              <h2 className="section-title-big">Les délégations <em>nationales</em></h2>
-            </div>
-            
-            <div className="actors-grid" style={{ marginTop: '2rem' }}>
-              <div className="actor-card a2" style={{ background: 'rgba(212,146,42,0.05)', borderColor: 'var(--gold)' }}>
 
-                <h3 className="actor-name">Les Amazones</h3>
-                <p className="actor-desc">
-                  Femmes porteuses de projets à impact. Vous gérez la banque des jetons et coordonnez les coalitions mondiales.
-                </p>
-                <button className="btn-recruit">DEVENIR UNE AMAZONE - STRATÈGE</button>
-
-              </div>
-
-              <div className="actor-card a3" style={{ background: 'rgba(46,95,163,0.05)', borderColor: 'var(--blue)' }}>
-
-                <h3 className="actor-name">Les Soutiens</h3>
-                <p className="actor-desc">
-                  Experts recrutés directement par les Amazones. Vous alimentez les arènes et produisez l'énergie du jeu.
-                </p>
-                <button className="btn-recruit blue">REJOINDRE LA DÉLÉGATION - EXPERT</button>
-
-              </div>
-
-
-            </div>
-          </section>
 
           {/* Section: Les 6 Arènes (Gallery) */}
           <section className="content-section">
@@ -128,6 +102,11 @@ export default function YonyGamesPage() {
               </div>
             </div>
           </section>
+ 
+          <Delegation />
+          <FaHome />
+          <CtaFinal />
+
 
 
 

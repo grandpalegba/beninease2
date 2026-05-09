@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 export function Delegation() {
   return (
-    <section className="relative py-32 px-6 bg-zinc-950 text-white overflow-hidden">
+    <section className="relative py-32 px-6 bg-transparent text-white overflow-hidden">
       <div className="absolute inset-0 opacity-10 pointer-events-none">
         <div 
           className="absolute inset-0" 
