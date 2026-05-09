@@ -57,8 +57,8 @@
   font-family: 'Outfit', sans-serif;
   font-size: 16px;
   line-height: 1.6;
-  background: var(--off);
-  color: var(--ink);
+  background: var(--navy-d);
+  color: var(--white);
   letter-spacing: 0.03em;
   min-height: 100vh;
 }
@@ -219,12 +219,20 @@
 }
 .yony-games .cover-title em { color: var(--gold-l); font-style: normal; }
 .yony-games .cover-desc {
-  font-size: 17px;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--white);
+  max-width: 600px;
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+}
+.yony-games .cover-slogan {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
   font-style: italic;
-  color: rgba(255,255,255,.65);
-  max-width: 540px;
-  line-height: 1.7;
+  color: var(--gold-l);
   margin-bottom: 2.5rem;
+  opacity: 0.9;
 }
 .yony-games .cover-stats-row {
   display: flex;
@@ -284,7 +292,9 @@
 }
 
 /* ─── MAIN ───────────────────────────────────────────── */
-.yony-games .main { max-width: 900px; margin: 0 auto; padding: 0 2rem 5rem; }
+.yony-games .main { max-width: 1000px; margin: 0 auto; padding: 0 2rem 5rem; background: var(--navy-d); }
+.yony-games .main section { background: rgba(255,255,255, 0.02); border: 1px solid rgba(255,255,255, 0.05); border-radius: 12px; padding: 2.5rem; margin-bottom: 2rem; }
+
 
 /* ─── SECTION HEADER ─────────────────────────────────── */
 .yony-games .section-header-block {
@@ -612,29 +622,80 @@
   margin-bottom: 8px;
   line-height: 1.2;
 }
-.yony-games .actor-desc { font-size: 13px; color: #4A4540; line-height: 1.55; }
+.yony-games .actor-desc { font-size: 14px; color: rgba(255,255,255,.6); line-height: 1.55; margin-bottom: 1.5rem; }
 .yony-games .actor-card.a4 .actor-inner { display: flex; gap: 1.5rem; align-items: flex-start; }
 
-/* ─── SPACES ──────────────────────────────────────────── */
-.yony-games .spaces { display: flex; flex-direction: column; gap: 6px; margin: 1rem 0; }
-.yony-games .space-row {
-  display: flex;
-  align-items: stretch;
-  border-radius: 6px;
-  overflow: hidden;
-  border: 1px solid var(--grey);
-}
-.yony-games .space-tag {
-  display: flex;
-  align-items: center;
-  padding: .75rem 1.25rem;
-  min-width: 190px;
+.yony-games .btn-recruit {
+  display: inline-block;
+  background: var(--gold);
+  color: var(--navy-d);
   font-family: 'Outfit', sans-serif;
-  font-size: 13px;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  padding: 1rem 1.5rem;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  width: 100%;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+}
+.yony-games .btn-recruit:hover { background: var(--gold-l); transform: translateY(-2px); }
+.yony-games .btn-recruit.blue { background: var(--blue); color: var(--white); }
+.yony-games .btn-recruit.blue:hover { background: var(--blue-l); }
+
+.yony-games .recruit-badge {
+  background: var(--red);
+  color: var(--white);
+  font-size: 10px;
+  font-weight: 900;
+  padding: 4px 10px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-bottom: 10px;
+  letter-spacing: .05em;
+}
+.yony-games .urgency-tag {
+  font-size: 12px;
+  color: var(--red-l);
+  font-weight: 600;
+  margin-top: 10px;
+  display: block;
+}
+
+
+/* ─── SPACES ──────────────────────────────────────────── */
+.yony-games .spaces { 
+  display: grid; 
+  grid-template-columns: repeat(3, 1fr); 
+  gap: 15px; 
+  margin: 1.5rem 0; 
+}
+.yony-games .space-card {
+  background: rgba(255,255,255, 0.05);
+  border: 1px solid rgba(255,255,255, 0.1);
+  border-radius: 10px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+.yony-games .space-card:hover { transform: translateY(-5px); background: rgba(255,255,255, 0.08); }
+.yony-games .space-tag {
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: .05em;
+  letter-spacing: .1em;
   color: var(--white);
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 1rem;
 }
 .yony-games .space-tag.s1 { background: #a22634; }
 .yony-games .space-tag.s2 { background: #e57429; }
@@ -642,36 +703,33 @@
 .yony-games .space-tag.s4 { background: #276c84; }
 .yony-games .space-tag.s5 { background: #1e4e8d; }
 .yony-games .space-tag.s6 { background: #3b5d9a; }
+
+.yony-games .space-token-icon {
+  font-size: 48px;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
+}
 .yony-games .space-desc {
-  flex: 1;
-  background: var(--white);
-  padding: .75rem 1rem;
   font-size: 13px;
-  color: #3A3530;
-  line-height: 1.4;
-  display: flex;
-  align-items: center;
+  color: rgba(255,255,255, 0.6);
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+  flex-grow: 1;
 }
-.yony-games .space-token {
-  padding: .75rem 1.1rem;
-  font-family: 'Outfit', sans-serif;
-  font-size: 12px;
+.yony-games .btn-arena {
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: .06em;
+  padding: 8px 16px;
+  border-radius: 4px;
   text-transform: uppercase;
-  background: #ffffff;
-  border-left: 1px solid var(--grey);
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  min-width: 160px;
+  cursor: pointer;
+  transition: all 0.2s;
 }
-.yony-games .space-token.t1 { color: #a22634; }
-.yony-games .space-token.t2 { color: #e57429; }
-.yony-games .space-token.t3 { color: #c39e3b; }
-.yony-games .space-token.t4 { color: #276c84; }
-.yony-games .space-token.t5 { color: #1e4e8d; }
-.yony-games .space-token.t6 { color: #3b5d9a; }
+.yony-games .btn-arena:hover { background: var(--gold); color: var(--navy-d); }
+
 
 /* ─── LIBERATION ──────────────────────────────────────── */
 .yony-games .lib-grid {
@@ -1148,6 +1206,30 @@
 
 .yony-games p { margin-bottom: .5rem; }
 
+/* ─── WALL PREVIEW ───────────────────────────────────── */
+.yony-games .wall-preview {
+  margin-top: 4rem;
+  padding: 3rem;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(212,146,42,0.05) 100%);
+  border-radius: 15px;
+  text-align: center;
+}
+.yony-games .wall-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 4px;
+  margin: 2rem 0;
+}
+.yony-games .wall-brick {
+  aspect-ratio: 1;
+  background: rgba(255,255,255,0.05);
+  border-radius: 2px;
+}
+.yony-games .wall-brick.active {
+  background: var(--gold);
+  box-shadow: 0 0 10px var(--gold);
+}
+
 /* ─── RESPONSIVE ─────────────────────────────────────── */
 @media (max-width: 768px) {
   .yony-games .cover-header { padding: 1.5rem; }
@@ -1169,6 +1251,7 @@
   }
 
   .yony-games .main { padding: 0 1rem 3rem; }
+  .yony-games .main section { padding: 1.5rem; }
   
   .yony-games .section-header-block { margin: 0 -1rem; padding: 1.5rem; }
   .yony-games .section-title-big { font-size: 28px; }
@@ -1197,10 +1280,11 @@
   .yony-games .actors-grid { grid-template-columns: 1fr; }
   .yony-games .actor-card.a4 .actor-inner { flex-direction: column; gap: 1rem; }
   
-  .yony-games .space-row { flex-direction: column; }
-  .yony-games .space-tag { min-width: 0; width: 100%; justify-content: center; }
-  .yony-games .space-token { min-width: 0; width: 100%; border-left: none; border-top: 1px solid var(--grey); justify-content: center; }
+  .yony-games .spaces { grid-template-columns: 1fr; }
   
   .yony-games .closing { padding: 2rem 1.5rem; }
+  
+  .yony-games .btn-recruit { padding: 1.25rem; font-size: 14px; }
 }
+
 

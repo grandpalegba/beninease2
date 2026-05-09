@@ -8,12 +8,11 @@ import { motion } from "framer-motion";
 export default function YonyGamesPage() {
   return (
     <div className="yony-games">
-      <main className="min-h-screen bg-[#F5F3EF]">
+      <main className="min-h-screen">
         
         {/* ─── COVER ─── */}
-        <section className="cover">
+        <section className="cover" style={{ background: 'var(--navy-d)', border: 'none' }}>
           <div className="cover-stripe-top"></div>
-
           
           <div className="cover-header">
             <div className="cover-logo">
@@ -28,15 +27,18 @@ export default function YonyGamesPage() {
                 <span className="cover-logo-name">YONY GAMES</span>
               </div>
             </div>
-
           </div>
 
           <div className="cover-body">
-
-            <h1 className="cover-title">
-              Jeux de Valorisation du <em>Féminin</em> et des <em>Traditions</em> du Monde
+            <h1 className="cover-title" style={{ color: 'var(--gold)', letterSpacing: '0.05em' }}>
+              OLYMPIADES DES TRADITIONS DU MONDE
             </h1>
-
+            <p className="cover-desc">
+              Libérer des trésors (Bénin) et révéler des lieux magiques (Pérou)
+            </p>
+            <p className="cover-slogan">
+              "Votre talent est la clé qui déverrouille l'histoire."
+            </p>
             
             <div className="cover-stats-row">
               <div className="cover-stat">
@@ -53,8 +55,6 @@ export default function YonyGamesPage() {
               </div>
             </div>
           </div>
-
-
         </section>
 
         {/* ─── MAIN CONTENT ─── */}
@@ -63,7 +63,7 @@ export default function YonyGamesPage() {
           {/* Section: Chiffres-Clés */}
           <section className="kf-section">
             <div className="section-header-block">
-              <h2 className="section-title-big">Chiffres-<em>Clés</em></h2>
+              <h2 className="section-title-big">L'Ingénierie <em>de la Victoire</em></h2>
             </div>
             
             <div className="kf-grid" style={{ marginTop: '2rem' }}>
@@ -89,312 +89,119 @@ export default function YonyGamesPage() {
               </div>
             </div>
 
-            <div className="kf-budget-row">
-              <div className="kf-bud b1">
-                <div className="kf-bud-label">Structure des Équipes</div>
-                <div className="kf-bud-amount">3</div>
-                <div className="kf-bud-note">Voyageurs par pays hôte — Porteur, Photographe, Spécialiste des traditions</div>
-              </div>
-              <div className="kf-bud b2">
-                <div className="kf-bud-label">Conseil Souverain</div>
-                <div className="kf-bud-amount">16</div>
-                <div className="kf-bud-note">Amazones par délégation — femmes porteuses de projets à impact</div>
-              </div>
-              <div className="kf-bud b3">
-                <div className="kf-bud-label">Jetons Sacrés</div>
-                <div className="kf-bud-amount">6</div>
-                <div className="kf-bud-note">Types de jetons à réunir pour libérer un trésor ou réactiver un site</div>
-              </div>
-            </div>
-
             <div className="quote-block">
               <p className="quote-text">
-                "L'originalité des Yony Games, c'est d'avoir compris qu'un événement culturel mondial pouvait être sublimé par la convergence des sagesses ancestrales. Depuis les cérémonies d'ouverture jusqu'au choix des sites, nous mettons à profit l'incroyable richesse du patrimoine mondial — et de la mémoire des femmes."
+                "L'originalité des Yony Games, c'est d'avoir compris qu'un événement culturel mondial pouvait être sublimé par la convergence des sagesses ancestrales."
               </p>
               <div className="quote-author">YONY</div>
             </div>
           </section>
 
-          {/* Section: L'Esprit du Jeu */}
+          {/* Section: Les Équipes (Action-Oriented) */}
           <section className="content-section">
             <div className="section-header-block">
-              <h2 className="section-title-big">L'Esprit <em>du Jeu</em></h2>
-            </div>
-            
-            <div style={{ marginTop: '2rem' }}>
-              <div className="content-lead">
-                Les Yony Games célèbrent la force du collectif et la sagesse des ancêtres. Ils ne sont pas une compétition ordinaire — ils sont une épopée de mémoire, de sororité et d'impact réel sur le monde.
-              </div>
-              
-              <div className="fa-block">
-                <div className="fa-number">256</div>
-                <div className="fa-content">
-                  <h3 className="fa-title">16 AMAZONES × 16 CYCLES = 256 SIGNES DU FÂ</h3>
-                  <p className="fa-desc">
-                    Le nombre exact de signes de la matrice divinatoire du Fâ — système de connaissance ancestral béninois millénaire. 
-                    Ce n'est pas une coïncidence : c'est la colonne vertébrale symbolique des Yony Games. 
-                    256 trésors du Bénin, 256 sites du Pérou, 256 membres par délégation, 256 jours de cycle. 
-                    La structure du jeu est inscrite dans l'ancestralité.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Section: Le Nombre 41 */}
-          <section className="content-section">
-            <div className="num41-block">
-              <div className="num41-header">
-                <div className="num41-digit">41</div>
-                <div className="num41-text">
-                  <h3 className="num41-headline">Preuve de <em>Convergence</em></h3>
-
-                </div>
-              </div>
-              <div className="num41-cols">
-                <div className="num41-col benin">
-                  <div className="num41-col-tag">Bénin</div>
-                  <h4 className="num41-col-title">41 Lignées du Dahomey</h4>
-                  <p className="num41-col-desc">Les familles fondatrices qui portent la mémoire du Royaume et ses traditions sacrées.</p>
-                </div>
-                <div className="num41-col peru">
-                  <div className="num41-col-tag">Pérou</div>
-                  <h4 className="num41-col-title">41 Ceques de Cusco</h4>
-                  <p className="num41-col-desc">Lignes énergétiques invisibles reliant le Temple du Soleil aux sites sacrés de l'Empire Inca.</p>
-                </div>
-                <div className="num41-col yony">
-                  <div className="num41-col-tag">Yony Games</div>
-                  <h4 className="num41-col-title">Convergence Totale</h4>
-                  <p className="num41-col-desc">Le jeu réunit ces deux géométries pour créer un pont de conscience entre les deux continents.</p>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Section: La Mission */}
-          <section className="content-section">
-            <div className="section-header-block">
-              <h2 className="section-title-big">La Mission — <em>La Double Épopée</em></h2>
-            </div>
-            
-            <div style={{ marginTop: '2rem' }}>
-              <div className="content-lead">
-                Le succès aux Yony Games dépend d'une double épopée de sauvegarde du patrimoine mondial, menée simultanément sur deux continents.
-              </div>
-              
-              <div className="mission-duo">
-                <div className="mission-card benin">
-                  <div className="mission-card-geo"></div>
-                  <div className="mission-country">Continent Africain • Bénin</div>
-                  <h3 className="mission-title">La Libération des Trésors</h3>
-                  <p className="mission-desc">
-                    Redonner vie et visibilité à 256 trésors historiques béninois. Chaque trésor libéré est une victoire pour la mémoire collective de l'humanité.
-                  </p>
-                  <div className="mission-count">256</div>
-                </div>
-                <div className="mission-card peru">
-                  <div className="mission-card-geo"></div>
-                  <div className="mission-country">Continent Américain • Pérou</div>
-                  <h3 className="mission-title">La Réactivation des Sites</h3>
-                  <p className="mission-desc">
-                    Réveiller l'énergie vibratoire de 256 sites archéologiques dans la Vallée Sacrée de Cusco. Chaque réactivation est un souffle rendu aux ancêtres.
-                  </p>
-                  <div className="mission-count">256</div>
-                </div>
-              </div>
-
-              <div className="gold-rule">
-                <strong>La Règle d'Or :</strong> Pour valider une libération ou une réactivation, il faut <strong>6 appels de 6 nations différentes</strong>. 
-                Aucune nation ne peut libérer seule. C'est l'union de vos forces qui déclenche la réussite. 
-                L'Indice d'Harmonie récompense l'équilibre entre vos actions au Bénin et au Pérou.
-              </div>
-            </div>
-          </section>
-
-          {/* Section: La Mécanique */}
-          <section className="content-section">
-            <div className="section-header-block">
-              <h2 className="section-title-big">La Mécanique <em>de Libération</em></h2>
-            </div>
-            
-            <div className="lib-grid" style={{ marginTop: '2rem' }}>
-              <div className="lib-step">
-                <div className="lib-n">6</div>
-                <div className="lib-l">types de jetons réunis</div>
-              </div>
-              <div className="lib-step">
-                <div className="lib-n">6</div>
-                <div className="lib-l">nations différentes en coalition</div>
-              </div>
-              <div className="lib-step">
-                <div className="lib-n">1</div>
-                <div className="lib-l">trésor ou site libéré</div>
-              </div>
-              <div className="lib-step">
-                <div className="lib-n">?</div>
-                <div className="lib-l">points aléatoires cryptés révélés</div>
-              </div>
-              <div className="lib-step">
-                <div className="lib-n">×16</div>
-                <div className="lib-l">multiplicateur max de solidarité</div>
-              </div>
-            </div>
-
-            <div className="gold-rule" style={{ borderLeftColor: '#F0BE68' }}>
-              Les trésors sont visibles sur un marché ouvert. Les nations repèrent librement ceux auxquels elles souhaitent contribuer — sans invitation, sans négociation préalable. 
-              Les coalitions se forment par affinité stratégique et complémentarité de jetons.
-            </div>
-          </section>
-
-          {/* Section: L'Ingénierie */}
-          <section className="content-section">
-            <div className="section-header-block">
-              <h2 className="section-title-big">L'Ingénierie <em>de la Victoire</em></h2>
-            </div>
-            
-            <div className="score-grid" style={{ marginTop: '2rem' }}>
-              <div className="score-card s1">
-                <div className="score-label">Composante 1</div>
-                <h3 className="score-title">Le Bonus de l'Audace</h3>
-                <p className="score-desc">Le jeu valorise l'initiative. Les délégations qui prennent des risques sont récompensées.</p>
-                <div className="score-val">×1.5</div>
-              </div>
-              <div className="score-card s2">
-                <div className="score-label">Composante 2</div>
-                <h3 className="score-title">Multiplicateur de Solidarité</h3>
-                <p className="score-desc">Chaque projet Amazone financé incrémente le multiplicateur global. C'est le levier le plus puissant du score.</p>
-                <div className="score-val">×16</div>
-              </div>
-              <div className="score-card s3">
-                <div className="score-label">Composante 3</div>
-                <h3 className="score-title">L'Indice d'Harmonie</h3>
-                <p className="score-desc">L'équilibre entre vos actions au Bénin et au Pérou libère toute la puissance de votre multiplicateur.</p>
-                <div className="score-val">= MAX</div>
-              </div>
-            </div>
-
-            <div className="pioneer-duo">
-              <div className="pioneer-card">
-                <div className="pioneer-badge">Statut de Pionnier</div>
-                <h3 className="pioneer-title">Les 3 Premières Coalitions</h3>
-                <p className="pioneer-desc">Les 3 premières délégations qui lancent une coalition reçoivent un bonus sur les points du projet libéré.</p>
-                <div className="pioneer-val">× 1.5</div>
-              </div>
-              <div className="pioneer-card">
-                <div className="pioneer-badge">Force de Frappe</div>
-                <h3 className="pioneer-title">Les Délégations qui Complètent</h3>
-                <p className="pioneer-desc">Les nations qui rejoignent une coalition et la portent à 6 sécurisent les points de base pour leur pays.</p>
-                <div className="pioneer-val">Points Base</div>
-              </div>
-            </div>
-
-            <div className="formula-block">
-              <div className="formula-eq">
-                Score Final = Σ (Points Trésors + Points Sites) × Multiplicateur de Solidarité (1 → 16)
-              </div>
-            </div>
-          </section>
-
-          {/* Section: Les Équipes */}
-          <section className="content-section">
-            <div className="section-header-block">
-              <h2 className="section-title-big">Les <em>Équipes</em></h2>
+              <h2 className="section-title-big">Rejoindre <em>l'Épopée</em></h2>
             </div>
             
             <div className="actors-grid" style={{ marginTop: '2rem' }}>
-              <div className="actor-card a1">
-                <div className="actor-icon">🧭</div>
-                <div className="actor-role">Cœur vivant du jeu</div>
-                <h3 className="actor-name">L'Équipe des 3 Voyageurs</h3>
-                <p className="actor-desc">
-                  Porteur de projet • Photographe • Spécialiste des traditions. 16 jours par pays hôte, 16 pays, 256 jours. 
-                  Ils documentent, créent les défis culturels et organisent les cérémonies d'harmonisation.
-                </p>
-              </div>
-              <div className="actor-card a2">
+              <div className="actor-card a2" style={{ background: 'rgba(212,146,42,0.05)', borderColor: 'var(--gold)' }}>
+                <div className="recruit-badge">RECRUTEMENT EN COURS</div>
                 <div className="actor-icon">👑</div>
                 <div className="actor-role">Conseil Souverain • 16 par pays</div>
                 <h3 className="actor-name">Les Amazones</h3>
                 <p className="actor-desc">
-                  Des femmes porteuses de projets à impact, une par délégation. Elles gèrent collectivement la banque des 6 jetons, 
-                  coordonnent les coalitions de libération et organisent les soirées de convergence. Leur organisation est libre.
+                  Femmes porteuses de projets à impact. Vous gérez la banque des jetons et coordonnez les coalitions mondiales.
                 </p>
+                <button className="btn-recruit">DEVENIR UNE AMAZONE - STRATÈGE</button>
+                <span className="urgency-tag">Bénin : 4 places restantes</span>
               </div>
-              <div className="actor-card a3">
+
+              <div className="actor-card a3" style={{ background: 'rgba(46,95,163,0.05)', borderColor: 'var(--blue)' }}>
                 <div className="actor-icon">🛡️</div>
                 <div className="actor-role">Générateurs de Jetons • 240 par pays</div>
                 <h3 className="actor-name">Les Soutiens</h3>
                 <p className="actor-desc">
-                  15 experts par Amazone, recrutés par le conseil. Ils alimentent les 6 espaces du jeu et produisent les jetons nécessaires à la libération des trésors. 
-                  Ils servent les Amazones sans les gouverner.
+                  Experts recrutés directement par les Amazones. Vous alimentez les arènes et produisez l'énergie du jeu.
                 </p>
+                <button className="btn-recruit blue">REJOINDRE LA DÉLÉGATION - EXPERT</button>
+                <span className="urgency-tag">Sénégal : 12 places d'experts restantes</span>
               </div>
-              <div className="actor-card a4">
-                <div className="actor-inner">
-                  <div className="actor-icon">🌍</div>
-                  <div className="actor-text">
-                    <div className="actor-role">Concordance + Convergence</div>
-                    <h3 className="actor-name">Touristes et Grand Public Mondial</h3>
-                    <p className="actor-desc">
-                      Les touristes génèrent la Concordance en scannant les QR codes des lieux culturels partenaires. 
-                      Le grand public mondial génère la Convergence en assistant aux cérémonies d'harmonisation diffusées en live.
-                    </p>
-                  </div>
-                </div>
+
+              <div className="actor-card a1">
+                <div className="actor-icon">🧭</div>
+                <div className="actor-role">Explorateurs de terrain</div>
+                <h3 className="actor-name">L'Équipe Voyageurs</h3>
+                <p className="actor-desc">
+                  Porteur • Photographe • Spécialiste. Vous documentez les traditions sur 16 pays pendant 256 jours.
+                </p>
+                <button className="btn-recruit" style={{ background: 'transparent', border: '1px solid var(--red)', color: 'var(--red)' }}>Candidature Voyageur</button>
               </div>
             </div>
           </section>
 
-          {/* Section: Les 6 Espaces */}
+          {/* Section: Les 6 Arènes (Gallery) */}
           <section className="content-section">
             <div className="section-header-block">
-              <h2 className="section-title-big">Les 6 Espaces & <em>Les 6 Jetons</em></h2>
+              <h2 className="section-title-big">Les 6 <em>Arènes de Pouvoir</em></h2>
             </div>
             
-            <p style={{ marginTop: '2rem', fontSize: '14px', color: '#666', marginBottom: '1.5rem' }}>
-              Chaque espace produit un type de jeton. Les 6 jetons sont nécessaires pour libérer un trésor ou réactiver un site.
+            <p style={{ marginTop: '2rem', fontSize: '15px', color: 'rgba(255,255,255,0.6)', marginBottom: '2rem', textAlign: 'center' }}>
+              Choisissez votre domaine d'expertise et commencez à générer les jetons nécessaires à la libération des trésors.
             </p>
 
             <div className="spaces">
-              <div className="space-row">
-                <div className="space-tag s1">Espace Sagesses</div>
-                <div className="space-desc">Résolutions de cas de vie • défis de sagesse ancestrale et de discernement</div>
-                <div className="space-token t1">Jeton de Conscience</div>
+              <div className="space-card">
+                <div className="space-tag s1">Sagesses</div>
+                <div className="space-token-icon">👁️</div>
+                <p className="space-desc">Défis de discernement et résolutions de cas de vie ancestraux.</p>
+                <button className="btn-arena">S'engager dans cette arène</button>
               </div>
-              <div className="space-row">
-                <div className="space-tag s2">Espace Savoirs</div>
-                <div className="space-desc">Défis de culture générale • questions sur les traditions, l'histoire, les langues</div>
-                <div className="space-token t2">Jeton de Connaissance</div>
+              <div className="space-card">
+                <div className="space-tag s2">Savoirs</div>
+                <div className="space-token-icon">📜</div>
+                <p className="space-desc">Culture générale, traditions orales et maîtrise des langues.</p>
+                <button className="btn-arena">S'engager dans cette arène</button>
               </div>
-              <div className="space-row">
-                <div className="space-tag s3">Espace Talents</div>
-                <div className="space-desc">Duels artistiques • musique, arts visuels, danse, artisanat traditionnel</div>
-                <div className="space-token t3">Jeton de Compétence</div>
+              <div className="space-card">
+                <div className="space-tag s3">Talents</div>
+                <div className="space-token-icon">🎨</div>
+                <p className="space-desc">Duels artistiques, artisanat et performances traditionnelles.</p>
+                <button className="btn-arena">S'engager dans cette arène</button>
               </div>
-              <div className="space-row">
-                <div className="space-tag s4">Espace Histoires</div>
-                <div className="space-desc">Partage de récits de vie • témoignages, narrations orales, mémoire transmise</div>
-                <div className="space-token t4">Jeton de Confiance</div>
+              <div className="space-card">
+                <div className="space-tag s4">Histoires</div>
+                <div className="space-token-icon">🗣️</div>
+                <p className="space-desc">Partage de récits de vie et transmission de la mémoire.</p>
+                <button className="btn-arena">S'engager dans cette arène</button>
               </div>
-              <div className="space-row">
-                <div className="space-tag s5">Espace Portails</div>
-                <div className="space-desc">Scan de QR codes sur les lieux partenaires • présence physique sur les sites culturels</div>
-                <div className="space-token t5">Jeton de Concordance</div>
+              <div className="space-card">
+                <div className="space-tag s5">Portails</div>
+                <div className="space-token-icon">⛩️</div>
+                <p className="space-desc">Présence physique et activation des lieux partenaires (QR Codes).</p>
+                <button className="btn-arena">S'engager dans cette arène</button>
               </div>
-              <div className="space-row">
-                <div className="space-tag s6">Espace Voyages</div>
-                <div className="space-desc">Cérémonies d'harmonisation en live • création du Mur des Convergences</div>
-                <div className="space-token t6">Jeton de Convergence</div>
+              <div className="space-card">
+                <div className="space-tag s6">Voyages</div>
+                <div className="space-token-icon">🤝</div>
+                <p className="space-desc">Cérémonies d'harmonisation et convergence mondiale en live.</p>
+                <button className="btn-arena">S'engager dans cette arène</button>
               </div>
             </div>
           </section>
 
-          {/* Section: Closing */}
-
+          {/* Section: Mur des Convergences (Social Proof) */}
+          <section className="wall-preview">
+            <h2 className="section-title-big">Le Mur des <em>Convergences</em></h2>
+            <p style={{ marginTop: '1rem', color: 'rgba(255,255,255,0.5)' }}>Le mouvement est lancé. Voici l'état de construction de la mémoire mondiale.</p>
+            <div className="wall-grid">
+              {[...Array(60)].map((_, i) => (
+                <div key={i} className={`wall-brick ${i < 24 ? 'active' : ''}`}></div>
+              ))}
+            </div>
+            <div style={{ fontSize: '12px', color: 'var(--gold)', fontWeight: 'bold' }}>24 / 512 TRÉSORS LIBÉRÉS</div>
+          </section>
 
         </div>
-
-        {/* ─── FOOTER ─── */}
 
       </main>
     </div>
