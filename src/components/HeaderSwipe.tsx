@@ -37,7 +37,7 @@ export const HeaderSwipe = () => {
 
 
   return (
-    <nav className="fixed top-0 left-0 right-0 h-20 bg-[#1B2A4A] z-[100] flex items-center border-b border-white/10 font-sans overflow-x-auto scrollbar-hide">
+    <nav className="fixed top-0 left-0 right-0 h-20 bg-white z-[100] flex items-center border-b border-zinc-100 font-sans overflow-x-auto scrollbar-hide">
       <div className="w-full flex justify-center items-center gap-2 md:gap-8 px-4">
         {visiblePages.map((page, i) => (
           <Link 
@@ -49,12 +49,12 @@ export const HeaderSwipe = () => {
               "flex items-center gap-1 md:gap-2 transition-all duration-500",
               pathname === page.href 
                 ? "scale-105 opacity-100" 
-                : "opacity-40 scale-90 hover:opacity-70"
+                : "opacity-50 scale-90 hover:opacity-80"
             )}>
-              <CategoryPattern id={page.id} size={14} className={pathname === page.href ? "text-[#D4922A]" : "grayscale opacity-20"} />
+              <CategoryPattern id={page.id} size={14} className={pathname === page.href ? "text-[#D4922A]" : "grayscale opacity-30"} />
               <span className={cn(
                 "font-display text-[9px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.25em] whitespace-nowrap transition-colors duration-500",
-                pathname === page.href ? "font-black text-white" : "font-semibold text-white/40"
+                pathname === page.href ? "font-bold text-[#1B2A4A]" : "font-medium text-[#1B2A4A]"
               )}>
                 {page.name}
               </span>
