@@ -42,9 +42,9 @@ export function CtaFinal() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
                   <div 
                     className="absolute bottom-0 left-0 right-0 pt-12 px-5 text-white text-center"
-                    style={{ paddingBottom: '4rem' }}
+                    style={{ paddingBottom: '3rem' }}
                   >
-                    <div className="font-display text-2xl font-semibold mb-8">{r.name}</div>
+                    <div className="font-display text-2xl font-semibold" style={{ marginBottom: '2rem' }}>{r.name}</div>
                     <div className="text-[10px] uppercase tracking-[0.25em] text-zinc-300 font-mono">
                       {r.treasures} trésors libérés
                     </div>
