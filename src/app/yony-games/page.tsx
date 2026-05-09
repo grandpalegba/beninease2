@@ -36,9 +36,7 @@ export default function YonyGamesPage() {
             <h1 className="cover-title">
               Jeux de Valorisation du <em>Féminin</em> et des <em>Traditions</em> du Monde
             </h1>
-            <p className="cover-desc">
-              Un événement sportif et culturel panafricain d'envergure, célébrant la convergence des sagesses ancestrales et l'impact réel sur le monde.
-            </p>
+
             
             <div className="cover-stats-row">
               <div className="cover-stat">
