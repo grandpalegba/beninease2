@@ -162,7 +162,7 @@
   font-weight: 800;
   letter-spacing: .12em;
   text-transform: uppercase;
-  color: var(--navy);
+  color: var(--white);
   line-height: 1.2;
 }
 .yony-games .cover-logo-tagline {
@@ -224,7 +224,7 @@
 .yony-games .cover-desc {
   font-size: 18px;
   font-weight: 500;
-  color: var(--navy);
+  color: var(--white);
   max-width: 600px;
   line-height: 1.5;
   margin-bottom: 0.5rem;
