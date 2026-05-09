@@ -243,7 +243,7 @@ const TalentsContent = () => {
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
     >
-      <BackButton href="/yony-games" className="absolute top-4 left-4" />
+      <BackButton href="/yonygames" className="absolute top-4 left-4" />
 
 
       {/* Duel Cards Section */}

@@ -82,7 +82,7 @@ export default function TresorsPage() {
       <div className="fixed inset-0 pattern-bg -z-10 opacity-[0.03]"></div>
 
       {/* BOUTON RETOUR */}
-      <BackButton href="/yony-games" />
+      <BackButton href="/yonygames" />
 
       <div className="flex-1 overflow-hidden">
         <CardDeck

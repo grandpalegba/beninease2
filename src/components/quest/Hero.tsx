@@ -40,7 +40,7 @@ export function Hero() {
             </div>
 
             <div className="mt-12">
-              <Link href="/yony-games" className="inline-block bg-[#2E5FA3] text-white px-10 py-4 rounded-full font-bold uppercase tracking-widest hover:bg-[#1B2A4A] transition-all transform hover:-translate-y-1 shadow-lg shadow-blue-500/20">
+              <Link href="/yonygames" className="inline-block bg-[#2E5FA3] text-white px-10 py-4 rounded-full font-bold uppercase tracking-widest hover:bg-[#1B2A4A] transition-all transform hover:-translate-y-1 shadow-lg shadow-blue-500/20">
                 Découvrir Yony Games
               </Link>
             </div>

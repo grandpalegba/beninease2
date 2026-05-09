@@ -12,7 +12,7 @@ const PAGES = [
   { name: "Savoirs", href: "/savoirs", id: "sagesse" },
   { name: "Sagesses", href: "/sagesses", id: "parole-aines" },
   { name: "Talents", href: "/talents", id: "beninois-monde" },
-  { name: "Yony Games", href: "/yony-games", id: "vision" },
+  { name: "Yony Games", href: "/yonygames", id: "vision" },
 ];
 
 export const HeaderSwipe = () => {
@@ -22,11 +22,11 @@ export const HeaderSwipe = () => {
   // Define dynamic pages based on the current route
   const getVisiblePages = () => {
     if (pathname === "/") {
-      return PAGES.filter(p => p.href === "/yony-games");
+      return PAGES.filter(p => p.href === "/yonygames");
     }
     // If on Yony Games or any of the game categories, show only the categories
     const categoryRoutes = ["/sagesses", "/talents", "/tresors", "/histoires", "/savoirs"];
-    if (pathname === "/yony-games" || categoryRoutes.some(route => pathname.startsWith(route))) {
+    if (pathname === "/yonygames" || categoryRoutes.some(route => pathname.startsWith(route))) {
       return PAGES.filter(p => ["/sagesses", "/talents", "/tresors", "/histoires", "/savoirs"].includes(p.href));
     }
     return PAGES;

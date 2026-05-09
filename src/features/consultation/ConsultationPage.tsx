@@ -51,7 +51,7 @@ export default function ConsultationPage() {
 
           <div className="flex flex-col gap-4 px-8">
             <Link 
-              href="/yony-games"
+              href="/yonygames"
               className="flex items-center justify-center gap-3 bg-[#00693e] text-white py-5 rounded-2xl font-bold text-[10px] uppercase tracking-[0.2em] transition-all hover:scale-[1.02]"
             >
               Retourner aux Jeux
@@ -100,7 +100,7 @@ export default function ConsultationPage() {
 
   return (
     <main className="h-[100dvh] bg-white text-foreground font-sans antialiased flex flex-col items-center justify-start overflow-hidden pb-20 relative">
-      <BackButton href="/yony-games" iconColor="#008751" className="z-[60]" />
+      <BackButton href="/yonygames" iconColor="#008751" className="z-[60]" />
       
       {/* Header Area */}
       <div className="w-full shrink-0 z-50 pt-6 px-6 flex flex-col items-center gap-2 md:gap-4">

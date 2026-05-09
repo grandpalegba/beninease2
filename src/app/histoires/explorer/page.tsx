@@ -41,7 +41,7 @@ export default function HistoiresPage() {
     <div className="h-screen w-full bg-white flex flex-col overflow-hidden relative">
       
       {/* BOUTON RETOUR */}
-      <BackButton href="/yony-games" />
+      <BackButton href="/yonygames" />
 
       {/* --- CARROUSEL FAÇON TINDER/BUMBLE --- */}
       <div className="flex-1 overflow-hidden">
