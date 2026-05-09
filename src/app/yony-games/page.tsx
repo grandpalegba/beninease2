@@ -71,7 +71,7 @@ export default function YonyGamesPage() {
               </div>
               
               <p style={{ marginTop: '0.5rem', fontSize: '15px', color: 'rgba(0,0,0,0.6)', marginBottom: '1rem', textAlign: 'center' }}>
-                Choisissez votre domaine d'expertise et commencez à générer les jetons nécessaires à la libération des trésors.
+                Les Amazones répartissent leurs soutiens en fonction de leur domaine d'expertise.
               </p>
 
               <div className="spaces">

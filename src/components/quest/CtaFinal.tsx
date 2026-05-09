@@ -15,9 +15,12 @@ export function CtaFinal() {
     <section className="relative bg-transparent border-t border-zinc-100">
       <div className="px-6 py-24">
         <div className="max-w-7xl mx-auto">
-          <div className="section-header-block" style={{ marginBottom: '2rem' }}>
+          <div className="section-header-block">
             <h2 className="section-title-big">Statuts des <em>Amazones</em></h2>
           </div>
+          <p style={{ marginTop: '0.5rem', fontSize: '15px', color: 'rgba(0,0,0,0.6)', marginBottom: '3rem', textAlign: 'center' }}>
+            Le statut des Amazones évolue en fonction de la libération des trésors.
+          </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {RANKS.map((r, idx) => (
@@ -41,10 +44,10 @@ export function CtaFinal() {
                     className="absolute bottom-0 left-0 right-0 pt-12 px-5 text-white text-center"
                     style={{ paddingBottom: '8rem' }}
                   >
-                    <div className="text-[10px] uppercase tracking-[0.25em] text-zinc-300 mb-1 font-mono">
+                    <div className="font-display text-2xl font-semibold mb-1">{r.name}</div>
+                    <div className="text-[10px] uppercase tracking-[0.25em] text-zinc-300 font-mono">
                       {r.treasures} trésors libérés
                     </div>
-                    <div className="font-display text-2xl font-semibold">{r.name}</div>
                   </div>
                 </div>
               </motion.div>
