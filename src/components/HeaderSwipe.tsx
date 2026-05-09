@@ -27,7 +27,7 @@ export const HeaderSwipe = () => {
     // If on Yony Games or any of the game categories, show only the categories
     const categoryRoutes = ["/sagesses", "/talents", "/tresors", "/histoires", "/savoirs"];
     if (pathname === "/yony-games" || categoryRoutes.some(route => pathname.startsWith(route))) {
-      return PAGES.filter(p => ["/sagesses", "/talents", "/tresors", "/histoires"].includes(p.href));
+      return PAGES.filter(p => ["/sagesses", "/talents", "/tresors", "/histoires", "/savoirs"].includes(p.href));
     }
     return PAGES;
   };
@@ -86,23 +86,23 @@ export const HeaderSwipe = () => {
           {visiblePages.map((page, i) => (
             <div 
               key={i} 
-              className="flex-[0_0_auto] px-2 md:px-4 cursor-pointer"
+              className="flex-[0_0_auto] px-1 md:px-3 cursor-pointer"
               onClick={() => handleTitleClick(i, page.href)}
             >
               <div className={cn(
-                "flex items-center gap-2 transition-all duration-500",
+                "flex items-center gap-1 md:gap-2 transition-all duration-500",
                 pathname === page.href 
-                  ? "scale-110 opacity-100" 
-                  : "opacity-50 scale-90"
+                  ? "scale-105 opacity-100" 
+                  : "opacity-40 scale-90"
               )}>
-                <CategoryPattern id={page.id} className={pathname === page.href ? "text-[#FFD700]" : "grayscale opacity-40"} />
+                <CategoryPattern id={page.id} size={14} className={pathname === page.href ? "text-[#FFD700]" : "grayscale opacity-30"} />
                 <span className={cn(
-                  "font-display text-[10px] md:text-[11px] uppercase tracking-[0.25em] whitespace-nowrap transition-colors duration-500",
+                  "font-display text-[9px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.25em] whitespace-nowrap transition-colors duration-500",
                   pathname === page.href ? "font-black text-white" : "font-semibold text-gray-400"
                 )}>
                   {page.name}
                 </span>
-                <CategoryPattern id={page.id} className={cn("scale-x-[-1]", pathname === page.href ? "text-[#FFD700]" : "grayscale opacity-40")} />
+                <CategoryPattern id={page.id} size={14} className={cn("scale-x-[-1]", pathname === page.href ? "text-[#FFD700]" : "grayscale opacity-30")} />
               </div>
             </div>
           ))}
