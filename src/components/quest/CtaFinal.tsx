@@ -15,7 +15,7 @@ export function CtaFinal() {
     <section className="relative bg-transparent border-t border-zinc-100">
       <div className="px-6 py-24">
         <div className="max-w-7xl mx-auto">
-          <div className="section-header-block" style={{ marginBottom: '5rem' }}>
+          <div className="section-header-block" style={{ marginBottom: '2rem' }}>
             <h2 className="section-title-big">Statuts des <em>Amazones</em></h2>
           </div>
 

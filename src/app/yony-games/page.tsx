@@ -70,7 +70,7 @@ export default function YonyGamesPage() {
                 <h2 className="section-title-big">Les 6 <em>arènes des jeux</em></h2>
               </div>
               
-              <p style={{ marginTop: '1rem', fontSize: '15px', color: 'rgba(255,255,255,0.6)', marginBottom: '2rem', textAlign: 'center' }}>
+              <p style={{ marginTop: '0.5rem', fontSize: '15px', color: 'rgba(0,0,0,0.6)', marginBottom: '1rem', textAlign: 'center' }}>
                 Choisissez votre domaine d'expertise et commencez à générer les jetons nécessaires à la libération des trésors.
               </p>
 
