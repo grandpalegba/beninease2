@@ -67,38 +67,40 @@ export default function YonyGamesPage() {
 
           {/* Section: Les 6 Arènes (Gallery) */}
           <section className="content-section">
-            <div className="section-header-block">
-              <h2 className="section-title-big">Les 6 <em>espaces des jeux</em></h2>
-            </div>
-            
-            <p style={{ marginTop: '2rem', fontSize: '15px', color: 'rgba(255,255,255,0.6)', marginBottom: '2rem', textAlign: 'center' }}>
-              Choisissez votre domaine d'expertise et commencez à générer les jetons nécessaires à la libération des trésors.
-            </p>
+            <div className="max-w-5xl mx-auto">
+              <div className="section-header-block">
+                <h2 className="section-title-big">Les 6 <em>espaces des jeux</em></h2>
+              </div>
+              
+              <p style={{ marginTop: '1rem', fontSize: '15px', color: 'rgba(255,255,255,0.6)', marginBottom: '2rem', textAlign: 'center' }}>
+                Choisissez votre domaine d'expertise et commencez à générer les jetons nécessaires à la libération des trésors.
+              </p>
 
-            <div className="spaces">
-              <div className="space-card">
-                <div className="space-tag s1">Sagesses</div>
-                <p className="space-desc">Défis de discernement et résolutions de cas de vie ancestraux.</p>
-              </div>
-              <div className="space-card">
-                <div className="space-tag s2">Savoirs</div>
-                <p className="space-desc">Culture générale, traditions orales et maîtrise des langues.</p>
-              </div>
-              <div className="space-card">
-                <div className="space-tag s3">Talents</div>
-                <p className="space-desc">Duels artistiques, artisanat et performances traditionnelles.</p>
-              </div>
-              <div className="space-card">
-                <div className="space-tag s4">Histoires</div>
-                <p className="space-desc">Partage de récits de vie et transmission de la mémoire.</p>
-              </div>
-              <div className="space-card">
-                <div className="space-tag s5">Portails</div>
-                <p className="space-desc">Présence physique et activation des lieux partenaires (QR Codes).</p>
-              </div>
-              <div className="space-card">
-                <div className="space-tag s6">Voyages</div>
-                <p className="space-desc">Cérémonies d'harmonisation et convergence mondiale en live.</p>
+              <div className="spaces">
+                <div className="space-card">
+                  <div className="space-tag s1">Sagesses</div>
+                  <p className="space-desc">Défis de discernement et résolutions de cas de vie ancestraux.</p>
+                </div>
+                <div className="space-card">
+                  <div className="space-tag s2">Savoirs</div>
+                  <p className="space-desc">Culture générale, traditions orales et maîtrise des langues.</p>
+                </div>
+                <div className="space-card">
+                  <div className="space-tag s3">Talents</div>
+                  <p className="space-desc">Duels artistiques, artisanat et performances traditionnelles.</p>
+                </div>
+                <div className="space-card">
+                  <div className="space-tag s4">Histoires</div>
+                  <p className="space-desc">Partage de récits de vie et transmission de la mémoire.</p>
+                </div>
+                <div className="space-card">
+                  <div className="space-tag s5">Portails</div>
+                  <p className="space-desc">Présence physique et activation des lieux partenaires (QR Codes).</p>
+                </div>
+                <div className="space-card">
+                  <div className="space-tag s6">Voyages</div>
+                  <p className="space-desc">Cérémonies d'harmonisation et convergence mondiale en live.</p>
+                </div>
               </div>
             </div>
           </section>

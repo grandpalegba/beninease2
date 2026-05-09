@@ -296,30 +296,23 @@
 }
 
 /* ─── MAIN ───────────────────────────────────────────── */
-.yony-games .main { max-width: 1000px; margin: 0 auto; padding: 0 2rem 5rem; background: var(--navy-d); }
-.yony-games .main section { background: rgba(255,255,255, 0.02); border: 1px solid rgba(255,255,255, 0.05); border-radius: 12px; padding: 2.5rem; margin-bottom: 2rem; }
+.yony-games .main { width: 100%; padding: 0 0 5rem; background: var(--navy-d); }
+.yony-games .main section { background: transparent; border: none; border-radius: 0; padding: 4rem 2rem; margin-bottom: 0; }
 
 
 /* ─── SECTION HEADER ─────────────────────────────────── */
 .yony-games .section-header-block {
-  background: var(--navy);
-  margin: 0 -2rem;
-  padding: 2rem 2rem 2rem;
+  background: transparent;
+  margin: 0;
+  padding: 0 0 2rem;
   position: relative;
   overflow: hidden;
   display: flex;
+  justify-content: center;
   align-items: center;
+  text-align: center;
 }
-.yony-games .section-header-block::after {
-  content: '';
-  position: absolute;
-  right: 0; top: 0;
-  width: 90px; height: 90px;
-  border-radius: 50%;
-  background: var(--blue);
-  opacity: .18;
-  transform: translate(30%, -30%);
-}
+
 .yony-games .section-title-big {
   font-family: 'Outfit', sans-serif;
   font-size: clamp(30px, 4vw, 46px);
