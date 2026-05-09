@@ -1147,3 +1147,60 @@
 }
 
 .yony-games p { margin-bottom: .5rem; }
+
+/* ─── RESPONSIVE ─────────────────────────────────────── */
+@media (max-width: 768px) {
+  .yony-games .cover-header { padding: 1.5rem; }
+  .yony-games .cover-logo-name { font-size: 22px; }
+  .yony-games .cover-badge { display: none; }
+  
+  .yony-games .cover-body { padding: 1.5rem; }
+  .yony-games .cover-title { font-size: 32px; letter-spacing: .08em; }
+  
+  .yony-games .cover-stats-row { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    width: 100%; 
+  }
+  .yony-games .cover-stat:last-child { 
+    grid-column: 1 / -1; 
+    border-right: 1px solid rgba(255,255,255,.1); 
+    border-top: 1px solid rgba(255,255,255,.1);
+  }
+
+  .yony-games .main { padding: 0 1rem 3rem; }
+  
+  .yony-games .section-header-block { margin: 0 -1rem; padding: 1.5rem; }
+  .yony-games .section-title-big { font-size: 28px; }
+
+  .yony-games .kf-grid { grid-template-columns: 1fr; }
+  .yony-games .kf-card { border-right: none; border-bottom: 1px solid var(--grey); }
+  .yony-games .kf-card:last-child { border-bottom: none; }
+
+  .yony-games .kf-budget-row { grid-template-columns: 1fr; }
+  
+  .yony-games .num41-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+  .yony-games .num41-digit { font-size: 64px; }
+  .yony-games .num41-cols { grid-template-columns: 1fr; }
+  .yony-games .num41-block::before { display: none; }
+
+  .yony-games .mission-duo { grid-template-columns: 1fr; }
+  
+  .yony-games .lib-grid { grid-template-columns: 1fr 1fr; }
+  .yony-games .lib-step:nth-child(2),
+  .yony-games .lib-step:nth-child(4) { border-right: none; }
+  .yony-games .lib-step:last-child { grid-column: 1 / -1; border-top: 1px solid var(--grey); }
+
+  .yony-games .score-grid { grid-template-columns: 1fr; }
+  .yony-games .pioneer-duo { grid-template-columns: 1fr; }
+  
+  .yony-games .actors-grid { grid-template-columns: 1fr; }
+  .yony-games .actor-card.a4 .actor-inner { flex-direction: column; gap: 1rem; }
+  
+  .yony-games .space-row { flex-direction: column; }
+  .yony-games .space-tag { min-width: 0; width: 100%; justify-content: center; }
+  .yony-games .space-token { min-width: 0; width: 100%; border-left: none; border-top: 1px solid var(--grey); justify-content: center; }
+  
+  .yony-games .closing { padding: 2rem 1.5rem; }
+}
+
