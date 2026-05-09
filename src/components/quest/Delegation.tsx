@@ -14,7 +14,7 @@ export function Delegation() {
           }}
         />
       </div>
-<line_number>: 
+
       <div className="relative max-w-5xl mx-auto text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -29,7 +29,7 @@ export function Delegation() {
             Une délégation de <span className="text-[#D4922A]">256 personnes</span> par nation.
           </h2>
         </motion.div>
-<line_number>: 
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-20 items-stretch">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -46,7 +46,7 @@ export function Delegation() {
               </p>
             </div>
           </motion.div>
-<line_number>: 
+
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
