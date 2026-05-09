@@ -34,11 +34,11 @@ export default function YonyGamesPage() {
 
           <div className="cover-body">
             <h1 className="cover-title" style={{ color: 'var(--gold)', letterSpacing: '0.05em', marginBottom: '1.5rem' }}>
-              OLYMPIADES DES TRADITIONS <br /> DU MONDE
+              OLYMPIADES DES SAGESSES ANCESTRALES <br /> DU MONDE
             </h1>
             
             <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '18px', maxWidth: '600px', margin: '0 auto 3rem auto', lineHeight: 1.6 }}>
-              <strong>Mission :</strong> 16 trésors de 16 pays doivent retrouver leur terre d'origine et toute leur puissance pour délivrer l'énergie nécessaire à guérir le monde.
+              <strong>Mission :</strong> 16 trésors de 16 pays doivent retrouver leur terre d'origine et toute leur puissance pour délivrer l'énergie de guérison du monde.
             </p>            
             <div className="cover-stats-row">
               <div className="cover-stat">
