@@ -216,7 +216,7 @@ function SavoirsContent() {
           <motion.div key={currentM.id} initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }} className="h-full flex flex-col items-center justify-center p-6 relative">
             
             {/* BOUTON RETOUR */}
-            <BackButton href="/" iconColor="#008751" className="z-[60]" />
+            <BackButton href="/yony-games" iconColor="#008751" className="z-[60]" />
 
             <motion.div
               drag="both" dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }} dragElastic={0.4}
@@ -245,7 +245,7 @@ function SavoirsContent() {
           </motion.div>
         ) : (
           <motion.div key="ritual" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="absolute inset-0 bg-white z-[150] flex flex-col items-center p-4 pb-20 overflow-hidden">
-            <BackButton href="/" iconColor="#008751" className="z-[200]" />
+            <BackButton href="/yony-games" iconColor="#008751" className="z-[200]" />
             <div className="w-12 h-1 bg-gray-100 rounded-full mb-8 shrink-0 mt-14" />
 
             {/* ZONE VISUELLE */}
