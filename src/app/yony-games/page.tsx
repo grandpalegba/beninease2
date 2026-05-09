@@ -34,11 +34,9 @@ export default function YonyGamesPage() {
               OLYMPIADES DES TRADITIONS DU MONDE
             </h1>
             <p className="cover-desc">
-              Libérer des trésors (Bénin) et révéler des lieux magiques (Pérou)
+              Libérer des trésors et révéler des lieux magiques
             </p>
-            <p className="cover-slogan">
-              "Votre talent est la clé qui déverrouille l'histoire."
-            </p>
+
             
             <div className="cover-stats-row">
               <div className="cover-stat">
@@ -77,11 +75,7 @@ export default function YonyGamesPage() {
                 <div className="kf-card-n">512</div>
                 <div className="kf-card-label">256 trésors béninois + 256 sites archéologiques péruviens</div>
               </div>
-              <div className="kf-card c3">
-                <div className="kf-card-pre">Convergence</div>
-                <div className="kf-card-n">41</div>
-                <div className="kf-card-label">Ceques de Cusco = Lignées du Dahomey — Preuve de Convergence</div>
-              </div>
+
               <div className="kf-card c4">
                 <div className="kf-card-pre">Signes du Fâ</div>
                 <div className="kf-card-n">256</div>
@@ -89,12 +83,7 @@ export default function YonyGamesPage() {
               </div>
             </div>
 
-            <div className="quote-block">
-              <p className="quote-text">
-                "L'originalité des Yony Games, c'est d'avoir compris qu'un événement culturel mondial pouvait être sublimé par la convergence des sagesses ancestrales."
-              </p>
-              <div className="quote-author">YONY</div>
-            </div>
+
           </section>
 
           {/* Section: Les Équipes (Action-Oriented) */}
@@ -105,37 +94,26 @@ export default function YonyGamesPage() {
             
             <div className="actors-grid" style={{ marginTop: '2rem' }}>
               <div className="actor-card a2" style={{ background: 'rgba(212,146,42,0.05)', borderColor: 'var(--gold)' }}>
-                <div className="recruit-badge">RECRUTEMENT EN COURS</div>
-                <div className="actor-icon">👑</div>
-                <div className="actor-role">Conseil Souverain • 16 par pays</div>
+
                 <h3 className="actor-name">Les Amazones</h3>
                 <p className="actor-desc">
                   Femmes porteuses de projets à impact. Vous gérez la banque des jetons et coordonnez les coalitions mondiales.
                 </p>
                 <button className="btn-recruit">DEVENIR UNE AMAZONE - STRATÈGE</button>
-                <span className="urgency-tag">Bénin : 4 places restantes</span>
+
               </div>
 
               <div className="actor-card a3" style={{ background: 'rgba(46,95,163,0.05)', borderColor: 'var(--blue)' }}>
-                <div className="actor-icon">🛡️</div>
-                <div className="actor-role">Générateurs de Jetons • 240 par pays</div>
+
                 <h3 className="actor-name">Les Soutiens</h3>
                 <p className="actor-desc">
                   Experts recrutés directement par les Amazones. Vous alimentez les arènes et produisez l'énergie du jeu.
                 </p>
                 <button className="btn-recruit blue">REJOINDRE LA DÉLÉGATION - EXPERT</button>
-                <span className="urgency-tag">Sénégal : 12 places d'experts restantes</span>
+
               </div>
 
-              <div className="actor-card a1">
-                <div className="actor-icon">🧭</div>
-                <div className="actor-role">Explorateurs de terrain</div>
-                <h3 className="actor-name">L'Équipe Voyageurs</h3>
-                <p className="actor-desc">
-                  Porteur • Photographe • Spécialiste. Vous documentez les traditions sur 16 pays pendant 256 jours.
-                </p>
-                <button className="btn-recruit" style={{ background: 'transparent', border: '1px solid var(--red)', color: 'var(--red)' }}>Candidature Voyageur</button>
-              </div>
+
             </div>
           </section>
 
