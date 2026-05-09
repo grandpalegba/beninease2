@@ -18,7 +18,7 @@ export function CtaFinal() {
           <div className="section-header-block">
             <h2 className="section-title-big">Statuts des <em>Amazones</em></h2>
           </div>
-          <p style={{ marginTop: '0.5rem', fontSize: '15px', color: 'rgba(0,0,0,0.6)', marginBottom: '3rem', textAlign: 'center' }}>
+          <p style={{ marginTop: '0.5rem', fontSize: '17px', color: 'rgba(0,0,0,0.6)', marginBottom: '3rem', textAlign: 'center' }}>
             Le statut des Amazones évolue en fonction de la libération des trésors.
           </p>
 
@@ -44,7 +44,7 @@ export function CtaFinal() {
                     className="absolute bottom-0 left-0 right-0 pt-12 px-5 text-white text-center"
                     style={{ paddingBottom: '4rem' }}
                   >
-                    <div className="font-display text-2xl font-semibold mb-1">{r.name}</div>
+                    <div className="font-display text-2xl font-semibold mb-4">{r.name}</div>
                     <div className="text-[10px] uppercase tracking-[0.25em] text-zinc-300 font-mono">
                       {r.treasures} trésors libérés
                     </div>
