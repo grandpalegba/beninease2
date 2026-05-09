@@ -41,16 +41,16 @@ export default function YonyGamesPage() {
             
             <div className="cover-stats-row">
               <div className="cover-stat">
+                <div className="cover-stat-n">256</div>
+                <div className="cover-stat-l">16 cycles de 16 jours</div>
+              </div>
+              <div className="cover-stat">
                 <div className="cover-stat-n">16</div>
                 <div className="cover-stat-l">Nations Hôtes</div>
               </div>
               <div className="cover-stat">
                 <div className="cover-stat-n">256</div>
                 <div className="cover-stat-l">Trésors à libérer</div>
-              </div>
-              <div className="cover-stat">
-                <div className="cover-stat-n">256</div>
-                <div className="cover-stat-l">16 cycles de 16 jours</div>
               </div>
             </div>
           </div>
