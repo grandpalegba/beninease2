@@ -80,7 +80,7 @@ export const HeaderSwipe = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 h-20 bg-black z-[100] flex items-center border-b border-white/5 font-sans overflow-hidden">
+    <nav className="fixed top-0 left-0 right-0 h-20 bg-white/80 backdrop-blur-xl z-[100] flex items-center border-b border-zinc-100 font-sans overflow-hidden">
       <div className="w-full max-w-[800px] mx-auto overflow-hidden px-4" ref={emblaRef}>
         <div className="flex touch-pan-x items-center">
           {visiblePages.map((page, i) => (
@@ -95,14 +95,14 @@ export const HeaderSwipe = () => {
                   ? "scale-105 opacity-100" 
                   : "opacity-40 scale-90"
               )}>
-                <CategoryPattern id={page.id} size={14} className={pathname === page.href ? "text-[#FFD700]" : "grayscale opacity-30"} />
+                <CategoryPattern id={page.id} size={14} className={pathname === page.href ? "text-[#D4922A]" : "grayscale opacity-20"} />
                 <span className={cn(
                   "font-display text-[9px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.25em] whitespace-nowrap transition-colors duration-500",
-                  pathname === page.href ? "font-black text-white" : "font-semibold text-gray-400"
+                  pathname === page.href ? "font-black text-zinc-950" : "font-semibold text-zinc-400"
                 )}>
                   {page.name}
                 </span>
-                <CategoryPattern id={page.id} size={14} className={cn("scale-x-[-1]", pathname === page.href ? "text-[#FFD700]" : "grayscale opacity-30")} />
+                <CategoryPattern id={page.id} size={14} className={cn("scale-x-[-1]", pathname === page.href ? "text-[#D4922A]" : "grayscale opacity-20")} />
               </div>
             </div>
           ))}

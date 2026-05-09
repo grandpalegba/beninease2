@@ -12,7 +12,7 @@ const RANKS = [
 
 export function CtaFinal() {
   return (
-    <section className="relative bg-transparent border-t border-white/5">
+    <section className="relative bg-transparent border-t border-zinc-100">
       <div className="px-6 py-24">
         <div className="max-w-7xl mx-auto">
           <motion.div
@@ -22,7 +22,7 @@ export function CtaFinal() {
             transition={{ duration: 0.7 }}
             className="max-w-2xl mb-14"
           >
-            <h3 className="font-display text-3xl md:text-5xl font-semibold tracking-tight text-white leading-[1.05]">
+            <h3 className="font-display text-2xl md:text-4xl font-semibold tracking-tight text-zinc-950 leading-[1.05]">
               Le statut des Amazones évolue avec chaque Libération de trésor.
             </h3>
           </motion.div>
@@ -35,7 +35,7 @@ export function CtaFinal() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: idx * 0.1 }}
-                className="group relative rounded-2xl overflow-hidden border border-zinc-200 bg-zinc-950 hover:border-zinc-950 transition-all duration-500"
+                className="group relative rounded-2xl overflow-hidden border border-zinc-100 bg-zinc-950 hover:border-zinc-950 transition-all duration-500"
               >
                 <div className="relative aspect-[9/16] overflow-hidden">
                   <Image
@@ -45,7 +45,7 @@ export function CtaFinal() {
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-5 text-white">
+                  <div className="absolute inset-0 flex flex-col items-center justify-center p-5 text-white text-center">
                     <div className="text-[10px] uppercase tracking-[0.25em] text-zinc-300 mb-1 font-mono">
                       {r.treasures} trésors libérés
                     </div>

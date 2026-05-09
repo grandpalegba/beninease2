@@ -47,8 +47,8 @@ export default function YonyGamesPage() {
                 <div className="cover-stat-l">Nations Hôtes</div>
               </div>
               <div className="cover-stat">
-                <div className="cover-stat-n">256 x 2</div>
-                <div className="cover-stat-l">Trésors et Lieux Sacrés</div>
+                <div className="cover-stat-n">256</div>
+                <div className="cover-stat-l">Trésors à libérer</div>
               </div>
               <div className="cover-stat">
                 <div className="cover-stat-n">256</div>

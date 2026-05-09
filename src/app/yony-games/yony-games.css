@@ -32,7 +32,7 @@
 .yony-games .cover-title { font-weight: 500; }
 .yony-games .kf-title { font-weight: 600; }
 .yony-games .mission-title { font-weight: 600; }
-.yony-games .actor-name { font-weight: 600; color: var(--white); }
+.yony-games .actor-name { font-weight: 600; color: var(--navy); }
 .yony-games .num41-headline { font-weight: 600; }
 .yony-games .ceremony-title { font-weight: 600; }
 .yony-games .tension-title { font-weight: 600; }
@@ -57,8 +57,8 @@
   font-family: 'Outfit', sans-serif;
   font-size: 16px;
   line-height: 1.6;
-  background: var(--navy-d);
-  color: var(--white);
+  background: var(--white);
+  color: var(--navy);
   letter-spacing: 0.03em;
   min-height: 100vh;
 }
@@ -67,7 +67,7 @@
 
 /* ─── COVER ─────────────────────────────────────────── */
 .yony-games .cover {
-  background: var(--navy-d);
+  background: var(--white);
   min-height: 55vh;
   display: flex;
   flex-direction: column;
@@ -162,7 +162,7 @@
   font-weight: 800;
   letter-spacing: .12em;
   text-transform: uppercase;
-  color: var(--white);
+  color: var(--navy);
   line-height: 1.2;
 }
 .yony-games .cover-logo-tagline {
@@ -214,7 +214,7 @@
   font-family: 'Outfit', sans-serif;
   font-size: clamp(28px, 4.5vw, 52px);
   font-weight: 600;
-  color: var(--white);
+  color: var(--navy);
   line-height: 1.15;
   letter-spacing: .12em;
   text-transform: none;
@@ -224,7 +224,7 @@
 .yony-games .cover-desc {
   font-size: 18px;
   font-weight: 500;
-  color: var(--white);
+  color: var(--navy);
   max-width: 600px;
   line-height: 1.5;
   margin-bottom: 0.5rem;
@@ -240,7 +240,7 @@
 .yony-games .cover-stats-row {
   display: flex;
   gap: 0;
-  border: 1px solid rgba(255,255,255,.15);
+  border: 1px solid var(--grey);
   border-radius: 8px;
   overflow: hidden;
   width: fit-content;
@@ -249,7 +249,7 @@
 .yony-games .cover-stat {
   padding: 1rem 1.75rem;
   text-align: center;
-  border-right: 1px solid rgba(255,255,255,.1);
+  border-right: 1px solid var(--grey);
 }
 .yony-games .cover-stat:last-child { border-right: none; }
 .yony-games .cover-stat-n {
@@ -263,7 +263,7 @@
   font-size: 10px;
   letter-spacing: .12em;
   text-transform: uppercase;
-  color: rgba(255,255,255,.4);
+  color: var(--grey-m);
   margin-top: 3px;
 }
 
@@ -296,7 +296,7 @@
 }
 
 /* ─── MAIN ───────────────────────────────────────────── */
-.yony-games .main { width: 100%; padding: 0 0 5rem; background: var(--navy-d); }
+.yony-games .main { width: 100%; padding: 0 0 5rem; background: var(--white); }
 .yony-games .main section { background: transparent; border: none; border-radius: 0; padding: 4rem 2rem; margin-bottom: 0; }
 
 
@@ -318,7 +318,7 @@
   font-size: clamp(30px, 4vw, 46px);
   font-weight: 700;
   text-transform: none;
-  color: var(--white);
+  color: var(--navy);
   letter-spacing: .02em;
   line-height: 1.05;
 }
@@ -672,8 +672,8 @@
   margin: 1.5rem 0; 
 }
 .yony-games .space-card {
-  background: rgba(255,255,255, 0.05);
-  border: 1px solid rgba(255,255,255, 0.1);
+  background: var(--off);
+  border: 1px solid var(--grey);
   border-radius: 10px;
   padding: 1.5rem;
   display: flex;
@@ -682,7 +682,7 @@
   text-align: center;
   transition: transform 0.3s ease;
 }
-.yony-games .space-card:hover { transform: translateY(-5px); background: rgba(255,255,255, 0.08); }
+.yony-games .space-card:hover { transform: translateY(-5px); background: var(--grey); }
 .yony-games .space-tag {
   font-family: 'Outfit', sans-serif;
   font-size: 11px;
@@ -708,10 +708,11 @@
 }
 .yony-games .space-desc {
   font-size: 13px;
-  color: rgba(255,255,255, 0.6);
+  color: var(--navy);
   line-height: 1.5;
   margin-bottom: 1.5rem;
   flex-grow: 1;
+  opacity: 0.7;
 }
 .yony-games .btn-arena {
   background: transparent;

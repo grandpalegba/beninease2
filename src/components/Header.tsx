@@ -61,7 +61,7 @@ const Header = ({ hideTop = false }: { hideTop?: boolean }) => {
       {isMainPage && !hideTop && <HeaderSwipe />}
 
       {/* DOCK (Bottom) */}
-      <footer className="fixed bottom-0 left-0 right-0 z-[200] h-20 bg-black/95 backdrop-blur-xl border-t border-white/5 flex items-center justify-between px-8 rounded-t-[2.5rem] shadow-[0_-10px_40px_rgba(0,0,0,0.2)] font-sans">
+      <footer className="fixed bottom-0 left-0 right-0 z-[200] h-20 bg-white/90 backdrop-blur-xl border-t border-zinc-100 flex items-center justify-between px-8 rounded-t-[2.5rem] shadow-[0_-10px_40px_rgba(0,0,0,0.05)] font-sans">
         
         {/* Logo : Gauche sur mobile, Centré sur MD+ */}
         <div className={cn(
@@ -71,7 +71,7 @@ const Header = ({ hideTop = false }: { hideTop?: boolean }) => {
             <div className="relative w-5 h-5 md:w-7 md:h-7">
               <Image src="/logo.png" alt="logo" fill className="object-contain" />
             </div>
-            <span className="text-[10px] md:text-xl font-black tracking-[3px] md:tracking-[5px] uppercase flex items-center text-white">
+            <span className="text-[10px] md:text-xl font-black tracking-[3px] md:tracking-[5px] uppercase flex items-center text-zinc-950">
               Yonyverse
             </span>
           </Link>
@@ -82,16 +82,16 @@ const Header = ({ hideTop = false }: { hideTop?: boolean }) => {
           {user ? (
             <div className="relative user-menu-container">
               <button onClick={() => setShowDropdown(!showDropdown)} className="flex items-center gap-2 group">
-                <div className="relative h-10 w-10 rounded-full overflow-hidden border-2 border-white/10 group-hover:border-[#008751] transition-all">
+                <div className="relative h-10 w-10 rounded-full overflow-hidden border-2 border-zinc-100 group-hover:border-[#008751] transition-all">
                   {profile?.avatar_url ? (
                     <Image src={profile.avatar_url} alt="avatar" fill className="object-cover" />
                   ) : (
-                    <div className="w-full h-full bg-white/5 flex items-center justify-center text-white/40">
+                    <div className="w-full h-full bg-zinc-50 flex items-center justify-center text-zinc-300">
                       <UserIcon size={20} />
                     </div>
                   )}
                 </div>
-                <ChevronDown size={14} className={cn("text-white/30 transition-transform", showDropdown && "rotate-180")} />
+                <ChevronDown size={14} className={cn("text-zinc-300 transition-transform", showDropdown && "rotate-180")} />
               </button>
 
               {showDropdown && (
