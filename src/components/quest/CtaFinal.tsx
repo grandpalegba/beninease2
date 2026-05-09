@@ -45,7 +45,7 @@ export function CtaFinal() {
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 pb-10 pt-12 px-5 text-white text-center">
+                  <div className="absolute bottom-0 left-0 right-0 pb-16 pt-12 px-5 text-white text-center">
                     <div className="text-[10px] uppercase tracking-[0.25em] text-zinc-300 mb-1 font-mono">
                       {r.treasures} trésors libérés
                     </div>
