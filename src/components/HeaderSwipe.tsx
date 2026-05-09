@@ -80,33 +80,31 @@ export const HeaderSwipe = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 h-20 bg-[#1B2A4A] z-[100] flex items-center border-b border-white/10 font-sans overflow-hidden">
-      <div className="w-full max-w-[800px] mx-auto overflow-hidden px-4" ref={emblaRef}>
-        <div className="flex touch-pan-x items-center">
-          {visiblePages.map((page, i) => (
-            <div 
-              key={i} 
-              className="flex-[0_0_auto] px-1 md:px-3 cursor-pointer"
-              onClick={() => handleTitleClick(i, page.href)}
-            >
-              <div className={cn(
-                "flex items-center gap-1 md:gap-2 transition-all duration-500",
-                pathname === page.href 
-                  ? "scale-105 opacity-100" 
-                  : "opacity-40 scale-90"
+    <nav className="fixed top-0 left-0 right-0 h-20 bg-[#1B2A4A] z-[100] flex items-center border-b border-white/10 font-sans overflow-x-auto scrollbar-hide">
+      <div className="w-full flex justify-center items-center gap-2 md:gap-8 px-4">
+        {visiblePages.map((page, i) => (
+          <Link 
+            key={i} 
+            href={page.href}
+            className="flex-[0_0_auto] cursor-pointer"
+          >
+            <div className={cn(
+              "flex items-center gap-1 md:gap-2 transition-all duration-500",
+              pathname === page.href 
+                ? "scale-105 opacity-100" 
+                : "opacity-40 scale-90 hover:opacity-70"
+            )}>
+              <CategoryPattern id={page.id} size={14} className={pathname === page.href ? "text-[#D4922A]" : "grayscale opacity-20"} />
+              <span className={cn(
+                "font-display text-[9px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.25em] whitespace-nowrap transition-colors duration-500",
+                pathname === page.href ? "font-black text-white" : "font-semibold text-white/40"
               )}>
-                <CategoryPattern id={page.id} size={14} className={pathname === page.href ? "text-[#D4922A]" : "grayscale opacity-20"} />
-                <span className={cn(
-                  "font-display text-[9px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.25em] whitespace-nowrap transition-colors duration-500",
-                  pathname === page.href ? "font-black text-white" : "font-semibold text-white/40"
-                )}>
-                  {page.name}
-                </span>
-                <CategoryPattern id={page.id} size={14} className={cn("scale-x-[-1]", pathname === page.href ? "text-[#D4922A]" : "grayscale opacity-20")} />
-              </div>
+                {page.name}
+              </span>
+              <CategoryPattern id={page.id} size={14} className={cn("scale-x-[-1]", pathname === page.href ? "text-[#D4922A]" : "grayscale opacity-20")} />
             </div>
-          ))}
-        </div>
+          </Link>
+        ))}
       </div>
     </nav>
   );
