@@ -15,20 +15,12 @@ export function CtaFinal() {
     <section className="relative bg-transparent border-t border-zinc-100">
       <div className="px-6 py-24">
         <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="mb-24"
-          >
-            <h2 className="text-3xl md:text-5xl font-bold text-zinc-950 mb-6">
-              Statuts des Amazones
-            </h2>
-            <p className="text-lg md:text-xl text-zinc-500 font-medium">
-              Le statut des Amazones évolue avec chaque Libération de trésor.
-            </p>
-          </motion.div>
+          <div className="section-header-block">
+            <h2 className="section-title-big">Statuts des <em>Amazones</em></h2>
+          </div>
+          <p style={{ marginTop: '1rem', fontSize: '15px', color: 'rgba(0,0,0,0.6)', marginBottom: '5rem', textAlign: 'center' }}>
+            Le statut des Amazones évolue avec chaque Libération de trésor.
+          </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {RANKS.map((r, idx) => (
