@@ -36,7 +36,7 @@ export function Hero() {
               Première Odyssée : Yony Games
             </div>
             <div className="text-lg md:text-xl font-light italic opacity-70">
-              « Libérer les trésors, révéler les lieux magiques »
+              « Libérer les trésors du Bénin pour guérir le monde »
             </div>
 
             <div className="mt-12">
