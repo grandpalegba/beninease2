@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useCallback } from "react";
-import useEmblaCarousel from "embla-carousel-react";
+import React from "react";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { CategoryPattern } from "@/components/talents/CategoryPattern";
@@ -34,50 +34,7 @@ export const HeaderSwipe = () => {
 
   const visiblePages = getVisiblePages();
 
-  const [emblaRef, emblaApi] = useEmblaCarousel({ 
-    loop: visiblePages.length > 1, 
-    align: "center",
-    containScroll: false,
-    dragFree: false,
-    skipSnaps: false
-  });
 
-  const onSelect = useCallback(() => {
-    if (!emblaApi || visiblePages.length <= 1) return;
-    const engine = emblaApi.internalEngine();
-    const index = engine.index.get();
-    const targetPage = visiblePages[index % visiblePages.length];
-    
-    if (pathname !== targetPage.href && pathname !== "/") {
-      router.push(targetPage.href);
-    }
-  }, [emblaApi, pathname, router, visiblePages]);
-
-  useEffect(() => {
-    if (!emblaApi) return;
-    emblaApi.on("select", onSelect);
-    
-    // Initial scroll to active page (if not on home)
-    if (pathname !== "/" && pathname !== "/yony-games") {
-      const activeIndex = visiblePages.findIndex(p => p.href === pathname);
-      if (activeIndex !== -1) {
-        emblaApi.scrollTo(activeIndex, true);
-      }
-    }
-    
-    return () => {
-      emblaApi.off("select", onSelect);
-    };
-  }, [emblaApi, pathname, onSelect, visiblePages]);
-
-  const handleTitleClick = (index: number, href: string) => {
-    if (emblaApi) {
-      emblaApi.scrollTo(index);
-    }
-    if (pathname !== href) {
-      router.push(href);
-    }
-  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 h-20 bg-[#1B2A4A] z-[100] flex items-center border-b border-white/10 font-sans overflow-x-auto scrollbar-hide">
