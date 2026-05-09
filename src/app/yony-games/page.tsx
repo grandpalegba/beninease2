@@ -34,7 +34,7 @@ export default function YonyGamesPage() {
 
           <div className="cover-body">
             <h1 className="cover-title" style={{ color: 'var(--gold)', letterSpacing: '0.05em' }}>
-              OLYMPIADES DES TRADITIONS DU MONDE
+              OLYMPIADES DES TRADITIONS <br /> DU MONDE
             </h1>
             <p className="cover-desc">
               Libérer des trésors et révéler des lieux magiques
