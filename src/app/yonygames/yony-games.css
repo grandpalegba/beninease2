@@ -63,7 +63,7 @@
   min-height: 100vh;
 }
 
-.yony-games *, .yony-games *::before, .yony-games *::after { box-sizing: border-box; margin: 0; padding: 0; }
+.yony-games *, .yony-games *::before, .yony-games *::after { box-sizing: border-box; }
 
 /* ─── COVER ─────────────────────────────────────────── */
 .yony-games .cover {
