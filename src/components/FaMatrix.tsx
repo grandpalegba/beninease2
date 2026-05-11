@@ -123,19 +123,48 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
   const fetchSignData = async (signName: string) => {
     setLoadingData(true);
     try {
+      // Fetch traditional data
       const { data: allSigns, error } = await supabase
         .from('signes_fa')
         .select('*');
 
       if (error) throw error;
 
-      const foundSign = allSigns?.find(s => {
+      const traditional = allSigns?.find(s => {
         const dbSlug = cleanString(s.signe_nom).toLowerCase().replace('medji', 'meji');
         const searchSlug = cleanString(signName).toLowerCase().replace('medji', 'meji');
         return dbSlug === searchSlug;
       });
+
+      // Fetch universal values
+      const { data: allUniversal, error: uError } = await supabase
+        .from('valeurs_universelles')
+        .select('*');
+
+      if (uError) {
+        console.error("Error fetching universal values:", uError);
+      }
+
+      const universal = allUniversal?.find(s => {
+        // Check both combination and signe_fa fields for a match
+        const comboSlug = cleanString(s.combinaison || "").toLowerCase().replace('medji', 'meji');
+        const signSlug = cleanString(s.signe_fa || "").toLowerCase().replace('medji', 'meji');
+        const searchSlug = cleanString(signName).toLowerCase().replace('medji', 'meji');
+        return comboSlug === searchSlug || signSlug === searchSlug;
+      });
       
-      setSignData(foundSign || null);
+      // Merge data
+      setSignData({
+        ...(traditional || {}),
+        // Map universal fields to the expected UI keys
+        nom_universel: universal?.valeur,
+        sous_titre_universel: universal?.rythme,
+        description_universelle: universal?.recit,
+        revelation: universal?.revelation,
+        piege: universal?.piege,
+        geste: universal?.geste,
+        inspiration: universal?.inspiration
+      });
     } catch (err) {
       console.error("Error fetching sign data:", err);
     } finally {
