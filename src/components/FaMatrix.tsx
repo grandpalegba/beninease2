@@ -68,7 +68,7 @@ const MatrixCell = ({
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: (rIndex + cIndex) * 0.005, duration: 0.3 }}
       className={cn(
-        "w-4 h-4 md:w-8 md:h-8 flex items-center justify-center rounded-sm transition-all cursor-pointer border",
+        "w-5 h-5 md:w-8 md:h-8 flex items-center justify-center rounded-sm transition-all cursor-pointer border",
         isHovered 
           ? "scale-110 z-10 shadow-lg" 
           : "bg-[#1B2A4A] border-white/5 hover:border-white/20"
@@ -167,7 +167,7 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
     )}>
         <div className={cn(
           "relative",
-          isModal ? "p-8 sm:p-12" : "p-4 sm:p-8"
+          isModal ? "p-4 sm:p-8" : "p-2 sm:p-8"
         )}>
           {/* Top Header */}
           <div className="flex gap-[2px]">
@@ -182,45 +182,15 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
               }}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="w-6 h-6 md:w-12 md:h-12 flex flex-col items-center justify-center flex-shrink-0 rounded-lg group relative overflow-hidden transition-all shadow-sm border border-white/10 bg-[#1B2A4A]"
+              className="w-8 h-8 md:w-12 md:h-12 flex flex-col items-center justify-center flex-shrink-0 rounded-lg group relative overflow-hidden transition-all shadow-sm border border-white/10 bg-[#1B2A4A]"
             >
-              <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-5 transition-opacity" />
-              <BookOpen size={10} className="md:size-[14px] text-[#FFD700] mb-0.5 md:mb-1 drop-shadow-md" strokeWidth={2.5} />
-              <span className="text-[5px] md:text-[7px] font-black uppercase tracking-widest text-white/70 drop-shadow-md">Bases</span>
+              <BookOpen className="text-[#E9B113]" size={16} />
+              <span className="text-[6px] md:text-[8px] font-bold text-white uppercase tracking-tighter mt-0.5">Bases</span>
             </motion.button>
 
-            {/* Top Header Labels */}
+            {/* Column Headers (Horizontal) */}
             <div className="flex gap-[2px]">
               {SIGNS.map((sign, i) => (
-                <div 
-                  key={`h-${i}`} 
-                  className="w-4 h-6 md:w-8 md:h-12 relative"
-                >
-                  <motion.span 
-                    initial={{ opacity: 0, y: -5, rotate: -45 }}
-                    animate={{ opacity: 1, y: 0, rotate: -45 }}
-                    transition={{ delay: i * 0.02, duration: 0.5 }}
-                    className="absolute left-1/2 bottom-1 md:bottom-2 text-[5px] md:text-[7px] font-bold uppercase tracking-[0.2em] text-[#1B2A4A] font-sans origin-bottom-left whitespace-nowrap"
-                  >
-                    {sign.name}
-                  </motion.span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Rows */}
-          <div className="flex flex-col gap-[2px]">
-            {SIGNS.map((rowSign, rIndex) => (
-              <div key={`r-${rIndex}`} className="flex gap-[2px]">
-                {/* Left Header */}
-                <div className="w-6 h-4 md:w-12 md:h-8 flex items-center justify-end pr-1 md:pr-2 flex-shrink-0">
-                  <motion.span 
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: rIndex * 0.02, duration: 0.5 }}
-                    className="text-[5px] md:text-[7px] font-bold uppercase tracking-[0.2em] text-[#1B2A4A] font-sans"
-                  >
                     {rowSign.name}
                   </motion.span>
                 </div>
@@ -316,15 +286,15 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
                 <CloseIcon size={20} />
               </button>
 
-              <div className="flex-1 overflow-y-auto p-8 sm:p-10 no-scrollbar">
+              <div className="flex-1 overflow-y-auto p-6 sm:p-10 no-scrollbar">
                 <div className="flex flex-col items-center text-center">
                   {/* Ideogram */}
                   <div className="mb-6">
-                    <SignIdeogram leftSign={selectedSign.left} rightSign={selectedSign.right} size={100} color="#1B2A4A" />
+                    <SignIdeogram leftSign={selectedSign.left} rightSign={selectedSign.right} size={80} color="#1B2A4A" />
                   </div>
 
                   {/* Name */}
-                  <h2 className="text-3xl md:text-4xl font-sans font-bold text-[#1B2A4A] mb-3 tracking-tight">
+                  <h2 className="text-2xl md:text-4xl font-sans font-bold text-[#1B2A4A] mb-2 md:mb-3 tracking-tight">
                     {selectedSign.name}
                   </h2>
 
@@ -336,34 +306,34 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
                     </div>
                   ) : signData ? (
                     <>
-                      <p className="text-base md:text-lg text-[#A34D35] font-serif italic mb-6 leading-relaxed max-w-2xl">
+                      <p className="text-sm md:text-lg text-[#A34D35] font-serif italic mb-5 md:mb-6 leading-relaxed max-w-2xl px-2">
                         "{signData.devise}"
                       </p>
 
-                      <p className="text-[13px] text-gray-500 leading-relaxed mb-10 max-w-xl">
+                      <p className="text-[12px] md:text-[13px] text-gray-500 leading-relaxed mb-8 md:mb-10 max-w-xl px-4">
                         {signData.introduction || "Découvrez la sagesse ancestrale à travers ce signe majeur de la géomancie du Fâ."}
                       </p>
 
                       {/* Cards Grid */}
-                      <div className="grid sm:grid-cols-2 gap-4 w-full text-left">
+                      <div className="grid gap-4 w-full text-left max-w-2xl">
                         {/* Avantages */}
-                        <div className="bg-[#f2f6f4] p-6 rounded-2xl border border-emerald-100/50">
-                          <div className="flex items-center gap-2 mb-4">
-                            <Target className="text-[#008751]" size={16} />
+                        <div className="bg-[#f2f6f4] p-5 sm:p-6 rounded-2xl border border-emerald-100/50">
+                          <div className="flex items-center gap-2 mb-3">
+                            <Target className="text-[#008751]" size={14} />
                             <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-[#008751]">Avantages</h4>
                           </div>
-                          <p className="text-[13px] text-gray-600 leading-relaxed font-light">
+                          <p className="text-[12px] md:text-[13px] text-gray-600 leading-relaxed font-light">
                             {signData.avantages}
                           </p>
                         </div>
 
                         {/* Défis */}
-                        <div className="bg-[#f9f5f4] p-6 rounded-2xl border border-rose-100/50">
-                          <div className="flex items-center gap-2 mb-4">
-                            <Shield className="text-[#A34D35]" size={16} />
+                        <div className="bg-[#f9f5f4] p-5 sm:p-6 rounded-2xl border border-rose-100/50">
+                          <div className="flex items-center gap-2 mb-3">
+                            <Shield className="text-[#A34D35]" size={14} />
                             <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-[#A34D35]">Défis</h4>
                           </div>
-                          <p className="text-[13px] text-gray-600 leading-relaxed font-light">
+                          <p className="text-[12px] md:text-[13px] text-gray-600 leading-relaxed font-light">
                             {signData.defis}
                           </p>
                         </div>
