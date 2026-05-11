@@ -165,37 +165,56 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
       "relative inline-block min-w-fit",
       isModal ? "p-4 sm:p-8" : "p-1 sm:p-2"
     )}>
-        <div className={cn(
-          "relative",
-          isModal ? "p-4 sm:p-8" : "p-2 sm:p-8"
-        )}>
-          {/* Top Header */}
+      <div className={cn(
+        "relative",
+        isModal ? "p-4 sm:p-8" : "p-2 sm:p-8"
+      )}>
+        {/* Top Header */}
+        <div className="flex gap-[2px]">
+          {/* Intersection Cell: Bases (The Join) */}
+          <motion.button
+            onClick={() => {
+              if (useModal) {
+                setIsBasesModalOpen(true);
+              } else {
+                router.push('/sagesses/generalites');
+              }
+            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="w-8 h-8 md:w-12 md:h-12 flex flex-col items-center justify-center flex-shrink-0 rounded-lg group relative overflow-hidden transition-all shadow-sm border border-white/10 bg-[#1B2A4A]"
+          >
+            <BookOpen className="text-[#E9B113]" size={16} />
+            <span className="text-[6px] md:text-[8px] font-bold text-white uppercase tracking-tighter mt-0.5">Bases</span>
+          </motion.button>
+
+          {/* Column Headers (Horizontal) */}
           <div className="flex gap-[2px]">
-            {/* Intersection Cell: Bases (The Join) */}
-            <motion.button
-              onClick={() => {
-                if (useModal) {
-                  setIsBasesModalOpen(true);
-                } else {
-                  router.push('/sagesses/generalites');
-                }
-              }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="w-8 h-8 md:w-12 md:h-12 flex flex-col items-center justify-center flex-shrink-0 rounded-lg group relative overflow-hidden transition-all shadow-sm border border-white/10 bg-[#1B2A4A]"
-            >
-              <BookOpen className="text-[#E9B113]" size={16} />
-              <span className="text-[6px] md:text-[8px] font-bold text-white uppercase tracking-tighter mt-0.5">Bases</span>
-            </motion.button>
+            {SIGNS.map((sign, i) => (
+              <div key={i} className="w-5 h-6 md:w-8 md:h-12 flex items-center justify-center bg-[#1B2A4A] rounded-md border border-white/5 flex-shrink-0">
+                <span className="text-[5px] md:text-[7px] font-bold text-white uppercase tracking-widest rotate-[-45deg] whitespace-nowrap">
+                  {sign.name}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
 
-            {/* Column Headers (Horizontal) */}
-            <div className="flex gap-[2px]">
-              {SIGNS.map((sign, i) => (
-                    {rowSign.name}
-                  </motion.span>
-                </div>
+        <div className="flex gap-[2px]">
+          {/* Row Headers (Vertical) */}
+          <div className="flex flex-col gap-[2px]">
+            {SIGNS.map((sign, i) => (
+              <div key={i} className="w-8 h-5 md:w-12 md:h-8 flex items-center justify-center bg-[#1B2A4A] rounded-md border border-white/5 flex-shrink-0">
+                <span className="text-[5px] md:text-[7px] font-bold text-white uppercase tracking-widest text-right">
+                  {sign.name}
+                </span>
+              </div>
+            ))}
+          </div>
 
-                {/* Cells */}
+          <div className="flex flex-col gap-[2px]">
+            {SIGNS.map((rowSign, rIndex) => (
+              <div key={`r-${rIndex}`} className="flex gap-[2px]">
                 {SIGNS.map((colSign, cIndex) => (
                   <MatrixCell 
                     key={`${rIndex}-${cIndex}`} 
@@ -208,6 +227,7 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
             ))}
           </div>
         </div>
+      </div>
     </div>
   );
 
