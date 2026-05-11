@@ -18,20 +18,7 @@ export default function YonyGamesPage() {
         <section className="cover" style={{ background: '#1B2A4A', border: 'none' }}>
           <div className="cover-stripe-top"></div>
           
-          <div className="cover-header">
-            <div className="cover-logo">
-              <Image 
-                src="/yony-games-logo.png" 
-                alt="Yony Games Logo" 
-                width={52} 
-                height={52} 
-                className="cover-logo-img"
-              />
-              <div className="cover-logo-text">
-                <span className="cover-logo-name">YONY GAMES</span>
-              </div>
-            </div>
-          </div>
+
 
           <div className="cover-body">
             <h1 className="cover-title" style={{ color: 'var(--gold)', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
