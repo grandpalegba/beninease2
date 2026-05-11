@@ -108,7 +108,7 @@ export default function YonyGamesPage() {
   
           <section className="py-24" style={{ background: '#FFFFFF' }}>
             <div className="max-w-5xl mx-auto px-4">
-              <div style={{ textAlign: "center", marginBottom: "4rem" }}>
+              <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
                 <h2 style={{
                   fontFamily: "Outfit, sans-serif",
                   fontSize: "clamp(30px, 4vw, 52px)",
