@@ -138,7 +138,7 @@ export default function YonyGamesPage() {
                 overflowX: "auto"
               }}>
                 <div className="min-w-fit flex justify-center">
-                  <FaMatrix />
+                  <FaMatrix useModal={true} />
                 </div>
               </div>
             </div>

@@ -5,9 +5,10 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SIGNS, type FongbeSign } from '@/data/fongbe';
 import { useRouter } from 'next/navigation';
-import { BookOpen, Maximize2, X as CloseIcon } from 'lucide-react';
+import { BookOpen, Maximize2, X as CloseIcon, ArrowLeft, Shield, Target } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import BeninFrame from './BeninFrame';
+import { supabase } from '@/lib/supabase/client';
 
 /**
  * Renders a small version of the ideogram dots
@@ -95,9 +96,13 @@ const MatrixCell = ({
   );
 };
 
-const FaMatrix = () => {
+const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [selectedSign, setSelectedSign] = useState<{ left: FongbeSign, right: FongbeSign, name: string } | null>(null);
+  const [signData, setSignData] = useState<any>(null);
+  const [loadingData, setLoadingData] = useState(false);
 
   const generateSlug = (name: string) => {
     return name
@@ -106,15 +111,52 @@ const FaMatrix = () => {
       .replace(/[\s-]/g, "");
   };
 
+  const cleanString = (s: string) => {
+    return s
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[\s-]/g, "");
+  };
+
+  const fetchSignData = async (signName: string) => {
+    setLoadingData(true);
+    try {
+      const { data: allSigns, error } = await supabase
+        .from('signes_fa')
+        .select('*');
+
+      if (error) throw error;
+
+      const foundSign = allSigns?.find(s => {
+        const dbSlug = cleanString(s.signe_nom).toLowerCase().replace('medji', 'meji');
+        const searchSlug = cleanString(signName).toLowerCase().replace('medji', 'meji');
+        return dbSlug === searchSlug;
+      });
+      
+      setSignData(foundSign || null);
+    } catch (err) {
+      console.error("Error fetching sign data:", err);
+    } finally {
+      setLoadingData(false);
+    }
+  };
+
   const handleCellClick = (rIndex: number, cIndex: number) => {
     const leftSign = SIGNS[rIndex];
     const rightSign = SIGNS[cIndex];
     const combinedName = rIndex === cIndex 
       ? `${leftSign.name} Meji` 
       : `${leftSign.name} ${rightSign.name}`;
-    const slug = generateSlug(combinedName);
-    setIsModalOpen(false);
-    router.push(`/sagesses/cours/${slug}`);
+    
+    if (useModal) {
+      setSelectedSign({ left: leftSign, right: rightSign, name: combinedName });
+      setIsDetailsModalOpen(true);
+      fetchSignData(combinedName);
+    } else {
+      const slug = generateSlug(combinedName);
+      setIsModalOpen(false);
+      router.push(`/sagesses/cours/${slug}`);
+    }
   };
 
   const MatrixContent = ({ isModal = false }: { isModal?: boolean }) => (
@@ -244,6 +286,96 @@ const FaMatrix = () => {
               <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
                 Glissez pour naviguer · Cliquez sur un signe pour voir les détails
               </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Details Modal (Sign Info) */}
+      <AnimatePresence>
+        {isDetailsModalOpen && selectedSign && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[1100] bg-white flex flex-col overflow-y-auto"
+          >
+            {/* Header / Back */}
+            <div className="p-6 md:p-10 flex items-center justify-between">
+              <button 
+                onClick={() => setIsDetailsModalOpen(false)}
+                className="flex items-center gap-2 text-gray-400 hover:text-black transition-colors group"
+              >
+                <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Retour</span>
+              </button>
+            </div>
+
+            <div className="flex-1 max-w-4xl mx-auto w-full px-6 pb-20">
+              <div className="flex flex-col items-center text-center">
+                {/* Ideogram */}
+                <div className="mb-10">
+                  <SignIdeogram leftSign={selectedSign.left} rightSign={selectedSign.right} size={140} color="#1B2A4A" />
+                </div>
+
+                {/* Tags */}
+                <div className="flex gap-2 mb-8">
+                  <span className="px-5 py-2 bg-[#A34D35] text-white rounded-full text-[10px] font-bold uppercase tracking-widest">Tradition du Fâ</span>
+                  <span className="px-5 py-2 bg-gray-100 text-gray-500 rounded-full text-[10px] font-bold uppercase tracking-widest">Universalité</span>
+                </div>
+
+                {/* Name */}
+                <h2 className="text-4xl md:text-5xl font-black text-[#1B2A4A] mb-4 uppercase tracking-tighter">
+                  {selectedSign.name}
+                </h2>
+
+                {/* Motto / Devise */}
+                {loadingData ? (
+                  <div className="animate-pulse space-y-4 w-full max-w-md">
+                    <div className="h-4 bg-gray-100 rounded-full w-3/4 mx-auto" />
+                    <div className="h-24 bg-gray-50 rounded-2xl w-full" />
+                  </div>
+                ) : signData ? (
+                  <>
+                    <p className="text-lg md:text-xl text-[#A34D35] font-serif italic mb-10 leading-relaxed max-w-2xl">
+                      "{signData.devise}"
+                    </p>
+
+                    <p className="text-sm text-gray-500 leading-relaxed mb-16 max-w-xl">
+                      {signData.introduction || "Découvrez la sagesse ancestrale à travers ce signe majeur de la géomancie du Fâ."}
+                    </p>
+
+                    {/* Cards Grid */}
+                    <div className="grid md:grid-cols-2 gap-6 w-full text-left">
+                      {/* Avantages */}
+                      <div className="bg-[#f2f6f4] p-8 rounded-3xl border border-emerald-100/50">
+                        <div className="flex items-center gap-3 mb-6">
+                          <Target className="text-[#008751]" size={18} />
+                          <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#008751]">Avantages</h4>
+                        </div>
+                        <p className="text-sm text-gray-600 leading-relaxed font-light">
+                          {signData.avantages}
+                        </p>
+                      </div>
+
+                      {/* Défis */}
+                      <div className="bg-[#f9f5f4] p-8 rounded-3xl border border-rose-100/50">
+                        <div className="flex items-center gap-3 mb-6">
+                          <Shield className="text-[#A34D35]" size={18} />
+                          <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#A34D35]">Défis</h4>
+                        </div>
+                        <p className="text-sm text-gray-600 leading-relaxed font-light">
+                          {signData.defis}
+                        </p>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="py-10 text-gray-400 italic text-sm">
+                    Données en cours de préparation pour ce signe...
+                  </div>
+                )}
+              </div>
             </div>
           </motion.div>
         )}
