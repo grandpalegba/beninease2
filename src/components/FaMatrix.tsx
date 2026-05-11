@@ -100,6 +100,7 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [isBasesModalOpen, setIsBasesModalOpen] = useState(false);
   const [selectedSign, setSelectedSign] = useState<{ left: FongbeSign, right: FongbeSign, name: string } | null>(null);
   const [signData, setSignData] = useState<any>(null);
   const [loadingData, setLoadingData] = useState(false);
@@ -172,7 +173,13 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
           <div className="flex gap-[2px]">
             {/* Intersection Cell: Bases (The Join) */}
             <motion.button
-              onClick={() => router.push('/sagesses/generalites')}
+              onClick={() => {
+                if (useModal) {
+                  setIsBasesModalOpen(true);
+                } else {
+                  router.push('/sagesses/generalites');
+                }
+              }}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="w-6 h-6 md:w-12 md:h-12 flex flex-col items-center justify-center flex-shrink-0 rounded-lg group relative overflow-hidden transition-all shadow-sm border border-white/10 bg-[#1B2A4A]"
@@ -367,6 +374,51 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
                       Données en cours de préparation pour ce signe...
                     </div>
                   )}
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Bases Modal (Presentation) */}
+      <AnimatePresence>
+        {isBasesModalOpen && (
+          <div className="fixed inset-0 z-[1100] bg-[#1B2A4A]/40 backdrop-blur-md flex items-center justify-center p-4 sm:p-6">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="bg-white w-full max-w-xl rounded-[2rem] shadow-2xl flex flex-col overflow-hidden relative"
+            >
+              {/* Close Button */}
+              <button 
+                onClick={() => setIsBasesModalOpen(false)}
+                className="absolute top-5 right-5 p-2 bg-gray-50 rounded-full text-gray-400 hover:text-black transition-all hover:rotate-90 z-10"
+              >
+                <CloseIcon size={20} />
+              </button>
+
+              <div className="p-8 sm:p-12 text-center">
+                <div className="w-16 h-16 bg-[#1B2A4A]/5 rounded-2xl flex items-center justify-center mx-auto mb-8">
+                  <BookOpen className="text-[#1B2A4A]" size={32} />
+                </div>
+
+                <h2 className="text-3xl font-sans font-bold text-[#1B2A4A] mb-6 tracking-tight">
+                  Présentation du Fâ
+                </h2>
+
+                <p className="text-base text-gray-600 leading-relaxed font-light">
+                  Le Fâ est un système de connaissance et de sagesse originaire du Bénin et d’Afrique de l’Ouest, fondé sur un vaste corpus de signes, de récits et d’enseignements. Interprété par des spécialistes, il transmet des repères de compréhension et des sources d’inspiration.
+                </p>
+
+                <div className="mt-10 pt-10 border-t border-gray-50">
+                  <button 
+                    onClick={() => setIsBasesModalOpen(false)}
+                    className="px-8 py-3 bg-[#1B2A4A] text-white rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-opacity-90 transition-all"
+                  >
+                    Fermer
+                  </button>
                 </div>
               </div>
             </motion.div>

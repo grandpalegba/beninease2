@@ -118,7 +118,7 @@ export default function YonyGamesPage() {
                   lineHeight: 1.1,
                   marginBottom: "1.5rem"
                 }}>
-                  Matrice du Fâ
+                  La Matrice du Fâ
                 </h2>
                 <p style={{
                   fontSize: "18px",
