@@ -106,14 +106,14 @@ export default function YonyGamesPage() {
  
   
   
-          <section className="py-24" style={{ background: '#1B2A4A' }}>
+          <section className="py-24" style={{ background: '#FFFFFF' }}>
             <div className="max-w-5xl mx-auto px-4">
               <div style={{ textAlign: "center", marginBottom: "4rem" }}>
                 <h2 style={{
                   fontFamily: "Outfit, sans-serif",
                   fontSize: "clamp(30px, 4vw, 52px)",
                   fontWeight: 700,
-                  color: "#ffffff",
+                  color: "#2E5FA3",
                   letterSpacing: "0.01em",
                   lineHeight: 1.1,
                   marginBottom: "1.5rem"
@@ -122,20 +122,21 @@ export default function YonyGamesPage() {
                 </h2>
                 <p style={{
                   fontSize: "18px",
-                  color: "rgba(255,255,255,0.7)",
+                  color: "#2E5FA3",
                   lineHeight: 1.7,
                   maxWidth: "850px",
                   margin: "0 auto",
-                  textAlign: "center"
+                  textAlign: "center",
+                  opacity: 0.8
                 }}>
                   Chaque signe de la Matrice définit, selon l’arène choisie, les défis à relever. Pour accompagner les participants, une bibliothèque collaborative dédiée à chaque signe sera enrichie par des spécialistes du Fâ, proposant des clés de compréhension, des interprétations et des sources d’inspiration.
                 </p>
               </div>
 
               <div style={{
-                background: "rgba(255,255,255,0.04)",
+                background: "#1B2A4A",
                 borderRadius: "2rem",
-                border: "1px solid rgba(255,255,255,0.08)",
+                border: "1px solid rgba(0,0,0,0.05)",
                 padding: "2.5rem 2rem",
                 maxWidth: "700px",
                 margin: "0 auto",
