@@ -36,7 +36,7 @@ export default function YonyGamesPage() {
             <h1 className="cover-title" style={{ color: 'var(--gold)', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
               OLYMPIADES DU FÂ
             </h1>
-            <h2 className="cover-subtitle" style={{ color: 'white', fontSize: '20px', fontWeight: '500', marginBottom: '2rem', letterSpacing: '0.03em' }}>
+            <h2 className="cover-subtitle" style={{ color: 'white', fontSize: '20px', fontWeight: '500', marginBottom: '3rem', letterSpacing: '0.03em' }}>
               Récits, Savoirs et Traditions Ancestrales du monde
             </h2>
             
