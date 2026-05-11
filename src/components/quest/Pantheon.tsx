@@ -32,7 +32,7 @@ export function flagEmoji(code: string) {
 export function Flag({ code, className }: { code: string; className?: string }) {
   if (code === "RN") {
     return (
-      <div className={cn("relative w-[1.5em] h-[1em] inline-flex items-center", className)}>
+      <div className={cn("relative w-[1.25em] h-[0.9em] inline-flex items-center translate-y-[-0.05em]", className)}>
         <Image 
           src="/flags/rapanui.png" 
           alt="Rapa Nui" 
