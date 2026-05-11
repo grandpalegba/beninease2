@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { Delegation } from "@/components/quest/Delegation";
 import { FaHome } from "@/components/quest/FaHome";
 import { CtaFinal } from "@/components/quest/CtaFinal";
+import { FaMatrix } from "@/components/FaMatrix";
 
 export default function YonyGamesPage() {
   return (
@@ -105,6 +106,11 @@ export default function YonyGamesPage() {
  
   
   
+          <section className="bg-white py-16">
+            <div className="w-full overflow-x-auto flex justify-center px-4">
+              <FaMatrix />
+            </div>
+          </section>
 
           <CtaFinal />
 
