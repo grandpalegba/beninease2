@@ -1,5 +1,5 @@
 import { ChevronsRight } from "lucide-react";
-import { NATIONS, flagEmoji } from "./Pantheon";
+import { NATIONS, Flag } from "./Pantheon";
 import Link from "next/link";
 
 export function NationsCarousel() {
@@ -27,7 +27,7 @@ export function NationsCarousel() {
       <div className="flex gap-12 animate-[scroll_20s_linear_infinite] group-hover:[animation-play-state:paused] whitespace-nowrap">
         {loop.map((n, i) => (
           <div key={i} className="flex items-center gap-3 shrink-0">
-            <span className="text-2xl">{flagEmoji(n.code)}</span>
+            <Flag code={n.code} className="text-2xl" />
             <span className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-950">
               {n.name}
             </span>

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { NATIONS, flagEmoji } from "./Pantheon";
+import { NATIONS, Flag } from "./Pantheon";
 
 export function FaHome() {
   return (
@@ -63,7 +63,7 @@ export function FaHome() {
                 transition={{ duration: 0.3, delay: i * 0.03 }}
                 className="flex flex-col items-center gap-2 md:gap-3"
               >
-                <span className="text-3xl md:text-4xl">{flagEmoji(n.code)}</span>
+                <Flag code={n.code} className="text-3xl md:text-4xl" />
                 <span className="text-[8px] md:text-[10px] uppercase tracking-[0.15em] text-white/40 font-bold text-center leading-tight">
                   {n.name}
                 </span>

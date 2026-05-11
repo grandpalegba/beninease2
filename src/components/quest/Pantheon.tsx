@@ -1,3 +1,6 @@
+import Image from "next/image";
+import { cn } from "@/lib/utils";
+
 export const NATIONS = [
   { code: "BJ", name: "Bénin", points: 4820, cycle: 1 },
   { code: "NG", name: "Nigéria", points: 4715, cycle: 2 },
@@ -17,13 +20,29 @@ export const NATIONS = [
   { code: "PE", name: "Pérou", points: 3388, cycle: 16 },
 ];
 
-function flagEmoji(code: string) {
-  if (code === "RN") return "🗿";
+export function flagEmoji(code: string) {
+  if (code === "RN") return ""; // Custom handled by Flag component
   return code
     .toUpperCase()
     .split("")
     .map((c) => String.fromCodePoint(127397 + c.charCodeAt(0)))
     .join("");
+}
+
+export function Flag({ code, className }: { code: string; className?: string }) {
+  if (code === "RN") {
+    return (
+      <div className={cn("relative w-[1.5em] h-[1em] inline-flex items-center", className)}>
+        <Image 
+          src="/flags/rapanui.png" 
+          alt="Rapa Nui" 
+          fill 
+          className="object-contain" 
+        />
+      </div>
+    );
+  }
+  return <span className={className}>{flagEmoji(code)}</span>;
 }
 
 export function Pantheon() {
@@ -48,7 +67,7 @@ export function Pantheon() {
               {String(i + 1).padStart(2, "0")}
             </div>
             <div className="col-span-5 flex items-center gap-3">
-              <span className="text-2xl leading-none">{flagEmoji(n.code)}</span>
+              <Flag code={n.code} className="text-2xl leading-none" />
               <span className="font-semibold">{n.name}</span>
             </div>
             <div className="col-span-2 text-sm text-zinc-500">J{n.cycle}/16</div>
@@ -70,4 +89,3 @@ export function Pantheon() {
   );
 }
 
-export { flagEmoji };
