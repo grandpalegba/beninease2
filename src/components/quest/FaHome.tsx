@@ -41,7 +41,7 @@ export function FaHome() {
             margin: "2rem auto 4rem auto",
             textAlign: "center"
           }}>
-            L’Olympiade se déploie au rythme sacré du Fâ : 16 cycles de 16 jours. À chaque nouveau cycle, le monde entier voyage virtuellement vers une nouvelle Nation Hôte. Pendant 16 jours, cette nation devient l'épicentre de la Matrice, guidant les défis et les rituels pour l'ensemble des participants mondiaux.
+            À chaque cycle, une nouvelle Nation Hôte devient le cœur vivant des Jeux, inspirant les défis, récits et expériences culturelles partagés par les participants du monde entier.
           </p>
         </div>
 
