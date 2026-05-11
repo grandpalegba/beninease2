@@ -104,6 +104,7 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
   const [selectedSign, setSelectedSign] = useState<{ left: FongbeSign, right: FongbeSign, name: string } | null>(null);
   const [signData, setSignData] = useState<any>(null);
   const [loadingData, setLoadingData] = useState(false);
+  const [viewMode, setViewMode] = useState<'tradition' | 'universal'>('tradition');
 
   const generateSlug = (name: string) => {
     return name
@@ -302,10 +303,19 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               className="bg-white w-full max-w-2xl max-h-[90vh] rounded-[2rem] shadow-2xl flex flex-col overflow-hidden relative"
             >
+              {/* Back Button */}
+              <button 
+                onClick={() => setIsDetailsModalOpen(false)}
+                className="absolute top-5 left-5 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-gray-300 hover:text-gray-900 transition-colors z-10"
+              >
+                <ArrowLeft size={14} />
+                Retour
+              </button>
+
               {/* Close Button */}
               <button 
                 onClick={() => setIsDetailsModalOpen(false)}
-                className="absolute top-5 right-5 p-2 bg-gray-50 rounded-full text-gray-400 hover:text-black transition-all hover:rotate-90 z-10"
+                className="absolute top-5 right-5 p-2 bg-gray-50 rounded-full text-gray-300 hover:text-black transition-all hover:rotate-90 z-10 md:flex hidden"
               >
                 <CloseIcon size={20} />
               </button>
@@ -317,57 +327,114 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
                     <SignIdeogram leftSign={selectedSign.left} rightSign={selectedSign.right} size={window.innerWidth < 640 ? 60 : 80} color="#1B2A4A" />
                   </div>
 
-                  {/* Name */}
-                  <h2 className="text-2xl md:text-4xl font-sans font-bold text-[#1B2A4A] mb-2 md:mb-3 tracking-tight">
-                    {selectedSign.name}
-                  </h2>
-
-                  {/* Motto / Devise */}
-                  {loadingData ? (
-                    <div className="animate-pulse space-y-4 w-full max-w-md pt-4">
-                      <div className="h-4 bg-gray-100 rounded-full w-3/4 mx-auto" />
-                      <div className="h-20 bg-gray-50 rounded-2xl w-full" />
+                  {/* Name & Toggle Section */}
+                  <div className="flex flex-col items-center w-full mt-4">
+                    {/* Mode Toggle */}
+                    <div className="flex bg-gray-100 p-1 rounded-full mb-10">
+                      <button 
+                        onClick={() => setViewMode('tradition')}
+                        className={cn(
+                          "px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all",
+                          viewMode === 'tradition' ? "bg-[#A34D35] text-white shadow-md" : "text-gray-400 hover:text-gray-600"
+                        )}
+                      >
+                        Tradition du Fâ
+                      </button>
+                      <button 
+                        onClick={() => setViewMode('universal')}
+                        className={cn(
+                          "px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all",
+                          viewMode === 'universal' ? "bg-[#006B5D] text-white shadow-md" : "text-gray-400 hover:text-gray-600"
+                        )}
+                      >
+                        Universalité
+                      </button>
                     </div>
-                  ) : signData ? (
-                    <>
-                      <p className="text-sm md:text-lg text-[#A34D35] font-serif italic mb-4 md:mb-6 leading-relaxed max-w-2xl px-2">
-                        "{signData.devise.replace(/\[cite:\s*[\d,\s]+\]/g, '').trim()}"
-                      </p>
 
-                      <p className="text-[12px] md:text-[14px] text-gray-500 leading-relaxed mb-6 md:mb-8 max-w-xl px-4">
-                        {(signData.introduction || "Découvrez la sagesse ancestrale à travers ce signe majeur de la géomancie du Fâ.").replace(/\[cite:\s*[\d,\s]+\]/g, '').trim()}
-                      </p>
-
-                      {/* Cards Grid */}
-                      <div className="grid gap-3 md:gap-4 w-full text-left max-w-2xl">
-                        {/* Avantages */}
-                        <div className="bg-[#f2f6f4] p-4 md:p-6 rounded-2xl border border-emerald-100/50">
-                          <div className="flex items-center gap-2 mb-2 md:mb-3">
-                            <Target className="text-[#008751]" size={14} />
-                            <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-[#008751]">Avantages</h4>
-                          </div>
-                          <p className="text-[12px] md:text-[13px] text-gray-600 leading-relaxed font-light">
-                            {signData.avantages.replace(/\[cite:\s*[\d,\s]+\]/g, '').trim()}
-                          </p>
-                        </div>
-
-                        {/* Défis */}
-                        <div className="bg-[#f9f5f4] p-4 md:p-6 rounded-2xl border border-rose-100/50">
-                          <div className="flex items-center gap-2 mb-2 md:mb-3">
-                            <Shield className="text-[#A34D35]" size={14} />
-                            <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-[#A34D35]">Défis</h4>
-                          </div>
-                          <p className="text-[12px] md:text-[13px] text-gray-600 leading-relaxed font-light">
-                            {signData.defis.replace(/\[cite:\s*[\d,\s]+\]/g, '').trim()}
-                          </p>
-                        </div>
+                    {loadingData ? (
+                      <div className="animate-pulse space-y-4 w-full max-w-md pt-4">
+                        <div className="h-4 bg-gray-100 rounded-full w-3/4 mx-auto" />
+                        <div className="h-20 bg-gray-50 rounded-2xl w-full" />
                       </div>
-                    </>
-                  ) : (
-                    <div className="py-10 text-gray-400 italic text-sm">
-                      Données en cours de préparation pour ce signe...
-                    </div>
-                  )}
+                    ) : signData ? (
+                      <div className="w-full flex flex-col items-center">
+                        {viewMode === 'tradition' ? (
+                          <>
+                            <h2 className="text-3xl md:text-5xl font-sans font-bold text-[#1B2A4A] mb-4 tracking-tight">
+                              {selectedSign.name}
+                            </h2>
+                            <p className="text-sm md:text-lg text-[#A34D35] font-serif italic mb-5 md:mb-8 leading-relaxed max-w-2xl px-2">
+                              "{signData.devise?.replace(/\[cite:\s*[\d,\s]+\]/g, '').trim() || "Devise en cours..."}"
+                            </p>
+                            <p className="text-[13px] md:text-[15px] text-gray-500 leading-relaxed mb-8 md:mb-12 max-w-xl px-4 font-light">
+                              {(signData.introduction || "Découvrez la sagesse ancestrale à travers ce signe majeur de la géomancie du Fâ.").replace(/\[cite:\s*[\d,\s]+\]/g, '').trim()}
+                            </p>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full text-left max-w-2xl">
+                              <div className="bg-[#f2f6f4] p-6 rounded-[1.5rem] border border-emerald-100/50">
+                                <div className="flex items-center gap-2 mb-3">
+                                  <Target className="text-[#008751]" size={14} />
+                                  <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-[#008751]">Avantages</h4>
+                                </div>
+                                <p className="text-[12px] md:text-[13px] text-gray-600 leading-relaxed font-light">
+                                  {signData.avantages?.replace(/\[cite:\s*[\d,\s]+\]/g, '').trim() || "En attente..."}
+                                </p>
+                              </div>
+
+                              <div className="bg-[#f9f5f4] p-6 rounded-[1.5rem] border border-rose-100/50">
+                                <div className="flex items-center gap-2 mb-3">
+                                  <Shield className="text-[#A34D35]" size={14} />
+                                  <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-[#A34D35]">Défis</h4>
+                                </div>
+                                <p className="text-[12px] md:text-[13px] text-gray-600 leading-relaxed font-light">
+                                  {signData.defis?.replace(/\[cite:\s*[\d,\s]+\]/g, '').trim() || "En attente..."}
+                                </p>
+                              </div>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <h2 className="text-3xl md:text-5xl font-sans font-bold text-[#006B5D] mb-1 tracking-tight">
+                              {signData.nom_universel || "Harmonie"}
+                            </h2>
+                            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-8">
+                              {signData.sous_titre_universel || "UNITÉ × ÉQUILIBRE"}
+                            </p>
+                            
+                            <p className="text-[13px] md:text-[15px] text-gray-600 leading-relaxed mb-8 md:mb-12 max-w-xl px-4 font-light">
+                              {signData.description_universelle || "Une version simplifiée et universelle des enseignements de ce signe pour une application quotidienne."}
+                            </p>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full text-left max-w-2xl">
+                              <div className="bg-[#f2f6f4] p-6 rounded-[1.5rem] border border-emerald-100/50">
+                                <div className="flex items-center gap-2 mb-3">
+                                  <Target className="text-[#008751]" size={14} />
+                                  <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-[#008751]">Révélation</h4>
+                                </div>
+                                <p className="text-[12px] md:text-[13px] text-gray-600 leading-relaxed font-light">
+                                  {signData.revelation || "La clarté s'installe quand l'esprit s'apaise."}
+                                </p>
+                              </div>
+
+                              <div className="bg-[#f9f5f4] p-6 rounded-[1.5rem] border border-rose-100/50">
+                                <div className="flex items-center gap-2 mb-3">
+                                  <Shield className="text-[#A34D35]" size={14} />
+                                  <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-[#A34D35]">Piège</h4>
+                                </div>
+                                <p className="text-[12px] md:text-[13px] text-gray-600 leading-relaxed font-light">
+                                  {signData.piege || "L'attachement aux formes passées empêche le renouveau."}
+                                </p>
+                              </div>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="py-10 text-gray-400 italic text-sm">
+                        Données en cours de préparation pour ce signe...
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </motion.div>
