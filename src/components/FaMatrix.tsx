@@ -238,19 +238,21 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
       {/* Desktop View / Always visible but scaled on mobile if not in modal */}
-      <div className="w-full h-full overflow-auto no-scrollbar flex flex-col items-center p-2 md:p-8">
-        <div className="md:hidden mb-4 mt-0">
+      <div className="w-full flex flex-col items-center p-2 md:p-8 overflow-hidden">
+        <div className="md:hidden mb-6 flex justify-center w-full">
           <button 
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 bg-black text-white px-6 py-3 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-xl active:scale-95 transition-all"
+            className="flex items-center gap-2 bg-[#1B2A4A] text-white px-8 py-4 rounded-full text-[11px] font-black uppercase tracking-[0.2em] shadow-2xl active:scale-95 transition-all hover:bg-[#2E5FA3]"
           >
-            <Maximize2 size={14} />
+            <Maximize2 size={16} />
             Agrandir la matrice
           </button>
         </div>
         
-        <div className="scale-[0.5] sm:scale-100 origin-top">
-          <MatrixContent />
+        <div className="relative w-full flex justify-center">
+          <div className="md:scale-100 scale-[0.4] sm:scale-[0.6] origin-top transition-transform duration-500">
+            <MatrixContent />
+          </div>
         </div>
       </div>
 

@@ -51,22 +51,9 @@ export function FaHome() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
-          style={{
-            background: "rgba(255,255,255,0.04)",
-            borderRadius: "2rem",
-            border: "1px solid rgba(255,255,255,0.08)",
-            padding: "2.5rem 2rem",
-            maxWidth: "700px",
-            margin: "0 auto",
-          }}
+          className="bg-white/5 backdrop-blur-sm rounded-[2rem] border border-white/10 p-6 md:p-10 max-w-[700px] mx-auto"
         >
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(4, 1fr)",
-              gap: "2rem",
-            }}
-          >
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 md:gap-8">
             {NATIONS.map((n, i) => (
               <motion.div
                 key={n.code}
@@ -74,24 +61,10 @@ export function FaHome() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.3, delay: i * 0.03 }}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  gap: "0.75rem",
-                }}
+                className="flex flex-col items-center gap-2 md:gap-3"
               >
-                <span style={{ fontSize: "2.5rem" }}>{flagEmoji(n.code)}</span>
-                <span
-                  style={{
-                    fontSize: "10px",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.15em",
-                    color: "rgba(255,255,255,0.4)",
-                    fontWeight: 700,
-                    textAlign: "center",
-                  }}
-                >
+                <span className="text-3xl md:text-4xl">{flagEmoji(n.code)}</span>
+                <span className="text-[8px] md:text-[10px] uppercase tracking-[0.15em] text-white/40 font-bold text-center leading-tight">
                   {n.name}
                 </span>
               </motion.div>
