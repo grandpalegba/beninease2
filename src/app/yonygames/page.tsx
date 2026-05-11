@@ -122,12 +122,11 @@ export default function YonyGamesPage() {
                 </h2>
                 <p style={{
                   fontSize: "18px",
-                  color: "#2E5FA3",
+                  color: "rgba(0,0,0,0.6)",
                   lineHeight: 1.7,
                   maxWidth: "850px",
                   margin: "0 auto",
-                  textAlign: "center",
-                  opacity: 0.8
+                  textAlign: "center"
                 }}>
                   Chaque signe de la Matrice définit, selon l’arène choisie, les défis à relever. Pour accompagner les participants, une bibliothèque collaborative dédiée à chaque signe sera enrichie par des spécialistes du Fâ, proposant des clés de compréhension, des interprétations et des sources d’inspiration.
                 </p>
