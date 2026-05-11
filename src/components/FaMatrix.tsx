@@ -249,8 +249,8 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
           </button>
         </div>
         
-        <div className="relative w-full flex justify-center">
-          <div className="md:scale-100 scale-[0.4] sm:scale-[0.6] origin-top transition-transform duration-500">
+        <div className="relative w-full flex justify-center items-center py-4">
+          <div className="md:scale-100 scale-[0.7] sm:scale-[0.85] origin-center transition-transform duration-500">
             <MatrixContent />
           </div>
         </div>
@@ -308,11 +308,11 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
                 <CloseIcon size={20} />
               </button>
 
-              <div className="flex-1 overflow-y-auto p-6 sm:p-10 no-scrollbar">
+              <div className="flex-1 overflow-y-auto p-4 sm:p-10 no-scrollbar">
                 <div className="flex flex-col items-center text-center">
                   {/* Ideogram */}
-                  <div className="mb-6">
-                    <SignIdeogram leftSign={selectedSign.left} rightSign={selectedSign.right} size={80} color="#1B2A4A" />
+                  <div className="mb-4 md:mb-6 mt-4">
+                    <SignIdeogram leftSign={selectedSign.left} rightSign={selectedSign.right} size={window.innerWidth < 640 ? 60 : 80} color="#1B2A4A" />
                   </div>
 
                   {/* Name */}
@@ -328,35 +328,35 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
                     </div>
                   ) : signData ? (
                     <>
-                      <p className="text-sm md:text-lg text-[#A34D35] font-serif italic mb-5 md:mb-6 leading-relaxed max-w-2xl px-2">
-                        "{signData.devise}"
+                      <p className="text-sm md:text-lg text-[#A34D35] font-serif italic mb-4 md:mb-6 leading-relaxed max-w-2xl px-2">
+                        "{signData.devise.replace(/\[cite:\s*[\d,\s]+\]/g, '').trim()}"
                       </p>
 
-                      <p className="text-[12px] md:text-[13px] text-gray-500 leading-relaxed mb-8 md:mb-10 max-w-xl px-4">
-                        {signData.introduction || "Découvrez la sagesse ancestrale à travers ce signe majeur de la géomancie du Fâ."}
+                      <p className="text-[12px] md:text-[14px] text-gray-500 leading-relaxed mb-6 md:mb-8 max-w-xl px-4">
+                        {(signData.introduction || "Découvrez la sagesse ancestrale à travers ce signe majeur de la géomancie du Fâ.").replace(/\[cite:\s*[\d,\s]+\]/g, '').trim()}
                       </p>
 
                       {/* Cards Grid */}
-                      <div className="grid gap-4 w-full text-left max-w-2xl">
+                      <div className="grid gap-3 md:gap-4 w-full text-left max-w-2xl">
                         {/* Avantages */}
-                        <div className="bg-[#f2f6f4] p-5 sm:p-6 rounded-2xl border border-emerald-100/50">
-                          <div className="flex items-center gap-2 mb-3">
+                        <div className="bg-[#f2f6f4] p-4 md:p-6 rounded-2xl border border-emerald-100/50">
+                          <div className="flex items-center gap-2 mb-2 md:mb-3">
                             <Target className="text-[#008751]" size={14} />
                             <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-[#008751]">Avantages</h4>
                           </div>
                           <p className="text-[12px] md:text-[13px] text-gray-600 leading-relaxed font-light">
-                            {signData.avantages}
+                            {signData.avantages.replace(/\[cite:\s*[\d,\s]+\]/g, '').trim()}
                           </p>
                         </div>
 
                         {/* Défis */}
-                        <div className="bg-[#f9f5f4] p-5 sm:p-6 rounded-2xl border border-rose-100/50">
-                          <div className="flex items-center gap-2 mb-3">
+                        <div className="bg-[#f9f5f4] p-4 md:p-6 rounded-2xl border border-rose-100/50">
+                          <div className="flex items-center gap-2 mb-2 md:mb-3">
                             <Shield className="text-[#A34D35]" size={14} />
                             <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-[#A34D35]">Défis</h4>
                           </div>
                           <p className="text-[12px] md:text-[13px] text-gray-600 leading-relaxed font-light">
-                            {signData.defis}
+                            {signData.defis.replace(/\[cite:\s*[\d,\s]+\]/g, '').trim()}
                           </p>
                         </div>
                       </div>
