@@ -67,7 +67,7 @@ const MatrixCell = ({
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: (rIndex + cIndex) * 0.005, duration: 0.3 }}
       className={cn(
-        "w-6 h-6 md:w-10 md:h-10 flex items-center justify-center rounded-sm transition-all cursor-pointer border",
+        "w-4 h-4 md:w-8 md:h-8 flex items-center justify-center rounded-sm transition-all cursor-pointer border",
         isHovered 
           ? "scale-110 z-10 shadow-lg" 
           : "bg-[#1B2A4A] border-white/5 hover:border-white/20"
@@ -88,7 +88,7 @@ const MatrixCell = ({
           leftSign={leftSign} 
           rightSign={rightSign} 
           color="#FFFFFF" 
-          size={0.8} 
+          size={0.6} 
         />
       </motion.div>
     </motion.div>
@@ -138,11 +138,11 @@ const FaMatrix = () => {
               onClick={() => router.push('/sagesses/generalites')}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="w-10 h-10 md:w-16 md:h-16 flex flex-col items-center justify-center flex-shrink-0 rounded-lg group relative overflow-hidden transition-all shadow-sm border border-white/10 bg-[#1B2A4A]"
+              className="w-6 h-6 md:w-12 md:h-12 flex flex-col items-center justify-center flex-shrink-0 rounded-lg group relative overflow-hidden transition-all shadow-sm border border-white/10 bg-[#1B2A4A]"
             >
               <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-5 transition-opacity" />
-              <BookOpen size={14} className="md:size-[18px] text-[#FFD700] mb-0.5 md:mb-1 drop-shadow-md" strokeWidth={2.5} />
-              <span className="text-[7px] md:text-[9px] font-black uppercase tracking-widest text-white/70 drop-shadow-md">Bases</span>
+              <BookOpen size={10} className="md:size-[14px] text-[#FFD700] mb-0.5 md:mb-1 drop-shadow-md" strokeWidth={2.5} />
+              <span className="text-[5px] md:text-[7px] font-black uppercase tracking-widest text-white/70 drop-shadow-md">Bases</span>
             </motion.button>
 
             {/* Top Header Labels */}
@@ -150,13 +150,13 @@ const FaMatrix = () => {
               {SIGNS.map((sign, i) => (
                 <div 
                   key={`h-${i}`} 
-                  className="w-6 h-10 md:w-10 md:h-16 relative"
+                  className="w-4 h-6 md:w-8 md:h-12 relative"
                 >
                   <motion.span 
                     initial={{ opacity: 0, y: -5, rotate: -45 }}
                     animate={{ opacity: 1, y: 0, rotate: -45 }}
                     transition={{ delay: i * 0.02, duration: 0.5 }}
-                    className="absolute left-1/2 bottom-2 md:bottom-4 text-[7px] md:text-[10px] font-bold uppercase tracking-[0.2em] text-[#1B2A4A] font-sans origin-bottom-left whitespace-nowrap"
+                    className="absolute left-1/2 bottom-1 md:bottom-2 text-[5px] md:text-[7px] font-bold uppercase tracking-[0.2em] text-[#1B2A4A] font-sans origin-bottom-left whitespace-nowrap"
                   >
                     {sign.name}
                   </motion.span>
@@ -170,12 +170,12 @@ const FaMatrix = () => {
             {SIGNS.map((rowSign, rIndex) => (
               <div key={`r-${rIndex}`} className="flex gap-[2px]">
                 {/* Left Header */}
-                <div className="w-10 h-6 md:w-16 md:h-10 flex items-center justify-end pr-3 md:pr-4 flex-shrink-0">
+                <div className="w-6 h-4 md:w-12 md:h-8 flex items-center justify-end pr-1 md:pr-2 flex-shrink-0">
                   <motion.span 
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: rIndex * 0.02, duration: 0.5 }}
-                    className="text-[7px] md:text-[10px] font-bold uppercase tracking-[0.2em] text-[#1B2A4A] font-sans"
+                    className="text-[5px] md:text-[7px] font-bold uppercase tracking-[0.2em] text-[#1B2A4A] font-sans"
                   >
                     {rowSign.name}
                   </motion.span>
