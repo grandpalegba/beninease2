@@ -238,19 +238,21 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
       {/* Desktop View / Always visible but scaled on mobile if not in modal */}
-      <div className="w-full flex flex-col items-center p-2 md:p-8 overflow-hidden">
-        <div className="md:hidden mb-6 flex justify-center w-full">
+      <div className="w-full flex flex-col items-center overflow-hidden py-4">
+        {/* Mobile Button - Centered */}
+        <div className="md:hidden mb-8 flex justify-center w-full px-6">
           <button 
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 bg-[#1B2A4A] text-white px-8 py-4 rounded-full text-[11px] font-black uppercase tracking-[0.2em] shadow-2xl active:scale-95 transition-all hover:bg-[#2E5FA3]"
+            className="w-full max-w-xs flex items-center justify-center gap-3 bg-[#1B2A4A] text-white py-4 rounded-full text-[12px] font-black uppercase tracking-[0.2em] shadow-2xl active:scale-95 transition-all hover:bg-[#2E5FA3]"
           >
-            <Maximize2 size={16} />
+            <Maximize2 size={18} />
             Agrandir la matrice
           </button>
         </div>
         
-        <div className="relative w-full flex justify-center items-center py-4">
-          <div className="md:scale-100 scale-[0.7] sm:scale-[0.85] origin-center transition-transform duration-500">
+        {/* Matrix Preview Container - Fixed height for mobile to avoid layout shift/overflow */}
+        <div className="relative w-full h-[300px] sm:h-[450px] md:h-auto flex justify-center items-center md:items-start">
+          <div className="md:relative absolute md:scale-100 scale-[0.55] sm:scale-[0.75] origin-center md:origin-top transition-all duration-500">
             <MatrixContent />
           </div>
         </div>

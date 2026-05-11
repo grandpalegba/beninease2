@@ -119,14 +119,8 @@ export default function YonyGamesPage() {
                 </p>
               </div>
 
-              <div style={{
-                maxWidth: "700px",
-                margin: "0 auto",
-                overflowX: "auto"
-              }}>
-                <div className="min-w-fit flex justify-center">
-                  <FaMatrix useModal={true} />
-                </div>
+              <div className="w-full">
+                <FaMatrix useModal={true} />
               </div>
             </div>
           </section>
