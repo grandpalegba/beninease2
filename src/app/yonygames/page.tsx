@@ -40,10 +40,7 @@ export default function YonyGamesPage() {
               Récits, Savoirs et Traditions Ancestrales du monde
             </h2>
             
-            <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '18px', maxWidth: '600px', margin: '0 auto 3rem auto', lineHeight: 1.6 }}>
-              <strong>Mission :</strong> 16 trésors de 16 pays doivent retrouver leur terre d'origine et toute leur puissance pour délivrer l'énergie de guérison du monde.<br /><br />
-              La structure des jeux s'appuie sur le Fâ, Tradition Majeure du Bénin.
-            </p>            
+
             <div className="cover-stats-row">
               <div className="cover-stat">
                 <div className="cover-stat-n">256</div>
