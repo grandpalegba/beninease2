@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import { Delegation } from "@/components/quest/Delegation";
 import { FaHome } from "@/components/quest/FaHome";
 import { CtaFinal } from "@/components/quest/CtaFinal";
-import { FaMatrix } from "@/components/FaMatrix";
+import FaMatrix from "@/components/FaMatrix";
 
 export default function YonyGamesPage() {
   return (
