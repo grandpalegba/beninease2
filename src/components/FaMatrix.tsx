@@ -317,7 +317,7 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
                   </div>
 
                   {/* Name */}
-                  <h2 className="text-3xl md:text-4xl font-black text-[#1B2A4A] mb-3 uppercase tracking-tighter">
+                  <h2 className="text-3xl md:text-4xl font-sans font-bold text-[#1B2A4A] mb-3 tracking-tight">
                     {selectedSign.name}
                   </h2>
 
