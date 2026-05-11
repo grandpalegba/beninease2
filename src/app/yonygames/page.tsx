@@ -134,10 +134,6 @@ export default function YonyGamesPage() {
               </div>
 
               <div style={{
-                background: "#1B2A4A",
-                borderRadius: "2rem",
-                border: "1px solid rgba(0,0,0,0.05)",
-                padding: "2.5rem 2rem",
                 maxWidth: "700px",
                 margin: "0 auto",
                 overflowX: "auto"

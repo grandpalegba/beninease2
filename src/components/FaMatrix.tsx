@@ -122,11 +122,6 @@ const FaMatrix = () => {
       "relative inline-block min-w-fit",
       isModal ? "p-4 sm:p-8" : "p-1 sm:p-2"
     )}>
-      <BeninFrame 
-        className="w-full h-full" 
-        inset={isModal ? 32 : 24} 
-        thickness={4}
-      >
         <div className={cn(
           "relative",
           isModal ? "p-8 sm:p-12" : "p-4 sm:p-8"
@@ -194,12 +189,11 @@ const FaMatrix = () => {
             ))}
           </div>
         </div>
-      </BeninFrame>
     </div>
   );
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-start bg-white select-none relative">
+    <div className="w-full h-full flex flex-col items-center justify-start select-none relative">
       <style>{`
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
