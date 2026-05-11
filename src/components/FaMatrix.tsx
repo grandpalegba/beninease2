@@ -104,7 +104,7 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
   const [selectedSign, setSelectedSign] = useState<{ left: FongbeSign, right: FongbeSign, name: string } | null>(null);
   const [signData, setSignData] = useState<any>(null);
   const [loadingData, setLoadingData] = useState(false);
-  const [viewMode, setViewMode] = useState<'tradition' | 'universal'>('tradition');
+  const [viewMode, setViewMode] = useState<'tradition' | 'feminine'>('tradition');
 
   const generateSlug = (name: string) => {
     return name
@@ -323,8 +323,13 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
               <div className="flex-1 overflow-y-auto p-4 sm:p-10 no-scrollbar">
                 <div className="flex flex-col items-center text-center">
                   {/* Ideogram */}
-                  <div className="mb-4 md:mb-6 mt-4">
-                    <SignIdeogram leftSign={selectedSign.left} rightSign={selectedSign.right} size={window.innerWidth < 640 ? 60 : 80} color="#1B2A4A" />
+                  <div className="mb-4 md:mb-10 mt-4">
+                    <SignIdeogram 
+                      leftSign={selectedSign.left} 
+                      rightSign={selectedSign.right} 
+                      size={window.innerWidth < 640 ? 100 : 140} 
+                      color="#1B2A4A" 
+                    />
                   </div>
 
                   {/* Name & Toggle Section */}
@@ -341,13 +346,13 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
                         Tradition du Fâ
                       </button>
                       <button 
-                        onClick={() => setViewMode('universal')}
+                        onClick={() => setViewMode('feminine')}
                         className={cn(
                           "px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all",
-                          viewMode === 'universal' ? "bg-[#006B5D] text-white shadow-md" : "text-gray-400 hover:text-gray-600"
+                          viewMode === 'feminine' ? "bg-[#006B5D] text-white shadow-md" : "text-gray-400 hover:text-gray-600"
                         )}
                       >
-                        Universalité
+                        Valeurs Féminines
                       </button>
                     </div>
 
@@ -363,11 +368,8 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
                             <h2 className="text-3xl md:text-5xl font-sans font-bold text-[#1B2A4A] mb-4 tracking-tight">
                               {selectedSign.name}
                             </h2>
-                            <p className="text-sm md:text-lg text-[#A34D35] font-serif italic mb-5 md:mb-8 leading-relaxed max-w-2xl px-2">
+                            <p className="text-sm md:text-lg text-[#A34D35] font-serif italic mb-10 md:mb-14 leading-relaxed max-w-2xl px-2">
                               "{signData.devise?.replace(/\[cite:\s*[\d,\s]+\]/g, '').trim() || "Devise en cours..."}"
-                            </p>
-                            <p className="text-[13px] md:text-[15px] text-gray-500 leading-relaxed mb-8 md:mb-12 max-w-xl px-4 font-light">
-                              {(signData.introduction || "Découvrez la sagesse ancestrale à travers ce signe majeur de la géomancie du Fâ.").replace(/\[cite:\s*[\d,\s]+\]/g, '').trim()}
                             </p>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full text-left max-w-2xl">
@@ -397,14 +399,10 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
                             <h2 className="text-3xl md:text-5xl font-sans font-bold text-[#006B5D] mb-1 tracking-tight">
                               {signData.nom_universel || "Harmonie"}
                             </h2>
-                            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-8">
+                            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-12">
                               {signData.sous_titre_universel || "UNITÉ × ÉQUILIBRE"}
                             </p>
                             
-                            <p className="text-[13px] md:text-[15px] text-gray-600 leading-relaxed mb-8 md:mb-12 max-w-xl px-4 font-light">
-                              {signData.description_universelle || "Une version simplifiée et universelle des enseignements de ce signe pour une application quotidienne."}
-                            </p>
-
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full text-left max-w-2xl">
                               <div className="bg-[#f2f6f4] p-6 rounded-[1.5rem] border border-emerald-100/50">
                                 <div className="flex items-center gap-2 mb-3">
