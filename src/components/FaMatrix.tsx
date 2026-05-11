@@ -191,8 +191,8 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
           {/* Column Headers (Horizontal) */}
           <div className="flex gap-[2px]">
             {SIGNS.map((sign, i) => (
-              <div key={i} className="w-5 h-6 md:w-8 md:h-12 flex items-center justify-center bg-[#1B2A4A] rounded-md border border-white/5 flex-shrink-0">
-                <span className="text-[5px] md:text-[7px] font-bold text-white uppercase tracking-widest rotate-[-45deg] whitespace-nowrap">
+              <div key={i} className="w-5 h-6 md:w-8 md:h-12 flex items-center justify-center bg-transparent flex-shrink-0">
+                <span className="text-[5px] md:text-[7px] font-bold text-[#1B2A4A] uppercase tracking-widest rotate-[-45deg] whitespace-nowrap">
                   {sign.name}
                 </span>
               </div>
@@ -204,8 +204,8 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
           {/* Row Headers (Vertical) */}
           <div className="flex flex-col gap-[2px]">
             {SIGNS.map((sign, i) => (
-              <div key={i} className="w-8 h-5 md:w-12 md:h-8 flex items-center justify-center bg-[#1B2A4A] rounded-md border border-white/5 flex-shrink-0">
-                <span className="text-[5px] md:text-[7px] font-bold text-white uppercase tracking-widest text-right">
+              <div key={i} className="w-8 h-5 md:w-12 md:h-8 flex items-center justify-end pr-1 md:pr-2 bg-transparent flex-shrink-0">
+                <span className="text-[5px] md:text-[7px] font-bold text-[#1B2A4A] uppercase tracking-widest text-right">
                   {sign.name}
                 </span>
               </div>
