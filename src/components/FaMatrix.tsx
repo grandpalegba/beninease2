@@ -411,15 +411,6 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
                 <p className="text-base text-gray-600 leading-relaxed font-light">
                   Le Fâ est un système de connaissance et de sagesse originaire du Bénin et d’Afrique de l’Ouest, fondé sur un vaste corpus de signes, de récits et d’enseignements. Interprété par des spécialistes, il transmet des repères de compréhension et des sources d’inspiration.
                 </p>
-
-                <div className="mt-10 pt-10 border-t border-gray-50">
-                  <button 
-                    onClick={() => setIsBasesModalOpen(false)}
-                    className="px-8 py-3 bg-[#1B2A4A] text-white rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-opacity-90 transition-all"
-                  >
-                    Fermer
-                  </button>
-                </div>
               </div>
             </motion.div>
           </div>
