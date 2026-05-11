@@ -29,7 +29,7 @@ export function Delegation() {
               <div className="text-4xl font-bold text-[#D4922A] mb-4">16</div>
               <h3 className="text-2xl font-semibold mb-6 uppercase tracking-wider">Amazones</h3>
               <p className="text-zinc-400 font-light leading-relaxed text-base">
-                Des femmes leaders, porteuses de projets à fort impact social, environnemental ou culturel. Elles sont le cœur stratégique de chaque nation.
+                Des femmes, porteuses de projets à fort impact social, environnemental ou culturel. Elles sont le cœur stratégique de chaque nation.
               </p>
             </div>
           </motion.div>

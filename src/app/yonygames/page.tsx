@@ -106,9 +106,45 @@ export default function YonyGamesPage() {
  
   
   
-          <section className="bg-white py-16">
-            <div className="w-full overflow-x-auto flex justify-center px-4">
-              <FaMatrix />
+          <section className="py-24" style={{ background: '#1B2A4A' }}>
+            <div className="max-w-5xl mx-auto px-4">
+              <div style={{ textAlign: "center", marginBottom: "4rem" }}>
+                <h2 style={{
+                  fontFamily: "Outfit, sans-serif",
+                  fontSize: "clamp(30px, 4vw, 52px)",
+                  fontWeight: 700,
+                  color: "#ffffff",
+                  letterSpacing: "0.01em",
+                  lineHeight: 1.1,
+                  marginBottom: "1.5rem"
+                }}>
+                  Matrice du Fâ
+                </h2>
+                <p style={{
+                  fontSize: "18px",
+                  color: "rgba(255,255,255,0.7)",
+                  lineHeight: 1.7,
+                  maxWidth: "850px",
+                  margin: "0 auto",
+                  textAlign: "center"
+                }}>
+                  Chaque signe de la Matrice définit, selon l’arène choisie, les défis à relever. Pour accompagner les participants, une bibliothèque collaborative dédiée à chaque signe sera enrichie par des spécialistes du Fâ, proposant des clés de compréhension, des interprétations et des sources d’inspiration.
+                </p>
+              </div>
+
+              <div style={{
+                background: "rgba(255,255,255,0.04)",
+                borderRadius: "2rem",
+                border: "1px solid rgba(255,255,255,0.08)",
+                padding: "2.5rem 2rem",
+                maxWidth: "700px",
+                margin: "0 auto",
+                overflowX: "auto"
+              }}>
+                <div className="min-w-fit flex justify-center">
+                  <FaMatrix />
+                </div>
+              </div>
             </div>
           </section>
 
