@@ -1,23 +1,24 @@
 export const NATIONS = [
   { code: "BJ", name: "Bénin", points: 4820, cycle: 1 },
-  { code: "GA", name: "Gabon", points: 4612, cycle: 2 },
-  { code: "ZA", name: "Afrique du Sud", points: 4488, cycle: 3 },
-  { code: "MG", name: "Madagascar", points: 4301, cycle: 4 },
-  { code: "EG", name: "Égypte", points: 4187, cycle: 5 },
-  { code: "TR", name: "Turquie", points: 4055, cycle: 6 },
-  { code: "SE", name: "Suède", points: 3998, cycle: 7 },
-  { code: "MN", name: "Mongolie", points: 3902, cycle: 8 },
-  { code: "IN", name: "Inde", points: 3877, cycle: 9 },
-  { code: "ID", name: "Indonésie", points: 3744, cycle: 10 },
-  { code: "JP", name: "Japon", points: 3690, cycle: 11 },
-  { code: "PG", name: "Papouasie-Nouvelle-Guinée", points: 3611, cycle: 12 },
-  { code: "CL", name: "Chili", points: 3580, cycle: 13 },
-  { code: "MX", name: "Mexique", points: 3501, cycle: 14 },
+  { code: "NG", name: "Nigéria", points: 4715, cycle: 2 },
+  { code: "MG", name: "Madagascar", points: 4601, cycle: 3 },
+  { code: "ET", name: "Éthiopie", points: 4487, cycle: 4 },
+  { code: "EG", name: "Égypte", points: 4355, cycle: 5 },
+  { code: "SE", name: "Suède", points: 4298, cycle: 6 },
+  { code: "MN", name: "Mongolie", points: 4102, cycle: 7 },
+  { code: "IN", name: "Inde", points: 3977, cycle: 8 },
+  { code: "ID", name: "Indonésie", points: 3844, cycle: 9 },
+  { code: "JP", name: "Japon", points: 3790, cycle: 10 },
+  { code: "PG", name: "Papouasie-Nouvelle-Guinée", points: 3611, cycle: 11 },
+  { code: "RN", name: "Rapa Nui", points: 3580, cycle: 12 },
+  { code: "MX", name: "Mexique", points: 3501, cycle: 13 },
+  { code: "CU", name: "Cuba", points: 3450, cycle: 14 },
   { code: "BR", name: "Brésil", points: 3422, cycle: 15 },
   { code: "PE", name: "Pérou", points: 3388, cycle: 16 },
 ];
 
 function flagEmoji(code: string) {
+  if (code === "RN") return "🗿";
   return code
     .toUpperCase()
     .split("")
