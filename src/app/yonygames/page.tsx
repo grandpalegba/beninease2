@@ -25,11 +25,11 @@ export default function YonyGamesPage() {
               OLYMPIADES DU FÂ
             </h1>
             <h2 className="cover-subtitle" style={{ color: 'white', fontSize: '20px', fontWeight: '500', marginBottom: '3rem', letterSpacing: '0.03em' }}>
-              Sagesses ancestrales & Valeurs du Féminin
+              Escape Game autour des Sagesses Ancestrales & Valeurs du Féminin
             </h2>
             
             <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '18px', maxWidth: '600px', margin: '0 auto 3rem auto', lineHeight: 1.6 }}>
-              <strong>Mission :</strong> 256 trésors du Bénin doivent retrouver leur terre d'origine et toute leur puissance pour délivrer l'énergie de guérison du monde.
+              <strong>Mission :</strong> 256 Trésors du Bénin doivent retrouver leur terre d'origine pour que le monde retrouve l'équilibre et l'Harmonie entre les Peuples.
             </p>
             
             <div className="cover-stats-row">
