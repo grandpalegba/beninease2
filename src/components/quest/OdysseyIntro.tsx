@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export function OdysseyIntro() {
   return (
-    <section className="py-24 px-6 bg-white">
+    <section className="pt-4 pb-20 px-6 bg-white">
       <div className="max-w-4xl mx-auto text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
