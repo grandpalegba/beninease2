@@ -29,7 +29,7 @@ export default function YonyGamesPage() {
             </h2>
             
             <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '18px', maxWidth: '600px', margin: '0 auto 3rem auto', lineHeight: 1.6 }}>
-              <strong>Mission :</strong> 16 trésors de 16 pays doivent retrouver leur terre d'origine et toute leur puissance pour délivrer l'énergie de guérison du monde.
+              <strong>Mission :</strong> 256 trésors du Bénin doivent retrouver leur terre d'origine et toute leur puissance pour délivrer l'énergie de guérison du monde.
             </p>
             
             <div className="cover-stats-row">

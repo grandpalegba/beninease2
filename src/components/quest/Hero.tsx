@@ -26,7 +26,7 @@ export function Hero() {
               YONYVERSE
             </span>
             <span className="block text-xl md:text-2xl lg:text-3xl font-medium mt-6 uppercase tracking-[0.15em] leading-relaxed opacity-90">
-              Mise en lumière du Féminin <br /> et des cultures du monde
+              Galaxie d'initiatives autour du Féminin <br /> et des cultures du monde
             </span>
           </h1>
         </motion.div>
