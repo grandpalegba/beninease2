@@ -112,10 +112,20 @@ export default function YonyGamesPage() {
                   color: "rgba(0,0,0,0.6)",
                   lineHeight: 1.7,
                   maxWidth: "850px",
+                  margin: "0 auto 1.5rem auto",
+                  textAlign: "center"
+                }}>
+                  Chaque signe de la Matrice définit, selon l’arène choisie, les défis à relever. Une bibliothèque collaborative enrichie par des spécialistes du Fâ proposera des clés de compréhension, récits et interprétations liés à chaque signe.
+                </p>
+                <p style={{
+                  fontSize: "18px",
+                  color: "rgba(0,0,0,0.6)",
+                  lineHeight: 1.7,
+                  maxWidth: "850px",
                   margin: "0 auto",
                   textAlign: "center"
                 }}>
-                  Chaque signe de la Matrice définit, selon l’arène choisie, les défis à relever. Pour accompagner les participants, une bibliothèque collaborative dédiée à chaque signe sera enrichie par des spécialistes du Fâ, proposant des clés de compréhension, des interprétations et des sources d’inspiration.
+                  En parallèle, une matrice distincte consacrée aux valeurs humaines fondamentales, développée avec des experts dédiés, apportera un autre angle de lecture autour des émotions, des relations et des expériences universelles.
                 </p>
               </div>
 

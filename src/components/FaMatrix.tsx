@@ -158,6 +158,7 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
         ...(traditional || {}),
         // Map universal fields to the expected UI keys
         nom_universel: universal?.valeur,
+        combinaison_universelle: universal?.combinaison,
         sous_titre_universel: universal?.rythme,
         description_universelle: universal?.recit,
         revelation: universal?.revelation,
@@ -425,11 +426,11 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
                           </>
                         ) : (
                           <>
-                            <h2 className="text-3xl md:text-5xl font-sans font-bold text-[#006B5D] mb-1 tracking-tight">
+                            <h2 className="text-3xl md:text-5xl font-sans font-bold text-[#006B5D] mb-4 tracking-tight">
                               {signData.nom_universel || "Harmonie"}
                             </h2>
-                            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-12">
-                              {signData.sous_titre_universel || "UNITÉ × ÉQUILIBRE"}
+                            <p className="text-sm md:text-lg text-[#006B5D] font-serif italic mb-10 md:mb-14 leading-relaxed max-w-2xl px-2 opacity-70">
+                              {signData.combinaison_universelle || "Unité Universelle"}
                             </p>
                             
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full text-left max-w-2xl">
