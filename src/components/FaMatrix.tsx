@@ -379,7 +379,7 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
                         onClick={() => setViewMode('feminine')}
                         className={cn(
                           "px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all",
-                          viewMode === 'feminine' ? "bg-[#00A3C1] text-white shadow-md" : "text-gray-400 hover:text-gray-600"
+                          viewMode === 'feminine' ? "bg-[#0077C8] text-white shadow-md" : "text-gray-400 hover:text-gray-600"
                         )}
                       >
                         Valeurs Féminines
@@ -426,10 +426,10 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
                           </>
                         ) : (
                           <>
-                            <h2 className="text-3xl md:text-5xl font-sans font-bold text-[#00A3C1] mb-4 tracking-tight">
+                            <h2 className="text-3xl md:text-5xl font-sans font-bold text-[#0077C8] mb-4 tracking-tight">
                               {signData.nom_universel || "Harmonie"}
                             </h2>
-                            <p className="text-sm md:text-lg text-[#00A3C1] font-serif italic mb-10 md:mb-14 leading-relaxed max-w-2xl px-2 opacity-70">
+                            <p className="text-sm md:text-lg text-[#0077C8] font-serif italic mb-10 md:mb-14 leading-relaxed max-w-2xl px-2 opacity-70">
                               {signData.combinaison_universelle || "Unité Universelle"}
                             </p>
                             
