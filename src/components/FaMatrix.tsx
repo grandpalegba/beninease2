@@ -60,7 +60,7 @@ const MatrixCell = ({
   const rightSign = SIGNS[cIndex];
 
   const isMeji = rIndex === cIndex;
-  const hoverColor = isMeji ? "#E8112D" : "#008751";
+  const hoverColor = isMeji ? "#E8112D" : "#0077C8";
 
   return (
     <motion.div 
