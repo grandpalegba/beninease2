@@ -9,7 +9,7 @@ const LEGEND_ITEMS = [
   {
     id: 1,
     title: "1. ORIGINE",
-    content: "Dans les temps anciens, les Grands Prêtres fusionnèrent la Sagesse du Fâ (le secret d'Amon) et la Lumière de Râ (la promesse d'Akhenaton) dans l'Œuf Primordial, matrice de l'harmonie universelle.",
+    content: "Dans les temps anciens, les Grands Prêtres fusionnèrent la Sagesse du Fâ (le secret d'Amon) et la Lumière de Râ (la promesse d'Akhenaton) dans l'Œuf Primordial, matrice de l'Harmonie universelle.",
     image: "/afraka_1.jpg"
   },
   {
@@ -51,7 +51,7 @@ const LEGEND_ITEMS = [
   {
     id: 8,
     title: "8. LA RESTAURATION",
-    content: "Yonyverse est l'univers parallèle où la libération et le retour des 256 trésors permettent de restaurer la puissance de l'Œuf originel : celle de restaurer et de maintenir l'harmonie sur Terre.",
+    content: "Yonyverse est l'univers parallèle où la libération et le retour des 256 trésors permettent de restaurer la puissance de l'Œuf originel : celle de restaurer et de maintenir l'Harmonie sur Terre.",
     image: "/afraka_8.jpg"
   }
 ];
