@@ -333,19 +333,10 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               className="bg-white w-full max-w-2xl max-h-[90vh] rounded-[2rem] shadow-2xl flex flex-col overflow-hidden relative"
             >
-              {/* Back Button */}
-              <button 
-                onClick={() => setIsDetailsModalOpen(false)}
-                className="absolute top-5 left-5 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-gray-300 hover:text-gray-900 transition-colors z-10"
-              >
-                <ArrowLeft size={14} />
-                Retour
-              </button>
-
               {/* Close Button */}
               <button 
                 onClick={() => setIsDetailsModalOpen(false)}
-                className="absolute top-5 right-5 p-2 bg-gray-50 rounded-full text-gray-300 hover:text-black transition-all hover:rotate-90 z-10 md:flex hidden"
+                className="absolute top-5 right-5 p-2 bg-gray-50 rounded-full text-gray-300 hover:text-black transition-all hover:rotate-90 z-10"
               >
                 <CloseIcon size={20} />
               </button>
