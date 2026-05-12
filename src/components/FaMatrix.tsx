@@ -373,7 +373,7 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
                           viewMode === 'feminine' ? "bg-[#0077C8] text-white shadow-md" : "text-gray-400 hover:text-gray-600"
                         )}
                       >
-                        Valeurs Féminines
+                        Valeurs du Féminin
                       </button>
                     </div>
 

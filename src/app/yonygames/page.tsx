@@ -25,7 +25,7 @@ export default function YonyGamesPage() {
               OLYMPIADES DU FÂ
             </h1>
             <h2 className="cover-subtitle" style={{ color: 'white', fontSize: '20px', fontWeight: '500', marginBottom: '3rem', letterSpacing: '0.03em' }}>
-              Traditions Ancestrales & Valeurs Féminines
+              Sagesses ancestrales & Valeurs du Féminin
             </h2>
             
             <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '18px', maxWidth: '600px', margin: '0 auto 3rem auto', lineHeight: 1.6 }}>
