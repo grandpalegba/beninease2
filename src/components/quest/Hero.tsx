@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 export function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden px-6 bg-white">
+    <section className="relative pt-40 pb-16 flex items-center justify-center overflow-hidden px-6 bg-white">
       <div
         className="absolute inset-0 opacity-[0.04] pointer-events-none"
         style={{

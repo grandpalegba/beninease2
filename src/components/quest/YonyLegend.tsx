@@ -58,7 +58,7 @@ const LEGEND_ITEMS = [
 
 export function YonyLegend() {
   return (
-    <section className="py-24 px-6 bg-white overflow-hidden">
+    <section className="pt-12 pb-24 px-6 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <h2 className="text-4xl md:text-5xl font-bold text-[#1B2A4A] mb-16 text-center md:text-left tracking-tight font-display">
           La légende de Yony
