@@ -3,6 +3,8 @@
  * Role: Vitrine principale du site BeninEase.
  */
 import { Hero } from "@/components/quest/Hero";
+import { YonyLegend } from "@/components/quest/YonyLegend";
+import { OdysseyIntro } from "@/components/quest/OdysseyIntro";
 import { Delegation } from "@/components/quest/Delegation";
 import { FaHome } from "@/components/quest/FaHome";
 import { CtaFinal } from "@/components/quest/CtaFinal";
@@ -12,6 +14,8 @@ export default function Home() {
     <div className="min-h-screen bg-white">
       <main>
         <Hero />
+        <YonyLegend />
+        <OdysseyIntro />
 
         
         <footer className="border-t border-zinc-100 py-10 px-6 bg-white">
