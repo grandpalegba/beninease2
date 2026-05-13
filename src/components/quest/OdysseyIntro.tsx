@@ -19,7 +19,7 @@ export function OdysseyIntro() {
             Première Odyssée : Yony Games
           </div>
           <div className="text-lg md:text-xl font-light italic opacity-70">
-            « Libérer 256 trésors du Bénin pour ramener l'Harmonie sur Terre »
+            « Libérer les Trésors du Monde pour ramener l'Harmonie sur Terre »
           </div>
 
           <div className="mt-12">
