@@ -13,7 +13,7 @@ export function OdysseyIntro() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="space-y-4 text-[#1B2A4A]"
+          className="space-y-4 text-[#043a82]"
         >
           <div className="text-2xl md:text-3xl font-semibold font-display">
             Première Odyssée : Yony Games
@@ -25,7 +25,7 @@ export function OdysseyIntro() {
           <div className="mt-12">
             <Link 
               href="/yonygames" 
-              className="inline-block bg-[#2E5FA3] text-white px-10 py-4 rounded-full font-bold uppercase tracking-widest hover:bg-[#1B2A4A] transition-all transform hover:-translate-y-1 shadow-lg shadow-blue-500/20"
+              className="inline-block bg-[#2E5FA3] text-white px-10 py-4 rounded-full font-bold uppercase tracking-widest hover:bg-[#043a82] transition-all transform hover:-translate-y-1 shadow-lg shadow-blue-500/20"
             >
               Découvrir Yony Games
             </Link>

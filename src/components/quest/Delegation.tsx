@@ -22,7 +22,7 @@ export function Delegation() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="rounded-[1.5rem] bg-[#1B2A4A] text-white shadow-xl flex flex-col justify-between"
+            className="rounded-[1.5rem] bg-[#043a82] text-white shadow-xl flex flex-col justify-between"
             style={{ padding: '2.5rem 3rem' }}
           >
             <div>
@@ -40,7 +40,7 @@ export function Delegation() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="rounded-[1.5rem] bg-[#1B2A4A] text-white shadow-xl flex flex-col justify-between"
+            className="rounded-[1.5rem] bg-[#043a82] text-white shadow-xl flex flex-col justify-between"
             style={{ padding: '2.5rem 3rem' }}
           >
             <div>

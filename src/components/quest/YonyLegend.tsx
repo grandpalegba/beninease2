@@ -60,7 +60,7 @@ export function YonyLegend() {
   return (
     <section className="pt-24 pb-24 px-6 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-4xl md:text-5xl font-bold text-[#1B2A4A] mb-16 text-center tracking-tight font-display">
+        <h2 className="text-4xl md:text-5xl font-bold text-[#043a82] mb-16 text-center tracking-tight font-display">
           La légende de Yony
         </h2>
 

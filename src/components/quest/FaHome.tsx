@@ -8,8 +8,8 @@ export function FaHome() {
     <section
       className="relative overflow-hidden"
       style={{
-        background: "#1B2A4A",
-        backgroundColor: "#1B2A4A",
+        background: "#043a82",
+        backgroundColor: "#043a82",
         color: "#ffffff",
         paddingTop: "6rem",
         paddingBottom: "6rem",

@@ -223,7 +223,7 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
           <div className="flex gap-[2px]">
             {SIGNS.map((sign, i) => (
               <div key={i} className="w-5 h-6 md:w-8 md:h-12 flex items-center justify-center bg-transparent flex-shrink-0">
-                <span className="text-[5px] md:text-[7px] font-bold text-[#1B2A4A] uppercase tracking-widest rotate-[-45deg] whitespace-nowrap">
+                <span className="text-[5px] md:text-[7px] font-bold text-[#043a82] uppercase tracking-widest rotate-[-45deg] whitespace-nowrap">
                   {sign.name}
                 </span>
               </div>
@@ -236,7 +236,7 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
           <div className="flex flex-col gap-[2px]">
             {SIGNS.map((sign, i) => (
               <div key={i} className="w-8 h-5 md:w-12 md:h-8 flex items-center justify-end pr-1 md:pr-2 bg-transparent flex-shrink-0">
-                <span className="text-[5px] md:text-[7px] font-bold text-[#1B2A4A] uppercase tracking-widest text-right">
+                <span className="text-[5px] md:text-[7px] font-bold text-[#043a82] uppercase tracking-widest text-right">
                   {sign.name}
                 </span>
               </div>
@@ -326,7 +326,7 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
       {/* Details Modal (Sign Info) */}
       <AnimatePresence>
         {isDetailsModalOpen && selectedSign && (
-          <div className="fixed inset-0 z-[1100] bg-[#1B2A4A]/40 backdrop-blur-md flex items-center justify-center p-4 sm:p-6">
+          <div className="fixed inset-0 z-[1100] bg-[#043a82]/40 backdrop-blur-md flex items-center justify-center p-4 sm:p-6">
             <motion.div 
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -349,7 +349,7 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
                       leftSign={selectedSign.left} 
                       rightSign={selectedSign.right} 
                       size={window.innerWidth < 640 ? 100 : 140} 
-                      color="#1B2A4A" 
+                      color="#043a82" 
                     />
                   </div>
 
@@ -386,7 +386,7 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
                       <div className="w-full flex flex-col items-center">
                         {viewMode === 'tradition' ? (
                           <>
-                            <h2 className="text-3xl md:text-5xl font-sans font-bold text-[#1B2A4A] mb-4 tracking-tight">
+                            <h2 className="text-3xl md:text-5xl font-sans font-bold text-[#043a82] mb-4 tracking-tight">
                               {selectedSign.name}
                             </h2>
                             <p className="text-sm md:text-lg text-[#A34D35] font-serif italic mb-10 md:mb-14 leading-relaxed max-w-2xl px-2">
@@ -464,7 +464,7 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
       {/* Bases Modal (Presentation) */}
       <AnimatePresence>
         {isBasesModalOpen && (
-          <div className="fixed inset-0 z-[1100] bg-[#1B2A4A]/40 backdrop-blur-md flex items-center justify-center p-4 sm:p-6">
+          <div className="fixed inset-0 z-[1100] bg-[#043a82]/40 backdrop-blur-md flex items-center justify-center p-4 sm:p-6">
             <motion.div 
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -480,11 +480,11 @@ const FaMatrix = ({ useModal = false }: { useModal?: boolean }) => {
               </button>
 
               <div className="p-8 sm:p-12 text-center">
-                <div className="w-16 h-16 bg-[#1B2A4A]/5 rounded-2xl flex items-center justify-center mx-auto mb-8">
-                  <BookOpen className="text-[#1B2A4A]" size={32} />
+                <div className="w-16 h-16 bg-[#043a82]/5 rounded-2xl flex items-center justify-center mx-auto mb-8">
+                  <BookOpen className="text-[#043a82]" size={32} />
                 </div>
 
-                <h2 className="text-3xl font-sans font-bold text-[#1B2A4A] mb-6 tracking-tight">
+                <h2 className="text-3xl font-sans font-bold text-[#043a82] mb-6 tracking-tight">
                   Présentation du Fâ
                 </h2>
 

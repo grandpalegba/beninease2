@@ -15,7 +15,7 @@ export default function YonyGamesPage() {
       <main className="min-h-screen">
         
         {/* ─── COVER ─── */}
-        <section className="cover" style={{ background: '#1B2A4A', border: 'none' }}>
+        <section className="cover" style={{ background: '#043a82', border: 'none' }}>
           <div className="cover-stripe-top"></div>
           
 

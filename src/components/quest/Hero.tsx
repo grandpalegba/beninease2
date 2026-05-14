@@ -21,7 +21,7 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: "easeOut" }}
         >
-          <h1 className="font-display font-semibold tracking-tight text-[#1B2A4A] mb-8 leading-[1.1]">
+          <h1 className="font-display font-semibold tracking-tight text-[#043a82] mb-8 leading-[1.1]">
             <span className="block text-[14vw] md:text-[8rem] uppercase">
               YONYVERSE
             </span>

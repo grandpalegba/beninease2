@@ -61,7 +61,7 @@ const Header = ({ hideTop = false }: { hideTop?: boolean }) => {
       {isMainPage && !hideTop && <HeaderSwipe />}
 
       {/* DOCK (Bottom) */}
-      <footer className="fixed bottom-0 left-0 right-0 z-[200] min-h-[5rem] pb-[max(1rem,env(safe-area-inset-bottom))] bg-[#1B2A4A] border-t border-white/10 flex items-center justify-between px-6 md:px-8 rounded-t-[2.5rem] shadow-[0_-10px_40px_rgba(0,0,0,0.3)] font-sans transition-all duration-300">
+      <footer className="fixed bottom-0 left-0 right-0 z-[200] min-h-[5rem] pb-[max(1rem,env(safe-area-inset-bottom))] bg-[#043a82] border-t border-white/10 flex items-center justify-between px-6 md:px-8 rounded-t-[2.5rem] shadow-[0_-10px_40px_rgba(0,0,0,0.3)] font-sans transition-all duration-300">
         
         {/* Logo : Gauche sur mobile, Centré sur MD+ */}
         <div className={cn(
