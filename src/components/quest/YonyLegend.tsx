@@ -8,50 +8,50 @@ import { cn } from "@/lib/utils";
 const LEGEND_ITEMS = [
   {
     id: 1,
-    title: "1. ORIGINE",
-    content: "Dans les temps anciens, les Grands Prêtres fusionnèrent la Sagesse du Fâ (le secret d'Amon) et la Lumière de Râ (la promesse d'Akhenaton) dans l'Œuf Primordial, matrice de l'Harmonie universelle.",
+    title: "I. La Matrice de l’Harmonie",
+    content: "Dans les temps anciens, les Grands Prêtres fusionnèrent la Sagesse du Fâ (le secret d'Amon), la Lumière de Râ (la promesse d'Akhenaton) et la beauté du Yanantin (le don d'Imhotep) dans l'Œuf Primordial, matrice absolue de l'Harmonie universelle.",
     image: "/afraka_1.jpg"
   },
   {
     id: 2,
-    title: "2. MISSION DE YONY",
-    content: "Face à la chute imminente de l'Égypte antique, ils confièrent à une femme, Nyonu (Yony), figure de pureté originelle, la mission sacrée d'escorter l'Œuf vers une terre élue : le Bénin.",
+    title: "II. La Messagère des Étoiles",
+    content: "Face à la chute de l'Égypte antique, les Sages confièrent à une femme la mission sacrée de scinder la puissance de l'Œuf vers deux terres élues : le Dahomey (Bénin) et le Tahuan-tinsuyo (Pérou). Appelée Yana ou Yɔnnu, les grands Initiés murmurent son nom secret : Yony.",
     image: "/afraka_2.jpg"
   },
   {
     id: 3,
-    title: "3. PAROLES DE POUVOIR",
-    content: "Ils lui transmirent la Phrase Clé : À mɔn, Gbè hin azi bô ayidjlè, amɔ̃ Acɛ na tɔn. (Tu as vu, l'univers porte l'œuf que la terre convoite, et pourtant la puissance se manifestera.)",
+    title: "III. La Phrase Clé Sacrée",
+    content: "Avant son grand voyage, ils lui transmirent la formule de pouvoir qui traverse les âges : « À mɔn, Gbè hin azi bô ayidjlè, amɔ̃ Acɛ na tɔn » — Tu as vu, l'univers porte l'œuf que la terre convoite, et pourtant la puissance se manifestera.",
     image: "/afraka_3.jpg"
   },
   {
     id: 4,
-    title: "4. ANCRAGE",
-    content: "Arrivée sur cette terre bénie, Yony utilisa ce pouvoir pour imprégner et consacrer les artefacts royaux de l'énergie pure de l'Œuf, concentré de la puissance des 256 signes du Fâ.",
+    title: "IV. L'Ancrage du Dahomey",
+    content: "Arrivée sur la terre bénie du Bénin, la première moitié de l'énergie de Yony imprégna et consacra les artefacts royaux. Ainsi naquirent les 256 Trésors mémoriels, concentrés sacrés de la puissance géomantique des signes du Fâ.",
     image: "/afraka_4.jpg"
   },
   {
     id: 5,
-    title: "5. LA FRAGMENTATION",
-    content: "Mais l'Œuf fut fragmenté par des Envahisseurs conscients que la dispersion des 256 trésors sacrés à travers le monde faciliterait la création d'un système mondial fondé sur la division.",
+    title: "V. Le Souffle de Cusco",
+    content: "L'autre moitié de sa puissance fut déployée directement dans la Terre des Andes, façonnant la Vallée Sacrée de Cusco. L'énergie de Yony imprégna le sol pendant 328 nuits, donnant naissance au réseau mystique des Huacas sacrées de l'Empire Inca.",
     image: "/afraka_5.jpg"
   },
   {
     id: 6,
-    title: "6. ALLIANCE DES 16",
-    content: "La prophétie annonce que la guérison exige un acte de souveraineté mondiale : l'union de 16 pays alliés pour briser les chaînes de la dispersion et restaurer l'intégrité de la mémoire.",
+    title: "VI. La Grande Cassure",
+    content: "Conscients de ce pouvoir, des Envahisseurs conspirèrent pour soumettre l'humanité en brisant le réseau : ils orchestrèrent la dispersion des 256 trésors africains et la profanation des 328 huacas andines pour imposer un ordre mondial fondé sur la division et l'oubli.",
     image: "/afraka_6.jpg"
   },
   {
     id: 7,
-    title: "7. LA RENAISSANCE",
-    content: "Ce rassemblement sacré redonnera une voix aux lignées invisibilisées, célébrant la puissance créatrice des femmes et la profondeur des gardiens de savoirs, piliers de notre complétude.",
+    title: "VII. Le Secret du Nombre 41",
+    content: "Dans l'ombre, le monde tint bon grâce au nombre sacré 41, qui régit secrètement les lignes de force du Pérou et les lois de justice du Roi Houegbaja au Bénin. Mais aujourd'hui, cet équilibre fragile ne suffit plus.",
     image: "/afraka_7.jpg"
   },
   {
     id: 8,
-    title: "8. LA RESTAURATION",
-    content: "Yonyverse est l'univers parallèle où la libération et le retour des 256 trésors permettent de restaurer la puissance de l'Œuf originel : celle de restaurer et de maintenir l'Harmonie sur Terre.",
+    title: "VIII. L'Appel des Yony Games",
+    content: "La prophétie est désormais en marche : pour guérir la Terre, l'énergie collective de l'humanité doit s'unir à travers des Jeux collaboratifs. En libérant les 256 trésors et en réactivant 256 huacas, les peuples restaureront l'Œuf de Yony et rétabliront l'Harmonie sur Terre.",
     image: "/afraka_8.jpg"
   }
 ];
@@ -61,7 +61,7 @@ export function YonyLegend() {
     <section className="pt-24 pb-24 px-6 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <h2 className="text-4xl md:text-5xl font-bold text-[#043a82] mb-16 text-center tracking-tight font-display">
-          La légende de Yony
+          La légende des Yony Games
         </h2>
 
         {/* Layout for Desktop: Custom Grid */}
