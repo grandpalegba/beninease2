@@ -57,6 +57,10 @@ body {
 }
 h1, h2, h3, h4 { letter-spacing: -0.02em; font-weight: 800; }
 
+#deesse {
+  background-color: #FFFFFF !important;
+}
+
 .bg-yony-night {
   background:
     radial-gradient(ellipse 80% 60% at 50% 35%, oklch(0.40 0.22 264) 0%, transparent 60%),

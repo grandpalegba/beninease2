@@ -298,9 +298,9 @@ export default function YonyGamesPage() {
           </div>
 
           <div className="mt-16">
-            <div className="flex items-baseline justify-between border-b border-border pb-3">
+            <div className="mb-6">
               <h3 className="text-xl text-[color:var(--yony-deep)]">4 Arènes de duels</h3>
-              <p className="text-sm text-muted-foreground">Duels vidéo nation contre nation</p>
+              <p className="mt-1 text-sm text-muted-foreground">Duels vidéo nation contre nation</p>
             </div>
             <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {ARENAS.map((a) => (
@@ -314,9 +314,9 @@ export default function YonyGamesPage() {
           </div>
 
           <div className="mt-16">
-            <div className="flex items-baseline justify-between border-b border-border pb-3">
+            <div className="mb-6">
               <h3 className="text-xl text-[color:var(--yony-deep)]">4 Yony Spaces</h3>
-              <p className="text-sm text-muted-foreground">Espaces de découvertes</p>
+              <p className="mt-1 text-sm text-muted-foreground">Espaces de découvertes</p>
             </div>
             <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {SPACES.map((a) => (
