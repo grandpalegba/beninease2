@@ -332,25 +332,25 @@ export default function YonyGamesPage() {
       </section>
 
       {/* DELEGATIONS */}
-      <section id="delegations" className="py-28 bg-[oklch(0.985_0.01_260)]">
-        <div className="mx-auto max-w-6xl px-6">
+      <section id="delegations" className="relative overflow-hidden bg-yony-night text-white py-28">
+        <div className="relative mx-auto max-w-6xl px-6">
           <div className="text-center max-w-3xl mx-auto">
             <p className="text-eyebrow">Les délégations</p>
-            <h2 className="mt-3 text-4xl md:text-5xl text-[color:var(--yony-deep)]">
+            <h2 className="mt-3 text-4xl md:text-5xl">
               600 membres par nation
             </h2>
-            <p className="mt-5 text-muted-foreground">
+            <p className="mt-5 text-white/70">
               Chaque délégation rassemble 600 ambassadrices et ambassadeurs répartis en 6 statuts. Ensemble, ils partagent ce que leur nation a de plus précieux.
             </p>
           </div>
           <div className="mt-14 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {DELEGATIONS.map((d) => (
-              <div key={d.title} className="card-light rounded-2xl p-7">
+              <div key={d.title} className="card-glow rounded-2xl p-7">
                 <p className="text-eyebrow">{d.eyebrow}</p>
-                <h3 className="mt-4 text-2xl text-[color:var(--yony-deep)]">{d.title}</h3>
+                <h3 className="mt-4 text-2xl text-white">{d.title}</h3>
                 <p className="text-eyebrow mt-1">{d.per}</p>
-                <div className="my-5 h-px bg-border" />
-                <p className="text-sm text-muted-foreground leading-relaxed">{d.text}</p>
+                <div className="my-5 h-px bg-white/10" />
+                <p className="text-sm text-white/70 leading-relaxed">{d.text}</p>
               </div>
             ))}
           </div>
