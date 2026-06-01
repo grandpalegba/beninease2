@@ -379,7 +379,7 @@ export default function YonyGamesPage() {
         <div className="relative mx-auto max-w-4xl px-6 text-center">
           <p className="text-eyebrow">10 jan au 22 sept 2027</p>
           <h2 className="mt-6 text-5xl md:text-6xl font-extrabold leading-tight">
-            Rejoins l'aventure de
+            Participe aux Jeux de
             <br />
             l'<span className="text-[color:var(--yony-orange)]">Harmonie</span>
           </h2>
