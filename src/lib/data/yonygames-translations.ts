@@ -1,0 +1,612 @@
+export const translations = {
+  Français: {
+    nav: {
+      deesse: "La Déesse",
+      parcours: "Parcours",
+      jetons: "Jetons",
+      delegations: "Délégations",
+      join: "Rejoindre une délégation",
+    },
+    hero: {
+      date: "10 jan au 22 sept 2027",
+      title1: "Les premiers Jeux mondiaux",
+      title2: "des",
+      titleOrange: "Traditions & Cultures",
+      subtitle: "Une aventure mondiale pour restaurer l'Harmonie sur Terre.",
+      btnJoin: "Rejoindre une délégation",
+      btnHow: "Comment ça marche",
+    },
+    stats: [
+      { value: "256", label: "Jours de jeux" },
+      { value: "16", label: "Nations hôtes" },
+      { value: "512", label: "Trésors Sacrés" },
+    ],
+    deesse: {
+      eyebrow: "La Déesse",
+      name: "Yony",
+      subtitle: "Déesse de l'Harmonie",
+      description: "L'Œuf de Yony est le symbole de l'équilibre du monde. Il se recharge à partir de deux centres : le Bénin et le Pérou, racines matérielles et spirituelles de sagesses primordiales.",
+      missionEyebrow: "Mission des jeux",
+      missionText: "Libérer les 256 Trésors Mémoriels du Bénin et les 256 Lieux Sacrés du Pérou.",
+      pillageEyebrow: "Pillage",
+      pillageTitle: "256 Trésors du Bénin",
+      pillageText: "Symboles royaux dispersés à travers le monde. Chaque trésor libéré recompose un fragment de la sagesse universelle.",
+      ruptureEyebrow: "Rupture",
+      ruptureTitle: "256 Wakas du Pérou",
+      ruptureText: "Lieux sacrés andins endormis. Chaque Waka réactivée ravive la mémoire collective et l'équilibre du monde."
+    },
+    sources: {
+      eyebrow: "Sources & Inspirations",
+      title: "Le Bénin rencontre le Pérou",
+      faTitle: "Le Fâ",
+      faText: "Tradition majeure du Bénin. Sa matrice composée de 256 signes constitue l'esprit des Jeux, inspirant les défis qui permettent aux nations de révéler leurs richesses culturelles.",
+      yanantinTitle: "Le Yanantin",
+      yanantinText: "Principe ancestral des Andes du Pérou fondé sur la complémentarité entre les contraires. Il constitue l'âme des Jeux, fondée sur l'enrichissement par la différence."
+    },
+    comment: {
+      eyebrow: "Comment ça marche",
+      title: "Participer en 4 étapes",
+    },
+    steps: [
+      {
+        n: "01",
+        title: "Choisis ta nation",
+        text: "Toutes les nations du monde participent. 16 d'entre elles deviennent hôtes et inspirent les défis.",
+      },
+      {
+        n: "02",
+        title: "Prends un statut",
+        text: "Star, Light, Place, Brand, Designer ou Guard. Chaque rôle a sa mission.",
+      },
+      {
+        n: "03",
+        title: "Gagne des jetons",
+        text: "Duels, explorations et soutiens font avancer la jauge de ta nation.",
+      },
+      {
+        n: "04",
+        title: "Libère les Trésors",
+        text: "256 Trésors du Bénin et 256 Wakas du Pérou à réactiver ensemble.",
+      },
+    ],
+    cycles: {
+      eyebrow: "10 jan au 22 sept 2027",
+      title: "16 cycles, 16 nations hôtes",
+      text: "Chaque cycle de 16 jours est porté par une nation hôte qui inspire les défis, les récits et les expériences culturelles partagés mondialement.",
+      cycleLabel: "CYCLE"
+    },
+    jetons: {
+      eyebrow: "Les 8 jetons",
+      title: "Comment gagner des jetons",
+      text1: "Chaque nation doit en réunir 8 types pour libérer des ",
+      textStrong1: "Trésors",
+      text2: " et réactiver des ",
+      textStrong2: "Wakas",
+      text3: ". Les jetons se gagnent dans les arènes de duels et les espaces de découvertes.",
+      arenesTitle: "4 Arènes de duels",
+      arenesSubtitle: "Duels vidéo nation contre nation",
+      spacesTitle: "4 Yony Spaces",
+      spacesSubtitle: "Espaces de découvertes",
+    },
+    arenas: [
+      { eyebrow: "Sagesses", title: "Jeton Conscience", text: "Résoudre un cas de vie complexe." },
+      { eyebrow: "Savoirs", title: "Jeton Connaissance", text: "Enseigner une méthode ancestrale." },
+      { eyebrow: "Créations", title: "Jeton Compétence", text: "Proposer une œuvre d'art." },
+      { eyebrow: "Légendes", title: "Jeton Confidence", text: "Raconter une histoire impactante." },
+    ],
+    spaces: [
+      { eyebrow: "Publicités", title: "Jeton Concordance", text: "Regarder, voter, soutenir une marque." },
+      { eyebrow: "Ambassades", title: "Jeton Convergence", text: "Scanner, découvrir, témoigner d'un lieu." },
+      { eyebrow: "Boutiques", title: "Jeton Convenance", text: "Explorer, acheter, collectionner." },
+      { eyebrow: "Évènements", title: "Jeton Confiance", text: "Participer aux cérémonies et défis collectifs dans chaque pays." },
+    ],
+    delegations: {
+      eyebrow: "Les délégations",
+      title: "600 membres par nation",
+      subtitle1: "Chaque délégation rassemble 600 ambassadrices et ambassadeurs répartis en 6 statuts.",
+      subtitle2: "Ensemble, ils partagent ce que leur nation a de plus précieux.",
+    },
+    delegationsList: [
+      {
+        eyebrow: "Femmes leaders",
+        title: "Yony Stars",
+        per: "16 par nation",
+        text: "Porter un projet à fort impact social, culturel ou environnemental pour valoriser leur pays.",
+      },
+      {
+        eyebrow: "Combattants culturels",
+        title: "Yony Lights",
+        per: "240 par nation",
+        text: "60 combattantes et combattants par arène : Sagesses, Savoirs, Créations, Légendes. Excellence et engagement au service de leur nation.",
+      },
+      {
+        eyebrow: "Lieux & Ambassades",
+        title: "Yony Places",
+        per: "50 par nation",
+        text: "Devenir une ambassade physique de la culture nationale et partager son patrimoine vivant.",
+      },
+      {
+        eyebrow: "Marques éthiques",
+        title: "Yony Brands",
+        per: "22 par nation",
+        text: "Valoriser un savoir-faire national à l'international avec exigence et responsabilité.",
+      },
+      {
+        eyebrow: "Créateurs & Artisans",
+        title: "Yony Designers",
+        per: "32 par nation",
+        text: "Diffuser graphisme, artisanat et design national portés par le talent et la créativité du pays.",
+      },
+      {
+        eyebrow: "Arbitres des duels",
+        title: "Yony Guards",
+        per: "240 par nation",
+        text: "Arbitrer les duels de chaque nation avec rigueur, équité et engagement collectif.",
+      },
+    ],
+    cta: {
+      date: "10 jan au 22 sept 2027",
+      title1: "Participe aux Jeux de",
+      titleOrange: "l'Harmonie",
+      btnJoin: "Rejoindre une délégation",
+    }
+  },
+  English: {
+    nav: {
+      deesse: "The Goddess",
+      parcours: "Journeys",
+      jetons: "Tokens",
+      delegations: "Delegations",
+      join: "Join a delegation",
+    },
+    hero: {
+      date: "Jan 10 to Sept 22, 2027",
+      title1: "The First World Games",
+      title2: "of",
+      titleOrange: "Traditions & Cultures",
+      subtitle: "A global adventure to restore Harmony on Earth.",
+      btnJoin: "Join a delegation",
+      btnHow: "How it works",
+    },
+    stats: [
+      { value: "256", label: "Days of games" },
+      { value: "16", label: "Host nations" },
+      { value: "512", label: "Sacred Treasures" },
+    ],
+    deesse: {
+      eyebrow: "The Goddess",
+      name: "Yony",
+      subtitle: "Goddess of Harmony",
+      description: "The Yony Egg is the symbol of the world's balance. It recharges from two centers: Benin and Peru, material and spiritual roots of primordial wisdoms.",
+      missionEyebrow: "Mission of the games",
+      missionText: "Free the 256 Memorial Treasures of Benin and the 256 Sacred Sites of Peru.",
+      pillageEyebrow: "Plunder",
+      pillageTitle: "256 Treasures of Benin",
+      pillageText: "Royal symbols scattered around the world. Each freed treasure reconstructs a fragment of universal wisdom.",
+      ruptureEyebrow: "Rupture",
+      ruptureTitle: "256 Wakas of Peru",
+      ruptureText: "Dormant Andean sacred sites. Each reactivated Waka revives the collective memory and the world's balance."
+    },
+    sources: {
+      eyebrow: "Sources & Inspirations",
+      title: "Benin meets Peru",
+      faTitle: "The Fâ",
+      faText: "Major tradition of Benin. Its matrix composed of 256 signs constitutes the spirit of the Games, inspiring the challenges that allow nations to reveal their cultural wealth.",
+      yanantinTitle: "The Yanantin",
+      yanantinText: "Ancestral principle of the Peruvian Andes based on complementarity between opposites. It constitutes the soul of the Games, based on enrichment through difference."
+    },
+    comment: {
+      eyebrow: "How it works",
+      title: "Participate in 4 steps",
+    },
+    steps: [
+      {
+        n: "01",
+        title: "Choose your nation",
+        text: "All nations in the world participate. 16 of them become hosts and inspire the challenges.",
+      },
+      {
+        n: "02",
+        title: "Take a status",
+        text: "Star, Light, Place, Brand, Designer, or Guard. Each role has its mission.",
+      },
+      {
+        n: "03",
+        title: "Earn tokens",
+        text: "Duels, explorations, and support help advance your nation's gauge.",
+      },
+      {
+        n: "04",
+        title: "Free the Treasures",
+        text: "256 Treasures from Benin and 256 Wakas from Peru to reactivate together.",
+      },
+    ],
+    cycles: {
+      eyebrow: "Jan 10 to Sept 22, 2027",
+      title: "16 cycles, 16 host nations",
+      text: "Each 16-day cycle is led by a host nation that inspires the challenges, stories, and cultural experiences shared globally.",
+      cycleLabel: "CYCLE"
+    },
+    jetons: {
+      eyebrow: "The 8 tokens",
+      title: "How to earn tokens",
+      text1: "Each nation must gather 8 types to free ",
+      textStrong1: "Treasures",
+      text2: " and reactivate ",
+      textStrong2: "Wakas",
+      text3: ". Tokens are earned in duel arenas and discovery spaces.",
+      arenesTitle: "4 Duel Arenas",
+      arenesSubtitle: "Nation vs Nation video duels",
+      spacesTitle: "4 Yony Spaces",
+      spacesSubtitle: "Discovery spaces",
+    },
+    arenas: [
+      { eyebrow: "Wisdoms", title: "Consciousness Token", text: "Solve a complex life case." },
+      { eyebrow: "Knowledge", title: "Knowledge Token", text: "Teach an ancestral method." },
+      { eyebrow: "Creations", title: "Skill Token", text: "Propose an artwork." },
+      { eyebrow: "Legends", title: "Confidence Token", text: "Tell an impactful story." },
+    ],
+    spaces: [
+      { eyebrow: "Advertisements", title: "Concordance Token", text: "Watch, vote, support a brand." },
+      { eyebrow: "Embassies", title: "Convergence Token", text: "Scan, discover, testify about a place." },
+      { eyebrow: "Shops", title: "Convenience Token", text: "Explore, buy, collect." },
+      { eyebrow: "Events", title: "Trust Token", text: "Participate in ceremonies and collective challenges in each country." },
+    ],
+    delegations: {
+      eyebrow: "The delegations",
+      title: "600 members per nation",
+      subtitle1: "Each delegation brings together 600 ambassadors divided into 6 statuses.",
+      subtitle2: "Together, they share what their nation holds most precious.",
+    },
+    delegationsList: [
+      {
+        eyebrow: "Female leaders",
+        title: "Yony Stars",
+        per: "16 per nation",
+        text: "Carry a project with high social, cultural, or environmental impact to showcase their country.",
+      },
+      {
+        eyebrow: "Cultural fighters",
+        title: "Yony Lights",
+        per: "240 per nation",
+        text: "60 fighters per arena: Wisdoms, Knowledge, Creations, Legends. Excellence and commitment serving their nation.",
+      },
+      {
+        eyebrow: "Places & Embassies",
+        title: "Yony Places",
+        per: "50 per nation",
+        text: "Become a physical embassy of national culture and share its living heritage.",
+      },
+      {
+        eyebrow: "Ethical brands",
+        title: "Yony Brands",
+        per: "22 per nation",
+        text: "Promote national expertise internationally with high standards and responsibility.",
+      },
+      {
+        eyebrow: "Creators & Artisans",
+        title: "Yony Designers",
+        per: "32 per nation",
+        text: "Spread national graphic design, crafts, and design carried by the country's talent and creativity.",
+      },
+      {
+        eyebrow: "Duel Referees",
+        title: "Yony Guards",
+        per: "240 per nation",
+        text: "Referee the duels of each nation with rigor, fairness, and collective commitment.",
+      },
+    ],
+    cta: {
+      date: "Jan 10 to Sept 22, 2027",
+      title1: "Participate in the Games of",
+      titleOrange: "Harmony",
+      btnJoin: "Join a delegation",
+    }
+  },
+  Español: {
+    nav: {
+      deesse: "La Diosa",
+      parcours: "Recorridos",
+      jetons: "Fichas",
+      delegations: "Delegaciones",
+      join: "Unirse a una delegación",
+    },
+    hero: {
+      date: "10 ene al 22 sept 2027",
+      title1: "Los primeros Juegos mundiales",
+      title2: "de las",
+      titleOrange: "Tradiciones y Culturas",
+      subtitle: "Una aventura global para restaurar la Armonía en la Tierra.",
+      btnJoin: "Unirse a una delegación",
+      btnHow: "Cómo funciona",
+    },
+    stats: [
+      { value: "256", label: "Días de juegos" },
+      { value: "16", label: "Naciones anfitrionas" },
+      { value: "512", label: "Tesoros Sagrados" },
+    ],
+    deesse: {
+      eyebrow: "La Diosa",
+      name: "Yony",
+      subtitle: "Diosa de la Armonía",
+      description: "El Huevo de Yony es el símbolo del equilibrio del mundo. Se recarga a partir de dos centros: Benín y Perú, raíces materiales y espirituales de sabidurías primordiales.",
+      missionEyebrow: "Misión de los juegos",
+      missionText: "Liberar los 256 Tesoros Memoriales de Benín y los 256 Lugares Sagrados de Perú.",
+      pillageEyebrow: "Saqueo",
+      pillageTitle: "256 Tesoros de Benín",
+      pillageText: "Símbolos reales dispersos por el mundo. Cada tesoro liberado recompone un fragmento de la sabiduría universal.",
+      ruptureEyebrow: "Ruptura",
+      ruptureTitle: "256 Wakas de Perú",
+      ruptureText: "Lugares sagrados andinos dormidos. Cada Waka reactivada reaviva la memoria colectiva y el equilibrio del mundo."
+    },
+    sources: {
+      eyebrow: "Fuentes e Inspiraciones",
+      title: "Benín se encuentra con Perú",
+      faTitle: "El Fâ",
+      faText: "Tradición mayor de Benín. Su matriz compuesta de 256 signos constituye el espíritu de los Juegos, inspirando los desafíos que permiten a las naciones revelar su riqueza cultural.",
+      yanantinTitle: "El Yanantin",
+      yanantinText: "Principio ancestral de los Andes de Perú basado en la complementariedad entre los opuestos. Constituye el alma de los Juegos, fundada en el enriquecimiento por la diferencia."
+    },
+    comment: {
+      eyebrow: "Cómo funciona",
+      title: "Participar en 4 pasos",
+    },
+    steps: [
+      {
+        n: "01",
+        title: "Elige tu nación",
+        text: "Todas las naciones del mundo participan. 16 de ellas se convierten en anfitrionas e inspiram los desafíos.",
+      },
+      {
+        n: "02",
+        title: "Adopta un estado",
+        text: "Star, Light, Place, Brand, Designer o Guard. Cada rol tiene su misión.",
+      },
+      {
+        n: "03",
+        title: "Gana fichas",
+        text: "Los duelos, exploraciones y apoyos hacen avanzar el medidor de tu nación.",
+      },
+      {
+        n: "04",
+        title: "Libera los Tesoros",
+        text: "256 Tesoros de Benín y 256 Wakas de Perú a reactivar juntos.",
+      },
+    ],
+    cycles: {
+      eyebrow: "10 ene al 22 sept 2027",
+      title: "16 ciclos, 16 naciones anfitrionas",
+      text: "Cada ciclo de 16 días está liderado por una nación anfitriona que inspira los desafíos, las historias y las experiencias culturales compartidas globalmente.",
+      cycleLabel: "CICLO"
+    },
+    jetons: {
+      eyebrow: "Las 8 fichas",
+      title: "Cómo ganar fichas",
+      text1: "Cada nación debe reunir 8 tipos para liberar ",
+      textStrong1: "Tesoros",
+      text2: " y reactivar ",
+      textStrong2: "Wakas",
+      text3: ". Las fichas se ganan en las arenas de duelos y los espacios de descubrimiento.",
+      arenesTitle: "4 Arenas de duelos",
+      arenesSubtitle: "Duelos en video nación contra nación",
+      spacesTitle: "4 Yony Spaces",
+      spacesSubtitle: "Espacios de descubrimiento",
+    },
+    arenas: [
+      { eyebrow: "Sabidurías", title: "Ficha Conciencia", text: "Resolver un caso de vida complejo." },
+      { eyebrow: "Saberes", title: "Ficha Conocimiento", text: "Enseñar un método ancestral." },
+      { eyebrow: "Creaciones", title: "Ficha Competencia", text: "Proponer una obra de arte." },
+      { eyebrow: "Leyendas", title: "Ficha Confidencia", text: "Contar una historia impactante." },
+    ],
+    spaces: [
+      { eyebrow: "Publicidades", title: "Ficha Concordancia", text: "Ver, votar, apoyar una marca." },
+      { eyebrow: "Embajadas", title: "Ficha Convergencia", text: "Escanear, descubrir, testimoniar de un lugar." },
+      { eyebrow: "Tiendas", title: "Ficha Conveniencia", text: "Explorar, comprar, coleccionar." },
+      { eyebrow: "Eventos", title: "Ficha Confianza", text: "Participar en ceremonias y desafíos colectivos en cada país." },
+    ],
+    delegations: {
+      eyebrow: "Las delegaciones",
+      title: "600 miembros por nación",
+      subtitle1: "Cada delegación reúne a 600 embajadoras y embajadores divididos en 6 estados.",
+      subtitle2: "Juntos, comparten lo más preciado de su nación.",
+    },
+    delegationsList: [
+      {
+        eyebrow: "Mujeres líderes",
+        title: "Yony Stars",
+        per: "16 por nación",
+        text: "Llevar un proyecto con alto impacto social, cultural o ambiental para destacar a su país.",
+      },
+      {
+        eyebrow: "Combatientes culturales",
+        title: "Yony Lights",
+        per: "240 por nación",
+        text: "60 combatientes por arena: Sabidurías, Saberes, Creaciones, Leyendas. Excelencia y compromiso al servicio de su nación.",
+      },
+      {
+        eyebrow: "Lugares y Embajadas",
+        title: "Yony Places",
+        per: "50 por nación",
+        text: "Convertirse en una embajada física de la cultura nacional y compartir su patrimonio vivo.",
+      },
+      {
+        eyebrow: "Marcas éticas",
+        title: "Yony Brands",
+        per: "22 por nación",
+        text: "Promover la experiencia nacional a nivel internacional con altos estándares y responsabilidad.",
+      },
+      {
+        eyebrow: "Creadores y Artesanos",
+        title: "Yony Designers",
+        per: "32 por nación",
+        text: "Difundir diseño gráfico, artesanía y diseño nacional impulsados por el talento y la creatividad del país.",
+      },
+      {
+        eyebrow: "Árbitros de duelos",
+        title: "Yony Guards",
+        per: "240 por nación",
+        text: "Arbitrar los duelos de cada nación con rigor, equidad y compromiso colectivo.",
+      },
+    ],
+    cta: {
+      date: "10 ene al 22 sept 2027",
+      title1: "Participa en los Juegos de",
+      titleOrange: "la Armonía",
+      btnJoin: "Unirse a una delegación",
+    }
+  },
+  Português: {
+    nav: {
+      deesse: "A Deusa",
+      parcours: "Jornadas",
+      jetons: "Fichas",
+      delegations: "Delegações",
+      join: "Junte-se a uma delegação",
+    },
+    hero: {
+      date: "10 jan a 22 set 2027",
+      title1: "Os primeiros Jogos Mundiais",
+      title2: "das",
+      titleOrange: "Tradições e Culturas",
+      subtitle: "Uma aventura global para restaurar a Harmonia na Terra.",
+      btnJoin: "Junte-se a uma delegação",
+      btnHow: "Como funciona",
+    },
+    stats: [
+      { value: "256", label: "Dias de jogos" },
+      { value: "16", label: "Nações anfitriãs" },
+      { value: "512", label: "Tesouros Sagrados" },
+    ],
+    deesse: {
+      eyebrow: "A Deusa",
+      name: "Yony",
+      subtitle: "Deusa da Harmonia",
+      description: "O Ovo de Yony é o símbolo do equilíbrio do mundo. Ele recarrega a partir de dois centros: Benin e Peru, raízes materiais e espirituais de sabedorias primordiais.",
+      missionEyebrow: "Missão dos jogos",
+      missionText: "Libertar os 256 Tesouros Memoriais do Benin e os 256 Lugares Sagrados do Peru.",
+      pillageEyebrow: "Saque",
+      pillageTitle: "256 Tesouros do Benin",
+      pillageText: "Símbolos reais dispersos pelo mundo. Cada tesouro libertado recompõe um fragmento da sabedoria universal.",
+      ruptureEyebrow: "Ruptura",
+      ruptureTitle: "256 Wakas do Peru",
+      ruptureText: "Lugares sagrados andinos adormecidos. Cada Waka reativada revive a memória coletiva e o equilíbrio do mundo."
+    },
+    sources: {
+      eyebrow: "Fontes e Inspirações",
+      title: "O Benin encontra o Peru",
+      faTitle: "O Fâ",
+      faText: "Tradição maior do Benin. Sua matriz composta de 256 signos constitui o espírito dos Jogos, inspirando os desafios que permitem às nações revelar sua riqueza cultural.",
+      yanantinTitle: "O Yanantin",
+      yanantinText: "Princípio ancestral dos Andes do Peru baseado na complementaridade entre os opostos. Constitui a alma dos Jogos, baseada no enriquecimento pela diferença."
+    },
+    comment: {
+      eyebrow: "Como funciona",
+      title: "Participe em 4 passos",
+    },
+    steps: [
+      {
+        n: "01",
+        title: "Escolha sua nação",
+        text: "Todas as nações do mundo participam. 16 delas se tornam anfitriãs e inspiram os desafios.",
+      },
+      {
+        n: "02",
+        title: "Adote um status",
+        text: "Star, Light, Place, Brand, Designer ou Guard. Cada papel tem sua missão.",
+      },
+      {
+        n: "03",
+        title: "Ganhe fichas",
+        text: "Duelos, explorações e apoios ajudam a avançar o medidor da sua nação.",
+      },
+      {
+        n: "04",
+        title: "Liberte os Tesouros",
+        text: "256 Tesouros do Benin e 256 Wakas do Peru para reativar juntos.",
+      },
+    ],
+    cycles: {
+      eyebrow: "10 jan a 22 set 2027",
+      title: "16 ciclos, 16 nações anfitriãs",
+      text: "Cada ciclo de 16 dias é liderado por uma nação anfitriã que inspira os desafios, histórias e experiências culturais compartilhadas globalmente.",
+      cycleLabel: "CICLO"
+    },
+    jetons: {
+      eyebrow: "As 8 fichas",
+      title: "Como ganhar fichas",
+      text1: "Cada nação deve reunir 8 tipos para libertar ",
+      textStrong1: "Tesouros",
+      text2: " e reativar ",
+      textStrong2: "Wakas",
+      text3: ". As fichas são ganhas em arenas de duelos e espaços de descoberta.",
+      arenesTitle: "4 Arenas de duelos",
+      arenesSubtitle: "Duelos em vídeo nação contra nação",
+      spacesTitle: "4 Yony Spaces",
+      spacesSubtitle: "Espaços de descoberta",
+    },
+    arenas: [
+      { eyebrow: "Sabedorias", title: "Ficha Consciência", text: "Resolver um caso de vida complexo." },
+      { eyebrow: "Saberes", title: "Ficha Conhecimento", text: "Ensinar um método ancestral." },
+      { eyebrow: "Criações", title: "Ficha Competência", text: "Propor uma obra de arte." },
+      { eyebrow: "Lendas", title: "Ficha Confidência", text: "Contar uma história impactante." },
+    ],
+    spaces: [
+      { eyebrow: "Publicidades", title: "Ficha Concordância", text: "Assistir, votar, apoiar uma marca." },
+      { eyebrow: "Embaixadas", title: "Ficha Convergência", text: "Digitalizar, descobrir, testemunhar sobre um lugar." },
+      { eyebrow: "Lojas", title: "Ficha Conveniência", text: "Explorar, comprar, colecionar." },
+      { eyebrow: "Eventos", title: "Ficha Confiança", text: "Participar em cerimônias e desafios coletivos em cada país." },
+    ],
+    delegations: {
+      eyebrow: "As delegações",
+      title: "600 membros por nação",
+      subtitle1: "Cada delegação reúne 600 embaixadoras e embaixadores divididos em 6 status.",
+      subtitle2: "Juntos, eles compartilham o que sua nação tem de mais precioso.",
+    },
+    delegationsList: [
+      {
+        eyebrow: "Mulheres líderes",
+        title: "Yony Stars",
+        per: "16 por nação",
+        text: "Apoiar um projeto com alto impacto social, cultural ou ambiental para promover seu país.",
+      },
+      {
+        eyebrow: "Combatientes culturais",
+        title: "Yony Lights",
+        per: "240 por nação",
+        text: "60 combatentes por arena: Sabedorias, Saberes, Criações, Lendas. Excelência e compromisso a serviço de sua nação.",
+      },
+      {
+        eyebrow: "Lugares e Embaixadas",
+        title: "Yony Places",
+        per: "50 por nação",
+        text: "Tornar-se uma embaixada física da cultura nacional e compartilhar seu patrimônio vivo.",
+      },
+      {
+        eyebrow: "Marcas éticas",
+        title: "Yony Brands",
+        per: "22 por nação",
+        text: "Promover o conhecimento nacional internacionalmente com altos padrões e responsabilidade.",
+      },
+      {
+        eyebrow: "Criadores e Artesãos",
+        title: "Yony Designers",
+        per: "32 por nação",
+        text: "Difundir design gráfico, artesanato e design nacional movidos pelo talento e criatividade do país.",
+      },
+      {
+        eyebrow: "Árbitros de duelos",
+        title: "Yony Guards",
+        per: "240 por nação",
+        text: "Arbitrar os duelos de cada nação com rigor, equidade e compromisso coletivo.",
+      },
+    ],
+    cta: {
+      date: "10 jan a 22 set 2027",
+      title1: "Participe dos Jogos da",
+      titleOrange: "Harmonia",
+      btnJoin: "Junte-se a uma delegação",
+    }
+  }
+} as const;
+
+export type Language = keyof typeof translations;

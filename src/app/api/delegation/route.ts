@@ -14,7 +14,7 @@ const schema = z.object({
       tiktok: z.string().max(200).optional(),
       youtube: z.string().max(200).optional(),
       linkedin: z.string().max(200).optional(),
-      x: z.string().max(200).optional(),
+      facebook: z.string().max(200).optional(),
       website: z.string().max(200).optional(),
     })
     .optional(),
@@ -67,7 +67,7 @@ export async function POST(request: Request) {
           tiktok: socials?.tiktok || null,
           youtube: socials?.youtube || null,
           linkedin: socials?.linkedin || null,
-          x_twitter: socials?.x || null,
+          facebook: socials?.facebook || null,
           website: socials?.website || null,
         }),
       }
