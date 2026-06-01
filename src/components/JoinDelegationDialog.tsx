@@ -50,7 +50,7 @@ const SOCIALS = [
   { key: "tiktok", label: "TikTok", placeholder: "@pseudo ou URL", icon: Music2 },
   { key: "youtube", label: "YouTube", placeholder: "Chaîne ou URL", icon: PlayCircle },
   { key: "linkedin", label: "LinkedIn", placeholder: "Profil ou URL", icon: Briefcase },
-  { key: "x", label: "X (Twitter)", placeholder: "@pseudo ou URL", icon: Code },
+  { key: "facebook", label: "Facebook", placeholder: "Profil ou URL", icon: Globe },
   { key: "website", label: "Site web", placeholder: "https://…", icon: Globe },
 ] as const;
 
