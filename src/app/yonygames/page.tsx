@@ -225,13 +225,13 @@ export default function YonyGamesPage() {
             <div className="card-light rounded-2xl p-7">
               <h3 className="text-xl text-[color:var(--yony-deep)]">Le Fâ</h3>
               <p className="mt-3 text-muted-foreground">
-                Science ancestrale de la divination du Bénin. Sa matrice devient le moteur des défis proposés à chaque nation.
+                Science ancestrale de la divination du Bénin. Sa matrice composée de 256 signes devient le générateur des défis qui rythment les Jeux et mettent les nations à l'épreuve.
               </p>
             </div>
             <div className="card-light rounded-2xl p-7">
               <h3 className="text-xl text-[color:var(--yony-deep)]">Le Yanantin</h3>
               <p className="mt-3 text-muted-foreground">
-                Principe andin de complémentarité entre les contraires. Il fonde les duels qui révèlent les sagesses partagées entre nations.
+                Principe andin de complémentarité entre les contraires. Il constitue l'âme des Jeux, fondé sur l'enrichissement par la différence.
               </p>
             </div>
           </div>

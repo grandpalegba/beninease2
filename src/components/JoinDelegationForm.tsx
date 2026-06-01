@@ -36,11 +36,11 @@ const schema = z.object({
 const inputClass =
   "w-full h-12 px-4 rounded-xl border border-gray-200 bg-white text-[color:var(--yony-deep)] text-base placeholder-gray-400 focus:outline-none focus:border-[color:var(--yony-orange)] focus:ring-2 focus:ring-[color:var(--yony-orange)]/20 transition";
 
-const labelClass =
-  "block text-sm font-semibold text-[color:var(--yony-deep)] mb-1.5";
+const labelClass = "block text-sm font-semibold text-[color:var(--yony-deep)] mb-1.5";
 
 export function JoinDelegationForm() {
   const countries = useMemo(() => getCountries("fr"), []);
+  const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
     country: "",
@@ -52,20 +52,45 @@ export function JoinDelegationForm() {
   });
   const [socials, setSocials] = useState<Record<string, string>>({});
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Client-side validation
     const result = schema.safeParse(form);
     if (!result.success) {
       toast.error(result.error.issues[0]?.message ?? "Formulaire invalide");
       return;
     }
-    toast.success("Candidature reçue", {
-      description: `Bienvenue dans la délégation ${
-        countries.find((c) => c.code === form.country)?.name ?? ""
-      }.`,
-    });
-    setForm({ country: "", firstName: "", lastName: "", status: "", bio: "", languages: "" });
-    setSocials({});
+
+    setLoading(true);
+
+    try {
+      const response = await fetch("/api/delegation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, socials }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        toast.error(data.error ?? "Une erreur est survenue");
+        return;
+      }
+
+      const countryName = countries.find((c) => c.code === form.country)?.name ?? "";
+      toast.success("Candidature envoyée !", {
+        description: `Bienvenue dans la délégation ${countryName}. Nous reviendrons vers toi prochainement.`,
+      });
+
+      // Reset form
+      setForm({ country: "", firstName: "", lastName: "", status: "", bio: "", languages: "" });
+      setSocials({});
+    } catch {
+      toast.error("Erreur de connexion. Réessaie dans quelques instants.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -92,6 +117,7 @@ export function JoinDelegationForm() {
             value={form.country}
             onChange={(e) => setForm((f) => ({ ...f, country: e.target.value }))}
             className={inputClass}
+            disabled={loading}
           >
             <option value="">Choisis un pays…</option>
             {countries.map((c) => (
@@ -111,6 +137,7 @@ export function JoinDelegationForm() {
               onChange={(e) => setForm((f) => ({ ...f, firstName: e.target.value }))}
               maxLength={80}
               className={inputClass}
+              disabled={loading}
             />
           </div>
           <div>
@@ -122,6 +149,7 @@ export function JoinDelegationForm() {
               onChange={(e) => setForm((f) => ({ ...f, lastName: e.target.value }))}
               maxLength={80}
               className={inputClass}
+              disabled={loading}
             />
           </div>
         </div>
@@ -134,6 +162,7 @@ export function JoinDelegationForm() {
             value={form.status}
             onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}
             className={inputClass}
+            disabled={loading}
           >
             <option value="">Choisis ton rôle…</option>
             {STATUSES.map((s) => (
@@ -153,6 +182,7 @@ export function JoinDelegationForm() {
             rows={4}
             placeholder="Qui es-tu, ce que tu portes pour ta nation…"
             className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-[color:var(--yony-deep)] text-base placeholder-gray-400 focus:outline-none focus:border-[color:var(--yony-orange)] focus:ring-2 focus:ring-[color:var(--yony-orange)]/20 transition resize-none"
+            disabled={loading}
           />
           <p className="text-xs text-gray-400 text-right mt-1">{form.bio.length}/280</p>
         </div>
@@ -168,6 +198,7 @@ export function JoinDelegationForm() {
             placeholder="Français, Anglais, Fon, Quechua…"
             maxLength={160}
             className={inputClass}
+            disabled={loading}
           />
         </div>
 
@@ -189,6 +220,7 @@ export function JoinDelegationForm() {
                   onChange={(e) => setSocials((s) => ({ ...s, [key]: e.target.value }))}
                   maxLength={200}
                   className="w-full h-12 pl-11 pr-4 rounded-xl border border-gray-200 bg-white text-[color:var(--yony-deep)] text-base placeholder-gray-400 focus:outline-none focus:border-[color:var(--yony-orange)] focus:ring-2 focus:ring-[color:var(--yony-orange)]/20 transition"
+                  disabled={loading}
                 />
               </div>
             ))}
@@ -199,9 +231,17 @@ export function JoinDelegationForm() {
         <div className="pt-4 flex justify-end">
           <button
             type="submit"
-            className="btn-yony rounded-full h-14 px-10 text-lg font-bold text-white cursor-pointer"
+            disabled={loading}
+            className="btn-yony rounded-full h-14 px-10 text-lg font-bold text-white cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-3"
           >
-            Envoyer ma candidature
+            {loading ? (
+              <>
+                <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                Envoi en cours…
+              </>
+            ) : (
+              "Envoyer ma candidature"
+            )}
           </button>
         </div>
 
