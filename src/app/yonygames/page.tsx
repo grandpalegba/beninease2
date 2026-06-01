@@ -183,7 +183,8 @@ export default function YonyGamesPage() {
           <div>
             <p className="text-eyebrow">La Déesse</p>
             <h2 className="mt-3 text-4xl md:text-5xl text-[color:var(--yony-deep)]">
-              Yony,<br />Déesse de l'Harmonie
+              Yony<br />
+              <span className="text-3xl md:text-4xl text-[color:var(--yony-blue)] font-bold">Déesse de l'Harmonie</span>
             </h2>
             <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
               L'Œuf de Yony est le symbole de l'équilibre du monde. Il se recharge à partir de deux centres : le Bénin et le Pérou, racines matérielles et spirituelles d'une sagesse universelle dispersée.
@@ -231,8 +232,7 @@ export default function YonyGamesPage() {
             <div className="card-light rounded-2xl p-7">
               <h3 className="text-xl text-[color:var(--yony-deep)]">Le Yanantin</h3>
               <p className="mt-3 text-muted-foreground">
-                Principe andin de complémentarité entre les contraires.<br />
-                Il constitue l'âme des Jeux, fondé sur l'enrichissement par la différence.
+                Principe andin de complémentarité entre les contraires. Il constitue l'âme des Jeux, fondé sur l'enrichissement par la différence.
               </p>
             </div>
           </div>
