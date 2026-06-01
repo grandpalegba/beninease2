@@ -3,7 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { JoinDelegationDialog } from "@/components/JoinDelegationDialog";
+import { JoinDelegationForm } from "@/components/JoinDelegationForm";
 import "./yony-games.css";
 
 const STATS = [
@@ -124,11 +124,11 @@ export default function YonyGamesPage() {
               <a href="#jetons" className="hover:text-[#043a82] transition-colors">Jetons</a>
               <a href="#delegations" className="hover:text-[#043a82] transition-colors">Délégations</a>
             </div>
-            <JoinDelegationDialog>
+            <a href="#inscription">
               <Button className="btn-yony rounded-full h-10 px-5 text-sm font-semibold text-white">
                 Rejoindre une délégation
               </Button>
-            </JoinDelegationDialog>
+            </a>
           </nav>
         </div>
       </header>
@@ -147,11 +147,11 @@ export default function YonyGamesPage() {
             Une aventure mondiale pour restaurer l'Harmonie sur Terre.
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-            <JoinDelegationDialog>
+            <a href="#inscription">
               <Button className="btn-yony rounded-full h-14 px-8 text-base font-semibold text-white">
                 Rejoindre une délégation
               </Button>
-            </JoinDelegationDialog>
+            </a>
             <a href="#comment">
               <Button className="btn-ghost-night rounded-full h-14 px-8 text-base font-semibold">
                 Comment ça marche
@@ -175,9 +175,9 @@ export default function YonyGamesPage() {
         <div className="mx-auto max-w-6xl px-6 grid md:grid-cols-2 gap-12 items-center">
           <div className="flex justify-center">
             <img
-              src="/afraka_logo.png"
+              src="/yony-games-logo.png"
               alt="Yony, Déesse de l'Harmonie — mascotte des Yony Games"
-              className="w-full max-w-md drop-shadow-[0_30px_60px_rgba(4,58,130,0.25)]"
+              className="w-full max-w-sm mx-auto drop-shadow-[0_30px_60px_rgba(4,58,130,0.20)]"
             />
           </div>
           <div>
@@ -188,22 +188,22 @@ export default function YonyGamesPage() {
             <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
               L'Œuf de Yony est le symbole de l'équilibre du monde. Il se recharge à partir de deux centres : le Bénin et le Pérou, racines matérielles et spirituelles d'une sagesse universelle dispersée.
             </p>
-            <div className="mt-8 rounded-2xl border border-[color:var(--yony-orange-soft)] bg-[oklch(0.98_0.04_80)] p-5">
-              <p className="text-eyebrow">Mission des jeux</p>
-              <p className="mt-2 font-semibold text-[color:var(--yony-deep)]">
+            <div className="mt-8 rounded-2xl bg-[color:var(--yony-deep)] p-6 shadow-xl shadow-[color:var(--yony-deep)]/20">
+              <p className="text-[color:var(--yony-orange)] uppercase tracking-[0.3em] font-bold text-[0.78rem]">Mission des jeux</p>
+              <p className="mt-2 text-lg font-medium text-white leading-relaxed">
                 Libérer les 256 Trésors Mémoriels du Bénin et les 256 Lieux Sacrés du Pérou.
               </p>
             </div>
             <div className="mt-6 grid sm:grid-cols-2 gap-4">
               <div className="card-light rounded-2xl p-5">
-                <p className="text-eyebrow">Pillage matériel</p>
+                <p className="text-eyebrow">Pillage</p>
                 <h3 className="mt-2 text-xl text-[color:var(--yony-deep)]">256 Trésors du Bénin</h3>
                 <p className="mt-2 text-sm text-muted-foreground">
                   Symboles royaux dispersés à travers le monde. Chaque trésor libéré recompose un fragment de la sagesse universelle.
                 </p>
               </div>
               <div className="card-light rounded-2xl p-5">
-                <p className="text-eyebrow">Rupture spirituelle</p>
+                <p className="text-eyebrow">Rupture</p>
                 <h3 className="mt-2 text-xl text-[color:var(--yony-deep)]">256 Wakas du Pérou</h3>
                 <p className="mt-2 text-sm text-muted-foreground">
                   Lieux sacrés andins endormis. Chaque Waka réactivée ravive la mémoire collective et l'équilibre du monde.
@@ -263,7 +263,7 @@ export default function YonyGamesPage() {
       <section id="parcours" className="relative overflow-hidden bg-yony-night text-white py-28">
         <div className="relative mx-auto max-w-7xl px-6">
           <div className="text-center">
-            <p className="text-eyebrow">Le parcours</p>
+            <p className="text-eyebrow">10 jan au 22 sept 2027</p>
             <h2 className="mt-3 text-4xl md:text-5xl">16 cycles, 16 nations hôtes</h2>
             <p className="mt-5 text-white/70 max-w-2xl mx-auto">
               Chaque cycle de 16 jours est porté par une nation hôte qui inspire les défis, les récits et les expériences culturelles partagés mondialement.
@@ -337,10 +337,10 @@ export default function YonyGamesPage() {
           <div className="text-center max-w-3xl mx-auto">
             <p className="text-eyebrow">Les délégations</p>
             <h2 className="mt-3 text-4xl md:text-5xl text-[color:var(--yony-deep)]">
-              600 membres par nation, 6 statuts
+              600 membres par nation
             </h2>
             <p className="mt-5 text-muted-foreground">
-              Chaque délégation rassemble 600 ambassadrices et ambassadeurs qui viennent valoriser leur pays sur la scène mondiale. Talents, excellence et engagement : ensemble, ils partagent ce que leur nation a de plus précieux.
+              Chaque délégation rassemble 600 ambassadrices et ambassadeurs répartis en 6 statuts. Ensemble, ils partagent ce que leur nation a de plus précieux.
             </p>
           </div>
           <div className="mt-14 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -355,12 +355,19 @@ export default function YonyGamesPage() {
             ))}
           </div>
           <div className="mt-14 flex justify-center">
-            <JoinDelegationDialog>
+            <a href="#inscription">
               <Button className="btn-yony rounded-full h-14 px-8 text-base font-semibold text-white">
                 Rejoindre une délégation
               </Button>
-            </JoinDelegationDialog>
+            </a>
           </div>
+        </div>
+      </section>
+
+      {/* INSCRIPTION */}
+      <section id="inscription" className="py-24 bg-white">
+        <div className="mx-auto max-w-6xl px-6">
+          <JoinDelegationForm />
         </div>
       </section>
 
@@ -374,11 +381,11 @@ export default function YonyGamesPage() {
             l'<span className="text-[color:var(--yony-orange)]">Harmonie</span>
           </h2>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-            <JoinDelegationDialog>
+            <a href="#inscription">
               <Button className="btn-yony rounded-full h-14 px-8 text-base font-semibold text-white">
                 Rejoindre une délégation
               </Button>
-            </JoinDelegationDialog>
+            </a>
             <a href="#parcours">
               <Button className="btn-ghost-night rounded-full h-14 px-8 text-base font-semibold">
                 Découvrir le parcours
