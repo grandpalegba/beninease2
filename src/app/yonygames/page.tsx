@@ -8,24 +8,7 @@ import { JoinDelegationForm } from "@/components/JoinDelegationForm";
 import "./yony-games.css";
 import { translations, Language } from "@/lib/data/yonygames-translations";
 
-const CYCLES_DATA = [
-  ["01", "🇧🇯", "Bénin", "10 jan"],
-  ["02", "🇸🇹", "Sao Tomé & Pr.", "26 jan"],
-  ["03", "🇿🇦", "Afr. du Sud", "11 fév"],
-  ["04", "🇪🇬", "Égypte", "27 fév"],
-  ["05", "🇹🇷", "Turquie", "15 mar"],
-  ["06", "🇸🇪", "Suède", "31 mar"],
-  ["07", "🇮🇳", "Inde", "16 avr"],
-  ["08", "🇮🇩", "Indonésie", "02 mai"],
-  ["09", "🇯🇵", "Japon", "18 mai"],
-  ["10", "🇵🇬", "Papouasie N.G.", "03 juin"],
-  ["11", "🇨🇱", "Île de Pâques", "19 juin"],
-  ["12", "🇲🇽", "Mexique", "05 juil"],
-  ["13", "🇨🇺", "Cuba", "21 juil"],
-  ["14", "🇨🇴", "Colombie", "06 août"],
-  ["15", "🇧🇷", "Brésil", "22 août"],
-  ["16", "🇵🇪", "Pérou", "07 sept"],
-];
+
 
 export default function YonyGamesPage() {
   const [showLangDropdown, setShowLangDropdown] = useState(false);
@@ -229,7 +212,7 @@ export default function YonyGamesPage() {
             </p>
           </div>
           <div className="mt-14 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
-            {CYCLES_DATA.map(([n, flag, name, date]) => (
+            {t.cyclesData.map(([n, flag, name, date]) => (
               <div key={n} className="card-glow rounded-2xl p-4 text-center">
                 <p className="text-[10px] tracking-[0.3em] text-[color:var(--yony-orange)] font-semibold">
                   {t.cycles.cycleLabel} {n}
@@ -329,7 +312,7 @@ export default function YonyGamesPage() {
       {/* INSCRIPTION */}
       <section id="inscription" className="py-24 bg-white">
         <div className="mx-auto max-w-6xl px-6">
-          <JoinDelegationForm />
+          <JoinDelegationForm lang={lang} />
         </div>
       </section>
 

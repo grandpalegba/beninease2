@@ -5,42 +5,45 @@ import { z } from "zod";
 import { Code, Globe, Camera, Briefcase, Music2, PlayCircle } from "lucide-react";
 import { getCountries } from "@/lib/countries";
 import { toast } from "sonner";
-
-const STATUSES = [
-  { value: "yony-star", label: "Yony Star — Femme leader" },
-  { value: "yony-light", label: "Yony Light — Combattant culturel" },
-  { value: "yony-place", label: "Yony Place — Lieu / Ambassade" },
-  { value: "yony-brand", label: "Yony Brand — Marque éthique" },
-  { value: "yony-designer", label: "Yony Designer — Créateur / Artisan" },
-  { value: "yony-guard", label: "Yony Guard — Arbitre des duels" },
-] as const;
-
-const SOCIALS = [
-  { key: "instagram", label: "Instagram", placeholder: "@pseudo ou URL", icon: Camera },
-  { key: "tiktok", label: "TikTok", placeholder: "@pseudo ou URL", icon: Music2 },
-  { key: "youtube", label: "YouTube", placeholder: "Chaîne ou URL", icon: PlayCircle },
-  { key: "linkedin", label: "LinkedIn", placeholder: "Profil ou URL", icon: Briefcase },
-  { key: "facebook", label: "Facebook", placeholder: "Profil ou URL", icon: Globe },
-  { key: "website", label: "Site web", placeholder: "https://…", icon: Globe },
-] as const;
-
-const schema = z.object({
-  country: z.string().min(1, "Choisis un pays"),
-  firstName: z.string().trim().min(1, "Prénom requis").max(80),
-  lastName: z.string().trim().min(1, "Nom requis").max(80),
-  status: z.string().min(1, "Choisis un statut"),
-  bio: z.string().trim().min(20, "Au moins 20 caractères").max(280),
-  languages: z.string().trim().min(2, "Indique au moins une langue").max(160),
-});
+import { translations, Language } from "@/lib/data/yonygames-translations";
 
 const inputClass =
   "w-full h-12 px-4 rounded-xl border border-gray-200 bg-white text-[color:var(--yony-deep)] text-base placeholder-gray-400 focus:outline-none focus:border-[color:var(--yony-orange)] focus:ring-2 focus:ring-[color:var(--yony-orange)]/20 transition";
 
 const labelClass = "block text-sm font-semibold text-[color:var(--yony-deep)] mb-1.5";
 
-export function JoinDelegationForm() {
-  const countries = useMemo(() => getCountries("fr"), []);
+export function JoinDelegationForm({ lang = "Français" }: { lang?: Language }) {
+  const t = translations[lang].form;
+  const locale = translations[lang].locale;
+  const countries = useMemo(() => getCountries(locale), [locale]);
   const [loading, setLoading] = useState(false);
+
+  const STATUSES = useMemo(() => [
+    { value: "yony-star", label: t.statusOptions.star },
+    { value: "yony-light", label: t.statusOptions.light },
+    { value: "yony-place", label: t.statusOptions.place },
+    { value: "yony-brand", label: t.statusOptions.brand },
+    { value: "yony-designer", label: t.statusOptions.designer },
+    { value: "yony-guard", label: t.statusOptions.guard },
+  ], [t]);
+
+  const SOCIALS = useMemo(() => [
+    { key: "instagram", label: "Instagram", placeholder: t.socialsLabels.instagram, icon: Camera },
+    { key: "tiktok", label: "TikTok", placeholder: t.socialsLabels.tiktok, icon: Music2 },
+    { key: "youtube", label: "YouTube", placeholder: t.socialsLabels.youtube, icon: PlayCircle },
+    { key: "linkedin", label: "LinkedIn", placeholder: t.socialsLabels.linkedin, icon: Briefcase },
+    { key: "facebook", label: "Facebook", placeholder: t.socialsLabels.facebook, icon: Globe },
+    { key: "website", label: "Site web", placeholder: t.socialsLabels.website, icon: Globe },
+  ], [t]);
+
+  const schema = useMemo(() => z.object({
+    country: z.string().min(1, t.validation.country),
+    firstName: z.string().trim().min(1, t.validation.firstName).max(80),
+    lastName: z.string().trim().min(1, t.validation.lastName).max(80),
+    status: z.string().min(1, t.validation.status),
+    bio: z.string().trim().min(20, t.validation.bio).max(280),
+    languages: z.string().trim().min(2, t.validation.languages).max(160),
+  }), [t]);
 
   const [form, setForm] = useState({
     country: "",
@@ -58,7 +61,7 @@ export function JoinDelegationForm() {
     // Client-side validation
     const result = schema.safeParse(form);
     if (!result.success) {
-      toast.error(result.error.issues[0]?.message ?? "Formulaire invalide");
+      toast.error(result.error.issues[0]?.message ?? t.validation.invalid);
       return;
     }
 
@@ -74,20 +77,20 @@ export function JoinDelegationForm() {
       const data = await response.json();
 
       if (!response.ok) {
-        toast.error(data.error ?? "Une erreur est survenue");
+        toast.error(data.error ?? t.validation.error);
         return;
       }
 
       const countryName = countries.find((c) => c.code === form.country)?.name ?? "";
-      toast.success("Candidature envoyée !", {
-        description: `Bienvenue dans la délégation ${countryName}. Nous reviendrons vers toi prochainement.`,
+      toast.success(t.validation.success, {
+        description: t.validation.successDesc.replace("{country}", countryName),
       });
 
       // Reset form
       setForm({ country: "", firstName: "", lastName: "", status: "", bio: "", languages: "" });
       setSocials({});
     } catch {
-      toast.error("Erreur de connexion. Réessaie dans quelques instants.");
+      toast.error(t.validation.networkError);
     } finally {
       setLoading(false);
     }
@@ -97,13 +100,13 @@ export function JoinDelegationForm() {
     <div className="w-full max-w-3xl mx-auto bg-white rounded-3xl p-8 md:p-12 shadow-xl border border-gray-100">
       <div className="mb-8">
         <p className="text-[color:var(--yony-orange)] uppercase tracking-[0.25em] font-bold text-[0.78rem] mb-2">
-          Rejoindre une délégation
+          {translations[lang].nav.join}
         </p>
         <h2 className="text-3xl md:text-4xl font-extrabold text-[color:var(--yony-deep)]">
-          Porte les couleurs de ta nation
+          {t.title}
         </h2>
         <p className="mt-3 text-gray-500">
-          Renseigne ton profil pour rejoindre l'aventure des Jeux mondiaux des Traditions & Cultures.
+          {t.subtitle}
         </p>
       </div>
 
@@ -111,7 +114,7 @@ export function JoinDelegationForm() {
 
         {/* Pays */}
         <div>
-          <label htmlFor="country" className={labelClass}>Pays</label>
+          <label htmlFor="country" className={labelClass}>{t.country}</label>
           <select
             id="country"
             value={form.country}
@@ -119,7 +122,7 @@ export function JoinDelegationForm() {
             className={inputClass}
             disabled={loading}
           >
-            <option value="">Choisis un pays…</option>
+            <option value="">{t.countryPlaceholder}</option>
             {countries.map((c) => (
               <option key={c.code} value={c.code}>{c.name}</option>
             ))}
@@ -129,24 +132,26 @@ export function JoinDelegationForm() {
         {/* Prénom / Nom */}
         <div className="grid sm:grid-cols-2 gap-5">
           <div>
-            <label htmlFor="firstName" className={labelClass}>Prénom</label>
+            <label htmlFor="firstName" className={labelClass}>{t.firstName}</label>
             <input
               id="firstName"
               type="text"
               value={form.firstName}
               onChange={(e) => setForm((f) => ({ ...f, firstName: e.target.value }))}
+              placeholder={t.firstNamePlaceholder}
               maxLength={80}
               className={inputClass}
               disabled={loading}
             />
           </div>
           <div>
-            <label htmlFor="lastName" className={labelClass}>Nom</label>
+            <label htmlFor="lastName" className={labelClass}>{t.lastName}</label>
             <input
               id="lastName"
               type="text"
               value={form.lastName}
               onChange={(e) => setForm((f) => ({ ...f, lastName: e.target.value }))}
+              placeholder={t.lastNamePlaceholder}
               maxLength={80}
               className={inputClass}
               disabled={loading}
@@ -156,7 +161,7 @@ export function JoinDelegationForm() {
 
         {/* Statut */}
         <div>
-          <label htmlFor="status" className={labelClass}>Statut dans la délégation</label>
+          <label htmlFor="status" className={labelClass}>{t.status}</label>
           <select
             id="status"
             value={form.status}
@@ -164,7 +169,7 @@ export function JoinDelegationForm() {
             className={inputClass}
             disabled={loading}
           >
-            <option value="">Choisis ton rôle…</option>
+            <option value="">{t.statusPlaceholder}</option>
             {STATUSES.map((s) => (
               <option key={s.value} value={s.value}>{s.label}</option>
             ))}
@@ -173,14 +178,14 @@ export function JoinDelegationForm() {
 
         {/* Bio */}
         <div>
-          <label htmlFor="bio" className={labelClass}>Bio courte</label>
+          <label htmlFor="bio" className={labelClass}>{t.bio}</label>
           <textarea
             id="bio"
             value={form.bio}
             onChange={(e) => setForm((f) => ({ ...f, bio: e.target.value }))}
             maxLength={280}
             rows={4}
-            placeholder="Qui es-tu, ce que tu portes pour ta nation…"
+            placeholder={t.bioPlaceholder}
             className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-[color:var(--yony-deep)] text-base placeholder-gray-400 focus:outline-none focus:border-[color:var(--yony-orange)] focus:ring-2 focus:ring-[color:var(--yony-orange)]/20 transition resize-none"
             disabled={loading}
           />
@@ -189,13 +194,13 @@ export function JoinDelegationForm() {
 
         {/* Langues */}
         <div>
-          <label htmlFor="languages" className={labelClass}>Langues parlées</label>
+          <label htmlFor="languages" className={labelClass}>{t.languages}</label>
           <input
             id="languages"
             type="text"
             value={form.languages}
             onChange={(e) => setForm((f) => ({ ...f, languages: e.target.value }))}
-            placeholder="Français, Anglais, Fon, Quechua…"
+            placeholder={t.languagesPlaceholder}
             maxLength={160}
             className={inputClass}
             disabled={loading}
@@ -205,8 +210,8 @@ export function JoinDelegationForm() {
         {/* Réseaux sociaux */}
         <div>
           <div className="flex items-baseline justify-between mb-3">
-            <label className={labelClass + " mb-0"}>Réseaux sociaux</label>
-            <span className="text-xs text-gray-400">Optionnels</span>
+            <label className={labelClass + " mb-0"}>{t.socials}</label>
+            <span className="text-xs text-gray-400">{t.optional}</span>
           </div>
           <div className="grid sm:grid-cols-2 gap-4">
             {SOCIALS.map(({ key, label, placeholder, icon: Icon }) => (
@@ -237,10 +242,10 @@ export function JoinDelegationForm() {
             {loading ? (
               <>
                 <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                Envoi en cours…
+                {t.btnSending}
               </>
             ) : (
-              "Envoyer ma candidature"
+              t.btnSubmit
             )}
           </button>
         </div>
