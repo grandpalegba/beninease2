@@ -2,7 +2,7 @@
 
 import { useMemo, useState, type ReactNode } from "react";
 import { z } from "zod";
-import { Check, ChevronsUpDown, Github, Globe, Instagram, Linkedin, Music2, Youtube } from "lucide-react";
+import { Check, ChevronsUpDown, Code, Globe, Camera, Briefcase, Music2, PlayCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getCountries } from "@/lib/countries";
 import { Button } from "@/components/ui/button";
@@ -46,11 +46,11 @@ const STATUSES = [
 ] as const;
 
 const SOCIALS = [
-  { key: "instagram", label: "Instagram", placeholder: "@pseudo ou URL", icon: Instagram },
+  { key: "instagram", label: "Instagram", placeholder: "@pseudo ou URL", icon: Camera },
   { key: "tiktok", label: "TikTok", placeholder: "@pseudo ou URL", icon: Music2 },
-  { key: "youtube", label: "YouTube", placeholder: "Chaîne ou URL", icon: Youtube },
-  { key: "linkedin", label: "LinkedIn", placeholder: "Profil ou URL", icon: Linkedin },
-  { key: "x", label: "X (Twitter)", placeholder: "@pseudo ou URL", icon: Github },
+  { key: "youtube", label: "YouTube", placeholder: "Chaîne ou URL", icon: PlayCircle },
+  { key: "linkedin", label: "LinkedIn", placeholder: "Profil ou URL", icon: Briefcase },
+  { key: "x", label: "X (Twitter)", placeholder: "@pseudo ou URL", icon: Code },
   { key: "website", label: "Site web", placeholder: "https://…", icon: Globe },
 ] as const;
 

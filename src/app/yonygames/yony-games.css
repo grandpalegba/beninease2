@@ -50,66 +50,62 @@
   --ring: oklch(0.78 0.16 62);
 }
 
-@layer base {
-  body {
-    background-color: var(--background);
-    color: var(--foreground);
-    -webkit-font-smoothing: antialiased;
-  }
-  h1, h2, h3, h4 { letter-spacing: -0.02em; font-weight: 800; }
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
 }
+h1, h2, h3, h4 { letter-spacing: -0.02em; font-weight: 800; }
 
-@layer utilities {
-  .bg-yony-night {
-    background:
-      radial-gradient(ellipse 80% 60% at 50% 35%, oklch(0.40 0.22 264) 0%, transparent 60%),
-      radial-gradient(ellipse 100% 80% at 50% 100%, oklch(0.16 0.16 268) 0%, transparent 70%),
-      linear-gradient(180deg, #043a82, #022047);
-  }
-  .bg-yony-night::before {
-    content: "";
-    position: absolute; inset: 0;
-    background-image: radial-gradient(oklch(1 0 0 / 0.08) 1px, transparent 1px);
-    background-size: 28px 28px;
-    opacity: 0.5;
-    pointer-events: none;
-  }
-  .text-eyebrow {
-    color: var(--yony-orange);
-    text-transform: uppercase;
-    letter-spacing: 0.32em;
-    font-weight: 600;
-    font-size: 0.78rem;
-  }
-  .btn-yony {
-    background: var(--yony-orange);
-    color: var(--yony-deep);
-    box-shadow:
-      0 0 0 6px color-mix(in oklab, var(--yony-orange) 20%, transparent),
-      0 20px 60px -10px color-mix(in oklab, var(--yony-orange) 50%, transparent);
-    transition: transform .2s ease, box-shadow .2s ease;
-  }
-  .btn-yony:hover {
-    transform: translateY(-1px);
-    box-shadow:
-      0 0 0 8px color-mix(in oklab, var(--yony-orange) 25%, transparent),
-      0 28px 70px -10px color-mix(in oklab, var(--yony-orange) 60%, transparent);
-  }
-  .btn-ghost-night {
-    border: 1px solid oklch(1 0 0 / 0.2);
-    color: white;
-    background: transparent;
-    transition: background .2s ease, border-color .2s ease;
-  }
-  .btn-ghost-night:hover { background: oklch(1 0 0 / 0.08); border-color: oklch(1 0 0 / 0.35); }
-  .card-glow {
-    background: linear-gradient(180deg, oklch(1 0 0 / 0.06), oklch(1 0 0 / 0.02));
-    border: 1px solid oklch(1 0 0 / 0.10);
-    backdrop-filter: blur(6px);
-  }
-  .card-light {
-    background: white;
-    border: 1px solid oklch(0.94 0.02 260);
-    box-shadow: 0 1px 0 oklch(0.95 0.02 260), 0 20px 40px -28px oklch(0.30 0.18 268 / 0.18);
-  }
+.bg-yony-night {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 35%, oklch(0.40 0.22 264) 0%, transparent 60%),
+    radial-gradient(ellipse 100% 80% at 50% 100%, oklch(0.16 0.16 268) 0%, transparent 70%),
+    linear-gradient(180deg, #043a82, #022047);
+}
+.bg-yony-night::before {
+  content: "";
+  position: absolute; inset: 0;
+  background-image: radial-gradient(oklch(1 0 0 / 0.08) 1px, transparent 1px);
+  background-size: 28px 28px;
+  opacity: 0.5;
+  pointer-events: none;
+}
+.text-eyebrow {
+  color: var(--yony-orange);
+  text-transform: uppercase;
+  letter-spacing: 0.32em;
+  font-weight: 600;
+  font-size: 0.78rem;
+}
+.btn-yony {
+  background: var(--yony-orange);
+  color: var(--yony-deep);
+  box-shadow:
+    0 0 0 6px color-mix(in oklab, var(--yony-orange) 20%, transparent),
+    0 20px 60px -10px color-mix(in oklab, var(--yony-orange) 50%, transparent);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.btn-yony:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 0 0 8px color-mix(in oklab, var(--yony-orange) 25%, transparent),
+    0 28px 70px -10px color-mix(in oklab, var(--yony-orange) 60%, transparent);
+}
+.btn-ghost-night {
+  border: 1px solid oklch(1 0 0 / 0.2);
+  color: white;
+  background: transparent;
+  transition: background .2s ease, border-color .2s ease;
+}
+.btn-ghost-night:hover { background: oklch(1 0 0 / 0.08); border-color: oklch(1 0 0 / 0.35); }
+.card-glow {
+  background: linear-gradient(180deg, oklch(1 0 0 / 0.06), oklch(1 0 0 / 0.02));
+  border: 1px solid oklch(1 0 0 / 0.10);
+  backdrop-filter: blur(6px);
+}
+.card-light {
+  background: white;
+  border: 1px solid oklch(0.94 0.02 260);
+  box-shadow: 0 1px 0 oklch(0.95 0.02 260), 0 20px 40px -28px oklch(0.30 0.18 268 / 0.18);
 }
