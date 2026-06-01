@@ -7,9 +7,9 @@ import { JoinDelegationForm } from "@/components/JoinDelegationForm";
 import "./yony-games.css";
 
 const STATS = [
-  { value: "256", label: "Jours de jeu" },
+  { value: "256", label: "Jours de jeux" },
   { value: "16", label: "Nations hôtes" },
-  { value: "512", label: "Trésors & Lieux Sacrés" },
+  { value: "512", label: "Trésors Sacrés" },
 ];
 
 const STEPS = [
