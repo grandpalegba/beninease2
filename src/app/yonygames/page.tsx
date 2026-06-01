@@ -187,7 +187,7 @@ export default function YonyGamesPage() {
               <span className="text-3xl md:text-4xl text-[color:var(--yony-blue)] font-bold">Déesse de l'Harmonie</span>
             </h2>
             <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
-              L'Œuf de Yony est le symbole de l'équilibre du monde. Il se recharge à partir de deux centres : le Bénin et le Pérou, racines matérielles et spirituelles d'une sagesse universelle dispersée.
+              L'Œuf de Yony est le symbole de l'équilibre du monde. Il se recharge à partir de deux centres : le Bénin et le Pérou, racines matérielles et spirituelles de sagesses primordiales.
             </p>
             <div className="mt-8 rounded-2xl bg-[color:var(--yony-deep)] p-6 shadow-xl shadow-[color:var(--yony-deep)]/20">
               <p className="text-[color:var(--yony-orange)] uppercase tracking-[0.3em] font-bold text-[0.78rem]">Mission des jeux</p>
