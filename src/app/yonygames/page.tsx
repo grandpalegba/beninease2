@@ -157,22 +157,22 @@ export default function YonyGamesPage() {
       </section>
 
       {/* SOURCES */}
-      <section className="py-20 bg-[oklch(0.985_0.01_260)]">
+      <section className="py-20 bg-[color:var(--yony-deep)]">
         <div className="mx-auto max-w-5xl px-6 text-center">
           <p className="text-eyebrow">{t.sources.eyebrow}</p>
-          <h2 className="mt-3 text-4xl md:text-5xl text-[color:var(--yony-deep)]">
+          <h2 className="mt-3 text-4xl md:text-5xl text-white">
             {t.sources.title}
           </h2>
           <div className="mt-12 grid md:grid-cols-2 gap-6 text-left">
-            <div className="card-light rounded-2xl p-7">
-              <h3 className="text-xl text-[color:var(--yony-deep)]">{t.sources.faTitle}</h3>
-              <p className="mt-3 text-muted-foreground">
+            <div className="rounded-2xl p-7 bg-white/10 border border-white/15">
+              <h3 className="text-xl text-white font-bold">{t.sources.faTitle}</h3>
+              <p className="mt-3 text-white/70">
                 {t.sources.faText}
               </p>
             </div>
-            <div className="card-light rounded-2xl p-7">
-              <h3 className="text-xl text-[color:var(--yony-deep)]">{t.sources.yanantinTitle}</h3>
-              <p className="mt-3 text-muted-foreground">
+            <div className="rounded-2xl p-7 bg-white/10 border border-white/15">
+              <h3 className="text-xl text-white font-bold">{t.sources.yanantinTitle}</h3>
+              <p className="mt-3 text-white/70">
                 {t.sources.yanantinText}
               </p>
             </div>
