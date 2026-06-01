@@ -6,10 +6,10 @@ import ConditionalHeader from "@/components/ConditionalHeader";
 import BodyWrapper from "@/components/BodyWrapper";
 import Providers from "@/components/Providers";
 import { Toaster } from "sonner";
-import { Geist } from "next/font/google";
+import { Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
   title: "Yonyverse - Explorer la Matrice du Fâ",
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="fr" className={cn("scroll-smooth", "font-sans", geist.variable)}>
+    <html lang="fr" className={cn("scroll-smooth", "font-sans", inter.variable)}>
       <body className="min-h-screen antialiased bg-[#F9F9F7]">
         <Providers>
           <Suspense fallback={null}>
