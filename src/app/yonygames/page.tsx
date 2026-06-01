@@ -75,7 +75,7 @@ export default function YonyGamesPage() {
       </header>
 
       {/* HERO */}
-      <section id="top" className="relative isolate overflow-hidden bg-yony-night text-white">
+      <section id="top" className="relative isolate overflow-hidden bg-[color:var(--yony-deep)] text-white">
         <div className="relative mx-auto max-w-6xl px-6 pt-40 pb-32 text-center">
           <p className="text-eyebrow">{t.hero.date}</p>
           <h1 className="mt-6 text-5xl md:text-7xl font-extrabold leading-[1.05]">
@@ -202,7 +202,7 @@ export default function YonyGamesPage() {
       </section>
 
       {/* PARCOURS */}
-      <section id="parcours" className="relative overflow-hidden bg-yony-night text-white py-28">
+      <section id="parcours" className="relative overflow-hidden bg-[color:var(--yony-deep)] text-white py-28">
         <div className="relative mx-auto max-w-7xl px-6">
           <div className="text-center">
             <p className="text-eyebrow">{t.cycles.eyebrow}</p>
@@ -276,7 +276,7 @@ export default function YonyGamesPage() {
       </section>
 
       {/* DELEGATIONS */}
-      <section id="delegations" className="relative overflow-hidden bg-yony-night text-white py-28">
+      <section id="delegations" className="relative overflow-hidden bg-[color:var(--yony-deep)] text-white py-28">
         <div className="relative mx-auto max-w-6xl px-6">
           <div className="text-center max-w-3xl mx-auto">
             <p className="text-eyebrow">{t.delegations.eyebrow}</p>
@@ -317,7 +317,7 @@ export default function YonyGamesPage() {
       </section>
 
       {/* CTA */}
-      <section className="relative overflow-hidden bg-yony-night text-white py-28">
+      <section className="relative overflow-hidden bg-[color:var(--yony-deep)] text-white py-28">
         <div className="relative mx-auto max-w-4xl px-6 text-center">
           <p className="text-eyebrow">{t.cta.date}</p>
           <h2 className="mt-6 text-5xl md:text-6xl font-extrabold leading-tight">
