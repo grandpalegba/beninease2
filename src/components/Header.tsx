@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { supabase } from "@/utils/supabase/client";
 import type { User } from "@supabase/supabase-js";
-import { User as UserIcon, LogOut, ChevronDown, Search, Globe } from "lucide-react";
+import { User as UserIcon, LogOut, ChevronDown, Search } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import UserBadge from "./UserBadge";
@@ -26,9 +26,6 @@ const Header = ({ hideTop = false }: { hideTop?: boolean }) => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [showLangDropdown, setShowLangDropdown] = useState(false);
-  const [lang, setLang] = useState("Français");
-  const LANGUAGES = ["Français", "English", "Español", "Português"];
 
   useEffect(() => {
     const init = async () => {
@@ -46,13 +43,10 @@ const Header = ({ hideTop = false }: { hideTop?: boolean }) => {
       if (showDropdown && !target.closest('.user-menu-container')) {
         setShowDropdown(false);
       }
-      if (showLangDropdown && !target.closest('.lang-menu-container')) {
-        setShowLangDropdown(false);
-      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [showDropdown, showLangDropdown]);
+  }, [showDropdown]);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -87,30 +81,6 @@ const Header = ({ hideTop = false }: { hideTop?: boolean }) => {
         {/* Actions à droite */}
         <div className="flex-1 md:flex-none flex justify-end items-center gap-5 md:gap-6">
           
-          <div className="relative lang-menu-container">
-            <button onClick={() => setShowLangDropdown(!showLangDropdown)} className="flex items-center gap-1.5 text-white/80 hover:text-white transition-colors cursor-pointer">
-              <Globe size={22} />
-              <span className="text-[10px] font-black uppercase hidden md:inline-block tracking-widest">{lang.slice(0,2)}</span>
-            </button>
-
-            {showLangDropdown && (
-              <div className="absolute right-0 bottom-full mb-4 bg-white shadow-2xl rounded-2xl p-2 border border-gray-100 min-w-[140px] animate-in fade-in slide-in-from-bottom-2 duration-200">
-                {LANGUAGES.map((l) => (
-                  <button
-                    key={l}
-                    onClick={() => { setLang(l); setShowLangDropdown(false); }}
-                    className={cn(
-                      "w-full text-left px-4 py-2.5 rounded-xl text-sm font-bold transition-colors cursor-pointer",
-                      lang === l ? "bg-[#043a82] text-white" : "text-[#043a82] hover:bg-gray-50"
-                    )}
-                  >
-                    {l}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
           {user ? (
             <div className="relative user-menu-container">
               <button onClick={() => setShowDropdown(!showDropdown)} className="flex items-center gap-2 group">
