@@ -171,7 +171,7 @@ export default function YonyGamesPage() {
       </section>
 
       {/* DEESSE */}
-      <section id="deesse" className="py-28 bg-white">
+      <section id="deesse" className="py-28 bg-white" style={{ backgroundColor: '#FFFFFF' }}>
         <div className="mx-auto max-w-6xl px-6 grid md:grid-cols-2 gap-12 items-center">
           <div className="flex justify-center">
             <img
