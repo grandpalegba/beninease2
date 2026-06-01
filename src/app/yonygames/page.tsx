@@ -232,7 +232,7 @@ export default function YonyGamesPage() {
             <div className="card-light rounded-2xl p-7">
               <h3 className="text-xl text-[color:var(--yony-deep)]">Le Yanantin</h3>
               <p className="mt-3 text-muted-foreground">
-                Principe andin de complémentarité entre les contraires. Il constitue l'âme des Jeux, fondé sur l'enrichissement par la différence.
+                Principe ancestral des Andes du Pérou fondé sur la complémentarité entre les contraires. Il constitue l'âme des Jeux, fondée sur l'enrichissement par la différence.
               </p>
             </div>
           </div>
