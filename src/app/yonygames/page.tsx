@@ -9,7 +9,7 @@ import "./yony-games.css";
 const STATS = [
   { value: "256", label: "Jours de jeu" },
   { value: "16", label: "Nations hôtes" },
-  { value: "512", label: "Trésors & Wakas en jeu" },
+  { value: "512", label: "Trésors & Lieux Sacrés" },
 ];
 
 const STEPS = [
@@ -171,7 +171,7 @@ export default function YonyGamesPage() {
       </section>
 
       {/* DEESSE */}
-      <section id="deesse" className="py-28">
+      <section id="deesse" className="py-28 bg-white">
         <div className="mx-auto max-w-6xl px-6 grid md:grid-cols-2 gap-12 items-center">
           <div className="flex justify-center">
             <img
