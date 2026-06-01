@@ -175,7 +175,7 @@ export default function YonyGamesPage() {
         <div className="mx-auto max-w-6xl px-6 grid md:grid-cols-2 gap-12 items-center">
           <div className="flex justify-center">
             <img
-              src="/yony-deesse.png.jpg"
+              src="/yony-desse.png"
               alt="Yony, Déesse de l'Harmonie — mascotte des Yony Games"
               className="w-full max-w-sm mx-auto drop-shadow-[0_30px_60px_rgba(4,58,130,0.20)]"
             />
@@ -183,7 +183,7 @@ export default function YonyGamesPage() {
           <div>
             <p className="text-eyebrow">La Déesse</p>
             <h2 className="mt-3 text-4xl md:text-5xl text-[color:var(--yony-deep)]">
-              Yony, Déesse de l'Harmonie
+              Yony,<br />Déesse de l'Harmonie
             </h2>
             <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
               L'Œuf de Yony est le symbole de l'équilibre du monde. Il se recharge à partir de deux centres : le Bénin et le Pérou, racines matérielles et spirituelles d'une sagesse universelle dispersée.
