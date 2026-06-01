@@ -226,7 +226,7 @@ export default function YonyGamesPage() {
             <div className="card-light rounded-2xl p-7">
               <h3 className="text-xl text-[color:var(--yony-deep)]">Le Fâ</h3>
               <p className="mt-3 text-muted-foreground">
-                Science ancestrale de la divination du Bénin. Sa matrice composée de 256 signes devient le générateur des défis qui rythment les Jeux et mettent les nations à l'épreuve.
+                Tradition majeure du Bénin. Sa matrice composée de 256 signes constitue l'esprit des Jeux, inspirant les défis qui permettent aux nations de révéler leurs richesses culturelles.
               </p>
             </div>
             <div className="card-light rounded-2xl p-7">
