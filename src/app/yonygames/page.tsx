@@ -340,7 +340,8 @@ export default function YonyGamesPage() {
               600 membres par nation
             </h2>
             <p className="mt-5 text-white/70">
-              Chaque délégation rassemble 600 ambassadrices et ambassadeurs répartis en 6 statuts. Ensemble, ils partagent ce que leur nation a de plus précieux.
+              Chaque délégation rassemble 600 ambassadrices et ambassadeurs répartis en 6 statuts.<br />
+              Ensemble, ils partagent ce que leur nation a de plus précieux.
             </p>
           </div>
           <div className="mt-14 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
