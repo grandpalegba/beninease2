@@ -231,7 +231,8 @@ export default function YonyGamesPage() {
             <div className="card-light rounded-2xl p-7">
               <h3 className="text-xl text-[color:var(--yony-deep)]">Le Yanantin</h3>
               <p className="mt-3 text-muted-foreground">
-                Principe andin de complémentarité entre les contraires. Il constitue l'âme des Jeux, fondé sur l'enrichissement par la différence.
+                Principe andin de complémentarité entre les contraires.<br />
+                Il constitue l'âme des Jeux, fondé sur l'enrichissement par la différence.
               </p>
             </div>
           </div>
@@ -293,7 +294,8 @@ export default function YonyGamesPage() {
               Comment gagner des jetons
             </h2>
             <p className="mt-5 text-muted-foreground">
-              Chaque nation doit en réunir 8 types pour libérer des <strong className="text-[color:var(--yony-deep)]">Trésors</strong> et réactiver des <strong className="text-[color:var(--yony-deep)]">Wakas</strong>. Les jetons se gagnent dans les arènes de duels et les espaces de découvertes.
+              Chaque nation doit en réunir 8 types pour libérer des <strong className="text-[color:var(--yony-deep)]">Trésors</strong> et réactiver des <strong className="text-[color:var(--yony-deep)]">Wakas</strong>.<br />
+              Les jetons se gagnent dans les arènes de duels et les espaces de découvertes.
             </p>
           </div>
 
