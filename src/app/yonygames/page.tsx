@@ -175,7 +175,7 @@ export default function YonyGamesPage() {
         <div className="mx-auto max-w-6xl px-6 grid md:grid-cols-2 gap-12 items-center">
           <div className="flex justify-center">
             <img
-              src="/afraka_logo.png"
+              src="/yony-deesse.png.jpg"
               alt="Yony, Déesse de l'Harmonie — mascotte des Yony Games"
               className="w-full max-w-sm mx-auto drop-shadow-[0_30px_60px_rgba(4,58,130,0.20)]"
             />
