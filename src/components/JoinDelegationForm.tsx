@@ -2,29 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { z } from "zod";
-import { Check, ChevronsUpDown, Code, Globe, Camera, Briefcase, Music2, PlayCircle } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Code, Globe, Camera, Briefcase, Music2, PlayCircle } from "lucide-react";
 import { getCountries } from "@/lib/countries";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { toast } from "sonner";
 
 const STATUSES = [
@@ -54,9 +33,14 @@ const schema = z.object({
   languages: z.string().trim().min(2, "Indique au moins une langue").max(160),
 });
 
+const inputClass =
+  "w-full h-12 px-4 rounded-xl border border-gray-200 bg-white text-[color:var(--yony-deep)] text-base placeholder-gray-400 focus:outline-none focus:border-[color:var(--yony-orange)] focus:ring-2 focus:ring-[color:var(--yony-orange)]/20 transition";
+
+const labelClass =
+  "block text-sm font-semibold text-[color:var(--yony-deep)] mb-1.5";
+
 export function JoinDelegationForm() {
   const countries = useMemo(() => getCountries("fr"), []);
-  const [countryOpen, setCountryOpen] = useState(false);
 
   const [form, setForm] = useState({
     country: "",
@@ -84,167 +68,143 @@ export function JoinDelegationForm() {
     setSocials({});
   };
 
-  const selectedCountry = countries.find((c) => c.code === form.country);
-
   return (
-    <div className="w-full max-w-3xl mx-auto bg-white rounded-3xl p-8 md:p-12 shadow-xl border border-gray-100 text-left">
+    <div className="w-full max-w-3xl mx-auto bg-white rounded-3xl p-8 md:p-12 shadow-xl border border-gray-100">
       <div className="mb-8">
-        <p className="text-eyebrow text-[color:var(--yony-orange)] uppercase tracking-[0.2em] font-bold text-sm mb-2">Rejoindre une délégation</p>
+        <p className="text-[color:var(--yony-orange)] uppercase tracking-[0.25em] font-bold text-[0.78rem] mb-2">
+          Rejoindre une délégation
+        </p>
         <h2 className="text-3xl md:text-4xl font-extrabold text-[color:var(--yony-deep)]">
           Porte les couleurs de ta nation
         </h2>
-        <p className="mt-3 text-muted-foreground">
+        <p className="mt-3 text-gray-500">
           Renseigne ton profil pour rejoindre l'aventure des Jeux mondiaux des Traditions & Cultures.
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="grid gap-6">
+
         {/* Pays */}
-        <div className="grid gap-2">
-          <Label>Pays</Label>
-          <Popover open={countryOpen} onOpenChange={setCountryOpen}>
-            <PopoverTrigger asChild>
-              <Button
-                type="button"
-                variant="outline"
-                role="combobox"
-                className="justify-between h-12 font-normal text-base"
-              >
-                {selectedCountry ? selectedCountry.name : "Choisis un pays…"}
-                <ChevronsUpDown className="h-4 w-4 opacity-50" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
-              <Command>
-                <CommandInput placeholder="Rechercher un pays…" />
-                <CommandList>
-                  <CommandEmpty>Aucun pays trouvé.</CommandEmpty>
-                  <CommandGroup>
-                    {countries.map((c) => (
-                      <CommandItem
-                        key={c.code}
-                        value={c.name}
-                        onSelect={() => {
-                          setForm((f) => ({ ...f, country: c.code }));
-                          setCountryOpen(false);
-                        }}
-                      >
-                        <Check
-                          className={cn(
-                            "mr-2 h-4 w-4",
-                            form.country === c.code ? "opacity-100" : "opacity-0",
-                          )}
-                        />
-                        {c.name}
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </CommandList>
-              </Command>
-            </PopoverContent>
-          </Popover>
+        <div>
+          <label htmlFor="country" className={labelClass}>Pays</label>
+          <select
+            id="country"
+            value={form.country}
+            onChange={(e) => setForm((f) => ({ ...f, country: e.target.value }))}
+            className={inputClass}
+          >
+            <option value="">Choisis un pays…</option>
+            {countries.map((c) => (
+              <option key={c.code} value={c.code}>{c.name}</option>
+            ))}
+          </select>
         </div>
 
+        {/* Prénom / Nom */}
         <div className="grid sm:grid-cols-2 gap-5">
-          <div className="grid gap-2">
-            <Label htmlFor="firstName">Prénom</Label>
-            <Input
+          <div>
+            <label htmlFor="firstName" className={labelClass}>Prénom</label>
+            <input
               id="firstName"
-              className="h-12"
+              type="text"
               value={form.firstName}
               onChange={(e) => setForm((f) => ({ ...f, firstName: e.target.value }))}
               maxLength={80}
+              className={inputClass}
             />
           </div>
-          <div className="grid gap-2">
-            <Label htmlFor="lastName">Nom</Label>
-            <Input
+          <div>
+            <label htmlFor="lastName" className={labelClass}>Nom</label>
+            <input
               id="lastName"
-              className="h-12"
+              type="text"
               value={form.lastName}
               onChange={(e) => setForm((f) => ({ ...f, lastName: e.target.value }))}
               maxLength={80}
+              className={inputClass}
             />
           </div>
         </div>
 
-        <div className="grid gap-2">
-          <Label>Statut dans la délégation</Label>
-          <Select
+        {/* Statut */}
+        <div>
+          <label htmlFor="status" className={labelClass}>Statut dans la délégation</label>
+          <select
+            id="status"
             value={form.status}
-            onValueChange={(v) => setForm((f) => ({ ...f, status: v }))}
+            onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}
+            className={inputClass}
           >
-            <SelectTrigger className="h-12">
-              <SelectValue placeholder="Choisis ton rôle…" />
-            </SelectTrigger>
-            <SelectContent>
-              {STATUSES.map((s) => (
-                <SelectItem key={s.value} value={s.value}>
-                  {s.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            <option value="">Choisis ton rôle…</option>
+            {STATUSES.map((s) => (
+              <option key={s.value} value={s.value}>{s.label}</option>
+            ))}
+          </select>
         </div>
 
-        <div className="grid gap-2">
-          <Label htmlFor="bio">Bio courte</Label>
-          <Textarea
+        {/* Bio */}
+        <div>
+          <label htmlFor="bio" className={labelClass}>Bio courte</label>
+          <textarea
             id="bio"
             value={form.bio}
             onChange={(e) => setForm((f) => ({ ...f, bio: e.target.value }))}
             maxLength={280}
             rows={4}
-            className="resize-none py-3"
             placeholder="Qui es-tu, ce que tu portes pour ta nation…"
+            className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-[color:var(--yony-deep)] text-base placeholder-gray-400 focus:outline-none focus:border-[color:var(--yony-orange)] focus:ring-2 focus:ring-[color:var(--yony-orange)]/20 transition resize-none"
           />
-          <p className="text-xs text-muted-foreground text-right">{form.bio.length}/280</p>
+          <p className="text-xs text-gray-400 text-right mt-1">{form.bio.length}/280</p>
         </div>
 
-        <div className="grid gap-2">
-          <Label htmlFor="languages">Langues parlées</Label>
-          <Input
+        {/* Langues */}
+        <div>
+          <label htmlFor="languages" className={labelClass}>Langues parlées</label>
+          <input
             id="languages"
-            className="h-12"
+            type="text"
             value={form.languages}
             onChange={(e) => setForm((f) => ({ ...f, languages: e.target.value }))}
             placeholder="Français, Anglais, Fon, Quechua…"
             maxLength={160}
+            className={inputClass}
           />
         </div>
 
-        <div className="grid gap-4 mt-2">
-          <div className="flex items-baseline justify-between">
-            <Label>Réseaux sociaux</Label>
-            <span className="text-xs text-muted-foreground">Optionnels</span>
+        {/* Réseaux sociaux */}
+        <div>
+          <div className="flex items-baseline justify-between mb-3">
+            <label className={labelClass + " mb-0"}>Réseaux sociaux</label>
+            <span className="text-xs text-gray-400">Optionnels</span>
           </div>
           <div className="grid sm:grid-cols-2 gap-4">
             {SOCIALS.map(({ key, label, placeholder, icon: Icon }) => (
               <div key={key} className="relative">
-                <Icon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <Input
+                <Icon className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <input
+                  type="text"
                   aria-label={label}
                   placeholder={`${label} — ${placeholder}`}
-                  className="pl-11 h-12"
                   value={socials[key] ?? ""}
-                  onChange={(e) =>
-                    setSocials((s) => ({ ...s, [key]: e.target.value }))
-                  }
+                  onChange={(e) => setSocials((s) => ({ ...s, [key]: e.target.value }))}
                   maxLength={200}
+                  className="w-full h-12 pl-11 pr-4 rounded-xl border border-gray-200 bg-white text-[color:var(--yony-deep)] text-base placeholder-gray-400 focus:outline-none focus:border-[color:var(--yony-orange)] focus:ring-2 focus:ring-[color:var(--yony-orange)]/20 transition"
                 />
               </div>
             ))}
           </div>
         </div>
 
-        <div className="pt-6 flex justify-end">
-          <Button
+        {/* Submit */}
+        <div className="pt-4 flex justify-end">
+          <button
             type="submit"
-            className="btn-yony rounded-full h-14 px-10 text-lg font-bold"
+            className="btn-yony rounded-full h-14 px-10 text-lg font-bold text-white cursor-pointer"
           >
             Envoyer ma candidature
-          </Button>
+          </button>
         </div>
+
       </form>
     </div>
   );
